@@ -31,6 +31,7 @@ namespace Audio
 	//本体も解放
 	void AllRelease();
 
+	//ピッチ更新
 	void SetPitch(int ID,float pitch);
 };
 

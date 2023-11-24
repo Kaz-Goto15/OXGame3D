@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include "CsvManager.h"
-#include "Engine/Debug.h"
+#include "Debug.h"
 
 
 
@@ -140,7 +140,7 @@ bool CsvManager::Write(std::string fileName, DWORD x, DWORD y, std::string repDa
 	//開けなかった
 	if (hFile2 == INVALID_HANDLE_VALUE)
 	{
-		std::string message = "「" + fileName + "」が開けませんwwwwwwwwwwww\n開いている場合は閉じろｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗ";
+		std::string message = "「" + fileName + "」が開けません。\n開いている場合は閉じてください。";
 		MessageBox(NULL, message.c_str(), "BaseProjDx9エラー", MB_OK);
 
 		return false;

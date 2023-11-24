@@ -2,7 +2,12 @@
 #include "Direct3D.h"
 #include "Text.h"
 
-Text::Text() : hPict_(-1), width_(16), height_(32), fileName_("char.png"), rowLength_(16)
+Text::Text():
+	hPict_(-1),
+	width_(16),
+	height_(32),
+	fileName_("char.png"),
+	rowLength_(16)
 {
 }
 
@@ -92,6 +97,6 @@ void Text::Release()
 	Image::Release(hPict_);
 }
 
-void Text::SetAlpha(int x) {
-	Image::SetAlpha(hPict_, x);
+void Text::SetAlpha(int val) {
+	Image::SetAlpha(hPict_, val);
 }

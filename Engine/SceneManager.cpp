@@ -1,17 +1,14 @@
 #include "sceneManager.h"
 
-#include "../LobbyScene.h"
-#include "../GameScene.h"
-#include "../ResultScene.h"
+#include "../TestScene.h"
 
 #include "Model.h"
 #include "Image.h"
 #include "Audio.h"
 
-
 //コンストラクタ
-SceneManager::SceneManager(GameObject * parent)
-	: GameObject(parent, "SceneManager")
+SceneManager::SceneManager(GameObject * parent):
+	GameObject(parent, "SceneManager")
 {
 }
 
@@ -19,9 +16,9 @@ SceneManager::SceneManager(GameObject * parent)
 void SceneManager::Initialize()
 {
 	//最初のシーンを準備
-	currentSceneID_ = SCENE_ID_LOBBY;
+	currentSceneID_ = SCENE_ID_TEST;
 	nextSceneID_ = currentSceneID_;
-	Instantiate<LobbyScene>(this);
+	Instantiate<TestScene>(this);
 }
 
 //更新
@@ -41,9 +38,7 @@ void SceneManager::Update()
 		//次のシーンを作成
 		switch (nextSceneID_)
 		{
-		case SCENE_ID_LOBBY: Instantiate<LobbyScene>(this); break;
-		case SCENE_ID_GAME: Instantiate<GameScene>(this); break;
-		case SCENE_ID_RESULT: Instantiate<ResultScene>(this); break;
+		case SCENE_ID_TEST: Instantiate<TestScene>(this); break;
 
 		}
 		Audio::Initialize();

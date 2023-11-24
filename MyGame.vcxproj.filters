@@ -161,6 +161,8 @@
     <ClCompile Include="Engine\CsvManager.cpp">
       <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
+    <ClCompile Include="TestScene.cpp" />
+    <ClCompile Include="SystemConfig.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -289,6 +291,8 @@
     <ClInclude Include="Engine\CsvManager.h">
       <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
+    <ClInclude Include="TestScene.h" />
+    <ClInclude Include="SystemConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

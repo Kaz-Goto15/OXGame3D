@@ -216,8 +216,8 @@ void VFX::Draw()
         }
         (*particle)->pEmitter->pBillBoard->Draw(matWorld,(*particle)->now.color);
     }
-
-    
+    Direct3D::SetShader(Direct3D::SHADER_3D);
+    Direct3D::SetBlendMode(Direct3D::BLEND_DEFAULT);
 }
 
 //‰ð•ú

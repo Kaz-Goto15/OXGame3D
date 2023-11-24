@@ -41,8 +41,6 @@ HRESULT BillBoard::Load(std::string fileName)
 		return hr;
 	}
 
-
-
 	//インデックス情報
 	int index[] = { 0,2,3, 0,1,2 };
 
@@ -76,7 +74,6 @@ HRESULT BillBoard::Load(std::string fileName)
 	// コンスタントバッファの作成
 	Direct3D::pDevice_->CreateBuffer(&cb, nullptr, &pConstantBuffer_);
 
-
 	//テクスチャ
 	pTexture_ = new Texture;
 	pTexture_->Load(fileName.c_str());
@@ -104,8 +101,6 @@ void BillBoard::Draw(XMMATRIX matWorld, XMFLOAT4 color)
 	Direct3D::pContext_->PSSetShaderResources(0, 1, &pSRV);
 
 	Direct3D::pContext_->Unmap(pConstantBuffer_, 0);	//再開
-
-
 
 	//頂点バッファ
 	UINT stride = sizeof(VERTEX);

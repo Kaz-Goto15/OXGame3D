@@ -3,6 +3,15 @@
 //　最終更新日：2023/03/28
 //
 
+//TODO
+/*
+KeyConfigのiniファイル移行
+Debug,D3D,Fbx,FbxParts,GameObject,Global,Image,Input,Mainの確認
+fixGBDXとの全比較
+puzzlenotdragonsのファイルとの比較
+KeyConfiginiファイル移行後SystemConfigとまとめるか独立させるかを検討
+TestSceneとりまSceneオブジェクトにする
+*/
 
 
 #include <Windows.h>

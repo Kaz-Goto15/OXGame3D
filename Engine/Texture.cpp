@@ -7,7 +7,6 @@ Texture::Texture():
 {
 }
 
-
 Texture::~Texture()
 {
 	SAFE_RELEASE(pSampleLinear_);
@@ -19,7 +18,6 @@ HRESULT Texture::Load(std::string fileName)
 	wchar_t wtext[FILENAME_MAX];
 	size_t ret;
 	mbstowcs_s(&ret, wtext, fileName.c_str(), fileName.length());
-
 
 	// テクスチャを読み込む
 	CoInitialize(NULL);
@@ -65,7 +63,6 @@ HRESULT Texture::Load(std::string fileName)
 	Direct3D::pContext_->Map(pTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &hMappedres);
 	pFormatConverter->CopyPixels(NULL, imgWidth * 4, imgWidth * imgHeight * 4, (BYTE*)hMappedres.pData);
 	Direct3D::pContext_->Unmap(pTexture, 0);
-
 
 	// シェーダリソースビュー(テクスチャ用)の設定
 	D3D11_SHADER_RESOURCE_VIEW_DESC srv = {};

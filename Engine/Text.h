@@ -39,6 +39,6 @@ public:
 	//‰ð•ú
 	void Release();
 
-	void SetAlpha(int x);
+	void SetAlpha(int val);
 };
 

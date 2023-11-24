@@ -18,7 +18,6 @@ namespace Model
 	{
 			ModelData* pData = new ModelData;
 
-
 			//開いたファイル一覧から同じファイル名のものが無いか探す
 			bool isExist = false;
 			for (int i = 0; i < _datas.size(); i++)
@@ -47,7 +46,6 @@ namespace Model
 				//無事開けた
 				pData->fileName = fileName;
 			}
-
 
 			//使ってない番号が無いか探す
 			for (int i = 0; i < _datas.size(); i++)
@@ -81,8 +79,6 @@ namespace Model
 		if (_datas[handle]->nowFrame > (float)_datas[handle]->endFrame)
 			_datas[handle]->nowFrame = (float)_datas[handle]->startFrame;
 
-
-
 		if (_datas[handle]->pFbx)
 		{
 			_datas[handle]->pFbx->Draw(_datas[handle]->transform, (int)_datas[handle]->nowFrame);
@@ -115,7 +111,6 @@ namespace Model
 		{
 			SAFE_DELETE(_datas[handle]->pFbx);
 		}
-
 
 		SAFE_DELETE(_datas[handle]);
 	}

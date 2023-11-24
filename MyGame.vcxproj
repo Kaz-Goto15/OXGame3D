@@ -173,6 +173,8 @@
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="SceneChangeAnim.cpp" />
     <ClCompile Include="SoundEffect.cpp" />
+    <ClCompile Include="SystemConfig.cpp" />
+    <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ceiling.h" />
@@ -219,6 +221,8 @@
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneChangeAnim.h" />
     <ClInclude Include="SoundEffect.h" />
+    <ClInclude Include="SystemConfig.h" />
+    <ClInclude Include="TestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\BillBoard.hlsl">

@@ -3,7 +3,7 @@
 #include <DirectXMath.h>
 #include <d3dcompiler.h>
 #include <wincodec.h>
-#include "string"
+#include <string>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
@@ -31,7 +31,6 @@ public:
 	//引数：fileName	画像ファイル名
 	//戻値：成功/失敗
 	HRESULT Load(std::string fileName);
-
 
 	//各アクセス関数
 	ID3D11SamplerState* GetSampler() { return pSampleLinear_; }	//サンプラーの取得
