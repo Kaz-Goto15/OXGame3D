@@ -24,15 +24,6 @@
       <UniqueIdentifier>{47a6a3f5-8cfd-436b-8d58-beccd108f3f3}</UniqueIdentifier>
       <Extensions>hlsl</Extensions>
     </Filter>
-    <Filter Include="A_Utility">
-      <UniqueIdentifier>{e6d5dfa6-5512-49cd-a920-cd16908afac4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="C_Scene">
-      <UniqueIdentifier>{1ea4850a-abd3-46e5-a50f-7bce03f215d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="B_GameScene">
-      <UniqueIdentifier>{5a1252d3-be04-4a39-9177-473d69588329}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -89,6 +80,7 @@
     <ClCompile Include="Engine\Transform.cpp">
       <Filter>01Engine\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Engine\Audio.cpp">
       <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
@@ -102,63 +94,6 @@
       <Filter>01Engine\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="Engine\VFX.cpp">
-      <Filter>01Engine\ResourceManager</Filter>
-    </ClCompile>
-    <ClCompile Include="MenuSelect.cpp" />
-    <ClCompile Include="ConfigKey.cpp" />
-    <ClCompile Include="ResultScene.cpp">
-      <Filter>C_Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>C_Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="LobbyScene.cpp">
-      <Filter>C_Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Needle.cpp">
-      <Filter>B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="RivalObject.cpp">
-      <Filter>B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="CsvManager.cpp">
-      <Filter>A_Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="GameData.cpp">
-      <Filter>A_Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyConfig.cpp">
-      <Filter>A_Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Ground.cpp">
-      <Filter>B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneChange.cpp">
-      <Filter>A_Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneChangeAnim.cpp">
-      <Filter>A_Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="ceiling.cpp">
-      <Filter>B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Effect.cpp">
-      <Filter>A_Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundEffect.cpp" />
-    <ClCompile Include="RecordScene.cpp">
-      <Filter>C_Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Health.cpp">
-      <Filter>B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\CsvManager.cpp">
       <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
   </ItemGroup>
@@ -217,6 +152,7 @@
     <ClInclude Include="Engine\Transform.h">
       <Filter>01Engine\GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="TestScene.h" />
     <ClInclude Include="Engine\Audio.h">
       <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
@@ -230,63 +166,6 @@
       <Filter>01Engine\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="Engine\VFX.h">
-      <Filter>01Engine\ResourceManager</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuSelect.h" />
-    <ClInclude Include="ConfigKey.h" />
-    <ClInclude Include="ResultScene.h">
-      <Filter>C_Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>C_Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="LobbyScene.h">
-      <Filter>C_Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Item.h">
-      <Filter>B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Needle.h">
-      <Filter>B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="RivalObject.h">
-      <Filter>B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="CsvManager.h">
-      <Filter>A_Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="GameData.h">
-      <Filter>A_Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyConfig.h">
-      <Filter>A_Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Ground.h">
-      <Filter>B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneChange.h">
-      <Filter>A_Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneChangeAnim.h">
-      <Filter>A_Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="ceiling.h">
-      <Filter>B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Effect.h">
-      <Filter>A_Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundEffect.h" />
-    <ClInclude Include="RecordScene.h">
-      <Filter>C_Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Health.h">
-      <Filter>B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\CsvManager.h">
       <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
   </ItemGroup>

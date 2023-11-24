@@ -93,11 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\include</AdditionalIncludeDirectories>
     </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.2\lib\vs2019\x64\debug</AdditionalLibraryDirectories>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -129,16 +125,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ceiling.cpp" />
-    <ClCompile Include="ConfigKey.cpp" />
-    <ClCompile Include="CsvManager.cpp" />
-    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Engine\Audio.cpp" />
     <ClCompile Include="Engine\BillBoard.cpp" />
     <ClCompile Include="Engine\BoxCollider.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
     <ClCompile Include="Engine\Collider.cpp" />
-    <ClCompile Include="Engine\CsvManager.cpp" />
     <ClCompile Include="Engine\CsvReader.cpp" />
     <ClCompile Include="Engine\Debug.cpp" />
     <ClCompile Include="Engine\Direct3D.cpp" />
@@ -157,34 +148,14 @@
     <ClCompile Include="Engine\Text.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
-    <ClCompile Include="GameData.cpp" />
-    <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="Ground.cpp" />
-    <ClCompile Include="Health.cpp" />
-    <ClCompile Include="Item.cpp" />
-    <ClCompile Include="KeyConfig.cpp" />
-    <ClCompile Include="LobbyScene.cpp" />
-    <ClCompile Include="MenuSelect.cpp" />
-    <ClCompile Include="Needle.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="RecordScene.cpp" />
-    <ClCompile Include="ResultScene.cpp" />
-    <ClCompile Include="RivalObject.cpp" />
-    <ClCompile Include="SceneChange.cpp" />
-    <ClCompile Include="SceneChangeAnim.cpp" />
-    <ClCompile Include="SoundEffect.cpp" />
+    <ClCompile Include="TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ceiling.h" />
-    <ClInclude Include="ConfigKey.h" />
-    <ClInclude Include="CsvManager.h" />
-    <ClInclude Include="Effect.h" />
     <ClInclude Include="Engine\Audio.h" />
     <ClInclude Include="Engine\BillBoard.h" />
     <ClInclude Include="Engine\BoxCollider.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\Collider.h" />
-    <ClInclude Include="Engine\CsvManager.h" />
     <ClInclude Include="Engine\CsvReader.h" />
     <ClInclude Include="Engine\Debug.h" />
     <ClInclude Include="Engine\Direct3D.h" />
@@ -203,22 +174,7 @@
     <ClInclude Include="Engine\Text.h" />
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
-    <ClInclude Include="GameData.h" />
-    <ClInclude Include="GameScene.h" />
-    <ClInclude Include="Ground.h" />
-    <ClInclude Include="Health.h" />
-    <ClInclude Include="Item.h" />
-    <ClInclude Include="KeyConfig.h" />
-    <ClInclude Include="LobbyScene.h" />
-    <ClInclude Include="MenuSelect.h" />
-    <ClInclude Include="Needle.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="RecordScene.h" />
-    <ClInclude Include="ResultScene.h" />
-    <ClInclude Include="RivalObject.h" />
-    <ClInclude Include="SceneChange.h" />
-    <ClInclude Include="SceneChangeAnim.h" />
-    <ClInclude Include="SoundEffect.h" />
+    <ClInclude Include="TestScene.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\BillBoard.hlsl">
