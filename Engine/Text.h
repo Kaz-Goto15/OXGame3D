@@ -40,5 +40,9 @@ public:
 	void Release();
 
 	void SetAlpha(int val);
+
+	void SetScale(float sc) { scale = sc; }
+private:
+	float scale;
 };
 

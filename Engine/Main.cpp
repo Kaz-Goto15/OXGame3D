@@ -6,7 +6,7 @@
 //TODO
 /*
 KeyConfigのiniファイル移行
-Debug,D3D,GameObject,Mainの確認
+Mainの確認
 fixGBDXとの全比較
 puzzlenotdragonsのファイルとの比較
 KeyConfiginiファイル移行後SystemConfigとまとめるか独立させるかを検討

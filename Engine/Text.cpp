@@ -7,7 +7,8 @@ Text::Text():
 	width_(16),
 	height_(32),
 	fileName_("char.png"),
-	rowLength_(16)
+	rowLength_(16),
+	scale(1)
 {
 }
 
@@ -68,11 +69,12 @@ void Text::Draw(int x, int y, const char* str)
 		Transform transform;
 		transform.position_.x = px;
 		transform.position_.y = py;
+		transform.scale_ = XMFLOAT3(scale, scale, scale);
 		Image::SetTransform(hPict_, transform);
 
 		//•\Ž¦‚·‚é”ÍˆÍ
 		Image::SetRect(hPict_, width_ * x, height_ * y, width_, height_);
-		
+
 		//•\Ž¦
 		Image::Draw(hPict_);
 

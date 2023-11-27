@@ -33,5 +33,7 @@ namespace Audio
 
 	//ピッチ更新
 	void SetPitch(int ID,float pitch);
+
+	bool Confirm(BOOL b, std::string msg);
 };
 

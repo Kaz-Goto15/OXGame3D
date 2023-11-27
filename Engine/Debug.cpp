@@ -21,8 +21,8 @@ void Debug::Log(std::string value, bool isLineFeed)
 	OutputDebugString(value.c_str());
 }
 
-void Debug::LogStr(std::string value, bool isLineFeed)
-{
-	if (isLineFeed)	value += "\n";
-	OutputDebugString(value.c_str());
-}
+//void Debug::LogStr(std::string value, bool isLineFeed)
+//{
+//	if (isLineFeed)	value += "\n";
+//	OutputDebugString(value.c_str());
+//}

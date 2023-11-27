@@ -34,7 +34,7 @@ namespace Audio
 //初期化
 void Audio::Initialize()
 {
-	CoInitializeEx(0, COINIT_MULTITHREADED);
+	Confirm(CoInitializeEx(0, COINIT_MULTITHREADED), "Initialize");
 
 	XAudio2Create(&pXAudio);
 	pXAudio->CreateMasteringVoice(&pMasteringVoice);
@@ -67,28 +67,28 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 	DWORD dwBytes = 0;
 
 	Chunk riffChunk = { 0 };
-	ReadFile(hFile, &riffChunk.id, 4, &dwBytes, NULL);
-	ReadFile(hFile, &riffChunk.size, 4, &dwBytes, NULL);
+	Confirm(ReadFile(hFile, &riffChunk.id, 4, &dwBytes, NULL), "open");
+	Confirm(ReadFile(hFile, &riffChunk.size, 4, &dwBytes, NULL), "open");
 
 	char wave[4] = "";
-	ReadFile(hFile, &wave, 4, &dwBytes, NULL);
+	Confirm(ReadFile(hFile, &wave, 4, &dwBytes, NULL), "wave");
 
 	Chunk formatChunk = { 0 };
 	while (formatChunk.id[0] != 'f') {
-		ReadFile(hFile, &formatChunk.id, 4, &dwBytes, NULL);
+		Confirm(ReadFile(hFile, &formatChunk.id, 4, &dwBytes, NULL), "format chunk id");
 	}
-	ReadFile(hFile, &formatChunk.size, 4, &dwBytes, NULL);
+	Confirm(ReadFile(hFile, &formatChunk.size, 4, &dwBytes, NULL), "format chunk size");
 
 
 	//フォーマットを読み取る
 	//https://learn.microsoft.com/ja-jp/windows/win32/api/mmeapi/ns-mmeapi-waveformatex
 	WAVEFORMATEX fmt;
-	ReadFile(hFile, &fmt.wFormatTag, 2, &dwBytes, NULL);		//形式
-	ReadFile(hFile, &fmt.nChannels, 2, &dwBytes, NULL);			//チャンネル（モノラル/ステレオ）
-	ReadFile(hFile, &fmt.nSamplesPerSec, 4, &dwBytes, NULL);	//サンプリング数
-	ReadFile(hFile, &fmt.nAvgBytesPerSec, 4, &dwBytes, NULL);	//1秒あたりのバイト数
-	ReadFile(hFile, &fmt.nBlockAlign, 2, &dwBytes, NULL);		//ブロック配置
-	ReadFile(hFile, &fmt.wBitsPerSample, 2, &dwBytes, NULL);	//サンプル当たりのビット数
+	Confirm(ReadFile(hFile, &fmt.wFormatTag, 2, &dwBytes, NULL), "format tag");		//形式
+	Confirm(ReadFile(hFile, &fmt.nChannels, 2, &dwBytes, NULL), "format channel");			//チャンネル（モノラル/ステレオ）
+	Confirm(ReadFile(hFile, &fmt.nSamplesPerSec, 4, &dwBytes, NULL), "foamat sps");	//サンプリング数
+	Confirm(ReadFile(hFile, &fmt.nAvgBytesPerSec, 4, &dwBytes, NULL), "format byte per sec");	//1秒あたりのバイト数
+	Confirm(ReadFile(hFile, &fmt.nBlockAlign, 2, &dwBytes, NULL), "format block align");		//ブロック配置
+	Confirm(ReadFile(hFile, &fmt.wBitsPerSample, 2, &dwBytes, NULL), "bit per sample");	//サンプル当たりのビット数
 
 
 
@@ -219,4 +219,13 @@ void Audio::SetPitch(int ID, float pitch)
 			break;
 		}
 	}
+}
+
+bool Audio::Confirm(BOOL b, std::string msg = "fail")
+{
+	if (b == FALSE) {
+		MessageBox(NULL, msg.c_str(), "Audio Error", MB_OK);
+		return false;
+	}
+	return true;
 }

@@ -1,16 +1,13 @@
 #pragma once
 
-//インクルード
 #include <Windows.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
 
-//リンカ
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 
 using namespace DirectX;
-
 
 //-----------------------------------------------------------
 //画面の描画に関する処理
@@ -61,11 +58,6 @@ namespace Direct3D
 	extern int		screenWidth_;		//スクリーンの幅
 	extern int		screenHeight_;		//スクリーンの高さ
 	extern bool		isDrawCollision_;	//コリジョンを表示するかフラグ
-
-
-
-
-
 
 	////////////////////////ここからは関数///////////////////////////////
 

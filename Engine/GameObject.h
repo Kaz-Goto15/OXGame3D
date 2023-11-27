@@ -147,9 +147,10 @@ public:
 	void SetRotateZ(float z) { SetRotate(transform_.rotate_.x, transform_.rotate_.y, z); }
 	void SetScale(XMFLOAT3 scale) { transform_.scale_ = scale; }
 	void SetScale(float x, float y, float z) { SetScale(XMFLOAT3(x, y, z)); }
+
 	//追加　拡縮関連
 	void SetScale(float all) { SetScale(XMFLOAT3(all, all, all)); }
-	void SetScale(float all, float oX, float oY, float oZ);
+	void SetScale(float all, float oX, float oY, float oZ);	//指定座標を中心に拡縮（要検証）
 
 
 private:

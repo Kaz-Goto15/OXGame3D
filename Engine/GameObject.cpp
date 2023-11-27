@@ -10,13 +10,13 @@ GameObject::GameObject(void) :
 }
 
 //コンストラクタ（名前なし）
-GameObject::GameObject(GameObject * parent) :
+GameObject::GameObject(GameObject* parent) :
 	GameObject(parent, "")
 {
 }
 
 //コンストラクタ（標準）
-GameObject::GameObject(GameObject * parent, const std::string& name)
+GameObject::GameObject(GameObject* parent, const std::string& name)
 	: pParent_(parent),
 
 
@@ -26,7 +26,7 @@ GameObject::GameObject(GameObject * parent, const std::string& name)
 	childList_.clear();
 	state_ = { 0, 1, 1, 0 };
 
-	if(parent)
+	if (parent)
 		transform_.pParent_ = &parent->transform_;
 
 }
@@ -108,13 +108,13 @@ std::list<GameObject*>* GameObject::GetChildList()
 }
 
 //親オブジェクトを取得
-GameObject * GameObject::GetParent(void)
+GameObject* GameObject::GetParent(void)
 {
 	return pParent_;
 }
 
 //名前でオブジェクトを検索（対象は自分の子供以下）
-GameObject * GameObject::FindChildObject(const std::string & name)
+GameObject* GameObject::FindChildObject(const std::string& name)
 {
 	//子供がいないなら終わり
 	if (childList_.empty())
@@ -152,7 +152,7 @@ const std::string& GameObject::GetObjectName(void) const
 }
 
 //子オブジェクトを追加（リストの最後へ）
-void GameObject::PushBackChild(GameObject * obj)
+void GameObject::PushBackChild(GameObject* obj)
 {
 	assert(obj != nullptr);
 
@@ -161,7 +161,7 @@ void GameObject::PushBackChild(GameObject * obj)
 }
 
 //子オブジェクトを追加（リストの先頭へ）
-void GameObject::PushFrontChild(GameObject * obj)
+void GameObject::PushFrontChild(GameObject* obj)
 {
 	assert(obj != nullptr);
 
@@ -184,7 +184,7 @@ void GameObject::KillAllChildren(void)
 	while (it != end)
 	{
 		KillObjectSub(*it);
-		delete *it;
+		delete* it;
 		it = childList_.erase(it);
 	}
 
@@ -203,7 +203,7 @@ void GameObject::SetScale(float all, float oX, float oY, float oZ)
 	XMFLOAT3 nextPos;
 	XMVECTOR tmpVec, tmpVec2;
 	XMFLOAT3 tmpFloat;
-	
+
 	//移動機能(to対称点)→拡大機能→移動場所計算→移動機能(to新配置点)
 	SetPosition(oPos);
 	SetScale(all);
@@ -220,7 +220,7 @@ void GameObject::SetScale(float all, float oX, float oY, float oZ)
 }
 
 //オブジェクト削除（再帰）
-void GameObject::KillObjectSub(GameObject * obj)
+void GameObject::KillObjectSub(GameObject* obj)
 {
 	if (!childList_.empty())
 	{
@@ -230,7 +230,7 @@ void GameObject::KillObjectSub(GameObject * obj)
 		while (it != end)
 		{
 			KillObjectSub(*it);
-			delete *it;
+			delete* it;
 			it = list->erase(it);
 		}
 		list->clear();
@@ -258,7 +258,7 @@ void GameObject::ClearCollider()
 }
 
 //衝突判定
-void GameObject::Collision(GameObject * pTarget)
+void GameObject::Collision(GameObject* pTarget)
 {
 	//自分同士の当たり判定はしない
 	if (pTarget == nullptr || this == pTarget)
@@ -302,7 +302,7 @@ void GameObject::CollisionDraw()
 }
 
 //RootJobを取得
-GameObject * GameObject::GetRootJob()
+GameObject* GameObject::GetRootJob()
 {
 	if (GetParent() == nullptr)
 	{
