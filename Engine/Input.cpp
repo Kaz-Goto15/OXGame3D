@@ -29,13 +29,15 @@ namespace Input
 
 	//string vector
 	std::vector<std::string> keyString = {
-		"Esc","1","2","3","4","5","6","7","8","9","0","-","=","BackSpace","Tab","Q","W","E","R","T",
-		"Y","U","I","O","P","[","]","Enter","LCtrl","A","S","D","F","G","H","J","K","L",";","'","`",
-		"LShift","\\","Z","X","C","V","B","N","M",",",".","/","RShift","*(Numpad)","LAlt","Space",
-		"Caps Lock","F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","Num Lock","Scroll Lock",
+		"Esc","1","2","3","4","5","6","7","8","9","0","-","=","BackSpace","Tab",
+		"Q","W","E","R","T","Y","U","I","O","P","[","]","Enter","LCtrl",
+		"A","S","D","F","G","H","J","K","L",";","'","`",
+		"LShift","\\","Z","X","C","V","B","N","M",",",".","/","RShift",
+		"*(Numpad)","LAlt","Space","Caps Lock",
+		"F1","F2","F3","F4","F5","F6","F7","F8","F9","F10","Num Lock","Scroll Lock",
 		"7 (Numpad)","8 (Numpad)","9 (Numpad)","- (Numpad)","4 (Numpad)","5 (Numpad)","6 (Numpad)",
-		"+ (Numpad)","1 (Numpad)","2 (Numpad)","3 (Numpad)","0 (Numpad)",". (Numpad)","F11","F12",
-		"F13","F14","F15","kana","convert","noconvert","\\","=","^","@",":","_","Chinese Characters",
+		"+ (Numpad)","1 (Numpad)","2 (Numpad)","3 (Numpad)","0 (Numpad)",". (Numpad)",
+		"F11","F12","F13","F14","F15","kana","convert","noconvert","\\","=","^","@",":","_","Chinese Characters",
 		"Stop","(JapanAX)","(J3100)","Enter (Numpad)","RCtrl",", (Numpad)","/ (Numpad)","SysRq",
 		"RAlt","Pause","Home","UpArrow","PageUp","LeftArrow","RightArrow","End","DownArrow","PageDown",
 		"Insert","Delete","Windows","Windows","Menu","Power","Windows"
@@ -139,7 +141,7 @@ namespace Input
 	}
 
 	//押したキーを調べる（押しっぱなしは無効）
-	//戻値：押してるキーの数値
+	//戻値：押してるキーの数値(コード昇順検索、１キーのみ) ない場合-1
 	int AnyKeyDown() {
 		int returnVal = -1;
 		for (int i = 0; i < 223;i++) {
@@ -204,14 +206,12 @@ namespace Input
 		mousePos_.y = y;
 	}
 
-
 	//そのフレームでのマウスの移動量を取得
 	XMFLOAT3 GetMouseMove()
 	{
 		XMFLOAT3 result = XMFLOAT3((float)mouseState_.lX, (float)mouseState_.lY, (float)mouseState_.lZ);
 		return result;
 	}
-
 
 	/////////////////////////////　コントローラー情報取得　//////////////////////////////////
 
@@ -247,8 +247,8 @@ namespace Input
 		return false;
 	}
 
-	//押したボタンを調べる（押しっぱなしは無効）
-	//戻値：押してるボタンの数値
+	//押したボタンを調べる
+	//戻値：押してるボタンの数値 (コード昇順検索、１ボタンのみ) ない場合-1
 	int AnyPadButtonDown(int padID) {
 		int returnVal = -1;
 		for (int i = 0; i < 32769; i = i * 2) {

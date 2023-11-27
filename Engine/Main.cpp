@@ -6,11 +6,13 @@
 //TODO
 /*
 KeyConfigのiniファイル移行
-Debug,D3D,Fbx,FbxParts,GameObject,Global,Image,Input,Mainの確認
+Debug,D3D,GameObject,Mainの確認
 fixGBDXとの全比較
 puzzlenotdragonsのファイルとの比較
 KeyConfiginiファイル移行後SystemConfigとまとめるか独立させるかを検討
-TestSceneとりまSceneオブジェクトにする
+E:TestSceneとりまSceneオブジェクトにする
+MainのSystemConfig化？
+FbxParts.cpp内にマイナスにしている箇所が２か所ありました。確認してください。
 */
 
 

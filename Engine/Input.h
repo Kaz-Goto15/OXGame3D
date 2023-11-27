@@ -41,7 +41,7 @@ namespace Input
 	bool IsKeyUp(int keyCode);
 
 	//押したキーを調べる（押しっぱなしは無効）
-	//戻値：押してるキーの数値
+	//戻値：押してるキーの数値(コード昇順検索、１キーのみ) ない場合-1
 	int AnyKeyDown();
 
 	///////////////////////////　マウス　//////////////////////////////////
@@ -90,8 +90,8 @@ namespace Input
 	//戻値：放した瞬間だったらtrue
 	bool IsPadButtonUp(int buttonCode, int padID = 0);
 
-	//押したボタンを調べる（押しっぱなしは無効）
-	//戻値：押してるボタンの数値
+	//押したボタンを調べる
+	//戻値：押してるボタンの数値 (コード昇順検索、１ボタンのみ) ない場合-1
 	int AnyPadButtonDown(int padID = 0);
 
 	//左スティックの傾きを取得
@@ -112,9 +112,6 @@ namespace Input
 
 	//振動させる
 	void SetPadVibration(int l, int r, int padID = 0);
-
-
-
 
 	//開放
 	void Release();

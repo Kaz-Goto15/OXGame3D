@@ -6,9 +6,11 @@
 
 //コンストラクタ
 FbxParts::FbxParts():
-	ppIndexBuffer_(nullptr), pMaterial_(nullptr), 
-	pVertexBuffer_(nullptr), pConstantBuffer_(nullptr),
-	pVertexData_(nullptr), ppIndexData_(nullptr)
+	pMaterial_(nullptr),
+	vertexCount_(-1), polygonCount_(-1), indexCount_(-1), materialCount_(-1), polygonVertexCount_(-1),
+	pVertexData_(nullptr), ppIndexData_(nullptr),
+	pVertexBuffer_(nullptr), ppIndexBuffer_(nullptr), pConstantBuffer_(nullptr),
+	pSkinInfo_(nullptr), ppCluster_(nullptr), numBone_(0), pBoneArray_(nullptr), pWeightArray_(nullptr) 
 {
 }
 

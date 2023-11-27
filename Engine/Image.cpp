@@ -14,7 +14,7 @@ namespace Image
 	}
 
 	//画像をロード
-	int Load(std::string fileName)
+	int Load(std::string fileName, bool isBlendAdd = false)
 	{
 		ImageData* pData = new ImageData;
 
@@ -66,7 +66,7 @@ namespace Image
 
 		//切り抜き範囲をリセット
 		ResetRect(handle);
-
+		pData->isBlendAdd = isBlendAdd;
 		return handle;
 	}
 
@@ -75,13 +75,19 @@ namespace Image
 	//描画
 	void Draw(int handle)
 	{
-		Direct3D::SetShader(Direct3D::SHADER_2D);
-		Direct3D::SetBlendMode(Direct3D::BLEND_DEFAULT);
-
 		if (handle < 0 || handle >= _datas.size() || _datas[handle] == nullptr)
 		{
 			return;
 		}
+
+		//Direct3D::SetShader(Direct3D::SHADER_2D);
+		if (_datas[handle]->isBlendAdd) {
+			Direct3D::SetBlendMode(Direct3D::BLEND_ADD);
+		}
+		else {
+			Direct3D::SetBlendMode(Direct3D::BLEND_DEFAULT);
+		}
+
 		_datas[handle]->transform.Calclation();
 		_datas[handle]->pSprite->Draw(_datas[handle]->transform, _datas[handle]->rect, _datas[handle]->alpha);
 	}

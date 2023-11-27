@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma once
-
 #include <vector>
 #include <string>
 #include "Sprite.h"
@@ -30,6 +28,9 @@ namespace Image
 		//行列
 		Transform transform;
 
+		//合成モード(bool 通常=false/加算=true)
+		bool isBlendAdd;
+
 		//コンストラクタ
 		ImageData() : pSprite(nullptr)
 		{
@@ -38,7 +39,6 @@ namespace Image
 			pSprite = nullptr;
 		}
 	};
-
 
 	//初期化
 	void Initialize();
