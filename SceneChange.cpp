@@ -24,7 +24,7 @@ SceneChange::SceneChange(GameObject* parent)
 	sinx = 0;
 	val = 0;
 	scID = SC_LATTICE;
-	sceneName = SCENE_ID_LOBBY;
+	sceneName = SCENE_ID_TEST;
 }
 
 //デストラクタ

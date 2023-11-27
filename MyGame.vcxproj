@@ -131,7 +131,6 @@
   <ItemGroup>
     <ClCompile Include="ceiling.cpp" />
     <ClCompile Include="ConfigKey.cpp" />
-    <ClCompile Include="CsvManager.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Engine\Audio.cpp" />
     <ClCompile Include="Engine\BillBoard.cpp" />
@@ -158,17 +157,12 @@
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="GameData.cpp" />
-    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="Health.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="KeyConfig.cpp" />
-    <ClCompile Include="LobbyScene.cpp" />
-    <ClCompile Include="MenuSelect.cpp" />
     <ClCompile Include="Needle.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="RecordScene.cpp" />
-    <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="RivalObject.cpp" />
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="SceneChangeAnim.cpp" />
@@ -179,7 +173,6 @@
   <ItemGroup>
     <ClInclude Include="ceiling.h" />
     <ClInclude Include="ConfigKey.h" />
-    <ClInclude Include="CsvManager.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Engine\Audio.h" />
     <ClInclude Include="Engine\BillBoard.h" />
@@ -206,17 +199,12 @@
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="GameData.h" />
-    <ClInclude Include="GameScene.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Health.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="KeyConfig.h" />
-    <ClInclude Include="LobbyScene.h" />
-    <ClInclude Include="MenuSelect.h" />
     <ClInclude Include="Needle.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="RecordScene.h" />
-    <ClInclude Include="ResultScene.h" />
     <ClInclude Include="RivalObject.h" />
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneChangeAnim.h" />

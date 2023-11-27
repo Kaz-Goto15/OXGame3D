@@ -34,7 +34,8 @@ namespace Audio
 //初期化
 void Audio::Initialize()
 {
-	Confirm(CoInitializeEx(0, COINIT_MULTITHREADED), "Initialize");
+	//0をnullptrにした　いいのか
+	Confirm(true, CoInitializeEx((LPVOID)nullptr, (DWORD)COINIT_MULTITHREADED), "Initialize");
 
 	XAudio2Create(&pXAudio);
 	pXAudio->CreateMasteringVoice(&pMasteringVoice);
@@ -44,6 +45,7 @@ void Audio::Initialize()
 //サウンドファイル(.wav）をロード
 int Audio::Load(std::string fileName, bool isLoop, int svNum)
 {
+	bool isSucc = false;
 	//すでに同じファイルを使ってないかチェック
 	for (int i = 0; i < audioDatas.size(); i++)
 	{
@@ -67,28 +69,28 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 	DWORD dwBytes = 0;
 
 	Chunk riffChunk = { 0 };
-	Confirm(ReadFile(hFile, &riffChunk.id, 4, &dwBytes, NULL), "open");
-	Confirm(ReadFile(hFile, &riffChunk.size, 4, &dwBytes, NULL), "open");
+	Confirm(isSucc, ReadFile(hFile, &riffChunk.id, 4, &dwBytes, NULL), "open");
+	Confirm(isSucc, ReadFile(hFile, &riffChunk.size, 4, &dwBytes, NULL), "open");
 
 	char wave[4] = "";
-	Confirm(ReadFile(hFile, &wave, 4, &dwBytes, NULL), "wave");
+	Confirm(isSucc, ReadFile(hFile, &wave, 4, &dwBytes, NULL), "wave");
 
 	Chunk formatChunk = { 0 };
 	while (formatChunk.id[0] != 'f') {
-		Confirm(ReadFile(hFile, &formatChunk.id, 4, &dwBytes, NULL), "format chunk id");
+		Confirm(isSucc, ReadFile(hFile, &formatChunk.id, 4, &dwBytes, NULL), "format chunk id");
 	}
-	Confirm(ReadFile(hFile, &formatChunk.size, 4, &dwBytes, NULL), "format chunk size");
+	Confirm(isSucc, ReadFile(hFile, &formatChunk.size, 4, &dwBytes, NULL), "format chunk size");
 
 
 	//フォーマットを読み取る
 	//https://learn.microsoft.com/ja-jp/windows/win32/api/mmeapi/ns-mmeapi-waveformatex
 	WAVEFORMATEX fmt;
-	Confirm(ReadFile(hFile, &fmt.wFormatTag, 2, &dwBytes, NULL), "format tag");		//形式
-	Confirm(ReadFile(hFile, &fmt.nChannels, 2, &dwBytes, NULL), "format channel");			//チャンネル（モノラル/ステレオ）
-	Confirm(ReadFile(hFile, &fmt.nSamplesPerSec, 4, &dwBytes, NULL), "foamat sps");	//サンプリング数
-	Confirm(ReadFile(hFile, &fmt.nAvgBytesPerSec, 4, &dwBytes, NULL), "format byte per sec");	//1秒あたりのバイト数
-	Confirm(ReadFile(hFile, &fmt.nBlockAlign, 2, &dwBytes, NULL), "format block align");		//ブロック配置
-	Confirm(ReadFile(hFile, &fmt.wBitsPerSample, 2, &dwBytes, NULL), "bit per sample");	//サンプル当たりのビット数
+	Confirm(isSucc, ReadFile(hFile, &fmt.wFormatTag,		2, &dwBytes, NULL), "format tag");				//形式
+	Confirm(isSucc, ReadFile(hFile, &fmt.nChannels,			2, &dwBytes, NULL), "format channel");			//チャンネル（モノラル/ステレオ）
+	Confirm(isSucc, ReadFile(hFile, &fmt.nSamplesPerSec,	4, &dwBytes, NULL), "format sps");				//サンプリング数
+	Confirm(isSucc, ReadFile(hFile, &fmt.nAvgBytesPerSec,	4, &dwBytes, NULL), "format byte per sec");		//1秒あたりのバイト数
+	Confirm(isSucc, ReadFile(hFile, &fmt.nBlockAlign,		2, &dwBytes, NULL), "format block align");		//ブロック配置
+	Confirm(isSucc, ReadFile(hFile, &fmt.wBitsPerSample,	2, &dwBytes, NULL), "bit per sample");			//サンプル当たりのビット数
 
 
 
@@ -97,7 +99,7 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 	while (true)
 	{
 		//次のデータのIDを調べる
-		ReadFile(hFile, &data.id, 4, &dwBytes, NULL);
+		Confirm(isSucc, ReadFile(hFile, &data.id, 4, &dwBytes, NULL), "next data id");
 
 		//「data」だったらループを抜けて次に進む
 		if (strcmp(data.id, "data") == 0)
@@ -107,20 +109,20 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 		else
 		{
 			//サイズ調べて
-			ReadFile(hFile, &data.size, 4, &dwBytes, NULL);
+			Confirm(isSucc, ReadFile(hFile, &data.size, 4, &dwBytes, NULL), "next data size");
 			char* pBuffer = new char[data.size];
 
 			//無駄に読み込む
-			ReadFile(hFile, pBuffer, data.size, &dwBytes, NULL);
+			Confirm(isSucc, ReadFile(hFile, pBuffer, data.size, &dwBytes, NULL), "next data excess");
 		}
 	}
 
 	//データチャンクのサイズを取得
-	ReadFile(hFile, &data.size, 4, &dwBytes, NULL);
+	Confirm(isSucc, ReadFile(hFile, &data.size, 4, &dwBytes, NULL), "data chunk size");
 
 	//波形データを読み込む
 	char* pBuffer = new char[data.size];
-	ReadFile(hFile, pBuffer, data.size, &dwBytes, NULL);
+	Confirm(isSucc, ReadFile(hFile, pBuffer, data.size, &dwBytes, NULL), "read wave data");
 	CloseHandle(hFile);
 
 
@@ -146,7 +148,7 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 	audioDatas.push_back(ad);
 
 	//SAFE_DELETE_ARRAY(pBuffer);
-
+	if (isSucc == false)return -1;
 	return (int)audioDatas.size() - 1;
 }
 
@@ -221,8 +223,9 @@ void Audio::SetPitch(int ID, float pitch)
 	}
 }
 
-bool Audio::Confirm(BOOL b, std::string msg = "fail")
+bool Audio::Confirm(bool prevSucc, BOOL b, std::string msg = "fail")
 {
+	if (prevSucc == false)return false;
 	if (b == FALSE) {
 		MessageBox(NULL, msg.c_str(), "Audio Error", MB_OK);
 		return false;

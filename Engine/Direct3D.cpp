@@ -396,6 +396,9 @@ namespace Direct3D
 
 		//深度バッファクリア
 		pContext_->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);	
+
+		SetBlendMode(Direct3D::BLEND_DEFAULT);
+
 	}
 
 

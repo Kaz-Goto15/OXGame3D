@@ -2,8 +2,6 @@
 #include "CsvManager.h"
 #include "Debug.h"
 
-
-
 //コンストラクタ
 CsvManager::CsvManager()
 {

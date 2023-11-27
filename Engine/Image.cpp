@@ -1,6 +1,5 @@
 #include "Global.h"
 #include "Image.h"
-
 //3D‰æ‘œ‚ğŠÇ—‚·‚é
 namespace Image
 {
@@ -14,7 +13,7 @@ namespace Image
 	}
 
 	//‰æ‘œ‚ğƒ[ƒh
-	int Load(std::string fileName, bool isBlendAdd = false)
+	int Load(std::string fileName, bool isBlendAdd)
 	{
 		ImageData* pData = new ImageData;
 

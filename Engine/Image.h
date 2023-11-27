@@ -47,7 +47,7 @@ namespace Image
 	//すでに同じ名前のファイルをロード済みの場合は、既存のデータの番号を返す
 	//引数：fileName　ファイル名
 	//戻値：その画像データに割り当てられた番号
-	int Load(std::string fileName);
+	int Load(std::string fileName, bool isBlendAdd = false);
 
 	//描画
 	//引数：handle	描画したい画像の番号

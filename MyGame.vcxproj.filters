@@ -101,17 +101,7 @@
     <ClCompile Include="Engine\VFX.cpp">
       <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
-    <ClCompile Include="MenuSelect.cpp" />
     <ClCompile Include="ConfigKey.cpp" />
-    <ClCompile Include="ResultScene.cpp">
-      <Filter>C_Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>C_Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="LobbyScene.cpp">
-      <Filter>C_Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>B_GameScene</Filter>
     </ClCompile>
@@ -123,9 +113,6 @@
     </ClCompile>
     <ClCompile Include="RivalObject.cpp">
       <Filter>B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="CsvManager.cpp">
-      <Filter>A_Utility</Filter>
     </ClCompile>
     <ClCompile Include="GameData.cpp">
       <Filter>A_Utility</Filter>
@@ -149,9 +136,6 @@
       <Filter>A_Utility</Filter>
     </ClCompile>
     <ClCompile Include="SoundEffect.cpp" />
-    <ClCompile Include="RecordScene.cpp">
-      <Filter>C_Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Health.cpp">
       <Filter>B_GameScene</Filter>
     </ClCompile>
@@ -231,17 +215,7 @@
     <ClInclude Include="Engine\VFX.h">
       <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
-    <ClInclude Include="MenuSelect.h" />
     <ClInclude Include="ConfigKey.h" />
-    <ClInclude Include="ResultScene.h">
-      <Filter>C_Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>C_Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="LobbyScene.h">
-      <Filter>C_Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>B_GameScene</Filter>
     </ClInclude>
@@ -253,9 +227,6 @@
     </ClInclude>
     <ClInclude Include="RivalObject.h">
       <Filter>B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="CsvManager.h">
-      <Filter>A_Utility</Filter>
     </ClInclude>
     <ClInclude Include="GameData.h">
       <Filter>A_Utility</Filter>
@@ -279,9 +250,6 @@
       <Filter>A_Utility</Filter>
     </ClInclude>
     <ClInclude Include="SoundEffect.h" />
-    <ClInclude Include="RecordScene.h">
-      <Filter>C_Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Health.h">
       <Filter>B_GameScene</Filter>
     </ClInclude>

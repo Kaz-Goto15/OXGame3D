@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include <windows.h>
 //-----------------------------------------------------------
 //サウンドを管理する（XAudio使用）
 //-----------------------------------------------------------
@@ -34,6 +34,6 @@ namespace Audio
 	//ピッチ更新
 	void SetPitch(int ID,float pitch);
 
-	bool Confirm(BOOL b, std::string msg);
+	bool Confirm(bool prevSucc, BOOL b, std::string msg);
 };
 
