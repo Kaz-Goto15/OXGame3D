@@ -4,7 +4,11 @@
 
 
 
-Fbx::Fbx():_animSpeed(0)
+Fbx::Fbx():
+	pFbxManager_(nullptr), pFbxScene_(nullptr),
+	_frameRate(FbxTime::EMode::eDefaultMode),
+	_animSpeed(0),
+	_startFrame(0), _endFrame(0)
 {
 }
 

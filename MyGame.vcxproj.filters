@@ -80,9 +80,6 @@
     <ClCompile Include="Engine\Main.cpp">
       <Filter>01Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\SceneManager.cpp">
-      <Filter>01Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Texture.cpp">
       <Filter>01Engine\DirectX</Filter>
     </ClCompile>
@@ -163,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="SystemConfig.cpp" />
+    <ClCompile Include="Engine\SceneManager.cpp">
+      <Filter>01Engine\ResourceManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -208,9 +208,6 @@
       <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Global.h">
-      <Filter>01Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\SceneManager.h">
       <Filter>01Engine</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Texture.h">
@@ -293,6 +290,9 @@
     </ClInclude>
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="SystemConfig.h" />
+    <ClInclude Include="Engine\SceneManager.h">
+      <Filter>01Engine\ResourceManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

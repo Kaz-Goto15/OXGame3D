@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include "CsvManager.h"
+#include "Engine/CsvManager.h"
 #include <vector>
 //キーコンの字表示を管理するクラス
 class ConfigKey : public GameObject
