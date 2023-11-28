@@ -33,8 +33,8 @@ void Health::Initialize()
 		if (i < 3)Image::SetRect(hPict_[i], 0, 0, 1024, 64);
 	}
 
-	transform_.position_ = { -0.55, 0.8, 0 };
-	transform_.scale_ = { 0.5,0.5,0.5 };
+	transform_.position_ = { -0.55f, 0.8f, 0.0f };
+	transform_.scale_ = { 0.5f,0.5f,0.5f };
 	textTra.position_ = { 1280 * (0.5f+ transform_.position_.x / 2), 720 * (0.5f + (-1 * transform_.position_.y) / 2), 0};
 	pText = new Text;
 	pText->Initialize("char_gakusanmarugo_half.png", 16, 32, 16);

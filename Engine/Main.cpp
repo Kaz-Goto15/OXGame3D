@@ -7,7 +7,6 @@
 /*
 KeyConfigのiniファイル移行
 Mainの確認
-fixGBDXとの全比較
 puzzlenotdragonsのファイルとの比較
 KeyConfiginiファイル移行後SystemConfigとまとめるか独立させるかを検討
 E:TestSceneとりまSceneオブジェクトにする

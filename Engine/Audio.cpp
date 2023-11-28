@@ -35,7 +35,7 @@ namespace Audio
 void Audio::Initialize()
 {
 	//0をnullptrにした　いいのか
-	Confirm(true, CoInitializeEx((LPVOID)nullptr, (DWORD)COINIT_MULTITHREADED), "Initialize");
+	Confirm(true, CoInitializeEx((LPVOID)nullptr, (DWORD)(int)COINIT_MULTITHREADED), "Initialize");
 
 	XAudio2Create(&pXAudio);
 	pXAudio->CreateMasteringVoice(&pMasteringVoice);
@@ -113,7 +113,7 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 			char* pBuffer = new char[data.size];
 
 			//無駄に読み込む
-			Confirm(isSucc, ReadFile(hFile, pBuffer, data.size, &dwBytes, NULL), "next data excess");
+			Confirm(isSucc, ReadFile(hFile, pBuffer, (DWORD)data.size, &dwBytes, NULL), "next data excess");
 		}
 	}
 
@@ -122,7 +122,7 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 
 	//波形データを読み込む
 	char* pBuffer = new char[data.size];
-	Confirm(isSucc, ReadFile(hFile, pBuffer, data.size, &dwBytes, NULL), "read wave data");
+	Confirm(isSucc, ReadFile(hFile, pBuffer, (DWORD)data.size, &dwBytes, NULL), "read wave data");
 	CloseHandle(hFile);
 
 
