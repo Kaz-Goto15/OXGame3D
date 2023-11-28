@@ -31,9 +31,10 @@ namespace SystemConfig {
 		SetCurrentDirectory("Assets");
 		const char* section = "System";
 		const char* iniFile = ".\\systemConf.ini";
-		SetVolBGM(GetPrivateProfileInt("System", "vol_bgm", volBGM, ".\\systemConf.ini"));		//スクリーンの幅
-		SetVolSE(GetPrivateProfileInt("System", "vol_se", volSE, ".\\systemConf.ini"));			//スクリーンの高さ
-		SetFPS(GetPrivateProfileInt("System", "fps", 60, ".\\systemConf.ini"));					//FPS（画面更新速度）
-		EnableFullScreen(GetPrivateProfileInt("System", "enFullScreen", 0, ".\\systemConf.ini"));//フルスクリーンの有効無効
+
+		SetVolBGM(GetPrivateProfileInt(section, "vol_bgm", volBGM, iniFile));		//スクリーンの幅
+		SetVolSE(GetPrivateProfileInt(section, "vol_se", volSE, iniFile));			//スクリーンの高さ
+		SetFPS(GetPrivateProfileInt(section, "fps", 60, iniFile));					//FPS（画面更新速度）
+		EnableFullScreen(GetPrivateProfileInt(section, "enFullScreen", 0, iniFile));//フルスクリーンの有効無効
 	}
 }

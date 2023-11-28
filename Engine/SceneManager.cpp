@@ -1,6 +1,7 @@
 #include "sceneManager.h"
 
 #include "../TestScene.h"
+#include "../SplashScene.h"
 
 #include "Model.h"
 #include "Image.h"
@@ -39,6 +40,7 @@ void SceneManager::Update()
 		switch (nextSceneID_)
 		{
 		case SCENE_ID_TEST: Instantiate<TestScene>(this); break;
+		case SCENE_ID_SPLASH: Instantiate<SplashScene>(this); break;
 
 		}
 		Audio::Initialize();

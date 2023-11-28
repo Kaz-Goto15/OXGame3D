@@ -142,10 +142,15 @@
     <ClCompile Include="Engine\CsvManager.cpp">
       <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="SystemConfig.cpp" />
     <ClCompile Include="Engine\SceneManager.cpp">
       <Filter>01Engine\ResourceManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SplashScene.cpp">
+      <Filter>C_Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>C_Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -256,10 +261,15 @@
     <ClInclude Include="Engine\CsvManager.h">
       <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h" />
     <ClInclude Include="SystemConfig.h" />
     <ClInclude Include="Engine\SceneManager.h">
       <Filter>01Engine\ResourceManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SplashScene.h">
+      <Filter>C_Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>C_Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
