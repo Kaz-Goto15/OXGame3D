@@ -15,7 +15,9 @@ private:
 	bool isDisplaying = false;
 	int queue_;
 	enum STATE {
+		S_SPLASH_START,
 		S_SPLASH,
+		S_SPLASH_END,
 		S_NEXT_SCENE,
 	}state_ = S_SPLASH;
 

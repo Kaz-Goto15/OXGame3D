@@ -17,7 +17,9 @@ void SplashScene::Update() {
 	}
 }
 void SplashScene::Draw() {
-	Image::Draw(hLogo_);
+	if (isDisplaying) {
+		Image::Draw(hLogo_[queue_]);
+	}
 
 }
 void SplashScene::Release() {}
@@ -29,8 +31,9 @@ void SplashScene::Splash()
 	}
 	else {
 		queue_++;
+		isDisplaying = true;
 		if (!(queue_ < LOGO_COUNT)) {
-
+			state_ = S_NEXT_SCENE;
 		}
 	}
 
