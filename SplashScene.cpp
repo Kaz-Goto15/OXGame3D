@@ -24,6 +24,13 @@ void SplashScene::Draw() {
 }
 void SplashScene::Release() {}
 
+void SplashScene::SplashStart()
+{
+	drawTime_ = 0;
+	queue_++;
+	state_ = S_SPLASH;
+}
+
 void SplashScene::Splash()
 {
 	if (isDisplaying) {

@@ -152,6 +152,9 @@
     <ClCompile Include="TestScene.cpp">
       <Filter>C_Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Transition.cpp" />
+    <ClCompile Include="TransitionAnimBase.cpp" />
+    <ClCompile Include="Easing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -271,6 +274,9 @@
     <ClInclude Include="TestScene.h">
       <Filter>C_Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Transition.h" />
+    <ClInclude Include="TransitionAnimBase.h" />
+    <ClInclude Include="Easing.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

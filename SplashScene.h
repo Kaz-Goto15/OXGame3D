@@ -11,9 +11,10 @@ public:
 	void Release() override;
 private:
 	static const int LOGO_COUNT = 2;
+	static const int DRAW_TIME = 1000;
 	int hLogo_[LOGO_COUNT];
 	bool isDisplaying = false;
-	int queue_;
+	int queue_, drawTime_ ;
 	enum STATE {
 		S_SPLASH_START,
 		S_SPLASH,
@@ -21,6 +22,8 @@ private:
 		S_NEXT_SCENE,
 	}state_ = S_SPLASH;
 
+	void SplashStart();
 	void Splash();
+	void SplashEnd();
 	void NextScene();
 };
