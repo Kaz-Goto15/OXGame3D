@@ -44,3 +44,10 @@ XMMATRIX Transform::GetWorldMatrix()
 	return  matScale_ * matRotate_ * matTranslate_;
 }
 
+void Transform::ConvDrawPos(float x, float y)
+{
+	position_.x = x / 40 * 0.062f;
+	position_.y = y / -40 * 0.110f;
+	position_.z = 0;
+}
+

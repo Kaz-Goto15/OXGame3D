@@ -45,10 +45,10 @@ namespace Easing
 		IN_BOUNCE,
 		OUT_BOUNCE,
 		IN_OUT_BOUNCE,
-		OUT_IN_BOUNCE
+		OUT_IN_BOUNCE,
+		MAX
 	};
-
-	float CalcTBCD(Ease e, float _time, float _begin, float change, float _duration);
+	float Calc(int _easeNum, float _nowTime, float _endTime, float _begin, float _end);
 	float Calc(Ease easeNo, float nowtime, float endTime, float begin, float end);
 };
 

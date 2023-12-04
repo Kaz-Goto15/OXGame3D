@@ -16,6 +16,10 @@ namespace Easing {
 	float begin;
 	float change;
 
+	float CalcTBCD(Ease e, float _time, float _begin, float change, float _duration) {
+		return Calc(e, _time, _duration, _begin, change + _begin);
+	}
+
 	float Linear() {
 		return change * time / duration + begin;
 	};
@@ -151,31 +155,161 @@ namespace Easing {
 	float InOutSine() {
 		return (-change / 2 * (cos(M_PI * time / duration) - 1) + begin);
 	}
-	float OutInSine();
-	float InExpo();
-	float OutExpo();
-	float InOutExpo();
-	float OutInExpo();
-	float InCirc();
-	float OutCirc();
-	float InOutCirc();
-	float OutInCirc();
-	float InElastic();
-	float OutElastic();
-	float InOutElastic();
-	float OutInElastic();
-	float InBack();
-	float OutBack();
-	float InOutBack();
-	float OutInBack();
-	float InBounce();
-	float OutBounce();
-	float InOutBounce();
-	float OutInBounce();
 
-	float linear();
-	float CalcTBCD(Ease e, float _time, float _begin, float change, float _duration) {
-		return Calc(e, _time, _duration, _begin, change + _begin);
+	float OutInSine() {
+		if (time < duration / 2) {
+			return CalcTBCD(OUT_SINE, time * 2, begin, change / 2, duration);
+		}
+		else {
+			return CalcTBCD(IN_SINE, (time * 2) - duration, begin + change / 2, change / 2, duration);
+		}
+	}
+
+	float InExpo() {
+		if (time == 0) {
+			return (begin);
+		}
+		else {
+			return (change * pow(2, 10 * (time / duration - 1)) + begin - change * 0.001);
+		}
+	}
+
+	float OutExpo() {
+		if (time == duration) {
+			return (begin + change);
+		}
+		else {
+			return (change * 1.001 * (-pow(2, -10 * time / duration) + 1) + begin);
+		}
+	}
+
+	float InOutExpo() {
+		if (time == 0) { return (begin); }
+		if (time == duration) { return (begin + change); }
+		time = time / duration * 2;
+		if (time < 1) {
+			return (change / 2 * pow(2, 10 * (time - 1)) + begin - change * 0.0005);
+		}
+		else {
+			time = time - 1;
+			return (change / 2 * 1.0005 * (-pow(2, -10 * time) + 2) + begin);
+		}
+	}
+
+	float OutInExpo() {
+		if (time < duration / 2) {
+			return CalcTBCD(OUT_EXPO, time * 2, begin, change / 2, duration);
+		}
+		else {
+			return CalcTBCD(IN_EXPO, (time * 2) - duration, begin + change / 2, change / 2, duration);
+		}
+	}
+
+	float InCirc() {
+		time = time / duration;
+		return (-change * (sqrt(1 - pow(time, 2)) - 1) + begin);
+	}
+
+	float OutCirc() {
+		time = time / duration - 1;
+		return (change * sqrt(1 - pow(time, 2)) + begin);
+	}
+
+	float InOutCirc() {
+		time = time / duration * 2;
+		if (time < 1) {
+			return (-change / 2 * (sqrt(1 - time * time) - 1) + begin);
+		}
+		else {
+			time = time - 2;
+			return (change / 2 * (sqrt(1 - time * time) + 1) + begin);
+		}
+	}
+
+	float OutInCirc() {
+		if (time < duration / 2) {
+			return CalcTBCD(OUT_CIRC, time * 2, begin, change / 2, duration);
+		}
+		else {
+			return CalcTBCD(IN_CIRC, (time * 2) - duration, begin + change / 2, change / 2, duration);
+		}
+	}
+
+	float InElastic() {
+		return 0;
+	}
+	float OutElastic() {
+		return 0;
+	}
+	float InOutElastic() {
+		return 0;
+	}
+	float OutInElastic() {
+		return 0;
+	}
+	float InBack() {
+		return 0;
+	}
+	float OutBack() {
+		return 0;
+	}
+	float InOutBack() {
+		return 0;
+	}
+	float OutInBack() {
+		return 0;
+	}
+	float InBounce() {
+		return 0;
+	}
+	float OutBounce() {
+		time = time / duration;
+		if (time < 1 / 2.75) {
+			return (change * (7.5625 * time * time) + begin);
+		}
+		else {
+			if (time < 2 / 2.75) {
+				time = time - (1.5 / 2.75);
+				return (change * (7.5625 * time * time + 0.75) + begin);
+			}
+			else {
+				if (time < 2.5 / 2.75) {
+					time = time - (2.25 / 2.75);
+					return (change * (7.5625 * time * time + 0.9375) + begin);
+				}
+				else {
+					time = time - (2.625 / 2.75);
+					return (change * (7.5625 * time * time + 0.984375) + begin);
+				}
+			}
+		}
+	}
+
+	float InOutBounce() {
+		if (time < duration / 2) {
+			return (CalcTBCD(IN_BOUNCE, time * 2, 0, change, duration) * 0.5 + begin);
+		}
+		else {
+			return (CalcTBCD(OUT_BOUNCE, time * 2 - duration, 0, change, duration) * 0.5 + change * 0.5 + begin);
+		}
+	}
+	
+	float OutInBounce() {
+		if (time < duration / 2) {
+			return CalcTBCD(OUT_BOUNCE, time * 2, begin, change / 2, duration);
+		}
+		else {
+			return CalcTBCD(IN_BOUNCE, (time * 2) - duration, begin + change / 2, change / 2, duration);
+		}
+	}
+
+	float Calc(int _easeNum, float _nowTime, float _endTime, float _begin, float _end) {
+		if (_easeNum > 0 && _easeNum < MAX) {
+			return Calc(static_cast<Ease>(_easeNum), _nowTime, _endTime, _begin, _end);
+		}
+		else {
+			return Calc(LINEAR, _nowTime, _endTime, _begin, _end);
+		}
 	}
 	float Calc(Ease e, float _nowTime, float _endTime, float _begin, float _end)
 	{

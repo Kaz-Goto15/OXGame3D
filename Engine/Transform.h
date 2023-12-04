@@ -39,5 +39,7 @@ public:
 	{
 		return XMFLOAT3(a.x + b.x, a.y + b.y, a.z + b.z);
 	}
+
+	void ConvDrawPos(float x, float y);
 };
 
