@@ -24,6 +24,7 @@ namespace Easing
 		OUT_IN_QUINT,
 		IN_SINE,
 		OUT_SINE,
+		IN_OUT_SINE,
 		OUT_IN_SINE,
 		IN_EXPO,
 		OUT_EXPO,
