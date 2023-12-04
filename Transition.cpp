@@ -15,7 +15,7 @@ namespace Transition {
 	}
 	void Run(TRANSITION_ID tID, float sec, int easeNum)
 	{
-		Instantiate<
+		//Instantiate<
 	}
 }
 

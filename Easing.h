@@ -5,7 +5,7 @@
 namespace Easing
 {
 	enum Ease {
-		LINEAR,
+		LINEAR = 1,
 		IN_QUAD,
 		OUT_QUAD,
 		IN_OUT_QUAD,
@@ -47,6 +47,7 @@ namespace Easing
 		OUT_IN_BOUNCE
 	};
 
+	float CalcTBCD(Ease e, float _time, float _begin, float change, float _duration);
 	float Calc(Ease easeNo, float nowtime, float endTime, float begin, float end);
 };
 

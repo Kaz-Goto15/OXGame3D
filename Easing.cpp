@@ -11,31 +11,146 @@ using std::asin;
 
 
 namespace Easing {
-	Ease easeNo;
-	float nowTime;
-	float endTime;
+	float time;
+	float duration;
 	float begin;
-	float end;
+	float change;
 
-	float Linear();
-	float InQuad();
-	float OutQuad();
-	float InOutQuad();
-	float OutInQuad();
-	float InCubic();
-	float OutCubic();
-	float InOutCubic();
-	float OutInCubic();
-	float InQuart();
-	float OutQuart();
-	float InOutQuart();
-	float OutInQuart();
-	float InQuint();
-	float OutQuint();
-	float InOutQuint();
-	float OutInQuint();
-	float InSine();
-	float OutSine();
+	float Linear() {
+		return change * time / duration + begin;
+	};
+
+	float InQuad() {
+		time /= duration;
+		return change * pow(time, 2) + begin;
+	}
+
+	float OutQuad() {
+		time /= duration;
+		return -change * time * (time - 2) + begin;
+	}
+
+	float InOutQuad() {
+		time = time / duration * 2;
+		if (time < 1) {
+			return(change / 2 * pow(time, 2) + begin);
+		}
+		else {
+			return(-change / 2 * ((time - 1) * (time - 3) - 1) + begin);
+		}
+	}
+
+	float OutInQuad() {
+		if (time < duration / 2) {
+			return CalcTBCD(OUT_QUAD, time * 2, begin, change / 2, duration);
+		}
+		else {
+			return CalcTBCD(IN_QUAD, (time * 2) - duration, begin + change / 2, change / 2, duration);
+		}
+	}
+
+	float InCubic() {
+		time = time / duration;
+		return (change * pow(time, 3) + begin);
+	}
+
+	float OutCubic() {
+		time = time / duration - 1;
+		return (change * (pow(time, 3) + 1) + begin);
+	}
+
+	float InOutCubic() {
+		time = time / duration * 2;
+		if (time < 1) {
+			return (change / 2 * time * time * time + begin);
+		}
+		else {
+			time = time - 2;
+			return (change / 2 * (time * time * time + 2) + begin);
+		}
+	}
+
+	float OutInCubic() {
+		if (time < duration / 2) {
+			return CalcTBCD(OUT_CUBIC, time * 2, begin, change / 2, duration);
+		}
+		else {
+			return CalcTBCD(IN_CUBIC, (time * 2) - duration, begin + change / 2, change / 2, duration);
+		}
+	}
+
+	float InQuart() {
+		time = time / duration;
+		return (change * pow(time, 4) + begin);
+	}
+
+	float OutQuart() {
+		time = time / duration - 1;
+		return (-change * (pow(time, 4) - 1) + begin);
+	}
+
+	float InOutQuart() {
+		time = time / duration * 2;
+		if (time < 1) {
+			return (change / 2 * pow(time, 4) + begin);
+		}
+		else {
+			time = time - 2;
+			return (-change / 2 * (pow(time, 4) - 2) + begin);
+		}
+	}
+
+	float OutInQuart() {
+		if (time < duration / 2) {
+			time *= 2;
+			return CalcTBCD(OUT_QUART, time * 2, begin, change / 2, duration);
+		}
+		else {
+			return CalcTBCD(IN_QUART, (time * 2) - duration, begin + change / 2, change / 2, duration);
+		}
+	}
+
+	float InQuint() {
+		time = time / duration;
+		return (change * pow(time, 5) + begin);
+	}
+
+	float OutQuint() {
+		time = time / duration - 1;
+		return (change * (pow(time, 5) + 1) + begin);
+	}
+
+	float InOutQuint() {
+		time = time / duration * 2;
+		if (time < 1) {
+			return (change / 2 * pow(time, 5) + begin);
+		}
+		else {
+			time = time - 2;
+			return (change / 2 * (pow(time, 5) + 2) + begin);
+		}
+	}
+
+	float OutInQuint() {
+		if (time < duration / 2) {
+			return CalcTBCD(OUT_QUINT, time * 2, begin, change / 2, duration);
+		}
+		else {
+			return CalcTBCD(IN_QUINT, (time * 2) - duration, begin + change / 2, change / 2, duration);
+		}
+	}
+
+	float InSine() {
+		return (-change * cos(time / duration * (M_PI / 2)) + change + begin);
+	}
+
+	float OutSine() {
+		return (change * sin(time / duration * (M_PI / 2)) + begin);
+	}
+
+	float InOutSine() {
+		return (-change / 2 * (cos(M_PI * time / duration) - 1) + begin);
+	}
 	float OutInSine();
 	float InExpo();
 	float OutExpo();
@@ -59,10 +174,17 @@ namespace Easing {
 	float OutInBounce();
 
 	float linear();
-	float Calc(Ease e, float nowtim, float endTime, float begin, float end)
+	float CalcTBCD(Ease e, float _time, float _begin, float change, float _duration) {
+		return Calc(e, _time, _duration, _begin, change + _begin);
+	}
+	float Calc(Ease e, float _nowTime, float _endTime, float _begin, float _end)
 	{
-		
-		switch (easeNo)
+		time = _nowTime;
+		duration = _endTime;
+		begin = _begin;
+		change = _end - _begin;
+
+		switch (e)
 		{
 		case Easing::LINEAR:		return Linear();
 		case Easing::IN_QUAD:		return InQuad();
@@ -83,6 +205,7 @@ namespace Easing {
 		case Easing::OUT_IN_QUINT:	return OutInQuint();
 		case Easing::IN_SINE:		return InSine();
 		case Easing::OUT_SINE:		return OutSine();
+		case Easing::IN_OUT_SINE:	return InOutSine();
 		case Easing::OUT_IN_SINE:	return OutInSine();
 		case Easing::IN_EXPO:		return InExpo();
 		case Easing::OUT_EXPO:		return OutExpo();
@@ -107,6 +230,7 @@ namespace Easing {
 		}
 		return Linear();
 	}
+
 }
 
 /*
@@ -127,6 +251,8 @@ local asin  = math.asin
 
 local function linear(t, b, c, d)
   return c * t / d + b
+  0.5,10,20,1
+  return 20*0.5/1 + 10;
 end
 
 local function inQuad(t, b, c, d)
@@ -476,4 +602,349 @@ local function outInBounce(t, b, c, d)
   end
 end
 
+*/
+
+
+/*
+floatime outQuad(){
+  time = time / duration;
+  return ( -change * time * (time - 2) + begin );
+}
+
+floatime inOutQuad(){
+  time = time / duration * 2;
+  if( time < 1 ){
+	return ( change / 2 * pow(time, 2) + begin );
+  }else {
+	return ( -change / 2 * ((time - 1) * (time - 3) - 1) + begin );
+  }
+}
+
+floatime outInQuad(){
+  if( time < duration / 2 ){
+	return ( outQuad (time * 2, begin, change / 2, duration) );
+  }else {
+	return ( inQuad((time * 2) - duration, begin + change / 2, change / 2, duration) );
+  }
+}
+
+floatime inCubic (){
+  time = time / duration;
+  return ( change * pow(time, 3) + begin );
+}
+
+floatime outCubic(){
+  time = time / duration - 1;
+  return ( change * (pow(time, 3) + 1) + begin );
+}
+
+floatime inOutCubic(){
+  time = time / duration * 2;
+  if( time < 1 ){
+	return ( change / 2 * time * time * time + begin );
+  }else {
+	time = time - 2;
+	return ( change / 2 * (time * time * time + 2) + begin );
+  }
+}
+
+floatime outInCubic(){
+  if( time < duration / 2 ){
+	return ( outCubic(time * 2, begin, change / 2, duration) );
+  }else {
+	return ( inCubic((time * 2) - duration, begin + change / 2, change / 2, duration) );
+  }
+}
+
+floatime inQuart(){
+  time = time / duration;
+  return ( change * pow(time, 4) + begin );
+}
+
+floatime outQuart(){
+  time = time / duration - 1;
+  return ( -change * (pow(time, 4) - 1) + begin );
+}
+
+floatime inOutQuart(){
+  time = time / duration * 2;
+  if( time < 1 ){
+	return ( change / 2 * pow(time, 4) + begin );
+  }else {
+	time = time - 2;
+	return ( -change / 2 * (pow(time, 4) - 2) + begin );
+  }
+}
+
+floatime outInQuart(){
+  if( time < duration / 2 ){
+	return ( outQuart(time * 2, begin, change / 2, duration) );
+  }else {
+	return ( inQuart((time * 2) - duration, begin + change / 2, change / 2, duration) );
+  }
+}
+
+floatime inQuint(){
+  time = time / duration;
+  return ( change * pow(time, 5) + begin );
+}
+
+floatime outQuint(){
+  time = time / duration - 1;
+  return ( change * (pow(time, 5) + 1) + begin );
+}
+
+floatime inOutQuint(){
+  time = time / duration * 2;
+  if( time < 1 ){
+	return ( change / 2 * pow(time, 5) + begin );
+  }else {
+	time = time - 2;
+	return ( change / 2 * (pow(time, 5) + 2) + begin );
+  }
+}
+
+floatime outInQuint(){
+  if( time < duration / 2 ){
+	return ( outQuint(time * 2, begin, change / 2, duration) );
+  }else {
+	return ( inQuint((time * 2) - duration, begin + change / 2, change / 2, duration) );
+  }
+}
+
+floatime inSine(){
+  return ( -change * cos(time / duration * (M_PI / 2)) + change + begin );
+}
+
+floatime outSine(){
+  return ( change * sin(time / duration * (M_PI / 2)) + begin );
+}
+
+floatime inOutSine(){
+  return ( -change / 2 * (cos(M_PI * time / duration) - 1) + begin );
+}
+
+floatime outInSine(){
+  if( time < duration / 2 ){
+	return ( outSine(time * 2, begin, change / 2, duration) );
+  }else {
+	return ( inSine((time * 2) -duration, begin + change / 2, change / 2, duration) );
+  }
+}
+
+floatime inExpo(){
+  if( time == 0 ){
+	return ( begin );
+  }else {
+	return ( change * pow(2, 10 * (time / duration - 1)) + begin - change * 0.001 );
+  }
+}
+
+floatime outExpo(){
+  if( time == duration ){
+	return ( begin + change );
+  }else {
+	return ( change * 1.001 * (-pow(2, -10 * time / duration) + 1) + begin );
+  }
+}
+
+floatime inOutExpo(){
+  if( time == 0 ){ return ( begin } );
+  if( time == duration ){ return ( begin + change } );
+  time = time / duration * 2;
+  if( time < 1 ){
+	return ( change / 2 * pow(2, 10 * (time - 1)) + begin - change * 0.0005 );
+  }else {
+	time = time - 1;
+	return ( change / 2 * 1.0005 * (-pow(2, -10 * t) + 2) + begin );
+  }
+}
+
+floatime outInExpo(){
+  if( time < duration / 2 ){
+	return ( outExpo(time * 2, begin, change / 2, duration) );
+  }else {
+	return ( inExpo((time * 2) - duration, begin + change / 2, change / 2, duration) );
+  }
+}
+
+floatime inCirc(){
+  time = time / duration;
+  return ((-change * (sqrt(1 - pow(time, 2)) - 1) + b) );
+}
+
+floatime outCirc(){
+  time = time / duration - 1;
+  return ((c * sqrt(1 - pow(time, 2)) + b) );
+}
+
+floatime inOutCirc(){
+  time = time / duration * 2;
+  if( time < 1 ){
+	return ( -change / 2 * (sqrt(1 - time * t) - 1) + begin );
+  }else {
+	time = time - 2;
+	return ( change / 2 * (sqrt(1 - time * t) + 1) + begin );
+  }
+}
+
+floatime outInCirc(){
+  if( time < duration / 2 ){
+	return ( outCirc(time * 2, begin, change / 2, duration) );
+  }else {
+	return ( inCirc((time * 2) - duration, begin + change / 2, change / 2, duration) );
+  }
+}
+
+floatime inElastic(){
+  if( time == 0 ){ return ( begin } );
+
+  time = time / duration;
+
+  if( time == 1  ){ return ( begin + change } );
+
+  if( notime p ){ p = duration * 0.3 }
+
+  local s
+
+  if( notime a or a < abs(c) ){
+	a = change
+	s = p / 4
+  }else {
+	s = p / (2 * M_PI) * asin(c/a)
+  }
+
+  time = time - 1;
+
+  return ( -(a * pow(2, 10 * t) * sin((time * duration - s) * (2 * M_PI) / p)) + begin );
+}
+
+-- a: amplitud
+-- p: period
+floatime outElastic(){
+  if( time == 0 ){ return ( begin } );
+
+  time = time / duration;
+
+  if( time == 1 ){ return ( begin + change } );
+
+  if( notime p ){ p = duration * 0.3 }
+
+  local s
+
+  if( notime a or a < abs(c) ){
+	a = change
+	s = p / 4
+  }else {
+	s = p / (2 * M_PI) * asin(c/a)
+  }
+
+  return ( a * pow(2, -10 * t) * sin((time * duration - s) * (2 * M_PI) / p) + change + begin );
+}
+
+-- p = period
+-- a = amplitud
+floatime inOutElastic(){
+  if( time == 0 ){ return ( begin } );
+
+  time = time / duration * 2;
+
+  if( time == 2 ){ return ( begin + change } );
+
+  if( notime p ){ p = duration * (0.3 * 1.5) }
+  if( notime a ){ a = 0 }
+
+  if( notime a or a < abs(c) ){
+	a = change
+	s = p / 4
+  }else {
+	s = p / (2 * M_PI) * asin(c / a)
+  }
+
+  if( time < 1 ){
+	time = time - 1;
+	return ( -0.5 * (a * pow(2, 10 * t) * sin((time * duration - s) * (2 * M_PI) / p)) + begin );
+  }else {
+	time = time - 1;
+	return ( a * pow(2, -10 * t) * sin((time * duration - s) * (2 * M_PI) / p ) * 0.5 + change + begin );
+  }
+}
+
+-- a: amplitud
+-- p: period
+floatime outInElastic(){
+  if( time < duration / 2 ){
+	return ( outElastic(time * 2, begin, change / 2, duration, a, p) );
+  }else {
+	return ( inElastic((time * 2) - duration, begin + change / 2, change / 2, duration, a, p) );
+  }
+}
+
+floatime inBack(){
+  if( notime s ){ s = 1.70158 }
+  time = time / duration;
+  return ( change * time * time * ((s + 1) * time - s) + begin );
+}
+
+floatime outBack(){
+  if( notime s ){ s = 1.70158 }
+  time = time / duration - 1;
+  return ( change * (time * time * ((s + 1) * time + s) + 1) + begin );
+}
+
+floatime inOutBack(){
+  if( notime s ){ s = 1.70158 }
+  s = s * 1.525
+  time = time / duration * 2;
+  if( time < 1 ){
+	return ( change / 2 * (time * time * ((s + 1) * time - s)) + begin );
+  }else {
+	time = time - 2;
+	return ( change / 2 * (time * time * ((s + 1) * time + s) + 2) + begin );
+  }
+}
+
+floatime outInBack(){
+  if( time < duration / 2 ){
+	return ( outBack(time * 2, begin, change / 2, duration, s) );
+  }else {
+	return ( inBack((time * 2) - duration, begin + change / 2, change / 2, duration, s) );
+  }
+}
+
+floatime outBounce(){
+  time = time / duration;
+  if( time < 1 / 2.75 ){
+	return ( change * (7.5625 * time * t) + begin );
+  }else {if( time < 2 / 2.75 ){
+	time = time - (1.5 / 2.75);
+	return ( change * (7.5625 * time * time + 0.75) + begin );
+  }else {if( time < 2.5 / 2.75 ){
+	time = time - (2.25 / 2.75);
+	return ( change * (7.5625 * time * time + 0.9375) + begin );
+  }else {
+	time = time - (2.625 / 2.75);
+	return ( change * (7.5625 * time * time + 0.984375) + begin );
+  }
+}
+
+floatime inBounce(){
+  return ( change - outBounce(d - time, 0, c, duration) + begin );
+}
+
+floatime inOutBounce(){
+  if( time < duration / 2 ){
+	return ( inBounce(time * 2, 0, c, duration) * 0.5 + begin );
+  }else {
+	return ( outBounce(time * 2 - duration, 0, c, duration) * 0.5 + change * .5 + begin );
+  }
+}
+
+floatime outInBounce(){
+  if( time < duration / 2 ){
+	return ( outBounce(time * 2, begin, change / 2, duration) );
+  }else {
+	return ( inBounce((time * 2) - duration, begin + change / 2, change / 2, duration) );
+  }
+}
 */
