@@ -19,8 +19,8 @@ void TestScene::Update(){
 }
 void TestScene::Draw(){
 	for (int i = 0; i < 100; i++) {
-		float cx = 0.01 * Easing::Calc(1, i, 100, 0, 100);
-		float cy = 0.01 * i;
+		float cx = 3.6 * Easing::Calc(2, i, 100, 0, 100);
+		float cy = 3.6 * -i;
 		ringTra.ConvDrawPos(cx, cy);
 		Image::SetTransform(hPict_, ringTra);
 		Image::Draw(hPict_);
