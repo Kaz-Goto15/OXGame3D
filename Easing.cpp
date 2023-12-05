@@ -20,20 +20,24 @@ namespace Easing {
 		return Calc(e, _time, _duration, _begin, change + _begin);
 	}
 
+	//1
 	float Linear() {
 		return change * time / duration + begin;
 	};
 
+	//2
 	float InQuad() {
 		time /= duration;
 		return change * pow(time, 2) + begin;
 	}
 
+	//3
 	float OutQuad() {
 		time /= duration;
 		return -change * time * (time - 2) + begin;
 	}
 
+	//4
 	float InOutQuad() {
 		time = time / duration * 2;
 		if (time < 1) {
@@ -44,6 +48,7 @@ namespace Easing {
 		}
 	}
 
+	//5
 	float OutInQuad() {
 		if (time < duration / 2) {
 			return CalcTBCD(OUT_QUAD, time * 2, begin, change / 2, duration);
@@ -53,16 +58,19 @@ namespace Easing {
 		}
 	}
 
+	//6
 	float InCubic() {
 		time = time / duration;
 		return (change * pow(time, 3) + begin);
 	}
 
+	//7
 	float OutCubic() {
 		time = time / duration - 1;
 		return (change * (pow(time, 3) + 1) + begin);
 	}
 
+	//8
 	float InOutCubic() {
 		time = time / duration * 2;
 		if (time < 1) {
@@ -74,6 +82,7 @@ namespace Easing {
 		}
 	}
 
+	//9
 	float OutInCubic() {
 		if (time < duration / 2) {
 			return CalcTBCD(OUT_CUBIC, time * 2, begin, change / 2, duration);
@@ -83,16 +92,19 @@ namespace Easing {
 		}
 	}
 
+	//10
 	float InQuart() {
 		time = time / duration;
 		return (change * pow(time, 4) + begin);
 	}
 
+	//11
 	float OutQuart() {
 		time = time / duration - 1;
 		return (-change * (pow(time, 4) - 1) + begin);
 	}
 
+	//12
 	float InOutQuart() {
 		time = time / duration * 2;
 		if (time < 1) {
@@ -104,9 +116,9 @@ namespace Easing {
 		}
 	}
 
+	//13
 	float OutInQuart() {
 		if (time < duration / 2) {
-			time *= 2;
 			return CalcTBCD(OUT_QUART, time * 2, begin, change / 2, duration);
 		}
 		else {
@@ -114,16 +126,19 @@ namespace Easing {
 		}
 	}
 
+	//14
 	float InQuint() {
 		time = time / duration;
 		return (change * pow(time, 5) + begin);
 	}
 
+	//15
 	float OutQuint() {
 		time = time / duration - 1;
 		return (change * (pow(time, 5) + 1) + begin);
 	}
 
+	//16
 	float InOutQuint() {
 		time = time / duration * 2;
 		if (time < 1) {
@@ -135,6 +150,7 @@ namespace Easing {
 		}
 	}
 
+	//17
 	float OutInQuint() {
 		if (time < duration / 2) {
 			return CalcTBCD(OUT_QUINT, time * 2, begin, change / 2, duration);
@@ -144,18 +160,22 @@ namespace Easing {
 		}
 	}
 
+	//18
 	float InSine() {
 		return (-change * cos(time / duration * (M_PI / 2)) + change + begin);
 	}
 
+	//19
 	float OutSine() {
 		return (change * sin(time / duration * (M_PI / 2)) + begin);
 	}
-
+	
+	//20
 	float InOutSine() {
 		return (-change / 2 * (cos(M_PI * time / duration) - 1) + begin);
 	}
 
+	//21
 	float OutInSine() {
 		if (time < duration / 2) {
 			return CalcTBCD(OUT_SINE, time * 2, begin, change / 2, duration);
@@ -165,6 +185,7 @@ namespace Easing {
 		}
 	}
 
+	//22
 	float InExpo() {
 		if (time == 0) {
 			return (begin);
@@ -174,6 +195,7 @@ namespace Easing {
 		}
 	}
 
+	//23
 	float OutExpo() {
 		if (time == duration) {
 			return (begin + change);
@@ -183,6 +205,7 @@ namespace Easing {
 		}
 	}
 
+	//24
 	float InOutExpo() {
 		if (time == 0) { return (begin); }
 		if (time == duration) { return (begin + change); }
@@ -196,6 +219,7 @@ namespace Easing {
 		}
 	}
 
+	//25
 	float OutInExpo() {
 		if (time < duration / 2) {
 			return CalcTBCD(OUT_EXPO, time * 2, begin, change / 2, duration);
@@ -205,16 +229,19 @@ namespace Easing {
 		}
 	}
 
+	//26
 	float InCirc() {
 		time = time / duration;
 		return (-change * (sqrt(1 - pow(time, 2)) - 1) + begin);
 	}
 
+	//27
 	float OutCirc() {
 		time = time / duration - 1;
 		return (change * sqrt(1 - pow(time, 2)) + begin);
 	}
 
+	//28
 	float InOutCirc() {
 		time = time / duration * 2;
 		if (time < 1) {
@@ -226,6 +253,7 @@ namespace Easing {
 		}
 	}
 
+	//29
 	float OutInCirc() {
 		if (time < duration / 2) {
 			return CalcTBCD(OUT_CIRC, time * 2, begin, change / 2, duration);
@@ -235,9 +263,28 @@ namespace Easing {
 		}
 	}
 
+	//30
 	float InElastic() {
-		return 0;
+		if (time == 0) return begin;
+		time = time / duration;
+		if (time == 1) return (begin + change);
+		float p = duration * 0.3;
+		float s;
+		float a = 0;
+			if (!a || a < abs(change)) {
+				a = change;
+				s = p / 4;
+			}
+			else {
+				s = p / (2 * M_PI) * asin(change / a);
+			}
+
+			time--;
+
+		return (-(a * pow(2, 10 * time) * sin((time * duration - s) * (2 * M_PI) / p)) + begin);
 	}
+	
+	//31
 	float OutElastic() {
 		return 0;
 	}

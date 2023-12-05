@@ -227,7 +227,7 @@ bool Audio::Confirm(bool prevSucc, BOOL b, std::string msg = "fail")
 {
 	if (prevSucc == false)return false;
 	if (b == FALSE) {
-		MessageBox(NULL, msg.c_str(), "Audio Error", MB_OK);
+		//MessageBox(NULL, msg.c_str(), "Audio Error", MB_OK);
 		return false;
 	}
 	return true;
