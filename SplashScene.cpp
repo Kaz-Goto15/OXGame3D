@@ -28,11 +28,14 @@ void SplashScene::SplashStart()
 {
 	drawTime_ = 0;
 	queue_++;
+	isDisplaying = true;
 	state_ = S_SPLASH;
 }
 
 void SplashScene::Splash()
 {
+	drawTime_++;
+
 	if (isDisplaying) {
 
 	}
@@ -44,6 +47,11 @@ void SplashScene::Splash()
 		}
 	}
 
+}
+
+void SplashScene::SplashEnd()
+{
+	if(que)
 }
 
 void SplashScene::NextScene()

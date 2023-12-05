@@ -9,6 +9,7 @@ public:
 	void Update() override;
 	void Draw() override;
 	void Release() override;
+
 private:
 	static const int LOGO_COUNT = 2;
 	static const int DRAW_TIME = 1000;

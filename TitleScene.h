@@ -3,14 +3,21 @@
 
 class Text;
 
-class TestScene : public GameObject
+class TitleScene : public GameObject
 {
+	enum Img {
+		BACKGROUND,
+		TITLE,
+		CHARACTER,
+		MAX
+	};
 	int easeNum = 41;
-	int hPict_ = -1;
+	int hPict_[Img::MAX];
 	Transform ringTra;
 	Text* newText;
+	std::string TitleImgFileName(Img E_IMG);
 public:
-	TestScene(GameObject* parent);
+	TitleScene(GameObject* parent);
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;
