@@ -2,6 +2,7 @@
 
 #include "../TestScene.h"
 #include "../SplashScene.h"
+#include "../TitleScene.h"
 
 #include "Model.h"
 #include "Image.h"
@@ -41,7 +42,7 @@ void SceneManager::Update()
 		{
 		case SCENE_ID_TEST: Instantiate<TestScene>(this); break;
 		case SCENE_ID_SPLASH: Instantiate<SplashScene>(this); break;
-
+		case SCENE_ID_TITLE: Instantiate<TitleScene>(this); break;
 		}
 		Audio::Initialize();
 		currentSceneID_ = nextSceneID_;

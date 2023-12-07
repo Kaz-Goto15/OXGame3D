@@ -51,7 +51,7 @@ void SplashScene::Splash()
 
 void SplashScene::SplashEnd()
 {
-	if(que)
+	//if(que)
 }
 
 void SplashScene::NextScene()

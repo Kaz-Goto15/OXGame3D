@@ -13,16 +13,33 @@ void TestScene::Initialize(){
 	hPict_ = Image::Load("circle.png");
 	ringTra.scale_ = { 0.05,0.05,0.05 };
 	Image::SetTransform(hPict_, ringTra);
+
 	newText = new Text();
 	newText->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
 }
 void TestScene::Update(){
-	if (Input::IsKeyDown(DIK_0)) {
+
+	//S ; Change Scene - Splash
+	if (Input::IsKeyDown(DIK_ESCAPE)) {
+		exit(0);
+
+	}
+	//S ; Change Scene - Splash
+	if (Input::IsKeyDown(DIK_S)) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_SPLASH);
 	}
+
+	//S ; Change Scene - Title
+	if (Input::IsKeyDown(DIK_T)) {
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_TITLE);
+	}
+
+	//AD ; Show easing_tra ease
 	if (Input::IsKeyDown(DIK_A))easeNum--;
 	if (Input::IsKeyDown(DIK_D))easeNum++;
+
 }
 void TestScene::Draw(){
 	std::string str = "ease: " + std::to_string(easeNum);

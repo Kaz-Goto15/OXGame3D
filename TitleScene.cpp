@@ -4,26 +4,26 @@
 #include "Engine/Image.h"
 #include "Easing.h"
 #include "Engine/Text.h"
-
 std::string TitleScene::TitleImgFileName(Img E_IMG)
 {
 	switch (E_IMG)
 	{
-	case TitleScene::BACKGROUND:	return "lobby_bg_720p.png";
-	case TitleScene::TITLE:			return "result_meter.png";
-	case TitleScene::CHARACTER:		return "grayman\\hm.png";
+	case Img::PIC_BACKGROUND:		return "lobby_bg_720p.png";
+	case Img::PIC_TITLE:			return "result_meter.png";
+	case Img::PIC_CHARACTER:		return "grayman\\hm.png";
 	}
 	return "null.png";
 }
 
 TitleScene::TitleScene(GameObject* parent)
 	: GameObject(parent, "TitleScene"),
-	newText(nullptr)
+	newText(nullptr),
+	selectState_(S_SEL_START)
 {}
 void TitleScene::Initialize() {
-	hPict_ = Image::Load("circle.png");
-	ringTra.scale_ = { 0.05,0.05,0.05 };
-	Image::SetTransform(hPict_, ringTra);
+	for (int i = 0; i < Img::MAX; i++) {
+		hPict_[i] = Image::Load(TitleImgFileName(static_cast<Img>(i)));
+	}
 	newText = new Text();
 	newText->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
 }
@@ -32,21 +32,39 @@ void TitleScene::Update() {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_SPLASH);
 	}
-	if (Input::IsKeyDown(DIK_A))easeNum--;
-	if (Input::IsKeyDown(DIK_D))easeNum++;
+	if (Input::IsKeyDown(DIK_SPACE)) {
+		Run(selectState_);
+	}
 }
 void TitleScene::Draw() {
-	std::string str = "ease: " + std::to_string(easeNum);
+	std::string str = "TitleScene: ";
 	newText->Draw(40, 40, str.c_str());
 
-	int drawCircleNum = 1600;
-	float circleUnit = 0.225f;
-	for (int i = 0; i < drawCircleNum; i++) {
-		float cy = -circleUnit * Easing::Calc(easeNum, i, drawCircleNum, 0, drawCircleNum) + drawCircleNum / 2.0f * circleUnit;
-		float cx = circleUnit * i - drawCircleNum / 2.0f * circleUnit;
-		ringTra.ConvDrawPos(cx, cy);
-		Image::SetTransform(hPict_, ringTra);
-		Image::Draw(hPict_);
+	for (int& h : hPict_) {
+		Image::Draw(h);
 	}
 }
 void TitleScene::Release() {}
+
+void TitleScene::Run(SELECT_STATE& ss) {
+	switch (ss)
+	{
+	case SELECT_STATE::S_SEL_START:
+		FileList.EnDraw();
+		manipTarget = FILE_LIST;
+		break;
+	case SELECT_STATE::S_SEL_CREDIT:
+
+		break;
+	case SELECT_STATE::S_SEL_OPTION:
+		break;
+	case SELECT_STATE::S_SEL_EXIT:
+		ConfirmWIndow cw = new ConfirmWindow();
+		cw.SetMessage("デスクトップに戻りますか？");
+		manipTarget = CONFIRM_WINDOW;
+		break;
+	default:
+		MessageBox(NULL, "Error", "致命的エラー：範囲外の選択ステート", MB_OK);
+		exit(1);
+	}
+}
