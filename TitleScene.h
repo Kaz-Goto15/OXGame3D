@@ -18,6 +18,14 @@ class TitleScene : public GameObject
 		S_SEL_OPTION,
 		S_SEL_EXIT,
 	};
+	enum MANIP_TARGET {
+		MANIP_MAIN,
+		MANIP_FILE_LIST,
+		MANIP_CREDIT,
+		MANIP_OPTION,
+		MANIP_CONFIRM_WINDOW,
+
+	};
 	int easeNum = 41;
 	int hPict_[Img::MAX];
 	Transform ringTra;
@@ -25,7 +33,7 @@ class TitleScene : public GameObject
 	std::string TitleImgFileName(Img E_IMG);
 
 	SELECT_STATE selectState_;
-
+	MANIP_TARGET manipTarget;
 	void Run(SELECT_STATE& ss);
 
 public:

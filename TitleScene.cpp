@@ -51,17 +51,18 @@ void TitleScene::Run(SELECT_STATE& ss) {
 	{
 	case SELECT_STATE::S_SEL_START:
 		FileList.EnDraw();
-		manipTarget = FILE_LIST;
+		manipTarget = MANIP_FILE_LIST;
 		break;
 	case SELECT_STATE::S_SEL_CREDIT:
-
+		credit.Show();
+		manipTarget = MANIP_CREDIT;
 		break;
 	case SELECT_STATE::S_SEL_OPTION:
 		break;
 	case SELECT_STATE::S_SEL_EXIT:
 		ConfirmWIndow cw = new ConfirmWindow();
 		cw.SetMessage("デスクトップに戻りますか？");
-		manipTarget = CONFIRM_WINDOW;
+		manipTarget = MANIP_CONFIRM_WINDOW;
 		break;
 	default:
 		MessageBox(NULL, "Error", "致命的エラー：範囲外の選択ステート", MB_OK);

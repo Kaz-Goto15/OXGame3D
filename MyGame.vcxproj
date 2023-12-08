@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="ceiling.cpp" />
     <ClCompile Include="ConfigKey.cpp" />
+    <ClCompile Include="CreditScreen.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Engine\Audio.cpp" />
@@ -159,6 +160,7 @@
     <ClCompile Include="Engine\Text.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
+    <ClCompile Include="HelpBar.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="GameData.cpp" />
@@ -180,6 +182,7 @@
   <ItemGroup>
     <ClInclude Include="ceiling.h" />
     <ClInclude Include="ConfigKey.h" />
+    <ClInclude Include="CreditScreen.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Engine\Audio.h" />
@@ -206,6 +209,7 @@
     <ClInclude Include="Engine\Text.h" />
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
+    <ClInclude Include="HelpBar.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="GameData.h" />
