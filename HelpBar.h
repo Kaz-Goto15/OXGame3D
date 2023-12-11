@@ -9,14 +9,18 @@ class HelpBar : public GameObject
 {
 public:
 
-    struct SUPPORT_INPUT {
-        int keyNum;
-        string keyHelp;
+    struct HELPBAR_RESOURCE {
+        int key;
+        string overview;
     };
+    void Show();
+    void Hide();
+    void AddInput(HELPBAR_RESOURCE si);
+
 private:
     bool enScreen_;
     int hPictBar_;
-    vector<SUPPORT_INPUT> supportInputList_;
+    vector<HELPBAR_RESOURCE> supportInputList_;
 public:
     HelpBar(GameObject* parent);
     ~HelpBar();
@@ -24,8 +28,4 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
-
-    void Show();
-    void Hide();
-    void AddInput(SUPPORT_INPUT si);
 };

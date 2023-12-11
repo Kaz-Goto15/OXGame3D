@@ -2,8 +2,11 @@
 #include "Engine/Image.h"
 
 //コンストラクタ
-HelpBar::HelpBar(GameObject* parent)
-    :GameObject(parent, "HelpBar")
+HelpBar::HelpBar(GameObject* parent):
+    GameObject(parent, "HelpBar"),
+    enScreen_(false),
+    hPictBar_(-1)
+
 {
 }
 
@@ -44,6 +47,6 @@ void HelpBar::Hide() {
     enScreen_ = false;
 }
 
-void HelpBar::AddInput(SUPPORT_INPUT si) {
+void HelpBar::AddInput(HELPBAR_RESOURCE si) {
     supportInputList_.push_back(si);
 }
