@@ -50,18 +50,18 @@ void TitleScene::Run(SELECT_STATE& ss) {
 	switch (ss)
 	{
 	case SELECT_STATE::S_SEL_START:
-		FileList.EnDraw();
+		//FileList.EnDraw();
 		manipTarget = MANIP_FILE_LIST;
 		break;
 	case SELECT_STATE::S_SEL_CREDIT:
-		credit.Show();
+		//credit.Show();
 		manipTarget = MANIP_CREDIT;
 		break;
 	case SELECT_STATE::S_SEL_OPTION:
 		break;
 	case SELECT_STATE::S_SEL_EXIT:
-		ConfirmWIndow cw = new ConfirmWindow();
-		cw.SetMessage("デスクトップに戻りますか？");
+		//ConfirmWIndow cw = new ConfirmWindow();
+		//cw.SetMessage("デスクトップに戻りますか？");
 		manipTarget = MANIP_CONFIRM_WINDOW;
 		break;
 	default:

@@ -160,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="CreditScreen.cpp" />
     <ClCompile Include="HelpBar.cpp" />
+    <ClCompile Include="EditScene.cpp">
+      <Filter>C_Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -287,6 +290,9 @@
     </ClInclude>
     <ClInclude Include="CreditScreen.h" />
     <ClInclude Include="HelpBar.h" />
+    <ClInclude Include="EditScene.h">
+      <Filter>C_Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

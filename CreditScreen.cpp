@@ -14,7 +14,7 @@ CreditScreen::~CreditScreen()
 //‰Šú‰»
 void CreditScreen::Initialize()
 {
-    keyHelp.push_back(KEY_CANCEL, "–ß‚é");
+    //keyHelp.push_back(KEY_CANCEL, "–ß‚é");
 }
 
 //XV

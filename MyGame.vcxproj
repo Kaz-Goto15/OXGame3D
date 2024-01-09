@@ -135,6 +135,7 @@
     <ClCompile Include="ConfigKey.cpp" />
     <ClCompile Include="CreditScreen.cpp" />
     <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="EditScene.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Engine\Audio.cpp" />
     <ClCompile Include="Engine\BillBoard.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="ConfigKey.h" />
     <ClInclude Include="CreditScreen.h" />
     <ClInclude Include="Easing.h" />
+    <ClInclude Include="EditScene.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Engine\Audio.h" />
     <ClInclude Include="Engine\BillBoard.h" />
