@@ -162,6 +162,7 @@
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="HelpBar.cpp" />
+    <ClCompile Include="Screen.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="GameData.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="HelpBar.h" />
+    <ClInclude Include="Screen.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="GameData.h" />
