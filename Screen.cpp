@@ -45,13 +45,6 @@ void Screen::Close()
     KillMe();
 }
 
-void Screen::Show() {
-    enScreen_ = true;
-}
-void Screen::Hide() {
-    enScreen_ = false;
-}
-
 void Screen::AddInput(Screen_RESOURCE si) {
     supportInputList_.push_back(si);
 }

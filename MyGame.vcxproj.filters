@@ -33,6 +33,9 @@
     <Filter Include="B_GameScene">
       <UniqueIdentifier>{5a1252d3-be04-4a39-9177-473d69588329}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Editer">
+      <UniqueIdentifier>{28914db0-d9b0-4aa6-9fe1-52fc29202d6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -164,6 +167,11 @@
       <Filter>C_Scene</Filter>
     </ClCompile>
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="StageView.cpp">
+      <Filter>Editer</Filter>
+    </ClCompile>
+    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="StageData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -295,6 +303,11 @@
       <Filter>C_Scene</Filter>
     </ClInclude>
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="StageView.h">
+      <Filter>Editer</Filter>
+    </ClInclude>
+    <ClInclude Include="Sample.h" />
+    <ClInclude Include="StageData.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

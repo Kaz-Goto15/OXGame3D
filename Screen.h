@@ -7,8 +7,8 @@ public:
 
     void Show();
     void Hide();
-
 private:
+    bool visible;
     bool debug;
     void DebugAction();
 public:

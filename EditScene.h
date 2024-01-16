@@ -39,23 +39,6 @@ private:
 	void EditMain();
 	void EditEnd();
 	void NextScene();
-	enum TILE_TAG {
-		NONE,
-		SPAWN,
-		GOAL,
-		TERRAIN,
-		ROTATE,
-		WARP,
-		SWITCH,
-		BLOCK_ITEM,
-		ATTACK,
-		STOP,
-		HIGHJUMP,
-	};
-	struct TILE_DATA {
-		TILE_TAG tag;
-		vector<int> property;
-	};
 
 	void LoadStageData();
 };
