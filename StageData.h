@@ -41,13 +41,12 @@ struct int3 {
 struct STAGE_DATA {
 	vector<vector<vector<TILE_DATA>>> sData;
 	int3 stageRange;
-	void ResizeX(int x);
-	void ResizeY(int y);
-	void ResizeZ(int z);
+	//void ResizeX(int x);
+	//void ResizeY(int y);
+	//void ResizeZ(int z);
 
 	void Init();
 };
-TILE_DATA defaultTile = {TILE_TAG::NONE, ROTATE::NORTH, vector<int>(1,0) };
 
 class StageData
 {
@@ -56,5 +55,9 @@ public:
 	//Å¶xyÇâ°ècÅAzÇçÇÇ≥Ç∆ÇµÇƒÇ¢ÇÈ
 
 private:
+	void ResizeX(STAGE_DATA* pData, int x);
+	void ResizeY(STAGE_DATA* pData, int y);
+	void ResizeZ(STAGE_DATA* pData, int z);
+	TILE_DATA defaultTile = { TILE_TAG::NONE, ROTATE::NORTH, vector<int>(1,0) };
 };
 

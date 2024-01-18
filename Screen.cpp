@@ -3,7 +3,7 @@
 
 //コンストラクタ
 Screen::Screen(GameObject* parent) :
-    GameObject(parent, "Screen"),
+    GameObject(parent, "Screen")
 {
     parent->Leave();
 }
@@ -25,15 +25,15 @@ void Screen::Update()
 
 //描画
 void Screen::Draw()
-{
-    if (enScreen_) {
-        Image::Draw(hPictBar_);
-
-    }
+{   
 }
 
 //開放
 void Screen::Release()
+{
+}
+
+void Screen::CloseAnim()
 {
 }
 
@@ -43,8 +43,4 @@ void Screen::Close()
     GetParent()->Enter();
     CloseAnim();
     KillMe();
-}
-
-void Screen::AddInput(Screen_RESOURCE si) {
-    supportInputList_.push_back(si);
 }

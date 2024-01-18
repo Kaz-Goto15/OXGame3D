@@ -40,5 +40,5 @@ private:
 	void EditEnd();
 	void NextScene();
 
-	void LoadStageData();
+	bool LoadStageData();
 };

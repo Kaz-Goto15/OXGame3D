@@ -66,21 +66,23 @@ void EditScene::NextScene()
 	pSceneManager->ChangeScene(SCENE_ID_TEST);
 }
 
-void EditScene::LoadStageData()
+bool EditScene::LoadStageData()
 {
 	string ext = "hnsg";
-	char fileName[MAX_PATH] = "無題.map";  //ファイル名を入れる変数
+	char fileName[MAX_PATH] = "無題.hnsg";  //ファイル名を入れる変数
 
 	//「ファイルを開く」ダイアログの設定
 	OPENFILENAME ofn;                         	//名前をつけて保存ダイアログの設定用構造体
 	ZeroMemory(&ofn, sizeof(ofn));            	//構造体初期化
 	ofn.lStructSize = sizeof(OPENFILENAME);   	//構造体のサイズ
-	ofn.lpstrFilter = TEXT("ステージデータ(*." + ext.c_str() + ")\0 * .map\0")			//─┬ファイルの種類
-		TEXT("すべてのファイル(*.*)\0*.*\0\0");                     //─┘
+	string categoryStr = "ステージデータ(*." + ext + ")\0 * ." + ext + "\0";
+
+	ofn.lpstrFilter = TEXT(categoryStr.c_str())			//─┬ファイルの種類
+		,TEXT("すべてのファイル(*.*)\0*.*\0\0");                     //─┘
 	ofn.lpstrFile = fileName;               	//ファイル名
 	ofn.nMaxFile = MAX_PATH;               	//パスの最大文字数
 	ofn.Flags = OFN_OVERWRITEPROMPT;   		//フラグ（同名ファイルが存在したら上書き確認）
-	ofn.lpstrDefExt = "map";                  	//デフォルト拡張子
+	ofn.lpstrDefExt = "hnsg";                  	//デフォルト拡張子
 
 	//「ファイルを開く」ダイアログ
 	BOOL selFile;
@@ -89,7 +91,7 @@ void EditScene::LoadStageData()
 	//キャンセルしたら中断
 	if (selFile == FALSE) return false;
 
-	if (!ConfirmDestruct())return false;
+	//if (!ConfirmDestruct())return false;
 	HANDLE hFile;
 	//ファイルを開く
 	hFile = CreateFile(
@@ -131,21 +133,21 @@ void EditScene::LoadStageData()
 	//読込データ入れる配列
 	std::vector<std::vector<std::string>> data_;
 
-	LoadData(fileSize, data, &data_);
+	//LoadData(fileSize, data, &data_);
 
 	//読み込んだデータを開放
 	delete[] data;
 
 	//データを現在のプロジェクトファイルに読込
-	for (int l = 0; l < data_.size(); l++) {
-		table_[atoi(data_[l][0].c_str())][atoi(data_[l][1].c_str())].height = atoi(data_[l][2].c_str());
-		table_[atoi(data_[l][0].c_str())][atoi(data_[l][1].c_str())].bType = (BLOCKTYPE)atoi(data_[l][3].c_str());
-	}
+	//for (int l = 0; l < data_.size(); l++) {
+	//	table_[atoi(data_[l][0].c_str())][atoi(data_[l][1].c_str())].height = atoi(data_[l][2].c_str());
+	//	table_[atoi(data_[l][0].c_str())][atoi(data_[l][1].c_str())].bType = (BLOCKTYPE)atoi(data_[l][3].c_str());
+	//}
 
 	//全データ開放
 	for (int y = 0; y < data_.size(); y++)
 		for (int x = 0; x < data_[y].size(); x++)
 			data_[y][x].clear();
 
-	isEdited_ = false;
+	//isEdited_ = false;
 }
