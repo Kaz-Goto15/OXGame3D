@@ -69,3 +69,16 @@ void TitleScene::Run(SELECT_STATE& ss) {
 		exit(1);
 	}
 }
+
+/*
+main
+background
+select: logo (白フェード)
+
+
+
+fadein イージング番号に沿って透明度変更　0→100でidle SPACE:end
+idle 指定時間待機　指定時間超過でfadeoutへ SPACE:end
+fadeout イージング番号に沿って透明度変更　100→0でendへ SPACE:end
+end 表示するものがあればfadein なければタイトルシーンへ
+*/
