@@ -134,6 +134,7 @@
     <ClCompile Include="ceiling.cpp" />
     <ClCompile Include="ConfigKey.cpp" />
     <ClCompile Include="CreditScreen.cpp" />
+    <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="EaseScene.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="EditScene.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="ceiling.h" />
     <ClInclude Include="ConfigKey.h" />
     <ClInclude Include="CreditScreen.h" />
+    <ClInclude Include="DebugText.h" />
     <ClInclude Include="EaseScene.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="EditScene.h" />

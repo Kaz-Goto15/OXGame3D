@@ -175,6 +175,7 @@
     <ClCompile Include="EaseScene.cpp">
       <Filter>C_Scene</Filter>
     </ClCompile>
+    <ClCompile Include="DebugText.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -314,6 +315,7 @@
     <ClInclude Include="EaseScene.h">
       <Filter>C_Scene</Filter>
     </ClInclude>
+    <ClInclude Include="DebugText.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

@@ -1,6 +1,9 @@
 #pragma once
 #include "Engine/GameObject.h"
 
+class Text;
+class DebugText;
+
 class SplashScene : public GameObject
 {
 public:
@@ -12,19 +15,32 @@ public:
 
 private:
 	static const int LOGO_COUNT = 2;
-	static const int DRAW_TIME = 1000;
+	static const int DRAW_TIME = 30;
+	static const int FADE_TIME = 60;
+	static const int FADEIN_EASE_NO = 23, FADEOUT_EASE_NO = 22;
 	int hLogo_[LOGO_COUNT];
-	bool isDisplaying = false;
-	int queue_, drawTime_ ;
+	int queue_, drawTime_, fadeTime_;
+	int imageAlpha_;
 	enum STATE {
-		S_SPLASH_START,
-		S_SPLASH,
 		S_SPLASH_END,
-		S_NEXT_SCENE,
-	}state_ = S_SPLASH;
+		S_SPLASH_FADEIN,
+		S_SPLASH_IDLE,
+		S_SPLASH_FADEOUT,
+	}state_ = S_SPLASH_END;
 
-	void SplashStart();
-	void Splash();
-	void SplashEnd();
-	void NextScene();
+	void End();
+	void FadeIn();
+	void Idle();
+	void FadeOut();
+
+	void Skip();
+	DebugText* debugTxt;
+	std::string msg[3];
 };
+
+/*
+fadein イージング番号に沿って透明度変更　0→100でidle SPACE:end
+idle 指定時間待機　指定時間超過でfadeoutへ SPACE:end
+fadeout イージング番号に沿って透明度変更　100→0でendへ SPACE:end
+end 表示するものがあればfadein なければタイトルシーンへ
+*/
