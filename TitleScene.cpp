@@ -71,12 +71,79 @@ void TitleScene::Run(SELECT_STATE& ss) {
 }
 
 /*
+BUTTON STATE
+IDLE:
+ 選択外のアニメーション
+ カーソルが来た時にSELECTに移動
+
+ ボタンで選ばれたときSELECTに移動
+SELECT:
+ 選択中のアニメーション
+ マウスボタンが押されたらPUSHに移動
+ カーソルが外れたらIDLEに移動
+ ボタンが押されたらSELECTEDに移動(keydown upではなく)
+ ボタンが他に行ったときIDLEに移動
+PUSH:
+ 押下中アニメーション
+
+ カーソルが外れたらIDLEに移動
+ マウスボタンが離されたとき、SELECTEDに移動
+SELECTED:
+ 選択されたアニメーション
+ 処理を行う
+ 処理が終わったらIDLEに移動
+
+
+
+
+カーソルがぼたん上に来た時の処理：btn_select
+ボタン上で押し、押し続けている時の処理：btn_push
+ボタン上で押し、離したときの処理：btn_selected
+離されたとき・ボタン上に無い時の処理：btn_idle
+
+
+選択中のBTN_ENUM
+
+白inでボタンフェードイン 選択可能
+ ボタン：選択外/選択中/選択中かつ押されている/選択後の処理中
+ 押されたときの処理を考える
+ ボタンを登録するときにGenerate(cmd);
+ 表示は親のほうでTitleBtn.count()分のforでDraw
+ ボタンが押されたら親のRun(COMMAND cmd);を呼ぶ
 main
 background
 select: logo (白フェード)
+start/option/edit/exit
+start→screenで新たに記述
+option→screen
+edit→ブラックアウトからeditscene
+exit→そのまんまexit(0)でおけ
 
 
+ボタンとして追加するか？
+12
+34　で追加したとき
 
+1のとき 上下左右 0+2 0+1
+2のとき 上下左右 0+2-1 0
+3のとき 上下左右-2 0 0+1
+4のとき 上下左右-2 0-1 0
+
+12
+(3)4　で追加したとき
+
+1のとき 上下左右 0+3 0+1
+2のとき 上下左右 0+2-1 0
+3にいく時の入力 --+3-3--
+4のとき 上下左右-2 0-3 0
+
+1のとき 上下左右 0+2 0+1
+2のとき 上下左右 0+2-1 0
+3にいく時の入力 --+1-2--
+4のとき 上下左右-2 0-1 0
+
+下入力+2 上入力-2 3以上のとき下入力入れない 2以下のとき上入れない
+右+1
 fadein イージング番号に沿って透明度変更　0→100でidle SPACE:end
 idle 指定時間待機　指定時間超過でfadeoutへ SPACE:end
 fadeout イージング番号に沿って透明度変更　100→0でendへ SPACE:end
