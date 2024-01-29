@@ -6,6 +6,31 @@
 #include "Engine/Text.h"
 #include "Engine/Model.h"
 #include "Engine/Camera.h"
+#include "DebugText.h"
+
+using std::to_string;
+bool EaseScene::IsEntered()
+{
+	msg[9] = "imageSize: " + to_string(Image::GetSize(hImg_).x )+ "," + to_string(Image::GetSize(hImg_).y);
+	XMFLOAT3 imageSize = {
+		Image::GetSize(hImg_).x * nullScale_.x,
+		Image::GetSize(hImg_).y * nullScale_.y,
+		Image::GetSize(hImg_).z * nullScale_.z
+	};
+
+	msg[7] = "null vertex:(" +
+		      to_string((int)(screenWidth/2.0f - imageSize.x / 2.0f)) + "," + to_string((int)(screenHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
+		"(" + to_string((int)(screenWidth / 2.0f + imageSize.x / 2.0f)) + "," + to_string((int)(screenHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
+		"(" + to_string((int)(screenWidth / 2.0f - imageSize.x / 2.0f)) + "," + to_string((int)(screenHeight / 2.0f + imageSize.y / 2.0f)) + ")" +
+		"(" + to_string((int)(screenWidth / 2.0f + imageSize.x / 2.0f)) + "," + to_string((int)(screenHeight / 2.0f + imageSize.y / 2.0f)) + ")";
+	if (mousePos.x >= screenWidth / 2.0f - imageSize.x / 2.0f &&
+		mousePos.x <= screenWidth / 2.0f + imageSize.x / 2.0f &&
+		mousePos.y >= screenHeight / 2.0f - imageSize.y / 2.0f &&
+		mousePos.y <= screenHeight / 2.0f + imageSize.y / 2.0f) {
+		return true;
+	}
+	return false;
+}
 
 EaseScene::EaseScene(GameObject* parent)
 	: GameObject(parent, "EaseScene"),
@@ -19,8 +44,10 @@ void EaseScene::Initialize() {
 
 	newText = new Text();
 	newText->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
-	newmsgText = new Text();
-	newmsgText->Initialize("char_gakusanmarugo_half.png", 16, 32, 16);
+	debugText = Instantiate<DebugText>(this);
+	for (int i = 0; i < 20; i++) {
+		debugText->AddStrPtr(&msg[i]);
+	}
 
 	hModel_ = Model::Load("needle.fbx");
 	hImg_ = Image::Load("null.png");
@@ -28,6 +55,9 @@ void EaseScene::Initialize() {
 	nullScale_ = { 1,1,1 };
 }
 void EaseScene::Update() {
+
+	mousePos = Input::GetMousePosition();
+	isEntered = IsEntered();
 
 	//S ; Change Scene - Splash
 	if (Input::IsKeyDown(DIK_ESCAPE)) {
@@ -115,20 +145,15 @@ void EaseScene::Draw() {
 
 	Camera::SetPosition(camPos);
 
-	std::string msgstr = "mTrPos: " + std::to_string(modelPos.x) + ", " + std::to_string(modelPos.y) + ", " + std::to_string(modelPos.z);
-	newmsgText->Draw(40, 100, msgstr.c_str());
-
-	std::string msgstr2 = "trPos: " + std::to_string(transform_.position_.x) + ", " + std::to_string(transform_.position_.y) + ", " + std::to_string(transform_.position_.z);
-	newmsgText->Draw(40, 135, msgstr2.c_str());
+	msg[0] = "mTrPos: " + std::to_string(modelPos.x) + ", " + std::to_string(modelPos.y) + ", " + std::to_string(modelPos.z);
+	msg[1] = "trPos: " + std::to_string(transform_.position_.x) + ", " + std::to_string(transform_.position_.y) + ", " + std::to_string(transform_.position_.z);
 	XMFLOAT3 campos = Camera::GetPosition();
-	std::string msgstr3 = "cam: " + std::to_string(campos.x) + ", " + std::to_string(campos.y) + ", " + std::to_string(campos.z);
-	newmsgText->Draw(40, 170, msgstr3.c_str());
-	std::string msgstr4 = "imgSize: " + std::to_string(Image::GetWidth(hImg_)) + ", " + std::to_string(Image::GetHeight(hImg_));
-	newmsgText->Draw(40, 215, msgstr4.c_str());
-
-	std::string msgstr4 = "imgScale: " + std::to_string(nullScale_.x) + ", " + std::to_string(nullScale_.y);
-	newmsgText->Draw(40, 215, msgstr4.c_str());
-
+	msg[2] = "cam: " + std::to_string(campos.x) + ", " + std::to_string(campos.y) + ", " + std::to_string(campos.z);
+	msg[3] = "imgSize: " + std::to_string(Image::GetWidth(hImg_)) + ", " + std::to_string(Image::GetHeight(hImg_));
+	msg[4] = "imgScale: " + std::to_string(nullScale_.x) + ", " + std::to_string(nullScale_.y);
+	msg[5] = "mousePos: " + std::to_string(mousePos.x) + ", " + std::to_string(mousePos.y);
+	msg[6] = "scr: " + std::to_string(screenWidth) + ", " + std::to_string(screenHeight);
+	msg[8] = "enter:" + to_string(isEntered);
 	Image::Draw(hImg_);
 }
 void EaseScene::Release() {}

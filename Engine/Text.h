@@ -9,6 +9,17 @@ class Text
 	char fileName_[MAX_PATH];
 	unsigned int rowLength_;
 
+	enum HORIZONAL_ALIGNMENT {
+		CENTER,
+		LEFT,
+		RIGHT
+	};
+	enum VERTICAL_ALIGNMENT {
+		TOP,
+		CENTER,
+		BOTTOM
+	};
+
 public:
 	Text();
 	~Text();
@@ -35,6 +46,11 @@ public:
 	//引数：x, y	表示位置（左上）
 	//引数：value	表示したい値
 	void Draw(int x, int y, int value);
+
+	//描画（文字列）
+	//引数：x, y	基準位置
+	//引数：str		表示したい文字列
+	void Draw(int x, int y, const char* str, HORIZONAL_ALIGNMENT hAlignment, VERTICAL_ALIGNMENT vAlignment);
 
 	//解放
 	void Release();

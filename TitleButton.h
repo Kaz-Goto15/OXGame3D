@@ -15,6 +15,7 @@ class TitleButton : public GameObject
     Text* buttonTextObj_;
     std::string buttonName_;
     int hImg_[MAX];
+    int scrW, scrH;
 public:
     TitleButton(GameObject* parent);    //コンストラクタ
     ~TitleButton();                     //デストラクタ
@@ -29,4 +30,6 @@ private:
     void UpdateSelect();
     void UpdatePush();
     void UpdateSelected();
+
+    bool IsEntered();
 };
