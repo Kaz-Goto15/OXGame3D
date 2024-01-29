@@ -23,6 +23,9 @@ void EaseScene::Initialize() {
 	newmsgText->Initialize("char_gakusanmarugo_half.png", 16, 32, 16);
 
 	hModel_ = Model::Load("needle.fbx");
+	hImg_ = Image::Load("null.png");
+
+	nullScale_ = { 1,1,1 };
 }
 void EaseScene::Update() {
 
@@ -55,6 +58,14 @@ void EaseScene::Update() {
 	if (Input::IsKeyDown(DIK_J))camPos.z--;
 	if (Input::IsKeyDown(DIK_L))camPos.z++;
 
+	//7890 : set size : null.png width+-/height+-
+	if (Input::IsKeyDown(DIK_7))nullScale_.x += 0.05f;
+	if (Input::IsKeyDown(DIK_8))nullScale_.x -= 0.05f;
+	if (Input::IsKeyDown(DIK_9))nullScale_.y += 0.05f;
+	if (Input::IsKeyDown(DIK_0))nullScale_.y -= 0.05f;
+	Transform imageTra;
+	imageTra.scale_ = nullScale_;
+	Image::SetTransform(hImg_, imageTra);
 
 	progress++;
 	if (progress >= 100)progress = 0;
@@ -112,5 +123,12 @@ void EaseScene::Draw() {
 	XMFLOAT3 campos = Camera::GetPosition();
 	std::string msgstr3 = "cam: " + std::to_string(campos.x) + ", " + std::to_string(campos.y) + ", " + std::to_string(campos.z);
 	newmsgText->Draw(40, 170, msgstr3.c_str());
+	std::string msgstr4 = "imgSize: " + std::to_string(Image::GetWidth(hImg_)) + ", " + std::to_string(Image::GetHeight(hImg_));
+	newmsgText->Draw(40, 215, msgstr4.c_str());
+
+	std::string msgstr4 = "imgScale: " + std::to_string(nullScale_.x) + ", " + std::to_string(nullScale_.y);
+	newmsgText->Draw(40, 215, msgstr4.c_str());
+
+	Image::Draw(hImg_);
 }
 void EaseScene::Release() {}

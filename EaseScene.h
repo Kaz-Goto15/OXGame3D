@@ -12,6 +12,8 @@ class EaseScene : public GameObject
 	Text* newText, *newmsgText;
 	int progress = 0;
 	int hModel_ = -1;
+	int hImg_ = -1;
+	XMFLOAT3 nullScale_;
 public:
 	EaseScene(GameObject* parent);
 	void Initialize() override;
