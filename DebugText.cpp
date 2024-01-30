@@ -4,7 +4,7 @@
 //コンストラクタ
 DebugText::DebugText(GameObject* parent)
     :GameObject(parent, "DebugText"),
-    pos({40,100}),
+    pos({-640,-360}),
     count(0)
 {
 }
@@ -30,7 +30,7 @@ void DebugText::Update()
 void DebugText::Draw()
 {
     for (int i = 0; i < count; i++) {
-        txt->Draw(pos.x, pos.y + 35 * i, pStrList_[i]->c_str());
+        txt->Draw(pos.x, pos.y + 35 * i, pStrList_[i]->c_str(), Text::HORIZONAL_ALIGNMENT::LEFT, Text::VERTICAL_ALIGNMENT::TOP);
     }
 }
 

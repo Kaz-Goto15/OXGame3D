@@ -34,6 +34,7 @@ void TitleScene::Initialize() {
 	newText->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
 	newBtn = Instantiate<TitleButton>(this);
 	newBtn->SetText("test");
+	newBtn->SetPosition(640.0f, 320.0f,0.0f);
 	debugText = Instantiate<DebugText>(this);
 	for (int i = 0; i < 20; i++) {
 		debugText->AddStrPtr(&debugStr[i]);
@@ -53,7 +54,7 @@ void TitleScene::Draw() {
 	newText->Draw(40, 40, str.c_str());
 
 	for (int& h : hPict_) {
-		Image::Draw(h);
+		//Image::Draw(h);
 	}
 	XMFLOAT3 mousePos = Input::GetMousePosition();
 	//debugStr[0] = "imgSize: " + std::to_string(Image::GetWidth(hImg_)) + ", " + std::to_string(Image::GetHeight(hImg_));
@@ -64,6 +65,8 @@ void TitleScene::Draw() {
 	debugStr[5] = newBtn->GetDebugStr(1);
 	debugStr[6] = newBtn->GetDebugStr(2);
 	debugStr[7] = newBtn->GetDebugStr(3);
+	debugStr[8] = newBtn->GetDebugStr(4);
+	debugStr[9] = newBtn->GetDebugStr(5);
 
 }
 void TitleScene::Release() {}

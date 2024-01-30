@@ -15,6 +15,8 @@ class TitleButton : public GameObject
     std::string buttonName_;
     int hImg_[MAX];
     int scrW, scrH;
+    Text::HORIZONAL_ALIGNMENT hAl;
+    Text::VERTICAL_ALIGNMENT vAl;
 public:
     STATE state;
     TitleButton(GameObject* parent);    //コンストラクタ
@@ -34,4 +36,5 @@ private:
     void UpdateSelected();
 
     bool IsEntered();
+    bool Between(float value, float min, float max);
 };

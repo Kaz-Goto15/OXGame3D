@@ -23,8 +23,8 @@ TitleButton::~TitleButton()
 void TitleButton::Initialize()
 {
 	//SetCurrentDirectory("Assets");
-	int scrW = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
-	int scrH = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
+	scrW = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
+	scrH = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
 
 	for (int i = 0; i < MAX; i++) {
 		hImg_[i] = Image::Load(LinkImageFile(static_cast<STATE>(i)));
@@ -38,6 +38,42 @@ void TitleButton::Initialize()
 //更新
 void TitleButton::Update()
 {
+	if (Input::IsKeyDown(DIK_T)) {
+		hAl = Text::HORIZONAL_ALIGNMENT::RIGHT;
+		vAl = Text::VERTICAL_ALIGNMENT::BOTTOM;
+	}
+	if (Input::IsKeyDown(DIK_Y)) {
+		hAl = Text::HORIZONAL_ALIGNMENT::CENTER;
+		vAl = Text::VERTICAL_ALIGNMENT::BOTTOM;
+	}
+	if (Input::IsKeyDown(DIK_U)) {
+		hAl = Text::HORIZONAL_ALIGNMENT::LEFT;
+		vAl = Text::VERTICAL_ALIGNMENT::BOTTOM;
+	}
+	if (Input::IsKeyDown(DIK_G)) {
+		hAl = Text::HORIZONAL_ALIGNMENT::RIGHT;
+		vAl = Text::VERTICAL_ALIGNMENT::CENTER;
+	}
+	if (Input::IsKeyDown(DIK_H)) {
+		hAl = Text::HORIZONAL_ALIGNMENT::CENTER;
+		vAl = Text::VERTICAL_ALIGNMENT::CENTER;
+	}
+	if (Input::IsKeyDown(DIK_J)) {
+		hAl = Text::HORIZONAL_ALIGNMENT::LEFT;
+		vAl = Text::VERTICAL_ALIGNMENT::CENTER;
+	}
+	if (Input::IsKeyDown(DIK_B)) {
+		hAl = Text::HORIZONAL_ALIGNMENT::RIGHT;
+		vAl = Text::VERTICAL_ALIGNMENT::TOP;
+	}
+	if (Input::IsKeyDown(DIK_N)) {
+		hAl = Text::HORIZONAL_ALIGNMENT::CENTER;
+		vAl = Text::VERTICAL_ALIGNMENT::TOP;
+	}
+	if (Input::IsKeyDown(DIK_M)) {
+		hAl = Text::HORIZONAL_ALIGNMENT::LEFT;
+		vAl = Text::VERTICAL_ALIGNMENT::TOP;
+	}
 	switch (state)
 	{
 	case TitleButton::IDLE:		UpdateIdle();	break;
@@ -50,11 +86,10 @@ void TitleButton::Update()
 //描画
 void TitleButton::Draw()
 {
-	//for (int i = 0; i < MAX; i++) {
-	//	Image::Draw(hImg_[i]);
-	//}
+	Image::SetTransform(hImg_[state], transform_);
 	Image::Draw(hImg_[state]);
 	buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonName_.c_str(), Text::HORIZONAL_ALIGNMENT::CENTER, Text::VERTICAL_ALIGNMENT::CENTER);
+	//buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonName_.c_str(), hAl, vAl);
 }
 
 //開放
@@ -64,7 +99,7 @@ void TitleButton::Release()
 
 void TitleButton::SetText(std::string buttonName)
 {
-    buttonName_ = buttonName;
+	buttonName_ = buttonName;
 }
 
 std::string TitleButton::LinkImageFile(STATE _state)
@@ -89,6 +124,7 @@ std::string TitleButton::GetDebugStr(int i)
 	Image::GetSize(hImg_[0]).z * transform_.scale_.z
 	};
 
+	Transform buttonTra = Image::GetTransform(hImg_[0]);
 	switch (i) {
 	case 0:	return "imageSize: " + std::to_string(Image::GetSize(hImg_[0]).x) + "," + std::to_string(Image::GetSize(hImg_[0]).y);
 	case 1:	return "null vertex:(" +
@@ -98,6 +134,12 @@ std::string TitleButton::GetDebugStr(int i)
 		"(" + std::to_string((int)(scrW / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(scrH / 2.0f + imageSize.y / 2.0f)) + ")";
 	case 2: return "windowsize: " + std::to_string(scrW) + ", " + std::to_string(scrH);
 	case 3: return "windowsize: " + std::to_string(GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini"));
+	case 4:	return "between:(" +
+		      std::to_string((int)(buttonTra.position_.x + scrW/2.0f - imageSize.x / 2.0f)) + ")" +
+		"(" + std::to_string((int)(buttonTra.position_.x + scrW / 2.0f + imageSize.x / 2.0f)) + ")" +
+		"(" + std::to_string((int)(buttonTra.position_.y + scrH / 2.0f - imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(buttonTra.position_.y + scrH / 2.0f + imageSize.y / 2.0f)) + ")";
+	case 5:	return "buttonPos: " + std::to_string(buttonTra.position_.x) + "," + std::to_string(buttonTra.position_.y);
 	}
 	return "invalid num";
 }
@@ -134,22 +176,33 @@ void TitleButton::UpdatePush()
 
 void TitleButton::UpdateSelected()
 {
-	
+
 }
 
 bool TitleButton::IsEntered()
 {
+	Transform buttonTra = Image::GetTransform(hImg_[state]);
+
 	XMFLOAT3 imageSize = {
-		Image::GetSize(hImg_[state]).x* transform_.scale_.x,
+		Image::GetSize(hImg_[state]).x * transform_.scale_.x,
 		Image::GetSize(hImg_[state]).y * transform_.scale_.y,
 		Image::GetSize(hImg_[state]).z * transform_.scale_.z
 	};
 	XMFLOAT3 mousePos = Input::GetMousePosition();
-	if (mousePos.x >= scrW / 2.0f - imageSize.x / 2.0f &&
-		mousePos.x <= scrW / 2.0f + imageSize.x / 2.0f &&
-		mousePos.y >= scrH / 2.0f - imageSize.y / 2.0f &&
-		mousePos.y <= scrH / 2.0f + imageSize.y / 2.0f) {
-		return true;
-	}
-	return false;
+	if (
+		Between(mousePos.x,
+			buttonTra.position_.x + scrW / 2.0f - imageSize.x / 2.0f,
+			buttonTra.position_.x + scrW / 2.0f + imageSize.x / 2.0f) &&
+		Between(mousePos.y,
+			buttonTra.position_.y + scrH / 2.0f - imageSize.y / 2.0f,
+			buttonTra.position_.y + scrH / 2.0f + imageSize.y / 2.0f)
+		){
+			return true;
+		}
+		return false;
+}
+
+bool TitleButton::Between(float value, float min, float max)
+{
+	return (value >= min && value <= max);
 }

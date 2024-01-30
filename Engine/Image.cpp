@@ -74,6 +74,7 @@ namespace Image
 	//•`‰æ
 	void Draw(int handle)
 	{
+
 		if (handle < 0 || handle >= _datas.size() || _datas[handle] == nullptr)
 		{
 			return;
@@ -86,9 +87,13 @@ namespace Image
 		else {
 			Direct3D::SetBlendMode(Direct3D::BLEND_DEFAULT);
 		}
-
-		_datas[handle]->transform.Calclation();
-		_datas[handle]->pSprite->Draw(_datas[handle]->transform, _datas[handle]->rect, _datas[handle]->alpha);
+		Transform tmp = _datas[handle]->transform;
+		tmp.position_.x /= (float)(Direct3D::screenWidth_ / 2.0f);
+		tmp.position_.y /= -(float)(Direct3D::screenHeight_ / 2.0f);
+		tmp.Calclation();
+		//_datas[handle]->transform.Calclation();
+		//_datas[handle]->pSprite->Draw(_datas[handle]->transform, _datas[handle]->rect, _datas[handle]->alpha);
+		_datas[handle]->pSprite->Draw(tmp, _datas[handle]->rect, _datas[handle]->alpha);
 	}
 
 
@@ -185,8 +190,8 @@ namespace Image
 		{
 			return;
 		}
-
 		_datas[handle]->transform = transform;
+
 	}
 
 
@@ -211,6 +216,11 @@ namespace Image
 	XMFLOAT3 GetSize(int handle)
 	{
 		return _datas[handle]->pSprite->GetTextureSize();
+	}
+
+	Transform GetTransform(int handle)
+	{
+		return _datas[handle]->transform;
 	}
 
 }
