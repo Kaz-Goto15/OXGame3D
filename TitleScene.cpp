@@ -81,10 +81,13 @@ void TitleScene::Act(int hAct)
 	switch (ss)
 	{
 	case TitleScene::S_SEL_START:
+		//GameScene?
 		break;
 	case TitleScene::S_SEL_CREDIT:
+		//CreditScene?
 		break;
 	case TitleScene::S_SEL_OPTION:
+		//OptionScreen?
 		break;
 	case TitleScene::S_SEL_EXIT:
 		exit(0);
