@@ -9,18 +9,18 @@ class Text
 	char fileName_[MAX_PATH];
 	unsigned int rowLength_;
 
-	enum HORIZONAL_ALIGNMENT {
+public:
+	enum class HORIZONAL_ALIGNMENT {
 		CENTER,
 		LEFT,
 		RIGHT
 	};
-	enum VERTICAL_ALIGNMENT {
+	enum class VERTICAL_ALIGNMENT {
 		TOP,
 		CENTER,
 		BOTTOM
 	};
 
-public:
 	Text();
 	~Text();
 
@@ -50,7 +50,7 @@ public:
 	//描画（文字列）
 	//引数：x, y	基準位置
 	//引数：str		表示したい文字列
-	void Draw(int x, int y, const char* str, HORIZONAL_ALIGNMENT hAlignment, VERTICAL_ALIGNMENT vAlignment);
+	void Draw(int x, int y, const char* str, Text::HORIZONAL_ALIGNMENT hAlignment, Text::VERTICAL_ALIGNMENT vAlignment);
 
 	//解放
 	void Release();
@@ -58,6 +58,7 @@ public:
 	void SetAlpha(int val);
 
 	void SetScale(float sc) { scale = sc; }
+
 private:
 	float scale;
 };

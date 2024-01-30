@@ -11,12 +11,12 @@ class TitleButton : public GameObject
         SELECTED,
         MAX
     };
-    STATE state;
     Text* buttonTextObj_;
     std::string buttonName_;
     int hImg_[MAX];
     int scrW, scrH;
 public:
+    STATE state;
     TitleButton(GameObject* parent);    //コンストラクタ
     ~TitleButton();                     //デストラクタ
     void Initialize() override; //初期化
@@ -25,6 +25,8 @@ public:
     void Release() override;    //解放
     void SetText(std::string buttonName);
     std::string LinkImageFile(STATE state);
+
+    std::string GetDebugStr(int i);
 private:
     void UpdateIdle();
     void UpdateSelect();

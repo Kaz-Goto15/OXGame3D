@@ -8,7 +8,8 @@ TitleButton::TitleButton(GameObject* parent):
 	buttonTextObj_(nullptr),
 	buttonName_(""),
 	scrW(0),
-	scrH(0)
+	scrH(0),
+	state(IDLE)
 {
 	std::fill_n(hImg_, MAX, -1);
 }
@@ -26,7 +27,11 @@ void TitleButton::Initialize()
 
 	for (int i = 0; i < MAX; i++) {
 		hImg_[i] = Image::Load(LinkImageFile(static_cast<STATE>(i)));
+		Image::SetTransform(hImg_[i], transform_);
 	}
+
+	buttonTextObj_ = new Text;
+	buttonTextObj_->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
 }
 
 //çXêV
@@ -44,10 +49,11 @@ void TitleButton::Update()
 //ï`âÊ
 void TitleButton::Draw()
 {
-	for (int i = 0; i < MAX; i++) {
-		Image::Draw(hImg_[i]);
-	}
-	Text::Draw()
+	//for (int i = 0; i < MAX; i++) {
+	//	Image::Draw(hImg_[i]);
+	//}
+	Image::Draw(hImg_[state]);
+	buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonName_.c_str(), Text::HORIZONAL_ALIGNMENT::CENTER, Text::VERTICAL_ALIGNMENT::CENTER);
 }
 
 //äJï˙
@@ -72,6 +78,25 @@ std::string TitleButton::LinkImageFile(STATE _state)
 	case TitleButton::SELECTED:	fileName = "btnSelected.png";	break;
 	}
 	return AssetDir + fileName;
+}
+
+std::string TitleButton::GetDebugStr(int i)
+{
+	XMFLOAT3 imageSize = {
+	Image::GetSize(hImg_[0]).x * transform_.scale_.x,
+	Image::GetSize(hImg_[0]).y * transform_.scale_.y,
+	Image::GetSize(hImg_[0]).z * transform_.scale_.z
+	};
+
+	switch (i) {
+	case 0:	return "imageSize: " + std::to_string(Image::GetSize(hImg_[0]).x) + "," + std::to_string(Image::GetSize(hImg_[0]).y);
+	case 1:	return "null vertex:(" +
+		std::to_string((int)(1280 / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(720 / 2.0f - imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(1280 / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(720 / 2.0f - imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(1280 / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(720 / 2.0f + imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(1280 / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(720 / 2.0f + imageSize.y / 2.0f)) + ")";
+	}
+	return std::string();
 }
 
 void TitleButton::UpdateIdle()

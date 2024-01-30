@@ -93,16 +93,39 @@ void Text::Draw(int x, int y, int value)
 	Draw(x, y, str);
 }
 
-void Text::Draw(int x, int y, const char* str, HORIZONAL_ALIGNMENT hAlignment, VERTICAL_ALIGNMENT vAlignment)
+void Text::Draw(int x, int y, const char* str, Text::HORIZONAL_ALIGNMENT hAlignment, Text::VERTICAL_ALIGNMENT vAlignment)
 {
 
 	//表示位置（左上）を計算
 	//Spriteクラスは中心が(0,0)、右上が(1,1)という座標だが、ここの引数は左上を(0,0)、ドット単位で指定している
 	float px, py;
-
-	//引数は左上原点だが、スプライトは画面中央が原点なので、画面サイズの半分ずらす
-	px = (float)(x - Direct3D::screenWidth_ / 2);
-	py = (float)(-y + Direct3D::screenHeight_ / 2);	//Y軸は+-反転
+	float strWidth = width_ * std::strlen(str);
+	switch (hAlignment)
+	{
+	case Text::HORIZONAL_ALIGNMENT::CENTER:
+		px = (float)(x - Direct3D::screenWidth_ / 2) - strWidth/2.0f;
+		break;
+	case Text::HORIZONAL_ALIGNMENT::LEFT:
+		px = (float)(x - Direct3D::screenWidth_ / 2);
+		break;
+	case Text::HORIZONAL_ALIGNMENT::RIGHT:
+		px = (float)(x - Direct3D::screenWidth_ / 2) - strWidth;
+		break;
+	default:
+		break;
+	}
+	switch (vAlignment)
+	{
+	case Text::VERTICAL_ALIGNMENT::TOP:
+		py = (float)(-y + Direct3D::screenHeight_ / 2);
+		break;
+	case Text::VERTICAL_ALIGNMENT::CENTER:
+		py = (float)(-y);
+		break;
+	case Text::VERTICAL_ALIGNMENT::BOTTOM:
+		py = (float)(-y - Direct3D::screenHeight_ / 2);
+		break;
+	}
 
 	//スプライトはPositionを1ずらすと画面サイズの半分ずれるので、ピクセル単位に変換
 	px /= (float)(Direct3D::screenWidth_ / 2.0f);

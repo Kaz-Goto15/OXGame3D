@@ -4,6 +4,11 @@
 #include "Engine/Image.h"
 #include "Easing.h"
 #include "Engine/Text.h"
+
+#include "TitleButton.h"
+#include "DebugText.h"
+using std::to_string;
+
 std::string TitleScene::TitleImgFileName(Img E_IMG)
 {
 	switch (E_IMG)
@@ -20,12 +25,19 @@ TitleScene::TitleScene(GameObject* parent)
 	newText(nullptr),
 	selectState_(S_SEL_START)
 {}
+
 void TitleScene::Initialize() {
 	for (int i = 0; i < Img::MAX; i++) {
 		hPict_[i] = Image::Load(TitleImgFileName(static_cast<Img>(i)));
 	}
 	newText = new Text();
 	newText->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
+	newBtn = Instantiate<TitleButton>(this);
+	newBtn->SetText("test");
+	debugText = Instantiate<DebugText>(this);
+	for (int i = 0; i < 20; i++) {
+		debugText->AddStrPtr(&debugStr[i]);
+	}
 }
 void TitleScene::Update() {
 	if (Input::IsKeyDown(DIK_0)) {
@@ -43,6 +55,12 @@ void TitleScene::Draw() {
 	for (int& h : hPict_) {
 		Image::Draw(h);
 	}
+	XMFLOAT3 mousePos = Input::GetMousePosition();
+	//debugStr[0] = "imgSize: " + std::to_string(Image::GetWidth(hImg_)) + ", " + std::to_string(Image::GetHeight(hImg_));
+	//debugStr[1] = "imgScale: " + std::to_string(nullScale_.x) + ", " + std::to_string(nullScale_.y);
+	debugStr[2] = "mousePos: " + std::to_string(mousePos.x) + ", " + std::to_string(mousePos.y);
+	debugStr[3] = "state:" + to_string(newBtn->state);
+
 }
 void TitleScene::Release() {}
 

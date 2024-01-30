@@ -2,6 +2,8 @@
 #include "Engine/GameObject.h"
 
 class Text;
+class TitleButton;
+class DebugText;
 
 class TitleScene : public GameObject
 {
@@ -35,6 +37,10 @@ class TitleScene : public GameObject
 	SELECT_STATE selectState_;
 	MANIP_TARGET manipTarget;
 	void Run(SELECT_STATE& ss);
+
+	TitleButton* newBtn;
+	DebugText* debugText;
+	std::string debugStr[20];
 
 public:
 	TitleScene(GameObject* parent);
