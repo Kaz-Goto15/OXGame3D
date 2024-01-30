@@ -22,6 +22,7 @@ TitleButton::~TitleButton()
 //初期化
 void TitleButton::Initialize()
 {
+	//SetCurrentDirectory("Assets");
 	int scrW = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
 	int scrH = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
 
@@ -91,12 +92,14 @@ std::string TitleButton::GetDebugStr(int i)
 	switch (i) {
 	case 0:	return "imageSize: " + std::to_string(Image::GetSize(hImg_[0]).x) + "," + std::to_string(Image::GetSize(hImg_[0]).y);
 	case 1:	return "null vertex:(" +
-		std::to_string((int)(1280 / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(720 / 2.0f - imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(1280 / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(720 / 2.0f - imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(1280 / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(720 / 2.0f + imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(1280 / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(720 / 2.0f + imageSize.y / 2.0f)) + ")";
+		std::to_string((int)(scrW / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(scrH / 2.0f - imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(scrW / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(scrH / 2.0f - imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(scrW / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(scrH / 2.0f + imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(scrW / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(scrH / 2.0f + imageSize.y / 2.0f)) + ")";
+	case 2: return "windowsize: " + std::to_string(scrW) + ", " + std::to_string(scrH);
+	case 3: return "windowsize: " + std::to_string(GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini"));
 	}
-	return std::string();
+	return "invalid num";
 }
 
 void TitleButton::UpdateIdle()

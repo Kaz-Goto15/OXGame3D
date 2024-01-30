@@ -60,6 +60,10 @@ void TitleScene::Draw() {
 	//debugStr[1] = "imgScale: " + std::to_string(nullScale_.x) + ", " + std::to_string(nullScale_.y);
 	debugStr[2] = "mousePos: " + std::to_string(mousePos.x) + ", " + std::to_string(mousePos.y);
 	debugStr[3] = "state:" + to_string(newBtn->state);
+	debugStr[4] = newBtn->GetDebugStr(0);
+	debugStr[5] = newBtn->GetDebugStr(1);
+	debugStr[6] = newBtn->GetDebugStr(2);
+	debugStr[7] = newBtn->GetDebugStr(3);
 
 }
 void TitleScene::Release() {}
