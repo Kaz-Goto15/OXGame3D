@@ -19,6 +19,7 @@ class TitleScene : public GameObject
 		S_SEL_CREDIT,
 		S_SEL_OPTION,
 		S_SEL_EXIT,
+		S_SEL_MAX
 	};
 	enum MANIP_TARGET {
 		MANIP_MAIN,
@@ -38,9 +39,10 @@ class TitleScene : public GameObject
 	MANIP_TARGET manipTarget;
 	void Run(SELECT_STATE& ss);
 
-	TitleButton* newBtn;
+	TitleButton* btn[S_SEL_MAX];
 	DebugText* debugText;
 	std::string debugStr[20];
+	void InitButton(SELECT_STATE ss, std::string text, XMFLOAT2 pos);
 
 public:
 	TitleScene(GameObject* parent);
@@ -48,4 +50,5 @@ public:
 	void Update() override;
 	void Draw() override;
 	void Release() override;
+	void Act(int hAct);
 };

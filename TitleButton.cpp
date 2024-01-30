@@ -1,6 +1,7 @@
 #include "TitleButton.h"
 #include "Engine/Image.h"
 #include "Engine/Input.h"
+#include "TitleScene.h"
 
 //コンストラクタ
 TitleButton::TitleButton(GameObject* parent):
@@ -162,6 +163,11 @@ void TitleButton::UpdateSelect()
 	}
 }
 
+void TitleButton::SetAction(int hAct)
+{
+	actHandle_ = hAct;
+}
+
 void TitleButton::UpdatePush()
 {
 	if (!IsEntered()) {
@@ -176,7 +182,8 @@ void TitleButton::UpdatePush()
 
 void TitleButton::UpdateSelected()
 {
-
+	TitleScene* ts = (TitleScene*)GetParent();
+	ts->Act(actHandle_);
 }
 
 bool TitleButton::IsEntered()

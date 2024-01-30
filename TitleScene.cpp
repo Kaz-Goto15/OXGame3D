@@ -32,13 +32,14 @@ void TitleScene::Initialize() {
 	}
 	newText = new Text();
 	newText->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
-	newBtn = Instantiate<TitleButton>(this);
-	newBtn->SetText("test");
-	newBtn->SetPosition(640.0f, 320.0f,0.0f);
 	debugText = Instantiate<DebugText>(this);
-	for (int i = 0; i < 20; i++) {
-		debugText->AddStrPtr(&debugStr[i]);
-	}
+	for (int i = 0; i < 20; i++) debugText->AddStrPtr(&debugStr[i]);
+
+	InitButton(S_SEL_START, "START", { 180,-240 });
+	InitButton(S_SEL_CREDIT, "CREDIT", { 180,-80 });
+	InitButton(S_SEL_OPTION, "OPTION", { 180,80 });
+	InitButton(S_SEL_EXIT, "EXIT", { 180, 240 });
+
 }
 void TitleScene::Update() {
 	if (Input::IsKeyDown(DIK_0)) {
@@ -47,6 +48,9 @@ void TitleScene::Update() {
 	}
 	if (Input::IsKeyDown(DIK_SPACE)) {
 		Run(selectState_);
+	}
+	if (Input::IsKeyDown(DIK_9)) {
+		Invisible();
 	}
 }
 void TitleScene::Draw() {
@@ -60,16 +64,34 @@ void TitleScene::Draw() {
 	//debugStr[0] = "imgSize: " + std::to_string(Image::GetWidth(hImg_)) + ", " + std::to_string(Image::GetHeight(hImg_));
 	//debugStr[1] = "imgScale: " + std::to_string(nullScale_.x) + ", " + std::to_string(nullScale_.y);
 	debugStr[2] = "mousePos: " + std::to_string(mousePos.x) + ", " + std::to_string(mousePos.y);
-	debugStr[3] = "state:" + to_string(newBtn->state);
-	debugStr[4] = newBtn->GetDebugStr(0);
-	debugStr[5] = newBtn->GetDebugStr(1);
-	debugStr[6] = newBtn->GetDebugStr(2);
-	debugStr[7] = newBtn->GetDebugStr(3);
-	debugStr[8] = newBtn->GetDebugStr(4);
-	debugStr[9] = newBtn->GetDebugStr(5);
+	//debugStr[3] = "state:" + to_string(newBtn->state);
+	//debugStr[4] = newBtn->GetDebugStr(0);
+	//debugStr[5] = newBtn->GetDebugStr(1);
+	//debugStr[6] = newBtn->GetDebugStr(2);
+	//debugStr[7] = newBtn->GetDebugStr(3);
+	//debugStr[8] = newBtn->GetDebugStr(4);
+	//debugStr[9] = newBtn->GetDebugStr(5);
 
 }
 void TitleScene::Release() {}
+
+void TitleScene::Act(int hAct)
+{
+	SELECT_STATE ss = static_cast<SELECT_STATE>(hAct);
+	switch (ss)
+	{
+	case TitleScene::S_SEL_START:
+		break;
+	case TitleScene::S_SEL_CREDIT:
+		break;
+	case TitleScene::S_SEL_OPTION:
+		break;
+	case TitleScene::S_SEL_EXIT:
+		exit(0);
+	default:
+		break;
+	}
+}
 
 void TitleScene::Run(SELECT_STATE& ss) {
 	switch (ss)
@@ -93,6 +115,14 @@ void TitleScene::Run(SELECT_STATE& ss) {
 		MessageBox(NULL, "Error", "致命的エラー：範囲外の選択ステート", MB_OK);
 		exit(1);
 	}
+}
+
+void TitleScene::InitButton(SELECT_STATE ss, std::string text, XMFLOAT2 pos)
+{
+	btn[ss] = Instantiate <TitleButton>(this);
+	btn[ss]->SetText(text);
+	btn[ss]->SetAction(ss);
+	btn[ss]->SetPosition(pos.x, pos.y, 0.0f);
 }
 
 /*

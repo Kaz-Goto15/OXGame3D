@@ -17,6 +17,7 @@ class TitleButton : public GameObject
     int scrW, scrH;
     Text::HORIZONAL_ALIGNMENT hAl;
     Text::VERTICAL_ALIGNMENT vAl;
+    int actHandle_;
 public:
     STATE state;
     TitleButton(GameObject* parent);    //コンストラクタ
@@ -29,6 +30,7 @@ public:
     std::string LinkImageFile(STATE state);
 
     std::string GetDebugStr(int i);
+    void SetAction(int hAct);
 private:
     void UpdateIdle();
     void UpdateSelect();
