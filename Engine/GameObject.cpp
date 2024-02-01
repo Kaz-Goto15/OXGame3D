@@ -316,49 +316,53 @@ GameObject* GameObject::GetRootJob()
 
 void GameObject::UpdateSub()
 {
-	Update();
-	Transform();
+	if (IsEntered()) {
+		Update();
+		Transform();
 
-	for (auto c : childList_)
-	{
-		c->UpdateSub();
-	}
-
-	for (auto it = childList_.begin(); it != childList_.end();)
-	{
-		if ((*it)->IsDead() == true)
+		for (auto c : childList_)
 		{
-			(*it)->ReleaseSub();
-			SAFE_DELETE(*it);
-			it = childList_.erase(it);
+			c->UpdateSub();
 		}
-		else
+
+		for (auto it = childList_.begin(); it != childList_.end();)
 		{
-			//当たり判定
-			(*it)->Collision(GetParent());
-			it++;
+			if ((*it)->IsDead() == true)
+			{
+				(*it)->ReleaseSub();
+				SAFE_DELETE(*it);
+				it = childList_.erase(it);
+			}
+			else
+			{
+				//当たり判定
+				(*it)->Collision(GetParent());
+				it++;
+			}
 		}
 	}
 }
 
 void GameObject::DrawSub()
 {
-	Draw();
+	if (IsVisibled()) {
+		Draw();
 
 
-	//リリース時は削除
+		//リリース時は削除
 #ifdef _DEBUG
 		//コリジョンの描画
-	if (Direct3D::isDrawCollision_)
-	{
-		CollisionDraw();
-	}
+		if (Direct3D::isDrawCollision_)
+		{
+			CollisionDraw();
+		}
 #endif
 
-	//その子オブジェクトの描画処理
-	for (auto c : childList_)
-	{
-		c->DrawSub();
+		//その子オブジェクトの描画処理
+		for (auto c : childList_)
+		{
+			c->DrawSub();
+		}
 	}
 }
 

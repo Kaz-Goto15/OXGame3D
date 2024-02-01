@@ -177,6 +177,9 @@
     </ClCompile>
     <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="TitleButton.cpp" />
+    <ClCompile Include="PlayScene.cpp">
+      <Filter>C_Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -318,6 +321,9 @@
     </ClInclude>
     <ClInclude Include="DebugText.h" />
     <ClInclude Include="TitleButton.h" />
+    <ClInclude Include="PlayScene.h">
+      <Filter>C_Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

@@ -64,6 +64,7 @@ void TitleScene::Draw() {
 	//debugStr[0] = "imgSize: " + std::to_string(Image::GetWidth(hImg_)) + ", " + std::to_string(Image::GetHeight(hImg_));
 	//debugStr[1] = "imgScale: " + std::to_string(nullScale_.x) + ", " + std::to_string(nullScale_.y);
 	debugStr[2] = "mousePos: " + std::to_string(mousePos.x) + ", " + std::to_string(mousePos.y);
+	debugStr[3] = btn[0]->GetDebugStr(6);
 	//debugStr[3] = "state:" + to_string(newBtn->state);
 	//debugStr[4] = newBtn->GetDebugStr(0);
 	//debugStr[5] = newBtn->GetDebugStr(1);
@@ -81,42 +82,22 @@ void TitleScene::Act(int hAct)
 	switch (ss)
 	{
 	case TitleScene::S_SEL_START:
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_SPLASH);
 		//GameScene?
 		break;
 	case TitleScene::S_SEL_CREDIT:
-		//CreditScene?
+		//Instantiate<CreditScreen>(GetParent());
+		Leave();
 		break;
 	case TitleScene::S_SEL_OPTION:
-		//OptionScreen?
+		//Instantiate<OptionScreen>(GetParent());
+		Leave();
 		break;
 	case TitleScene::S_SEL_EXIT:
 		exit(0);
 	default:
 		break;
-	}
-}
-
-void TitleScene::Run(SELECT_STATE& ss) {
-	switch (ss)
-	{
-	case SELECT_STATE::S_SEL_START:
-		//FileList.EnDraw();
-		manipTarget = MANIP_FILE_LIST;
-		break;
-	case SELECT_STATE::S_SEL_CREDIT:
-		//credit.Show();
-		manipTarget = MANIP_CREDIT;
-		break;
-	case SELECT_STATE::S_SEL_OPTION:
-		break;
-	case SELECT_STATE::S_SEL_EXIT:
-		//ConfirmWIndow cw = new ConfirmWindow();
-		//cw.SetMessage("デスクトップに戻りますか？");
-		manipTarget = MANIP_CONFIRM_WINDOW;
-		break;
-	default:
-		MessageBox(NULL, "Error", "致命的エラー：範囲外の選択ステート", MB_OK);
-		exit(1);
 	}
 }
 

@@ -31,7 +31,7 @@ void TitleButton::Initialize()
 		hImg_[i] = Image::Load(LinkImageFile(static_cast<STATE>(i)));
 		Image::SetTransform(hImg_[i], transform_);
 	}
-
+	Image::SetRect(hImg_[0], clip.x, clip.y, clip.z, clip.w);
 	buttonTextObj_ = new Text;
 	buttonTextObj_->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
 }
@@ -75,6 +75,32 @@ void TitleButton::Update()
 		hAl = Text::HORIZONAL_ALIGNMENT::LEFT;
 		vAl = Text::VERTICAL_ALIGNMENT::TOP;
 	}
+	if (Input::IsKey(DIK_9)) {
+		clip.x++;
+	}
+	if (Input::IsKey(DIK_0)) {
+		clip.x--;
+	}
+	if (Input::IsKey(DIK_O)) {
+		clip.y++;
+	}
+	if (Input::IsKey(DIK_P)) {
+		clip.y--;
+	}
+	if (Input::IsKey(DIK_L)) {
+		clip.z++;
+	}
+	if (Input::IsKey(DIK_SEMICOLON)) {
+		clip.z--;
+	}
+	if (Input::IsKey(DIK_PERIOD)) {
+		clip.w++;
+	}
+	if (Input::IsKey(DIK_SLASH)) {
+		clip.w--;
+	}
+
+	Image::SetRect(hImg_[0], clip.x, clip.y, clip.z, clip.w);
 	switch (state)
 	{
 	case TitleButton::IDLE:		UpdateIdle();	break;
@@ -90,7 +116,7 @@ void TitleButton::Draw()
 	Image::SetTransform(hImg_[state], transform_);
 	Image::Draw(hImg_[state]);
 	buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonName_.c_str(), Text::HORIZONAL_ALIGNMENT::CENTER, Text::VERTICAL_ALIGNMENT::CENTER);
-	//buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonName_.c_str(), hAl, vAl);
+	buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonName_.c_str(), hAl, vAl);
 }
 
 //ŠJ•ú
@@ -109,7 +135,7 @@ std::string TitleButton::LinkImageFile(STATE _state)
 	std::string fileName;
 	switch (_state)
 	{
-	case TitleButton::IDLE:		fileName = "btnIdle.png";	break;
+	case TitleButton::IDLE:		fileName = "light82sqrt2re.png";	break;
 	case TitleButton::SELECT:	fileName = "btnSelect.png";	break;
 	case TitleButton::PUSH:		fileName = "btnPush.png";	break;
 	case TitleButton::SELECTED:	fileName = "btnSelected.png";	break;
@@ -141,6 +167,7 @@ std::string TitleButton::GetDebugStr(int i)
 		"(" + std::to_string((int)(buttonTra.position_.y + scrH / 2.0f - imageSize.y / 2.0f)) + ")" +
 		"(" + std::to_string((int)(buttonTra.position_.y + scrH / 2.0f + imageSize.y / 2.0f)) + ")";
 	case 5:	return "buttonPos: " + std::to_string(buttonTra.position_.x) + "," + std::to_string(buttonTra.position_.y);
+	case 6:	return "clip: " + std::to_string(clip.x) + "," + std::to_string(clip.y) + "," + std::to_string(clip.z) + "," + std::to_string(clip.w);
 	}
 	return "invalid num";
 }

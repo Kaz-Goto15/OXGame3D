@@ -18,6 +18,7 @@ class TitleButton : public GameObject
     Text::HORIZONAL_ALIGNMENT hAl;
     Text::VERTICAL_ALIGNMENT vAl;
     int actHandle_;
+    XMINT4 clip = { 0,0,128,128 };
 public:
     STATE state;
     TitleButton(GameObject* parent);    //コンストラクタ

@@ -150,6 +150,8 @@ namespace Image
 
 		_datas[handle]->rect.left = x;
 		_datas[handle]->rect.top = y;
+		//_datas[handle]->rect.left = -Direct3D::screenWidth_ / 2.0f + x;
+		//_datas[handle]->rect.top = -Direct3D::screenHeight_ / 2.0f + y;
 		_datas[handle]->rect.right = width;
 		_datas[handle]->rect.bottom = height;
 	}
@@ -215,7 +217,13 @@ namespace Image
 	}
 	XMFLOAT3 GetSize(int handle)
 	{
-		return _datas[handle]->pSprite->GetTextureSize();
+		return {
+			static_cast<float>(_datas[handle]->rect.right),
+			static_cast<float>(_datas[handle]->rect.bottom),
+			1.0f
+
+		};
+		//return _datas[handle]->pSprite->GetTextureSize();
 	}
 
 	Transform GetTransform(int handle)
