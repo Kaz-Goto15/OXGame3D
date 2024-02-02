@@ -31,7 +31,8 @@ void TitleButton::Initialize()
 		hImg_[i] = Image::Load(LinkImageFile(static_cast<STATE>(i)));
 		Image::SetTransform(hImg_[i], transform_);
 	}
-	Image::SetRect(hImg_[0], clip.x, clip.y, clip.z, clip.w);
+	transform_.scale_ = { 0.5f, 0.5f,1.0f };
+	//Image::SetRect(hImg_[0], clip.x, clip.y, clip.z, clip.w);
 	buttonTextObj_ = new Text;
 	buttonTextObj_->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
 }
@@ -100,7 +101,7 @@ void TitleButton::Update()
 		clip.w--;
 	}
 
-	Image::SetRect(hImg_[0], clip.x, clip.y, clip.z, clip.w);
+	//Image::SetRect(hImg_[0], clip.x, clip.y, clip.z, clip.w);
 	switch (state)
 	{
 	case TitleButton::IDLE:		UpdateIdle();	break;
@@ -135,7 +136,7 @@ std::string TitleButton::LinkImageFile(STATE _state)
 	std::string fileName;
 	switch (_state)
 	{
-	case TitleButton::IDLE:		fileName = "light82sqrt2re.png";	break;
+	case TitleButton::IDLE:		fileName = "btnIdle.png";	break;
 	case TitleButton::SELECT:	fileName = "btnSelect.png";	break;
 	case TitleButton::PUSH:		fileName = "btnPush.png";	break;
 	case TitleButton::SELECTED:	fileName = "btnSelected.png";	break;

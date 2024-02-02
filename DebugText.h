@@ -14,8 +14,7 @@ class DebugText : public GameObject
     Text* txt;
     vector<string*> pStrList_;
     POINT pos;
-
-    int count;
+    int lineHeight;
 public:
     DebugText(GameObject* parent);    //コンストラクタ
     ~DebugText();                     //デストラクタ

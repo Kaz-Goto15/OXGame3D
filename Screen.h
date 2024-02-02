@@ -5,20 +5,17 @@ class Screen : public GameObject
 {
 public:
 
-    void Show();
-    void Hide();
-private:
-    bool visible;
-    bool debug;
+protected:
     void DebugAction();
+    GameObject* pPrevObject;
 public:
-    Screen(GameObject* parent);
+    Screen(GameObject* parent, const std::string& name);
     ~Screen();
-    void Initialize() override;
-    void Update() override;
-    void Draw() override;
-    void Release() override;
-    virtual void CloseAnim();
-    void Close();
-    
+    virtual void Initialize() override = 0;
+    virtual void Update() override= 0;
+    virtual void Draw() override=0;
+    virtual void Release() override=0;
+    void SetPrevScene(GameObject* prevScene);
+    void Prev();
+    void Run();
 };

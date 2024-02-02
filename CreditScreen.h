@@ -1,11 +1,15 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include "Screen.h"
 
 //クレジット画面を管理するクラス
-class CreditScreen : public GameObject
+class CreditScreen : public Screen
 {
+    enum PIC {
+        PIC_BACKGROUND,
+        PIC_BASIC_FRAME_ATLAS,
 
-    bool enScreen;
+    };
     int hPict_;
 public:
     CreditScreen(GameObject* parent);
@@ -14,7 +18,4 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
-
-    void Show();
-    void Hide();
 };

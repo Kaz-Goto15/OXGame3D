@@ -2,7 +2,7 @@
 
 //コンストラクタ
 CreditScreen::CreditScreen(GameObject* parent)
-    :GameObject(parent, "CreditScreen")
+    :Screen(parent, "CreditScreen")
 {
 }
 
@@ -25,16 +25,9 @@ void CreditScreen::Update()
 //描画
 void CreditScreen::Draw()
 {
-    if (enScreen) {
-        
-    }
 }
 
 //開放
 void CreditScreen::Release()
 {
-}
-
-void CreditScreen::Show() {
-    enScreen = true;
 }

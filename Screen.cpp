@@ -1,11 +1,22 @@
 #include "Screen.h"
 #include "Engine/Image.h"
 
-//コンストラクタ
-Screen::Screen(GameObject* parent) :
-    GameObject(parent, "Screen")
+void Screen::DebugAction()
 {
-    parent->Leave();
+    
+    LPSTR str = nullptr;
+    GetWindowText(GetActiveWindow(), str, 0);
+    str += *objectName_.c_str();
+    SetWindowText(GetActiveWindow(),str);
+}
+
+//コンストラクタ
+Screen::Screen(GameObject* parent, const std::string& name) :
+    GameObject(parent, "Screen"),
+    pPrevObject(nullptr)
+{
+    Leave();
+    Invisible();
 }
 
 //デストラクタ
@@ -33,14 +44,20 @@ void Screen::Release()
 {
 }
 
-void Screen::CloseAnim()
+void Screen::SetPrevScene(GameObject* prevScene)
 {
+    pPrevObject = prevScene;
 }
 
-void Screen::Close()
+void Screen::Prev()
 {
-    this->Leave();
-    GetParent()->Enter();
-    CloseAnim();
-    KillMe();
+    pPrevObject->Enter();
+    KillMe();   //いったんアニメーションは無し
+}
+
+void Screen::Run()
+{
+    Enter();
+    Visible();
+    pPrevObject->Leave();
 }

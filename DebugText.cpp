@@ -4,8 +4,9 @@
 //コンストラクタ
 DebugText::DebugText(GameObject* parent)
     :GameObject(parent, "DebugText"),
+    txt(nullptr),
     pos({-640,-360}),
-    count(0)
+    lineHeight(35)
 {
 }
 
@@ -29,8 +30,8 @@ void DebugText::Update()
 //描画
 void DebugText::Draw()
 {
-    for (int i = 0; i < count; i++) {
-        txt->Draw(pos.x, pos.y + 35 * i, pStrList_[i]->c_str(), Text::HORIZONAL_ALIGNMENT::LEFT, Text::VERTICAL_ALIGNMENT::TOP);
+    for (int i = 0; i < pStrList_.size(); i++) {
+        txt->Draw(pos.x, pos.y + lineHeight * i, pStrList_[i]->c_str(), Text::HORIZONAL_ALIGNMENT::LEFT, Text::VERTICAL_ALIGNMENT::TOP);
     }
 }
 
@@ -41,6 +42,5 @@ void DebugText::Release()
 
 void DebugText::AddStrPtr(string* pStr)
 {
-    count++;
     pStrList_.push_back(pStr);
 }
