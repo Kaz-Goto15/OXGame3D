@@ -1,5 +1,15 @@
 #pragma once
-class PlayScene
-{
-};
+#include "Engine/GameObject.h"
 
+class Text;
+
+class PlayScene : public GameObject
+{
+
+public:
+	PlayScene(GameObject* parent);
+	void Initialize() override;
+	void Update() override;
+	void Draw() override;
+	void Release() override;
+};

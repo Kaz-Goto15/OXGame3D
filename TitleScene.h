@@ -4,6 +4,7 @@
 class Text;
 class TitleButton;
 class DebugText;
+class SceneManager;
 
 class TitleScene : public GameObject
 {
@@ -37,12 +38,14 @@ class TitleScene : public GameObject
 
 	SELECT_STATE selectState_;
 	MANIP_TARGET manipTarget;
-	void Run(SELECT_STATE& ss);
+	//void Run(SELECT_STATE& ss);
 
 	TitleButton* btn[S_SEL_MAX];
 	DebugText* debugText;
 	std::string debugStr[20];
 	void InitButton(SELECT_STATE ss, std::string text, XMFLOAT2 pos);
+
+	SceneManager* pSceneManager;
 
 public:
 	TitleScene(GameObject* parent);

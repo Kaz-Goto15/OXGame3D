@@ -23,7 +23,8 @@ std::string TitleScene::TitleImgFileName(Img E_IMG)
 TitleScene::TitleScene(GameObject* parent)
 	: GameObject(parent, "TitleScene"),
 	newText(nullptr),
-	selectState_(S_SEL_START)
+	selectState_(S_SEL_START),
+	pSceneManager(nullptr)
 {}
 
 void TitleScene::Initialize() {
@@ -45,9 +46,6 @@ void TitleScene::Update() {
 	if (Input::IsKeyDown(DIK_0)) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_SPLASH);
-	}
-	if (Input::IsKeyDown(DIK_SPACE)) {
-		Run(selectState_);
 	}
 	if (Input::IsKeyDown(DIK_9)) {
 		Invisible();
@@ -82,12 +80,14 @@ void TitleScene::Act(int hAct)
 	switch (ss)
 	{
 	case TitleScene::S_SEL_START:
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_SPLASH);
 		//GameScene?
 		break;
 	case TitleScene::S_SEL_CREDIT:
-		//Instantiate<CreditScreen>(GetParent());
+		//Screen pScreen = Instantiate<CreditScreen>(GetParent());
+		//pScreen->SetPrevScene(this);
+		//pScreen->Run(); ここでleaveを内包したほうがいいのでは　a合成 後ろのほうが一番出る 前は完全透明←マジで？明るくなるんじゃねえの
 		Leave();
 		break;
 	case TitleScene::S_SEL_OPTION:

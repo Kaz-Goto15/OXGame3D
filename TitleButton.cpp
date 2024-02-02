@@ -116,7 +116,7 @@ void TitleButton::Draw()
 	Image::SetTransform(hImg_[state], transform_);
 	Image::Draw(hImg_[state]);
 	buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonName_.c_str(), Text::HORIZONAL_ALIGNMENT::CENTER, Text::VERTICAL_ALIGNMENT::CENTER);
-	buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonName_.c_str(), hAl, vAl);
+	//buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonName_.c_str(), hAl, vAl);
 }
 
 //ŠJ•ú
