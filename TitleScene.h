@@ -5,6 +5,7 @@ class Text;
 class TitleButton;
 class DebugText;
 class SceneManager;
+class Screen;
 
 class TitleScene : public GameObject
 {
@@ -46,6 +47,7 @@ class TitleScene : public GameObject
 	void InitButton(SELECT_STATE ss, std::string text, XMFLOAT2 pos);
 
 	SceneManager* pSceneManager;
+	Screen* pScreen;
 
 public:
 	TitleScene(GameObject* parent);

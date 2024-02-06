@@ -31,7 +31,12 @@ public:
     std::string LinkImageFile(STATE state);
 
     std::string GetDebugStr(int i);
+
+    //自身(ボタン)と親の選択ステートを紐づける
     void SetAction(int hAct);
+
+    //処理終了と銘打っているが、強制的にIDLE状態にする関数
+    void EndAct() { state = IDLE; }
 private:
     void UpdateIdle();
     void UpdateSelect();

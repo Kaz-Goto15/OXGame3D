@@ -33,8 +33,14 @@
     <Filter Include="B_GameScene">
       <UniqueIdentifier>{5a1252d3-be04-4a39-9177-473d69588329}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Editer">
+    <Filter Include="Splash,Title Obj">
+      <UniqueIdentifier>{790f7847-50a8-44ec-92e0-c63c939730ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Edit">
       <UniqueIdentifier>{28914db0-d9b0-4aa6-9fe1-52fc29202d6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Option Obj">
+      <UniqueIdentifier>{7a0eac1d-0f74-486a-9efe-5545c04a494a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -168,7 +174,7 @@
     </ClCompile>
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="StageView.cpp">
-      <Filter>Editer</Filter>
+      <Filter>Edit</Filter>
     </ClCompile>
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="StageData.cpp" />
@@ -176,9 +182,11 @@
       <Filter>C_Scene</Filter>
     </ClCompile>
     <ClCompile Include="DebugText.cpp" />
-    <ClCompile Include="TitleButton.cpp" />
     <ClCompile Include="PlayScene.cpp">
       <Filter>C_Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleButton.cpp">
+      <Filter>Splash,Title Obj</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -312,7 +320,7 @@
     </ClInclude>
     <ClInclude Include="Screen.h" />
     <ClInclude Include="StageView.h">
-      <Filter>Editer</Filter>
+      <Filter>Edit</Filter>
     </ClInclude>
     <ClInclude Include="Sample.h" />
     <ClInclude Include="StageData.h" />
@@ -320,9 +328,11 @@
       <Filter>C_Scene</Filter>
     </ClInclude>
     <ClInclude Include="DebugText.h" />
-    <ClInclude Include="TitleButton.h" />
     <ClInclude Include="PlayScene.h">
       <Filter>C_Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleButton.h">
+      <Filter>Splash,Title Obj</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

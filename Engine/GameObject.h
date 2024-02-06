@@ -140,7 +140,7 @@ public:
 	XMFLOAT3 GetWorldScale() { return Transform::Float3Add(GetParent()->transform_.scale_, transform_.scale_); }
 	void SetPosition(XMFLOAT3 position) { transform_.position_ = position; }
 	void SetPosition(float x, float y, float z) { SetPosition(XMFLOAT3(x, y, z)); }
-	void SetPosition(int x, int y, int z) { SetPosition(XMFLOAT3(x, y, z)); }
+	void SetPosition(int x, int y, int z) { SetPosition(XMFLOAT3((float)x, (float)y, (float)z)); }
 	void SetRotate(XMFLOAT3 rotate) { transform_.rotate_ = rotate; }
 	void SetRotate(float x, float y, float z) { SetRotate(XMFLOAT3( x, y, z )); }
 	void SetRotateX(float x) { SetRotate(x, transform_.rotate_.y, transform_.rotate_.z); }

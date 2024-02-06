@@ -7,6 +7,8 @@
 
 #include "TitleButton.h"
 #include "DebugText.h"
+#include "CreditScreen.h"
+
 using std::to_string;
 
 std::string TitleScene::TitleImgFileName(Img E_IMG)
@@ -85,16 +87,14 @@ void TitleScene::Act(int hAct)
 		//GameScene?
 		break;
 	case TitleScene::S_SEL_CREDIT:
-		ShellExecute(NULL, "open", "https://horikogasa.studio.site/", NULL, NULL, SW_SHOWNORMAL);
-
-		//Screen pScreen = Instantiate<CreditScreen>(GetParent());
-		//pScreen->SetPrevScene(this);
-		//pScreen->Run(); ここでleaveを内包したほうがいいのでは　a合成 後ろのほうが一番出る 前は完全透明←マジで？明るくなるんじゃねえの
+		pScreen = Instantiate<CreditScreen>(GetParent());
+		pScreen->SetPrevScene(this);
+		pScreen->Run(); //ここでleaveを内包したほうがいいのでは　a合成 後ろのほうが一番出る 前は完全透明←マジで？明るくなるんじゃねえの
 		break;
 	case TitleScene::S_SEL_OPTION:
 		//Instantiate<OptionScreen>(GetParent());
-		Leave();
-		btn[]
+		ShellExecute(NULL, "open", "https://horikogasa.studio.site/", NULL, NULL, SW_SHOWNORMAL);
+		btn[ss]->EndAct();
 		break;
 	case TitleScene::S_SEL_EXIT:
 		exit(0);
