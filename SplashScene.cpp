@@ -63,7 +63,7 @@ void SplashScene::End()
 void SplashScene::FadeIn()
 {
 	fadeTime_++;
-	imageAlpha_ = (int)Easing::Calc(FADEIN_EASE_NO, fadeTime_, FADE_TIME, 0, 255);
+	imageAlpha_ = (int)Easing::Calc(FADEIN_EASE_NO, fadeTime_, FADE_TIME, 0.0f, 255.0f);
 
 	if (fadeTime_ > FADE_TIME) {
 		drawTime_ = 0;

@@ -7,10 +7,11 @@ class CreditScreen : public Screen
 {
     enum PIC {
         PIC_BACKGROUND,
-        PIC_BASIC_FRAME_ATLAS,
-
+        PIC_BASIC_FRAME_TEX,
+        PIC_DESCRIPTION,
+        PIC_MAX
     };
-    int hPict_;
+    int hPict_[PIC_MAX - 1];
 public:
     CreditScreen(GameObject* parent);
     ~CreditScreen();

@@ -16,7 +16,10 @@ CreditScreen::~CreditScreen()
 //èâä˙âª
 void CreditScreen::Initialize()
 {
-    hPict_ = Image::Load("black.png");
+    hPict_[PIC_BACKGROUND] = Image::Load("black.png");
+    hPict_[PIC_BASIC_FRAME_TEX] = Image::Load("frame.png");
+    hPict_[PIC_DESCRIPTION] = Image::Load("descr.png");
+    Image::SetAlpha(hPict_[PIC_BACKGROUND], 128);
     //keyHelp.push_back(KEY_CANCEL, "ñﬂÇÈ");
 }
 
@@ -31,8 +34,10 @@ void CreditScreen::Update()
 //ï`âÊ
 void CreditScreen::Draw()
 {
-    Image::SetTransform(transform_);
-    Image::Draw(hPict_);
+    for (int i = 0; i < PIC_MAX; i++) {
+        Image::SetTransform(hPict_, transform_);
+        Image::Draw(hPict_);
+    }
 }
 
 //äJï˙

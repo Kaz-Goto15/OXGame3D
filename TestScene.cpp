@@ -11,7 +11,7 @@ TestScene::TestScene(GameObject* parent)
 {}
 void TestScene::Initialize(){
 	hPict_ = Image::Load("circle.png");
-	ringTra.scale_ = { 0.05,0.05,0.05 };
+	ringTra.scale_ = { 0.05f,0.05f,0.05f};
 	Image::SetTransform(hPict_, ringTra);
 
 	newText = new Text();
@@ -48,7 +48,7 @@ void TestScene::Draw(){
 	int drawCircleNum = 1600;
 	float circleUnit = 0.225f;
 	for (int i = 0; i < drawCircleNum; i++) {
-		float cy = -circleUnit * Easing::Calc(easeNum, i, drawCircleNum, 0, drawCircleNum) + drawCircleNum/2.0f * circleUnit;
+		float cy = -circleUnit * Easing::Calc(easeNum, i, (float)drawCircleNum, 0, (float)drawCircleNum) + (float)drawCircleNum/2.0f * circleUnit;
 		float cx = circleUnit * i - drawCircleNum/2.0f * circleUnit;
 		ringTra.ConvDrawPos(cx, cy);
 		Image::SetTransform(hPict_, ringTra);

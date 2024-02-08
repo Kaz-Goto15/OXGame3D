@@ -10,7 +10,10 @@ TitleButton::TitleButton(GameObject* parent):
 	buttonName_(""),
 	scrW(0),
 	scrH(0),
-	state(IDLE)
+	state(IDLE),
+	actHandle_(-1),
+	hAl(Text::HORIZONAL_ALIGNMENT::CENTER),
+	vAl(Text::VERTICAL_ALIGNMENT::CENTER)
 {
 	std::fill_n(hImg_, MAX, -1);
 }
