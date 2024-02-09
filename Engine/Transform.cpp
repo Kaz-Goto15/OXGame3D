@@ -7,6 +7,8 @@ Transform::Transform(): pParent_(nullptr)
 	position_ = XMFLOAT3(0, 0, 0);
 	rotate_ = XMFLOAT3(0, 0, 0);
 	scale_ = XMFLOAT3(1, 1, 1);
+	reSize_ = XMFLOAT3(1, 1, 1);
+	center_ = XMFLOAT3(0, 0, 0);
 	matTranslate_ = XMMatrixIdentity();
 	matRotate_ = XMMatrixIdentity();
 	matScale_ = XMMatrixIdentity();
@@ -30,7 +32,8 @@ void Transform::Calclation()
 	matRotate_ = rotateZ * rotateX * rotateY;
 
 	//拡大縮小
-	matScale_ = XMMatrixScaling(scale_.x, scale_.y, scale_.z);
+	matScale_ = XMMatrixScaling(scale_.x * reSize_.x, scale_.y * reSize_.y, scale_.z * reSize_.z);
+	//matScale_ = XMMatrixScaling(scale_.x, scale_.y, scale_.z);
 }
 
 XMMATRIX Transform::GetWorldMatrix() 
@@ -76,5 +79,34 @@ void Transform::SetScale(float all, float oX, float oY, float oZ)
 	tmpVec = pointVec + tmpVec2;
 	XMStoreFloat3(&nextPos, tmpVec);
 	SetPosition(nextPos);
+}
+
+Transform Transform::CalcTrans(Transform tra)
+{
+	Transform ret;
+	XMFLOAT3 oPos = { 0,0,0 };
+	XMVECTOR oVec = XMLoadFloat3(&oPos);
+	XMVECTOR pointVec = XMLoadFloat3(&center_);
+	XMVECTOR nowVec = XMLoadFloat3(&position_);
+	XMFLOAT3 nextPos;
+	XMVECTOR tmpVec, tmpVec2;
+	XMFLOAT3 tmpFloat;
+
+	//移動機能(to対称点)→拡大機能→移動場所計算→移動機能(to新配置点)
+	ret.position_ = oPos;
+	ret.scale_ = {
+		scale_.x * reSize_.x,
+		scale_.y * reSize_.y,
+		scale_.z * reSize_.z
+	};
+
+	tmpVec = nowVec - pointVec;
+	XMStoreFloat3(&tmpFloat, tmpVec);
+	tmpFloat = ret.scale_;
+	tmpVec2 = XMLoadFloat3(&tmpFloat);
+	tmpVec = pointVec + tmpVec2;
+	XMStoreFloat3(&nextPos, tmpVec);
+	ret.position_ = nextPos;
+	return ret;
 }
 

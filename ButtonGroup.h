@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include "Button.h"
 
 //ボタン集合を管理するクラス
 class ButtonGroup : public GameObject
@@ -13,7 +14,7 @@ public:
     void Draw() override;       //描画
     void Release() override;    //解放
 
-    void AddB
+    void AddButton(int handle, Button* btn);
 };
 
 

@@ -30,3 +30,11 @@ void ButtonGroup::Draw()
 void ButtonGroup::Release()
 {
 }
+
+void ButtonGroup::AddButton(int handle, Button* btn)
+{
+	//btn[ss] = Instantiate <TitleButton>(this);
+	//btn[ss]->SetText(text);
+	//btn[ss]->SetAction(ss);
+	//btn[ss]->SetPosition(pos.x, pos.y, 0.0f);
+}

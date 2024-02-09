@@ -2,12 +2,12 @@
 #include "Engine/Input.h"
 #include "Engine/Image.h"
 
+#include "SystemConfig.h"
 #include "DebugText.h"
 
 //コンストラクタ
 CreditScreen::CreditScreen(GameObject* parent):
-    Screen(parent, "CreditScreen"),
-    margin({ 100,100,100,100 })
+    Screen(parent, "CreditScreen")
 {
 }
 
@@ -20,7 +20,7 @@ CreditScreen::~CreditScreen()
 void CreditScreen::Initialize()
 {
     hPict_[PIC_BACKGROUND] = Image::Load("black.png");
-    hPict_[PIC_BASIC_FRAME_TEX] = Image::Load("frame.png");
+    hPict_[PIC_BASIC_FRAME_TEX] = Image::Load("frame256.png");
     hPict_[PIC_DESCRIPTION] = Image::Load("descr.png");
     Image::SetAlpha(hPict_[PIC_BACKGROUND], 128);
     //keyHelp.push_back(KEY_CANCEL, "戻る");
@@ -29,6 +29,8 @@ void CreditScreen::Initialize()
     for (int i = 0; i < 20; i++) {
         debugtext->AddStrPtr(&debugStr[i]);
     }
+    margin = { 50,50,50,50 };   //コンストラクタでやるとxが-1になる 原因不明のためこっちで
+    debugStr[16] = std::to_string(margin.x);
 }
 
 //更新
@@ -36,6 +38,13 @@ void CreditScreen::Update()
 {
     if (Input::IsKeyDown(DIK_P)) {
         Prev();
+    }
+
+    if (Input::IsKeyDown(DIK_6)) {
+        resize = (0.5f);
+    }
+    if (Input::IsKeyDown(DIK_7)) {
+        resize = (1.0f);
     }
 }
 
@@ -51,50 +60,57 @@ void CreditScreen::Draw()
     int edge = 64;
     Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], 0, 0, edge, edge);
     
+    using namespace SystemConfig;
     //frame構築
     for (int y = 0; y < 3; y++) {
         switch (y){
         case 0: 
-            frameTra.position_.y = -(scrH / 2.0f) + margin.x + edge/2.0f; 
+            frameTra.position_.y = -(screenHeight / 2.0f) + margin.x + edge/2.0f;
+            debugStr[11] = "-(screenHeight / 2.0f) + margin.x + edge/2.0f:" + std::to_string(-(screenHeight / 2.0f) + margin.x + edge / 2.0f);
+            debugStr[12] = "-(screenHeight / 2.0f):" + std::to_string(-(screenHeight / 2.0f));
+            debugStr[13] = "margin.x:" + std::to_string(margin.x);
+            debugStr[14] = "edge/2.0f:" + std::to_string(edge / 2.0f);
+            //debugStr[15] = ":" + std::to_string();
             frameTra.scale_.y = 1;
             break;
         case 1:
             frameTra.position_.y = 0;
-            frameTra.scale_.y = (scrH - edge*2 - margin.x - margin.z)/ edge;
+            frameTra.scale_.y = (float)(screenHeight - edge * 2 - margin.x - margin.z) / (float)edge;
             break;
         case 2:
-            frameTra.position_.y = (scrH / 2.0f) - margin.z - edge / 2.0f;
+            frameTra.position_.y = ((float)screenHeight / 2.0f) - (float)margin.z - (float)edge / 2.0f;
             frameTra.scale_.y = 1;
             break;
         }
         for (int x = 0; x < 3; x++) {
             switch (x) {
             case 0:
-                frameTra.position_.x = -(scrW / 2.0f) + margin.y + edge / 2.0f;
+                frameTra.position_.x = -(screenWidth / 2.0f) + margin.y + edge / 2.0f;
                 frameTra.scale_.x = 1;
                 break;
             case 1:
                 frameTra.position_.x = 0;
-                frameTra.scale_.x = (scrW - edge * 2 - margin.y - margin.w) / edge;
+                frameTra.scale_.x = (float)(screenWidth - edge * 2 - margin.y - margin.w) / (float)edge;
                 break;
             case 2:
-                frameTra.position_.x = (scrW / 2.0f) - margin.w - edge / 2.0f;
+                frameTra.position_.x = (screenWidth / 2.0f) - margin.w - edge / 2.0f;
                 frameTra.scale_.x = 1;
                 break;
             }
 
             Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], x*edge, y*edge, edge, edge);
             Transform tmp = frameTra;
-            //tmp.SetScale(0.5, 0, 0, 0);
+            tmp.SetReSize(resize);
             Image::SetTransform(hPict_[PIC_BASIC_FRAME_TEX], tmp);
             Image::Draw(hPict_[PIC_BASIC_FRAME_TEX]);
             debugStr[y * 3 + x] =
-                "frame:" + std::to_string(x) + "," + std::to_string(y) +
+                "frame" + std::to_string(y*3+x) + ": " + std::to_string(x) + ", " + std::to_string(y) +
                 " tra: pos(" + std::to_string((int)tmp.position_.x) + "," + std::to_string((int)tmp.position_.y) +
-                ") scl(" + std::to_string((int)tmp.scale_.x) + "," + std::to_string((int)tmp.scale_.y);
+                ") scl(" + std::to_string(tmp.scale_.x) + "," + std::to_string(tmp.scale_.y) + ")";
         }
     }
-    debugStr[9] = "scr:" + std::to_string(scrW) + "," + std::to_string(scrH);
+    debugStr[9] = "scr:" + std::to_string(screenWidth) + "," + std::to_string(screenHeight);
+    debugStr[10] = "mousePos: " + std::to_string(Input::GetMousePosition().x-640) + ", " + std::to_string(Input::GetMousePosition().y-360);
 }
 
 //開放

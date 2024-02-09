@@ -13,13 +13,13 @@ namespace SystemConfig {
 
 	void SetVolBGM(int vol) {
 		volBGM = vol;
-		assert(vol < 0 || vol > 100);
+		assert(0 <=vol && vol <= 100);
 	}
 	int GetVolBGM() { return volBGM; }
 
 	void SetVolSE(int vol) {
 		volSE = vol;
-		assert(vol < 0 || vol > 100);
+		assert(0 <= vol && vol <= 100);
 	}
 	int GetVolSE() { return volSE; }
 
@@ -34,8 +34,8 @@ namespace SystemConfig {
 		const char* section = "System";
 		const char* iniFile = ".\\systemConf.ini";
 
-		screenWidth = GetPrivateProfileInt(section, "width", screenWidth, iniFile);		//スクリーンの幅
-		screenHeight = GetPrivateProfileInt(section, "height", screenHeight, iniFile);	//スクリーンの高さ
+		screenWidth = GetPrivateProfileInt("Screen", "width", screenWidth, iniFile);		//スクリーンの幅
+		screenHeight = GetPrivateProfileInt("Screen", "height", screenHeight, iniFile);	//スクリーンの高さ
 		SetVolBGM(GetPrivateProfileInt(section, "vol_bgm", volBGM, iniFile));		//BGM
 		SetVolSE(GetPrivateProfileInt(section, "vol_se", volSE, iniFile));			//SE
 		SetFPS(GetPrivateProfileInt(section, "fps", 60, iniFile));					//FPS（画面更新速度）

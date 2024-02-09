@@ -17,7 +17,8 @@ public:
 	XMFLOAT3 rotate_;		//向き
 	XMFLOAT3 scale_;		//拡大率
 	Transform * pParent_;	//親オブジェクトの情報
-
+	XMFLOAT3 reSize_;		//リサイズフィルタ
+	XMFLOAT3 center_;
 	//コンストラクタ
 	Transform();
 
@@ -55,5 +56,10 @@ public:
 	void SetScale(float x, float y, float z) { SetScale(XMFLOAT3(x, y, z)); }
 	void SetScale(float all) { SetScale(XMFLOAT3(all, all, all)); }
 	void SetScale(float all, float oX, float oY, float oZ);	//指定座標を中心に拡縮（要検証）
+	void SetReSize(XMFLOAT3 scale) { reSize_ = scale; }
+	void SetReSize(float x, float y, float z) { SetReSize(XMFLOAT3(x, y, z)); }
+	void SetReSize(float all) { SetReSize(XMFLOAT3(all, all, all)); }
+private:
+	Transform CalcTrans(Transform tra);
 };
 

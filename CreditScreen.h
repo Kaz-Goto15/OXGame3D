@@ -15,10 +15,10 @@ class CreditScreen : public Screen
     int hPict_[PIC_MAX - 1];
 
     XMINT4 margin;  //上右下左
-    int scrW = GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini");		//スクリーンの幅
-    int scrH = GetPrivateProfileInt("SCREEN", "Height", 600, ".\\setup.ini");	//スクリーンの高さ
     DebugText* debugtext;
     std::string debugStr[20];
+
+    float resize = 1;
 public:
     CreditScreen(GameObject* parent);
     ~CreditScreen();

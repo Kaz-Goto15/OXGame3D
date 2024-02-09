@@ -30,6 +30,7 @@ FbxParts.cpp内にマイナスにしている箇所が２か所ありました。確認してください。
 #include "VFX.h"
 
 #include "../KeyConfig.h"
+#include "../SystemConfig.h"
 
 #pragma comment(lib,"Winmm.lib")
 
@@ -84,6 +85,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//=========================== 追加 ===============================//
 	KeyConfig::Init("keyconfig.csv");
+	SystemConfig::Init();
 	//================================================================//
 
 	//メッセージループ（何か起きるのを待つ）

@@ -186,6 +186,6 @@ bool Button::Between(float value, float min, float max)
 
 bool Button::IsMovedMouse()
 {
-	XMFLOAT3* mouseMove = &Input::GetMouseMove();
-	return (mouseMove->x > 0 || mouseMove->y > 0);
+	XMFLOAT3 mouseMove = Input::GetMouseMove();
+	return (mouseMove.x > 0 || mouseMove.y > 0);
 }
