@@ -4,6 +4,8 @@
 //#include <stdlib.h>
 
 namespace SystemConfig {
+	int screenWidth = 800;
+	int screenHeight = 600;
 	int volBGM = 0;
 	int volSE = 0;
 	int FPS = 0;
@@ -32,8 +34,10 @@ namespace SystemConfig {
 		const char* section = "System";
 		const char* iniFile = ".\\systemConf.ini";
 
-		SetVolBGM(GetPrivateProfileInt(section, "vol_bgm", volBGM, iniFile));		//スクリーンの幅
-		SetVolSE(GetPrivateProfileInt(section, "vol_se", volSE, iniFile));			//スクリーンの高さ
+		screenWidth = GetPrivateProfileInt(section, "width", screenWidth, iniFile);		//スクリーンの幅
+		screenHeight = GetPrivateProfileInt(section, "height", screenHeight, iniFile);	//スクリーンの高さ
+		SetVolBGM(GetPrivateProfileInt(section, "vol_bgm", volBGM, iniFile));		//BGM
+		SetVolSE(GetPrivateProfileInt(section, "vol_se", volSE, iniFile));			//SE
 		SetFPS(GetPrivateProfileInt(section, "fps", 60, iniFile));					//FPS（画面更新速度）
 		EnableFullScreen(GetPrivateProfileInt(section, "enFullScreen", 0, iniFile));//フルスクリーンの有効無効
 	}

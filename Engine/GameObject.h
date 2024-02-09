@@ -130,7 +130,9 @@ public:
 	//RootJobを取得
 	GameObject* GetRootJob();
 
-
+	//ボタン押下時判定を追加した場合に使われる(override)
+	// 引数:hAct ボタンにSetActionで設定した値 押下時にボタンから呼ばれる
+	virtual void Act(int hAct) {};
 	//各アクセス関数
 	XMFLOAT3 GetPosition() { return transform_.position_; }
 	XMFLOAT3 GetRotate() { return transform_.rotate_; }

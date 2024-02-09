@@ -51,7 +51,7 @@ void CreditScreen::Draw()
     int edge = 64;
     Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], 0, 0, edge, edge);
     
-    
+    //frameç\íz
     for (int y = 0; y < 3; y++) {
         switch (y){
         case 0: 
@@ -88,7 +88,10 @@ void CreditScreen::Draw()
             //tmp.SetScale(0.5, 0, 0, 0);
             Image::SetTransform(hPict_[PIC_BASIC_FRAME_TEX], tmp);
             Image::Draw(hPict_[PIC_BASIC_FRAME_TEX]);
-            debugStr[y*3+x] = "frame:" + std::to_string(x) + "," + std::to_string(y) + " tra:" + std::to_string((int)tmp.position_.x) + "," + std::to_string((int)tmp.position_.y) + ;
+            debugStr[y * 3 + x] =
+                "frame:" + std::to_string(x) + "," + std::to_string(y) +
+                " tra: pos(" + std::to_string((int)tmp.position_.x) + "," + std::to_string((int)tmp.position_.y) +
+                ") scl(" + std::to_string((int)tmp.scale_.x) + "," + std::to_string((int)tmp.scale_.y);
         }
     }
     debugStr[9] = "scr:" + std::to_string(scrW) + "," + std::to_string(scrH);

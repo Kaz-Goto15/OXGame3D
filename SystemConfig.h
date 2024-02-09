@@ -1,7 +1,8 @@
 #pragma once
 
 namespace SystemConfig {
-
+	extern int screenHeight;
+	extern int screenWidth;
 	/// BGMâπó ê›íË 0-100
 	/// <param name="vol">âπó (%)</param>
 	void SetVolBGM(int vol);

@@ -131,6 +131,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ButtonGroup.cpp" />
     <ClCompile Include="ceiling.cpp" />
     <ClCompile Include="ConfigKey.cpp" />
     <ClCompile Include="CreditScreen.cpp" />
@@ -189,6 +191,8 @@
     <ClCompile Include="TransitionAnimBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="ButtonGroup.h" />
     <ClInclude Include="ceiling.h" />
     <ClInclude Include="ConfigKey.h" />
     <ClInclude Include="CreditScreen.h" />
