@@ -41,5 +41,19 @@ public:
 	}
 
 	void ConvDrawPos(float x, float y);
+
+	//アクセス云々の前にここで座標指定の色々をさせるべきではないか
+	void SetPosition(XMFLOAT3 position) { position_ = position; }
+	void SetPosition(float x, float y, float z) { SetPosition(XMFLOAT3(x, y, z)); }
+	void SetPosition(int x, int y, int z) { SetPosition(XMFLOAT3((float)x, (float)y, (float)z)); }
+	void SetRotate(XMFLOAT3 rotate) { rotate_ = rotate; }
+	void SetRotate(float x, float y, float z) { SetRotate(XMFLOAT3(x, y, z)); }
+	void SetRotateX(float x) { SetRotate(x, rotate_.y, rotate_.z); }
+	void SetRotateY(float y) { SetRotate(rotate_.x, y, rotate_.z); }
+	void SetRotateZ(float z) { SetRotate(rotate_.x, rotate_.y, z); }
+	void SetScale(XMFLOAT3 scale) { scale_ = scale; }
+	void SetScale(float x, float y, float z) { SetScale(XMFLOAT3(x, y, z)); }
+	void SetScale(float all) { SetScale(XMFLOAT3(all, all, all)); }
+	void SetScale(float all, float oX, float oY, float oZ);	//指定座標を中心に拡縮（要検証）
 };
 

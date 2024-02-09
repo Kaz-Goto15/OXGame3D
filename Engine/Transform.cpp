@@ -51,3 +51,30 @@ void Transform::ConvDrawPos(float x, float y)
 	position_.z = 0;
 }
 
+void Transform::SetScale(float all, float oX, float oY, float oZ)
+{
+	XMFLOAT3 oPos = { 0,0,0 };
+	XMVECTOR oVec = XMLoadFloat3(&oPos);
+	XMFLOAT3 pointPos = { oX,oY,oZ };
+	XMVECTOR pointVec = XMLoadFloat3(&pointPos);
+	XMFLOAT3 nowPos = position_;
+	XMVECTOR nowVec = XMLoadFloat3(&nowPos);
+	XMFLOAT3 nextPos;
+	XMVECTOR tmpVec, tmpVec2;
+	XMFLOAT3 tmpFloat;
+
+	//移動機能(to対称点)→拡大機能→移動場所計算→移動機能(to新配置点)
+	SetPosition(oPos);
+	SetScale(all);
+
+	tmpVec = nowVec - pointVec;
+	XMStoreFloat3(&tmpFloat, tmpVec);
+	tmpFloat.x *= all;
+	tmpFloat.y *= all;
+	tmpFloat.z *= all;
+	tmpVec2 = XMLoadFloat3(&tmpFloat);
+	tmpVec = pointVec + tmpVec2;
+	XMStoreFloat3(&nextPos, tmpVec);
+	SetPosition(nextPos);
+}
+
