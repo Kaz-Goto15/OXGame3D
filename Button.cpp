@@ -10,7 +10,8 @@ Button::Button(GameObject* parent) :
 	state(IDLE),
 	actHandle_(-1),
 	hAl(Text::HORIZONAL_ALIGNMENT::CENTER),
-	vAl(Text::VERTICAL_ALIGNMENT::CENTER)
+	vAl(Text::VERTICAL_ALIGNMENT::CENTER),
+	nextIdle(false)
 {
 	std::fill_n(hImg_, MAX, -1);
 }
@@ -34,11 +35,15 @@ void Button::Initialize()
 //XV
 void Button::Update()
 {
+	if (nextIdle) {
+		state = IDLE;
+		nextIdle = false;
+	}
 	switch (state)
 	{
-	case Button::IDLE:		UpdateIdle();	break;
-	case Button::SELECT:	UpdateSelect();	break;
-	case Button::PUSH:		UpdatePush();	break;
+	case Button::IDLE:		UpdateIdle();		break;
+	case Button::SELECT:	UpdateSelect();		break;
+	case Button::PUSH:		UpdatePush();		break;
 	case Button::SELECTED:	UpdateSelected();	break;
 	}
 }
@@ -46,8 +51,14 @@ void Button::Update()
 //•`‰æ
 void Button::Draw()
 {
-	Image::SetTransform(hImg_[state], transform_);
-	Image::Draw(hImg_[state]);
+	switch (state)
+	{
+	case Button::IDLE:		DrawIdle();		break;
+	case Button::SELECT:	DrawSelect();	break;
+	case Button::PUSH:		DrawPush();		break;
+	case Button::SELECTED:	DrawSelected();	break;
+	}
+
 	buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonTextName_.c_str(), hAl, vAl);
 }
 
@@ -58,7 +69,7 @@ void Button::Release()
 
 std::string Button::LinkImageFile(STATE _state)
 {
-	std::string AssetDir = "Title\\";
+	std::string AssetDir = "Default\\";
 	std::string fileName;
 	switch (_state)
 	{
@@ -68,6 +79,30 @@ std::string Button::LinkImageFile(STATE _state)
 	case Button::SELECTED:	fileName = "btnSelected.png";	break;
 	}
 	return AssetDir + fileName;
+}
+
+void Button::DrawIdle()
+{
+	Image::SetTransform(hImg_[IDLE], transform_);
+	Image::Draw(hImg_[IDLE]);
+}
+
+void Button::DrawSelect()
+{
+	Image::SetTransform(hImg_[SELECT], transform_);
+	Image::Draw(hImg_[SELECT]);
+}
+
+void Button::DrawPush()
+{
+	Image::SetTransform(hImg_[PUSH], transform_);
+	Image::Draw(hImg_[PUSH]);
+}
+
+void Button::DrawSelected()
+{
+	Image::SetTransform(hImg_[SELECTED], transform_);
+	Image::Draw(hImg_[SELECTED]);
 }
 
 std::string Button::GetDebugStr(int i)
@@ -154,6 +189,7 @@ void Button::UpdateSelected()
 {
 	GameObject* obj = (GameObject*)GetParent();
 	obj->Act(actHandle_);
+	nextIdle = true;
 }
 
 bool Button::IsEntered()

@@ -19,6 +19,7 @@ class TitleButton : public GameObject
     Text::VERTICAL_ALIGNMENT vAl;
     int actHandle_;
     XMINT4 clip = { 0,0,128,128 };
+    bool nextIdle = false;
 public:
     STATE state;
     TitleButton(GameObject* parent);    //コンストラクタ
@@ -35,8 +36,8 @@ public:
     //自身(ボタン)と親の選択ステートを紐づける
     void SetAction(int hAct);
 
-    //処理終了と銘打っているが、強制的にIDLE状態にする関数
-    void EndAct() { state = IDLE; }
+    //処理終了
+    void EndAct() { nextIdle = true; }
 private:
     void UpdateIdle();
     void UpdateSelect();

@@ -103,14 +103,17 @@ void TitleButton::Update()
 	if (Input::IsKey(DIK_SLASH)) {
 		clip.w--;
 	}
-
 	//Image::SetRect(hImg_[0], clip.x, clip.y, clip.z, clip.w);
+	if (nextIdle) {
+		nextIdle = false;
+		state = IDLE;
+	}
 	switch (state)
 	{
 	case TitleButton::IDLE:		UpdateIdle();	break;
 	case TitleButton::SELECT:	UpdateSelect();	break;
 	case TitleButton::PUSH:		UpdatePush();	break;
-	case TitleButton::SELECTED:	UpdateSelected();	break;
+	case TitleButton::SELECTED:	UpdateSelected();break;
 	}
 }
 
@@ -215,6 +218,7 @@ void TitleButton::UpdateSelected()
 {
 	TitleScene* ts = (TitleScene*)GetParent();
 	ts->Act(actHandle_);
+	EndAct();
 }
 
 bool TitleButton::IsEntered()

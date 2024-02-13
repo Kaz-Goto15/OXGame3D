@@ -12,15 +12,13 @@ class CreditScreen : public Screen
         PIC_DESCRIPTION,
         PIC_MAX
     };
-    int hPict_[PIC_MAX - 1];
+    int hPict_[PIC_MAX];
 
     XMINT4 frameMargin;  //ã‰E‰º¶
     float frameScale;    //‰Â•ÏƒtƒŒ[ƒ€Šg‘å—¦
+
     DebugText* debugtext;
     std::string debugStr[20];
-    float resize = 1;
-    float scaleMag = 1.0f;
-    bool b = true;
 public:
     CreditScreen(GameObject* parent);
     ~CreditScreen();

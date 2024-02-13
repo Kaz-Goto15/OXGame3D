@@ -89,7 +89,7 @@ void TitleScene::Act(int hAct)
 	case TitleScene::S_SEL_CREDIT:
 		pScreen = Instantiate<CreditScreen>(GetParent());
 		pScreen->SetPrevScene(this);
-		pScreen->Run(); //ここでleaveを内包したほうがいいのでは　a合成 後ろのほうが一番出る 前は完全透明←マジで？明るくなるんじゃねえの
+		pScreen->Run(); //ここでleaveを内包したほうがいいのでは
 		break;
 	case TitleScene::S_SEL_OPTION:
 		//Instantiate<OptionScreen>(GetParent());
