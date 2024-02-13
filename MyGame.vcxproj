@@ -166,6 +166,7 @@
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="HelpBar.cpp" />
+    <ClCompile Include="OptionScreen.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="Screen.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="HelpBar.h" />
+    <ClInclude Include="OptionScreen.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Sample.h" />
     <ClInclude Include="Screen.h" />

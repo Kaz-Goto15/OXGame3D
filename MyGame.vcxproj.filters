@@ -27,9 +27,6 @@
     <Filter Include="A_Utility">
       <UniqueIdentifier>{e6d5dfa6-5512-49cd-a920-cd16908afac4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="C_Scene">
-      <UniqueIdentifier>{1ea4850a-abd3-46e5-a50f-7bce03f215d2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="B_GameScene">
       <UniqueIdentifier>{5a1252d3-be04-4a39-9177-473d69588329}</UniqueIdentifier>
     </Filter>
@@ -44,6 +41,9 @@
     </Filter>
     <Filter Include="BaseObject">
       <UniqueIdentifier>{2c3164fb-4614-454f-8840-54b54be4564c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C_Scene/Screen">
+      <UniqueIdentifier>{1ea4850a-abd3-46e5-a50f-7bce03f215d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -159,32 +159,31 @@
       <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
     <ClCompile Include="SplashScene.cpp">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClCompile>
     <ClCompile Include="TestScene.cpp">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClCompile>
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="TransitionAnimBase.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="TitleScene.cpp">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClCompile>
-    <ClCompile Include="CreditScreen.cpp" />
     <ClCompile Include="HelpBar.cpp" />
     <ClCompile Include="EditScene.cpp">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClCompile>
     <ClCompile Include="StageView.cpp">
       <Filter>Edit</Filter>
     </ClCompile>
     <ClCompile Include="StageData.cpp" />
     <ClCompile Include="EaseScene.cpp">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClCompile>
     <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="PlayScene.cpp">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClCompile>
     <ClCompile Include="TitleButton.cpp">
       <Filter>Splash,Title Obj</Filter>
@@ -198,6 +197,12 @@
     </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>BaseObject</Filter>
+    </ClCompile>
+    <ClCompile Include="CreditScreen.cpp">
+      <Filter>C_Scene/Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionScreen.cpp">
+      <Filter>C_Scene/Screen</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,32 +318,31 @@
       <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="SplashScene.h">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClInclude>
     <ClInclude Include="TestScene.h">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClInclude>
     <ClInclude Include="Transition.h" />
     <ClInclude Include="TransitionAnimBase.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="TitleScene.h">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClInclude>
-    <ClInclude Include="CreditScreen.h" />
     <ClInclude Include="HelpBar.h" />
     <ClInclude Include="EditScene.h">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClInclude>
     <ClInclude Include="StageView.h">
       <Filter>Edit</Filter>
     </ClInclude>
     <ClInclude Include="StageData.h" />
     <ClInclude Include="EaseScene.h">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClInclude>
     <ClInclude Include="DebugText.h" />
     <ClInclude Include="PlayScene.h">
-      <Filter>C_Scene</Filter>
+      <Filter>C_Scene/Screen</Filter>
     </ClInclude>
     <ClInclude Include="TitleButton.h">
       <Filter>Splash,Title Obj</Filter>
@@ -352,6 +356,12 @@
     </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>BaseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="CreditScreen.h">
+      <Filter>C_Scene/Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionScreen.h">
+      <Filter>C_Scene/Screen</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

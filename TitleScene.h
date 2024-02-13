@@ -13,8 +13,8 @@ class TitleScene : public GameObject
 		PIC_BACKGROUND,
 		PIC_TITLE,
 		PIC_CHARACTER,
-		SEL_CHOOSE,
-		MAX
+		//SEL_CHOOSE,
+		PIC_MAX
 	};
 	enum SELECT_STATE {
 		S_SEL_START,
@@ -23,22 +23,12 @@ class TitleScene : public GameObject
 		S_SEL_EXIT,
 		S_SEL_MAX
 	};
-	enum MANIP_TARGET {
-		MANIP_MAIN,
-		MANIP_FILE_LIST,
-		MANIP_CREDIT,
-		MANIP_OPTION,
-		MANIP_CONFIRM_WINDOW,
-
-	};
 	int easeNum = 41;
-	int hPict_[Img::MAX];
+	int hPict_[Img::PIC_MAX];
 	Transform ringTra;
-	Text* newText;
 	std::string TitleImgFileName(Img E_IMG);
 
 	SELECT_STATE selectState_;
-	MANIP_TARGET manipTarget;
 	//void Run(SELECT_STATE& ss);
 
 	TitleButton* btn[S_SEL_MAX];
