@@ -61,7 +61,7 @@ public:
 	void SetReSize(float x, float y, float z) { SetReSize(XMFLOAT3(x, y, z)); }
 	void SetReSize(float all) { SetReSize(XMFLOAT3(all, all, all)); }
 	void IsCalcCenterPoint(bool b) { isCalcCenterPt_ = b; }
-	void SetCenter(XMFLOAT3 pt) { reSize_ = pt; }
+	void SetCenter(XMFLOAT3 pt) { center_ = pt; }
 	void SetCenter(float x, float y, float z) { SetCenter(XMFLOAT3(x, y, z)); }
 private:
 	Transform CalcTrans(Transform tra);

@@ -4,7 +4,7 @@
 //ボタンを管理するクラス
 class Button : public GameObject
 {
-private:
+protected:
     enum STATE {
         IDLE,
         SELECT,
@@ -18,12 +18,12 @@ private:
     Text::HORIZONAL_ALIGNMENT hAl;
     Text::VERTICAL_ALIGNMENT vAl;
     int actHandle_;
-    XMINT4 clip = { 0,0,128,128 };
+    //XMINT4 clip = { 0,0,128,128 };
     bool nextIdle;
 public:
     STATE state;
 
-    Button(GameObject* parent);    //コンストラクタ
+    Button(GameObject* parent, const std::string& name= "Button");    //コンストラクタ
     ~Button();                     //デストラクタ
     void Initialize() override; //初期化
     void Update() override;     //更新
@@ -39,6 +39,8 @@ public:
     void SetFont(const char* fileName, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength);
     void SetText(std::string buttonName);
 protected:
+    //初期化追加時の処理
+    virtual void Init() {}
     //画像リンク ボタン画像を変えたい場合これ継承してオーバーライドする
     virtual std::string LinkImageFile(STATE state);
     //ボタンアニメーション系

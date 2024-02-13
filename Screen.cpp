@@ -1,18 +1,18 @@
 #include "Screen.h"
 #include "Engine/Image.h"
-
+#include <string>
 void Screen::DebugAction()
 {
-    
-    LPSTR str = nullptr;
-    GetWindowText(GetActiveWindow(), str, 0);
-    str += *objectName_.c_str();
-    SetWindowText(GetActiveWindow(),str);
+    char str[8];
+    GetWindowTextA(GetForegroundWindow(), str, 8);
+    std::string out = str;
+    out += "   " + objectName_ ;
+    SetWindowText(GetActiveWindow(),out.c_str());
 }
 
 //コンストラクタ
 Screen::Screen(GameObject* parent, const std::string& name) :
-    GameObject(parent, "Screen"),
+    GameObject(parent, name),
     pPrevObject(nullptr)
 {
     Leave();
@@ -21,26 +21,6 @@ Screen::Screen(GameObject* parent, const std::string& name) :
 
 //デストラクタ
 Screen::~Screen()
-{
-}
-
-//初期化
-void Screen::Initialize()
-{
-}
-
-//更新
-void Screen::Update()
-{
-}
-
-//描画
-void Screen::Draw()
-{   
-}
-
-//開放
-void Screen::Release()
 {
 }
 

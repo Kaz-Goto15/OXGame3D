@@ -3,8 +3,8 @@
 #include "Engine/Input.h"
 #include "SystemConfig.h"
 //コンストラクタ
-Button::Button(GameObject* parent) :
-	GameObject(parent, "Button"),
+Button::Button(GameObject* parent, const std::string& name) :
+	GameObject(parent, name),
 	buttonTextObj_(nullptr),
 	buttonTextName_(""),
 	state(IDLE),
@@ -30,6 +30,8 @@ void Button::Initialize()
 	}
 	buttonTextObj_ = new Text;
 	buttonTextObj_->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
+
+	Init();
 }
 
 //更新
@@ -129,7 +131,7 @@ std::string Button::GetDebugStr(int i)
 		"(" + std::to_string((int)(buttonTra.position_.y + SystemConfig::screenHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
 		"(" + std::to_string((int)(buttonTra.position_.y + SystemConfig::screenHeight / 2.0f + imageSize.y / 2.0f)) + ")";
 	case 5:	return "buttonPos: " + std::to_string(buttonTra.position_.x) + "," + std::to_string(buttonTra.position_.y);
-	case 6:	return "clip: " + std::to_string(clip.x) + "," + std::to_string(clip.y) + "," + std::to_string(clip.z) + "," + std::to_string(clip.w);
+	//case 6:	return "clip: " + std::to_string(clip.x) + "," + std::to_string(clip.y) + "," + std::to_string(clip.z) + "," + std::to_string(clip.w);
 	}
 	return "invalid num";
 }
@@ -188,7 +190,7 @@ void Button::UpdatePush()
 void Button::UpdateSelected()
 {
 	GameObject* obj = (GameObject*)GetParent();
-	obj->Act(actHandle_);
+	obj->ButtonAct(actHandle_);
 	nextIdle = true;
 }
 
@@ -223,5 +225,5 @@ bool Button::Between(float value, float min, float max)
 bool Button::IsMovedMouse()
 {
 	XMFLOAT3 mouseMove = Input::GetMouseMove();
-	return (mouseMove.x > 0 || mouseMove.y > 0);
+	return (mouseMove.x != 0 || mouseMove.y != 0);
 }

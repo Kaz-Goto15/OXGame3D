@@ -90,6 +90,8 @@ namespace Image
 		Transform tmp = _datas[handle]->transform;
 		tmp.position_.x /= (float)(Direct3D::screenWidth_ / 2.0f);
 		tmp.position_.y /= -(float)(Direct3D::screenHeight_ / 2.0f);
+		tmp.center_.x /= (float)(Direct3D::screenWidth_ / 2.0f);
+		tmp.center_.y /= -(float)(Direct3D::screenHeight_ / 2.0f);
 		tmp.Calclation();
 		//_datas[handle]->transform.Calclation();
 		//_datas[handle]->pSprite->Draw(_datas[handle]->transform, _datas[handle]->rect, _datas[handle]->alpha);

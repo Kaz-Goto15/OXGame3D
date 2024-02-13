@@ -76,7 +76,7 @@ void TitleScene::Draw() {
 }
 void TitleScene::Release() {}
 
-void TitleScene::Act(int hAct)
+void TitleScene::ButtonAct(int hAct)
 {
 	SELECT_STATE ss = static_cast<SELECT_STATE>(hAct);
 	switch (ss)
@@ -94,7 +94,6 @@ void TitleScene::Act(int hAct)
 	case TitleScene::S_SEL_OPTION:
 		//Instantiate<OptionScreen>(GetParent());
 		ShellExecute(NULL, "open", "https://horikogasa.studio.site/", NULL, NULL, SW_SHOWNORMAL);
-		btn[ss]->EndAct();
 		break;
 	case TitleScene::S_SEL_EXIT:
 		exit(0);

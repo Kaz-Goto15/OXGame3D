@@ -2,6 +2,7 @@
 #include "Global.h"
 #include <vector>
 #include <string>
+#include "Debug.h"
 namespace Input
 {
 
@@ -210,6 +211,7 @@ namespace Input
 	XMFLOAT3 GetMouseMove()
 	{
 		XMFLOAT3 result = XMFLOAT3((float)mouseState_.lX, (float)mouseState_.lY, (float)mouseState_.lZ);
+		Debug::Log("x:" + std::to_string(result.x) + "y:" + std::to_string(result.y), true);
 		return result;
 	}
 

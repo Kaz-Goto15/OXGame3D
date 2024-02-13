@@ -4,12 +4,14 @@
 
 #include "SystemConfig.h"
 #include "DebugText.h"
+#include "Button.h"
 
 //コンストラクタ
 CreditScreen::CreditScreen(GameObject* parent):
     Screen(parent, "CreditScreen"),
     frameMargin(0,0,0,0),
     frameScale(1.0f),
+    framePos(0,50,0),
     debugtext(nullptr)
 {
     std::fill_n(hPict_, PIC_MAX, -1);
@@ -28,13 +30,18 @@ void CreditScreen::Initialize()
     hPict_[PIC_BASIC_FRAME_TEX] = Image::Load("frame256.png");
     hPict_[PIC_DESCRIPTION] = Image::Load("descr.png");
     Image::SetAlpha(hPict_[PIC_BACKGROUND], 128);
-    //keyHelp.push_back(KEY_CANCEL, "戻る");
     
     debugtext = Instantiate<DebugText>(this);
     for (int i = 0; i < 20; i++) {
         debugtext->AddStrPtr(&debugStr[i]);
     }
-    frameMargin = { 50,50,200,50 };   //コンストラクタでやるとxが-1になる 原因不明のためこっちで
+    frameMargin = { 50,50,150,50 };   //コンストラクタでやるとxが-1になる 原因不明のためこっちで
+    backBtn = Instantiate<Button>(this);
+    backBtn->SetText("BACK");
+    backBtn->SetAction(0);
+    backBtn->SetPosition(0, 266, 0);
+    backBtn->SetScale(2,0.66f,1);
+    
 }
 
 //更新
@@ -52,6 +59,12 @@ void CreditScreen::Update()
     if (Input::IsKey(DIK_7)) {
         frameScale += 0.01f;
     }
+    if (Input::IsKey(DIK_8)) {
+        framePos.y -= 1.0f;
+    }
+    if (Input::IsKey(DIK_9)) {
+        framePos.y += 1.0f;
+    }
 }
 
 //描画
@@ -60,7 +73,7 @@ void CreditScreen::Draw()
     for (int i = 0; i < PIC_MAX; i++) {
         if (i == PIC_BASIC_FRAME_TEX) {
             Transform frameTra;
-            frameTra.SetCenter(0, 0, 0);
+            frameTra.SetCenter(framePos);   //中心点を移動して座標決めてるので注意 具体的には符号逆転する(中心点を動かすと必然的に逆側に移動するため)
             frameTra.IsCalcCenterPoint(true);
             int edge = 64;
             Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], 0, 0, edge, edge);
@@ -100,23 +113,48 @@ void CreditScreen::Draw()
 
                     Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], x * edge, y * edge, edge, edge);
                     Transform tmp = frameTra;
+                    
                     tmp.SetReSize(frameScale);
 
-                    Image::SetTransform(hPict_[PIC_BASIC_FRAME_TEX], tmp);
-                    Image::Draw(hPict_[PIC_BASIC_FRAME_TEX]);
+                    Image::SetTransform(hPict_[i], tmp);
+                    Image::Draw(hPict_[i]);
+                    
+    //                XMFLOAT3 tmpPos = {
+    //(tmp.position_.x - tmp.center_.x) * (tmp.scale_.x * tmp.reSize_.x),// + center_.x,
+    //(tmp.position_.y - tmp.center_.y) * (tmp.scale_.y * tmp.reSize_.y),// + center_.y,
+    //(tmp.position_.z - tmp.center_.z) * (tmp.scale_.z * tmp.reSize_.z),// + center_.z
+    //                };
+    //                debugStr[y * 3 + x] =
+    //                    "frame" + std::to_string(y * 3 + x) + ": " + std::to_string(x) + ", " + std::to_string(y) +
+    //                    " tra: pos(" + std::to_string((int)tmp.position_.x) + "," + std::to_string((int)tmp.position_.y) +
+    //                    ") scl(" + std::to_string(tmp.scale_.x) + "," + std::to_string(tmp.scale_.y) + ")" +
+    //                    "cv(" + std::to_string(tmpPos.x) + "," + std::to_string(tmpPos.y)
+    //                    ;
+
                 }
+                //debugStr[9] = "scr:" + std::to_string(screenWidth) + "," + std::to_string(screenHeight);
+                //debugStr[10] = "mousePos: " + std::to_string(Input::GetMousePosition().x - 640) + ", " + std::to_string(Input::GetMousePosition().y - 360);
+                //debugStr[11] = "center:" + std::to_string(framePos.x) + "," + std::to_string(framePos.y);
+                //debugStr[12] = "resize:" + std::to_string(frameScale);
             }
         }
         else {
             Image::SetTransform(hPict_[i], transform_);
             Image::Draw(hPict_[i]);
         }
+
     }
-    //debugStr[9] = "scr:" + std::to_string(screenWidth) + "," + std::to_string(screenHeight);
-    //debugStr[10] = "mousePos: " + std::to_string(Input::GetMousePosition().x-640) + ", " + std::to_string(Input::GetMousePosition().y-360);
+
 }
 
 //開放
 void CreditScreen::Release()
 {
+}
+
+void CreditScreen::ButtonAct(int hAct)
+{
+    if (hAct == 0) {
+        Prev();
+    }
 }

@@ -55,5 +55,5 @@ public:
 	void Update() override;
 	void Draw() override;
 	void Release() override;
-	void Act(int hAct);
+	void ButtonAct(int hAct);
 };

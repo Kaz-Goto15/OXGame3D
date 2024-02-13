@@ -24,10 +24,15 @@ void Transform::Calclation()
 {
 	//移動行列(中心点を考慮するかの条件)
 	if (isCalcCenterPt_) {
+		//XMFLOAT3 tmpPos = {
+		//	(position_.x - center_.x) * (scale_.x * reSize_.x),// + center_.x,
+		//	(position_.y - center_.y) * (scale_.y * reSize_.y),// + center_.y,
+		//	(position_.z - center_.z) * (scale_.z * reSize_.z),// + center_.z
+		//};
 		XMFLOAT3 tmpPos = {
-			(position_.x - center_.x) * (scale_.x * reSize_.x) + center_.x,
-			(position_.y - center_.y) * (scale_.y * reSize_.y) + center_.y,
-			(position_.z - center_.z) * (scale_.z * reSize_.z) + center_.z
+			(position_.x - center_.x) * (reSize_.x),// + center_.x,
+			(position_.y - center_.y) * (reSize_.y),// + center_.y,
+			(position_.z - center_.z) * (reSize_.z),// + center_.z
 		};
 		matTranslate_ = XMMatrixTranslation(tmpPos.x, tmpPos.y, tmpPos.z);
 	}

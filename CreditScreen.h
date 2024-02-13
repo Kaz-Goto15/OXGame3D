@@ -3,6 +3,7 @@
 #include "Engine/GameObject.h"
 #include "Screen.h"
 class DebugText;
+class Button;
 //クレジット画面を管理するクラス
 class CreditScreen : public Screen
 {
@@ -16,8 +17,10 @@ class CreditScreen : public Screen
 
     XMINT4 frameMargin;  //上右下左
     float frameScale;    //可変フレーム拡大率
+    XMFLOAT3 framePos;
 
     DebugText* debugtext;
+    Button* backBtn;
     std::string debugStr[20];
 public:
     CreditScreen(GameObject* parent);
@@ -26,4 +29,5 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
+    void ButtonAct(int hAct);
 };

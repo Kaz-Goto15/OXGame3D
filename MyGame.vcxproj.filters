@@ -42,6 +42,9 @@
     <Filter Include="Option Obj">
       <UniqueIdentifier>{7a0eac1d-0f74-486a-9efe-5545c04a494a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BaseObject">
+      <UniqueIdentifier>{2c3164fb-4614-454f-8840-54b54be4564c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -172,11 +175,9 @@
     <ClCompile Include="EditScene.cpp">
       <Filter>C_Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Screen.cpp" />
     <ClCompile Include="StageView.cpp">
       <Filter>Edit</Filter>
     </ClCompile>
-    <ClCompile Include="Sample.cpp" />
     <ClCompile Include="StageData.cpp" />
     <ClCompile Include="EaseScene.cpp">
       <Filter>C_Scene</Filter>
@@ -189,7 +190,15 @@
       <Filter>Splash,Title Obj</Filter>
     </ClCompile>
     <ClCompile Include="ButtonGroup.cpp" />
-    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Sample.cpp">
+      <Filter>BaseObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Screen.cpp">
+      <Filter>BaseObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>BaseObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -320,11 +329,9 @@
     <ClInclude Include="EditScene.h">
       <Filter>C_Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Screen.h" />
     <ClInclude Include="StageView.h">
       <Filter>Edit</Filter>
     </ClInclude>
-    <ClInclude Include="Sample.h" />
     <ClInclude Include="StageData.h" />
     <ClInclude Include="EaseScene.h">
       <Filter>C_Scene</Filter>
@@ -337,7 +344,15 @@
       <Filter>Splash,Title Obj</Filter>
     </ClInclude>
     <ClInclude Include="ButtonGroup.h" />
-    <ClInclude Include="Button.h" />
+    <ClInclude Include="Sample.h">
+      <Filter>BaseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Screen.h">
+      <Filter>BaseObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>BaseObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

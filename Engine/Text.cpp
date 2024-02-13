@@ -129,7 +129,7 @@ void Text::Draw(int x, int y, const char* str, Text::HORIZONAL_ALIGNMENT hAlignm
 		break;
 	}
 	std::string debugStr = "xy:" + std::to_string(px) + "," + std::to_string(py);
-	Debug::Log(debugStr, true);
+	//Debug::Log(debugStr, true);
 
 	//スプライトはPositionを1ずらすと画面サイズの半分ずれるので、ピクセル単位に変換
 	//px /= (float)(Direct3D::screenWidth_ / 2.0f);
