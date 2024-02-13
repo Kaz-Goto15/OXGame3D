@@ -12,6 +12,7 @@ Transform::Transform(): pParent_(nullptr)
 	matTranslate_ = XMMatrixIdentity();
 	matRotate_ = XMMatrixIdentity();
 	matScale_ = XMMatrixIdentity();
+	isCalcCenterPt_ = false;
 }
 
 
@@ -21,8 +22,20 @@ Transform::~Transform()
 
 void Transform::Calclation()
 {
+	//
+	if (isCalcCenterPt_) {
+		XMFLOAT3 tmpPos = {
+			(position_.x - center_.x) * (scale_.x * reSize_.x) + center_.x,
+			(position_.y - center_.y) * (scale_.y * reSize_.y) + center_.y,
+			(position_.z - center_.z) * (scale_.z * reSize_.z) + center_.z
+		};
+		matTranslate_ = XMMatrixTranslation(tmpPos.x, tmpPos.y, tmpPos.z);
+	}
+	else {
+		matTranslate_ = XMMatrixTranslation(position_.x, position_.y, position_.z);
+	}
 	//à⁄ìÆçsóÒ
-	matTranslate_ = XMMatrixTranslation(position_.x, position_.y, position_.z);
+	//matTranslate_ = XMMatrixTranslation(position_.x, position_.y, position_.z);
 
 	//âÒì]çsóÒ
 	XMMATRIX rotateX, rotateY, rotateZ;
@@ -47,12 +60,12 @@ XMMATRIX Transform::GetWorldMatrix()
 	return  matScale_ * matRotate_ * matTranslate_;
 }
 
-void Transform::ConvDrawPos(float x, float y)
-{
-	position_.x = x / 40 * 0.062f;
-	position_.y = y / -40 * 0.110f;
-	position_.z = 0;
-}
+//void Transform::ConvDrawPos(float x, float y)
+//{
+//	position_.x = x / 40 * 0.062f;
+//	position_.y = y / -40 * 0.110f;
+//	position_.z = 0;
+//}
 
 void Transform::SetScale(float all, float oX, float oY, float oZ)
 {

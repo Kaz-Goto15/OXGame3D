@@ -113,7 +113,7 @@ void EaseScene::Draw() {
 		float cx = circleUnit * i - drawCircleNum / 2.0f * circleUnit;
 		cx += easeSamplePt.x;
 		cy += easeSamplePt.y;
-		ringTra.ConvDrawPos(cx, cy);
+		//ringTra.ConvDrawPos(cx, cy);
 		Image::SetTransform(hPict_, ringTra);
 		Image::Draw(hPict_);
 	}

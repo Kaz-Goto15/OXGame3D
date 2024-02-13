@@ -19,6 +19,8 @@ class CreditScreen : public Screen
     std::string debugStr[20];
 
     float resize = 1;
+    float scaleMag = 1.0f;
+    bool b = true;
 public:
     CreditScreen(GameObject* parent);
     ~CreditScreen();

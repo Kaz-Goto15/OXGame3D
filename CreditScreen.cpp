@@ -46,6 +46,18 @@ void CreditScreen::Update()
     if (Input::IsKeyDown(DIK_7)) {
         resize = (1.0f);
     }
+    if (Input::IsKey(DIK_4)) {
+        scaleMag -= 0.01f;
+    }
+    if (Input::IsKey(DIK_5)) {
+        scaleMag += 0.01f;
+    }
+    if (Input::IsKey(DIK_2)) {
+        b = false;
+    }
+    if (Input::IsKey(DIK_3)) {
+        b = true;
+    }
 }
 
 //•`‰æ
@@ -57,6 +69,7 @@ void CreditScreen::Draw()
     }
     
     Transform frameTra;
+    frameTra.IsCalcCenterPoint(b);
     int edge = 64;
     Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], 0, 0, edge, edge);
     
@@ -101,6 +114,9 @@ void CreditScreen::Draw()
             Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], x*edge, y*edge, edge, edge);
             Transform tmp = frameTra;
             tmp.SetReSize(resize);
+            tmp.scale_.x *= scaleMag;
+            tmp.scale_.y *= scaleMag;
+            tmp.scale_.z *= scaleMag;
             Image::SetTransform(hPict_[PIC_BASIC_FRAME_TEX], tmp);
             Image::Draw(hPict_[PIC_BASIC_FRAME_TEX]);
             debugStr[y * 3 + x] =

@@ -18,7 +18,8 @@ public:
 	XMFLOAT3 scale_;		//拡大率
 	Transform * pParent_;	//親オブジェクトの情報
 	XMFLOAT3 reSize_;		//リサイズフィルタ
-	XMFLOAT3 center_;
+	XMFLOAT3 center_;		//中心点
+	bool isCalcCenterPt_;
 	//コンストラクタ
 	Transform();
 
@@ -41,7 +42,7 @@ public:
 		return XMFLOAT3(a.x + b.x, a.y + b.y, a.z + b.z);
 	}
 
-	void ConvDrawPos(float x, float y);
+	//void ConvDrawPos(float x, float y);	//Imageの仕様を変えたのでいらなくなった
 
 	//アクセス云々の前にここで座標指定の色々をさせるべきではないか
 	void SetPosition(XMFLOAT3 position) { position_ = position; }
@@ -59,6 +60,7 @@ public:
 	void SetReSize(XMFLOAT3 scale) { reSize_ = scale; }
 	void SetReSize(float x, float y, float z) { SetReSize(XMFLOAT3(x, y, z)); }
 	void SetReSize(float all) { SetReSize(XMFLOAT3(all, all, all)); }
+	void IsCalcCenterPoint(bool b) { isCalcCenterPt_ = b; }
 private:
 	Transform CalcTrans(Transform tra);
 };

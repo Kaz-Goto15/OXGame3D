@@ -50,7 +50,7 @@ void TestScene::Draw(){
 	for (int i = 0; i < drawCircleNum; i++) {
 		float cy = -circleUnit * Easing::Calc(easeNum, i, (float)drawCircleNum, 0, (float)drawCircleNum) + (float)drawCircleNum/2.0f * circleUnit;
 		float cx = circleUnit * i - drawCircleNum/2.0f * circleUnit;
-		ringTra.ConvDrawPos(cx, cy);
+		//ringTra.ConvDrawPos(cx, cy);
 		Image::SetTransform(hPict_, ringTra);
 		Image::Draw(hPict_);
 	}
