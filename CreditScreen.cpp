@@ -29,7 +29,7 @@ void CreditScreen::Initialize()
     for (int i = 0; i < 20; i++) {
         debugtext->AddStrPtr(&debugStr[i]);
     }
-    margin = { 50,50,50,50 };   //コンストラクタでやるとxが-1になる 原因不明のためこっちで
+    margin = { 50,50,200,50 };   //コンストラクタでやるとxが-1になる 原因不明のためこっちで
     debugStr[16] = std::to_string(margin.x);
 }
 
@@ -41,7 +41,7 @@ void CreditScreen::Update()
     }
 
     if (Input::IsKeyDown(DIK_6)) {
-        resize = (0.5f);
+        resize = (0.25f);
     }
     if (Input::IsKeyDown(DIK_7)) {
         resize = (1.0f);

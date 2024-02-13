@@ -22,7 +22,7 @@ Transform::~Transform()
 
 void Transform::Calclation()
 {
-	//
+	//移動行列(中心点を考慮するかの条件)
 	if (isCalcCenterPt_) {
 		XMFLOAT3 tmpPos = {
 			(position_.x - center_.x) * (scale_.x * reSize_.x) + center_.x,
@@ -34,8 +34,6 @@ void Transform::Calclation()
 	else {
 		matTranslate_ = XMMatrixTranslation(position_.x, position_.y, position_.z);
 	}
-	//移動行列
-	//matTranslate_ = XMMatrixTranslation(position_.x, position_.y, position_.z);
 
 	//回転行列
 	XMMATRIX rotateX, rotateY, rotateZ;
@@ -46,7 +44,6 @@ void Transform::Calclation()
 
 	//拡大縮小
 	matScale_ = XMMatrixScaling(scale_.x * reSize_.x, scale_.y * reSize_.y, scale_.z * reSize_.z);
-	//matScale_ = XMMatrixScaling(scale_.x, scale_.y, scale_.z);
 }
 
 XMMATRIX Transform::GetWorldMatrix() 
