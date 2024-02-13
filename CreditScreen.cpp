@@ -78,12 +78,11 @@ void CreditScreen::Draw()
     for (int y = 0; y < 3; y++) {
         switch (y){
         case 0: 
-            frameTra.position_.y = -(screenHeight / 2.0f) + margin.x + edge/2.0f;
-            debugStr[11] = "-(screenHeight / 2.0f) + margin.x + edge/2.0f:" + std::to_string(-(screenHeight / 2.0f) + margin.x + edge / 2.0f);
-            debugStr[12] = "-(screenHeight / 2.0f):" + std::to_string(-(screenHeight / 2.0f));
-            debugStr[13] = "margin.x:" + std::to_string(margin.x);
-            debugStr[14] = "edge/2.0f:" + std::to_string(edge / 2.0f);
-            //debugStr[15] = ":" + std::to_string();
+            frameTra.position_.y = -(screenHeight / 2.0f) + (float)(margin.x + margin.z + edge) / 2.0f;
+            //debugStr[11] = "-(screenHeight / 2.0f) + margin.x + edge/2.0f:" + std::to_string(-(screenHeight / 2.0f) + margin.x + edge / 2.0f);
+            //debugStr[12] = "-(screenHeight / 2.0f):" + std::to_string(-(screenHeight / 2.0f));
+            //debugStr[13] = "margin.x:" + std::to_string(margin.x);
+            //debugStr[14] = "edge/2.0f:" + std::to_string(edge / 2.0f);
             frameTra.scale_.y = 1;
             break;
         case 1:
@@ -91,7 +90,7 @@ void CreditScreen::Draw()
             frameTra.scale_.y = (float)(screenHeight - edge * 2 - margin.x - margin.z) / (float)edge;
             break;
         case 2:
-            frameTra.position_.y = ((float)screenHeight / 2.0f) - (float)margin.z - (float)edge / 2.0f;
+            frameTra.position_.y = ((float)screenHeight / 2.0f) - (float)(margin.x + margin.z + edge) / 2.0f;
             frameTra.scale_.y = 1;
             break;
         }

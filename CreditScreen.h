@@ -14,10 +14,10 @@ class CreditScreen : public Screen
     };
     int hPict_[PIC_MAX - 1];
 
-    XMINT4 margin;  //上右下左
+    XMINT4 frameMargin;  //上右下左
+    float frameScale;    //可変フレーム拡大率
     DebugText* debugtext;
     std::string debugStr[20];
-
     float resize = 1;
     float scaleMag = 1.0f;
     bool b = true;
