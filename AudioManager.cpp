@@ -17,9 +17,7 @@ namespace AudioManager {
 	{
 		std::ifstream f("audioSource.json");
 		json data = json::parse(f);
-
 		for (AUDIO_SOURCE as = static_cast<AUDIO_SOURCE>(0); as < AUDIO_SOURCE::MAX; as = static_cast<AUDIO_SOURCE>(as + 1)) {
-			std::string s = data[NAMEOF_ENUM(as)]["file"];
 			handle[as] = Audio::Load(
 				data[NAMEOF_ENUM(as)]["file"],
 				data[NAMEOF_ENUM(as)]["loop"],
@@ -27,6 +25,7 @@ namespace AudioManager {
 			);
 			assert(handle[as] >= 0);
 		}
+		SetCurrentDirectory("Assets");
 	}
 	void AudioManager::Play(int sourceID)
 	{
