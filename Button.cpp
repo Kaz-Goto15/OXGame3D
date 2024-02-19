@@ -61,7 +61,7 @@ void Button::Draw()
 	case Button::SELECTED:	DrawSelected();	break;
 	}
 
-	buttonTextObj_->Draw(transform_.position_.x, transform_.position_.y, buttonTextName_.c_str(), hAl, vAl);
+	buttonTextObj_->Draw((int)transform_.position_.x, (int)transform_.position_.y, buttonTextName_.c_str(), hAl, vAl);
 }
 
 //ŠJ•ú

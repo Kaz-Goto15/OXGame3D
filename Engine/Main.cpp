@@ -27,6 +27,7 @@ FbxParts.cpp内にマイナスにしている箇所が２か所ありました。確認してください。
 #include "Camera.h"
 #include "Input.h"
 #include "Audio.h"
+#include "../AudioManager.h"
 #include "VFX.h"
 
 #include "../KeyConfig.h"
@@ -76,7 +77,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//オーディオ（効果音）の準備
 	Audio::Initialize();
-
+	AudioManager::Init();
 
 	//ルートオブジェクト準備
 	//すべてのゲームオブジェクトの親となるオブジェクト

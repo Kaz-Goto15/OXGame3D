@@ -9,6 +9,8 @@
 #include "DebugText.h"
 #include "CreditScreen.h"
 
+#include "Engine/Audio.h"
+
 using std::to_string;
 
 std::string TitleScene::TitleImgFileName(Img E_IMG)
@@ -40,6 +42,11 @@ void TitleScene::Initialize() {
 	InitButton(S_SEL_CREDIT, "CREDIT", { 180,-80 });
 	InitButton(S_SEL_OPTION, "OPTION", { 180,80 });
 	InitButton(S_SEL_EXIT, "EXIT", { 180, 240 });
+
+	//サウンドデータのロード
+
+	hSound_ = Audio::Load("Assets/bgm_GAME.wav");
+	assert(hSound_ >= 0);
 
 }
 void TitleScene::Update() {
@@ -85,7 +92,7 @@ void TitleScene::ButtonAct(int hAct)
 		//pScreen = Instantiate<OptionScreen>(GetParent());
 		//pScreen->SetPrevScene(this);
 		//pScreen->Run();
-
+		Audio::Play(hSound_);
 		//option実装してないのでカスサイトへのリンクを渡している
 		ShellExecute(NULL, "open", "https://horikogasa.studio.site/", NULL, NULL, SW_SHOWNORMAL);
 

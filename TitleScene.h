@@ -38,7 +38,7 @@ class TitleScene : public GameObject
 
 	SceneManager* pSceneManager;
 	Screen* pScreen;
-
+	int hSound_;
 public:
 	TitleScene(GameObject* parent);
 	void Initialize() override;
