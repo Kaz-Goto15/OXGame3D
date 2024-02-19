@@ -204,6 +204,7 @@
     <ClCompile Include="OptionScreen.cpp">
       <Filter>C_Scene/Screen</Filter>
     </ClCompile>
+    <ClCompile Include="AudioManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -363,6 +364,7 @@
     <ClInclude Include="OptionScreen.h">
       <Filter>C_Scene/Screen</Filter>
     </ClInclude>
+    <ClInclude Include="AudioManager.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
