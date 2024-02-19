@@ -383,4 +383,7 @@
   <ItemGroup>
     <None Include="Assets\audioSource.json" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\todo.txt" />
+  </ItemGroup>
 </Project>
