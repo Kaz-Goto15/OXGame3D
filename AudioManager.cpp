@@ -22,7 +22,8 @@ void AudioManager::Init()
 		handle[as] = Audio::Load(
 			data[NAMEOF_ENUM(as)]["file"],
 			data[NAMEOF_ENUM(as)]["loop"],
-			data[NAMEOF_ENUM(as)]["maxPlay"]
+			data[NAMEOF_ENUM(as)]["maxPlay"],
+			data[NAMEOF_ENUM(as)]["attribute"]
 		);
 		assert(handle[as] >= 0);
 	}

@@ -3,6 +3,7 @@
 #include <vector>
 #include <cmath>
 #include "Audio.h"
+#include "../SystemConfig.h"
 
 #define SAFE_DELETE_ARRAY(p) if(p){delete[] p; p = nullptr;}
 
@@ -28,6 +29,10 @@ namespace Audio
 
 		//ファイル名
 		std::string fileName;
+
+		//オーディオ属性
+		ATTRIBUTE attribute;
+
 	};
 	std::vector<AudioData>	audioDatas;
 }
@@ -42,7 +47,7 @@ void Audio::Initialize()
 }
 
 //サウンドファイル(.wav）をロード
-int Audio::Load(std::string fileName, bool isLoop, int svNum)
+int Audio::Load(std::string fileName, bool isLoop, int svNum, ATTRIBUTE at)
 {
 	fileName = "Audio\\" + fileName;
 	bool isSucc = true;
@@ -145,6 +150,7 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum)
 		pXAudio->CreateSourceVoice(&ad.pSourceVoice[i], &fmt);
 	}
 	ad.svNum = svNum;
+	ad.attribute = at;
 	audioDatas.push_back(ad);
 
 	//SAFE_DELETE_ARRAY(pBuffer);
@@ -163,6 +169,19 @@ void Audio::Play(int ID)
 		if (state.BuffersQueued == 0)
 		{
 			audioDatas[ID].pSourceVoice[i]->SubmitSourceBuffer(&audioDatas[ID].buf);
+
+			switch (audioDatas[ID].attribute)
+			{
+			case BGM:
+				audioDatas[ID].pSourceVoice[i]->SetVolume((float)SystemConfig::GetVolBGM()/200.0f);
+				break;
+			case SE:
+				audioDatas[ID].pSourceVoice[i]->SetVolume((float)SystemConfig::GetVolSE()/100.0f);
+				break;
+			case OTHER:
+				audioDatas[ID].pSourceVoice[i]->SetVolume(0);
+				break;
+			}
 			audioDatas[ID].pSourceVoice[i]->Start();
 			break;
 		}

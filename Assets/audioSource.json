@@ -2,16 +2,19 @@
   "TST": {
     "file": "bgm_GAME.wav",
     "loop": false,
-    "maxPlay": 1
+    "maxPlay": 1,
+    "attribute": 0
   },
   "SE_BUTTON": {
     "file": "bgm_GAME.wav",
     "loop": false,
-    "maxPlay": 1
+    "maxPlay": 1,
+    "attribute": 1
   },
   "BGM_LOBBY": {
     "file": "bgm_GAME.wav",
     "loop": false,
-    "maxPlay": 1
+    "maxPlay": 1,
+    "attribute": 0
   }
 }
