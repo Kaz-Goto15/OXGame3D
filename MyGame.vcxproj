@@ -190,7 +190,6 @@
     <ClCompile Include="RivalObject.cpp" />
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="SceneChangeAnim.cpp" />
-    <ClCompile Include="SoundEffect.cpp" />
     <ClCompile Include="SplashScene.cpp" />
     <ClCompile Include="SystemConfig.cpp" />
     <ClCompile Include="TestScene.cpp" />
@@ -252,7 +251,6 @@
     <ClInclude Include="RivalObject.h" />
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneChangeAnim.h" />
-    <ClInclude Include="SoundEffect.h" />
     <ClInclude Include="SplashScene.h" />
     <ClInclude Include="SystemConfig.h" />
     <ClInclude Include="TestScene.h" />
@@ -281,6 +279,7 @@
     <None Include="Assets\audioSource.json" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Assets\memo.txt" />
     <Text Include="Assets\todo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

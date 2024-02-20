@@ -1,6 +1,6 @@
 #include "Global.h"
 #include "Image.h"
-//3D画像を管理する
+//画像を管理する
 namespace Image
 {
 	//ロード済みの画像データ一覧

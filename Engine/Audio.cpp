@@ -44,6 +44,7 @@ void Audio::Initialize()
 //サウンドファイル(.wav）をロード
 int Audio::Load(std::string fileName, bool isLoop, int svNum)
 {
+	fileName = "Audio\\" + fileName;
 	bool isSucc = true;
 	//すでに同じファイルを使ってないかチェック
 	for (int i = 0; i < audioDatas.size(); i++)

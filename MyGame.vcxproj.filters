@@ -45,6 +45,15 @@
     <Filter Include="C_Scene/Screen">
       <UniqueIdentifier>{1ea4850a-abd3-46e5-a50f-7bce03f215d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01Engine\ResourceManager\Audio">
+      <UniqueIdentifier>{ef6352b2-26f7-4b8a-be9f-28c77a6b07df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01Engine\ResourceManager\Text">
+      <UniqueIdentifier>{b1643819-2c8b-4323-b293-c2b98d88de11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01Engine\ResourceManager\CSV">
+      <UniqueIdentifier>{70832517-5a65-429b-81b2-cc6f0f77de7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -80,9 +89,6 @@
     <ClCompile Include="Engine\RootObject.cpp">
       <Filter>01Engine\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\CsvReader.cpp">
-      <Filter>01Engine\ResourceManager</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Image.cpp">
       <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
@@ -97,15 +103,6 @@
     </ClCompile>
     <ClCompile Include="Engine\Transform.cpp">
       <Filter>01Engine\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Audio.cpp">
-      <Filter>01Engine\ResourceManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Text.cpp">
-      <Filter>01Engine\ResourceManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Debug.cpp">
-      <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
     <ClCompile Include="Engine\BillBoard.cpp">
       <Filter>01Engine\DirectX</Filter>
@@ -147,12 +144,8 @@
     <ClCompile Include="Effect.cpp">
       <Filter>A_Utility</Filter>
     </ClCompile>
-    <ClCompile Include="SoundEffect.cpp" />
     <ClCompile Include="Health.cpp">
       <Filter>B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\CsvManager.cpp">
-      <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
     <ClCompile Include="SystemConfig.cpp" />
     <ClCompile Include="Engine\SceneManager.cpp">
@@ -181,7 +174,6 @@
     <ClCompile Include="EaseScene.cpp">
       <Filter>C_Scene/Screen</Filter>
     </ClCompile>
-    <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="PlayScene.cpp">
       <Filter>C_Scene/Screen</Filter>
     </ClCompile>
@@ -204,7 +196,27 @@
     <ClCompile Include="OptionScreen.cpp">
       <Filter>C_Scene/Screen</Filter>
     </ClCompile>
-    <ClCompile Include="AudioManager.cpp" />
+    <ClCompile Include="Engine\Audio.cpp">
+      <Filter>01Engine\ResourceManager\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>01Engine\ResourceManager\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Text.cpp">
+      <Filter>01Engine\ResourceManager\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugText.cpp">
+      <Filter>01Engine\ResourceManager\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Debug.cpp">
+      <Filter>01Engine\ResourceManager\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\CsvManager.cpp">
+      <Filter>01Engine\ResourceManager\CSV</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\CsvReader.cpp">
+      <Filter>01Engine\ResourceManager\CSV</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -240,9 +252,6 @@
     <ClInclude Include="Engine\RootObject.h">
       <Filter>01Engine\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\CsvReader.h">
-      <Filter>01Engine\ResourceManager</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Image.h">
       <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
@@ -257,15 +266,6 @@
     </ClInclude>
     <ClInclude Include="Engine\Transform.h">
       <Filter>01Engine\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Audio.h">
-      <Filter>01Engine\ResourceManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Text.h">
-      <Filter>01Engine\ResourceManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Debug.h">
-      <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\BillBoard.h">
       <Filter>01Engine\DirectX</Filter>
@@ -307,12 +307,8 @@
     <ClInclude Include="Effect.h">
       <Filter>A_Utility</Filter>
     </ClInclude>
-    <ClInclude Include="SoundEffect.h" />
     <ClInclude Include="Health.h">
       <Filter>B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\CsvManager.h">
-      <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="SystemConfig.h" />
     <ClInclude Include="Engine\SceneManager.h">
@@ -341,7 +337,6 @@
     <ClInclude Include="EaseScene.h">
       <Filter>C_Scene/Screen</Filter>
     </ClInclude>
-    <ClInclude Include="DebugText.h" />
     <ClInclude Include="PlayScene.h">
       <Filter>C_Scene/Screen</Filter>
     </ClInclude>
@@ -364,7 +359,27 @@
     <ClInclude Include="OptionScreen.h">
       <Filter>C_Scene/Screen</Filter>
     </ClInclude>
-    <ClInclude Include="AudioManager.h" />
+    <ClInclude Include="Engine\Audio.h">
+      <Filter>01Engine\ResourceManager\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>01Engine\ResourceManager\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Text.h">
+      <Filter>01Engine\ResourceManager\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugText.h">
+      <Filter>01Engine\ResourceManager\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Debug.h">
+      <Filter>01Engine\ResourceManager\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CsvManager.h">
+      <Filter>01Engine\ResourceManager\CSV</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CsvReader.h">
+      <Filter>01Engine\ResourceManager\CSV</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
@@ -381,9 +396,12 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\audioSource.json" />
+    <Text Include="Assets\todo.txt" />
+    <Text Include="Assets\memo.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Assets\todo.txt" />
+    <None Include="Assets\audioSource.json">
+      <Filter>01Engine\ResourceManager\Audio</Filter>
+    </None>
   </ItemGroup>
 </Project>

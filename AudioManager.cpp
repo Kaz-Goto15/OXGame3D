@@ -25,7 +25,6 @@ namespace AudioManager {
 			);
 			assert(handle[as] >= 0);
 		}
-		SetCurrentDirectory("Assets");
 	}
 	void AudioManager::Play(int sourceID)
 	{
