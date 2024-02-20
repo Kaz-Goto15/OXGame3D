@@ -15,7 +15,7 @@ void TestScene::Initialize(){
 	Image::SetTransform(hPict_, ringTra);
 
 	newText = new Text();
-	newText->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
+	newText->Initialize(KUROKANE_AQUA_50px);
 }
 void TestScene::Update(){
 

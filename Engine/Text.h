@@ -1,5 +1,7 @@
 #pragma once
 #include "Image.h"
+#include "../TextLoader.h"
+using namespace TextLoader;
 
 class Text
 {
@@ -36,6 +38,7 @@ public:
 	//戻値：成功／失敗
 	HRESULT Initialize(const char* fileName, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength);
 
+	HRESULT Initialize(TEXT_MEDIA tm);
 
 	//描画（文字列）
 	//引数：x, y	表示位置（左上）

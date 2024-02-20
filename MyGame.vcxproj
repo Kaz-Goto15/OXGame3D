@@ -177,6 +177,7 @@
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="StageData.cpp" />
     <ClCompile Include="StageView.cpp" />
+    <ClCompile Include="TextLoader.cpp" />
     <ClCompile Include="TitleButton.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="Transition.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="Screen.h" />
     <ClInclude Include="StageData.h" />
     <ClInclude Include="StageView.h" />
+    <ClInclude Include="TextLoader.h" />
     <ClInclude Include="TitleButton.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Transition.h" />
@@ -277,6 +279,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\audioSource.json" />
+    <None Include="Assets\charTextSource.json" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\memo.txt" />

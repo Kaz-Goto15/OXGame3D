@@ -1,0 +1,56 @@
+{
+  "CHAR": {
+    "fileName": "char.png",
+    "charWidth": 16,
+    "charHeight": 32,
+    "rowLength": 16
+  },
+  "RE_32px": {
+    "fileName": "char_re.png",
+    "charWidth": 32,
+    "charHeight": 64,
+    "rowLength": 16
+  },
+  "GAKUMARU_32px": {
+    "fileName": "char_gakusanmarugo.png",
+    "charWidth": 32,
+    "charHeight": 64,
+    "rowLength": 16
+  },
+  "GAKUMARU_16px": {
+    "fileName": "char_gakusanmarugo_half.png",
+    "charWidth": 16,
+    "charHeight": 32,
+    "rowLength": 16
+  },
+  "KUROKANE_AQUA_30px": {
+    "fileName": "char_kurokaneEB_aqua512_30.png",
+    "charWidth": 30,
+    "charHeight": 60,
+    "rowLength": 16
+  },
+  "KUROKANE_AQUA_35px": {
+    "fileName": "char_kurokaneEB_aqua1024_35.png",
+    "charWidth": 35,
+    "charHeight": 70,
+    "rowLength": 16
+  },
+  "KUROKANE_AQUA_50px": {
+    "fileName": "char_kurokaneEB_aqua1024_50.png",
+    "charWidth": 50,
+    "charHeight": 100,
+    "rowLength": 16
+  },
+  "KUROKANE_AQUA_64px": {
+    "fileName": "char_kurokaneEB_aqua1024.png",
+    "charWidth": 64,
+    "charHeight": 128,
+    "rowLength": 16
+  },
+  "STICK_B_PURPLE_35px": {
+    "fileName": "char_stickB_purple1024_35.png",
+    "charWidth": 35,
+    "charHeight": 70,
+    "rowLength": 16
+  }
+}

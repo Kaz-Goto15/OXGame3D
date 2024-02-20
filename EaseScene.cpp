@@ -43,7 +43,7 @@ void EaseScene::Initialize() {
 	Image::SetTransform(hPict_, ringTra);
 
 	newText = new Text();
-	newText->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
+	newText->Initialize(KUROKANE_AQUA_50px);
 	debugText = Instantiate<DebugText>(this);
 	for (int i = 0; i < 20; i++) {
 		debugText->AddStrPtr(&msg[i]);

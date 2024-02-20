@@ -37,7 +37,7 @@ void Health::Initialize()
 	transform_.scale_ = { 0.5f,0.5f,0.5f };
 	textTra.position_ = { 1280 * (0.5f+ transform_.position_.x / 2), 720 * (0.5f + (-1 * transform_.position_.y) / 2), 0};
 	pText = new Text;
-	pText->Initialize("char_gakusanmarugo_half.png", 16, 32, 16);
+	pText->Initialize(GAKUMARU_16px);
 }
 
 //XV

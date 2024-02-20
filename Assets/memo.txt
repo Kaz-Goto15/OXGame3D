@@ -2,4 +2,10 @@
 Assets/Audio内に格納
 AudioManager.hにenumを追加
 audioSource.jsonにKeyでenumを、fileにファイル名、loop/maxPlayを記述
-使いたいクラスでAudioManagerを呼び出し、そのままPlay(enum)4
+使いたいクラスでAudioManagerを呼び出し、そのままPlay(enum)
+
+フォント(char)追加時
+Assets/Text内に格納
+TextLoader.hにenumを追加
+charTextSource.jsonにKeyでenumを、fileにファイル名、１文字のw/h, 横の文字数を記述
+使いたいクラスでTextを呼び出し、そのままLoad(enum)

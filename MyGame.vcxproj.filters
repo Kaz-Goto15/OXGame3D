@@ -217,6 +217,9 @@
     <ClCompile Include="Engine\CsvReader.cpp">
       <Filter>01Engine\ResourceManager\CSV</Filter>
     </ClCompile>
+    <ClCompile Include="TextLoader.cpp">
+      <Filter>01Engine\ResourceManager\Text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -380,6 +383,9 @@
     <ClInclude Include="Engine\CsvReader.h">
       <Filter>01Engine\ResourceManager\CSV</Filter>
     </ClInclude>
+    <ClInclude Include="TextLoader.h">
+      <Filter>01Engine\ResourceManager\Text</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
@@ -402,6 +408,9 @@
   <ItemGroup>
     <None Include="Assets\audioSource.json">
       <Filter>01Engine\ResourceManager\Audio</Filter>
+    </None>
+    <None Include="Assets\charTextSource.json">
+      <Filter>01Engine\ResourceManager\Text</Filter>
     </None>
   </ItemGroup>
 </Project>

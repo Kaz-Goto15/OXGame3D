@@ -29,7 +29,7 @@ void Button::Initialize()
 		Image::SetTransform(hImg_[i], transform_);
 	}
 	buttonTextObj_ = new Text;
-	buttonTextObj_->Initialize("char_kurokaneEB_aqua1024_50.png", 50, 100, 16);
+	buttonTextObj_->Initialize(KUROKANE_AQUA_50px);
 
 	Init();
 }

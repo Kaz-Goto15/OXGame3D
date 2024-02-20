@@ -19,7 +19,7 @@ DebugText::~DebugText()
 void DebugText::Initialize()
 {
     txt = new Text();
-    txt->Initialize("char_gakusanmarugo_half.png", 16, 32, 16);
+    txt->Initialize(GAKUMARU_16px);
 }
 
 //XV

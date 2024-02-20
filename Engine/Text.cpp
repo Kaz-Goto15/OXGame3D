@@ -3,6 +3,8 @@
 #include "Text.h"
 #include "Debug.h"
 
+#include <string>
+
 Text::Text():
 	hPict_(-1),
 	width_(16),
@@ -36,6 +38,17 @@ HRESULT Text::Initialize(const char* fileName, const unsigned int charWidth, con
 	width_ = charWidth;
 	height_ = charHeight;
 	rowLength_ = rowLength;
+
+	return Initialize();
+}
+//初期化（オリジナルの画像）
+HRESULT Text::Initialize(TEXT_MEDIA tm)
+{
+	std::string str;
+	Load(tm, str, width_, height_, rowLength_);
+	str = "Text\\" + str;
+	strcpy_s(fileName_, str.c_str());
+
 	return Initialize();
 }
 
