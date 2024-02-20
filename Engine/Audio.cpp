@@ -173,7 +173,7 @@ void Audio::Play(int ID)
 			switch (audioDatas[ID].attribute)
 			{
 			case BGM:
-				audioDatas[ID].pSourceVoice[i]->SetVolume((float)SystemConfig::GetVolBGM()/200.0f);
+				audioDatas[ID].pSourceVoice[i]->SetVolume((float)SystemConfig::GetVolBGM()/100.0f);
 				break;
 			case SE:
 				audioDatas[ID].pSourceVoice[i]->SetVolume((float)SystemConfig::GetVolSE()/100.0f);
