@@ -9,3 +9,85 @@ Assets/Text内に格納
 TextLoader.hにenumを追加
 charTextSource.jsonにKeyでenumを、fileにファイル名、１文字のw/h, 横の文字数を記述
 使いたいクラスでTextを呼び出し、そのままLoad(enum)
+
+衝突判定関係の仕様
+Enemy含む破壊系オブジェクトははコリジョン付与
+プレイヤーは全検索で移動方向、地面、天井にレイキャスト
+
+
+FieldObject
+・bool unbreak = true;
+・int hModel;
+・bool isDraw;
+if(dist(this,player)<SysCon::drawDistance)Draw(hModel);
+Enemy
+・unbreak = false;
+・
+ 
+Player
+・全FieldObjectとレイキャストなんかしてたら重すぎるため絞りたい
+∟敵なども含まれるから　地形だけとしても複数オブジェクトのためキツイｗ
+∟地形にparent.Getでプレイヤー引っ張ってくる、距離を各地形オブジェクトで測定、したところで下方向しか見ない
+∟じゃ地形全部か 最低値を更新する形　地形オブジェクト1個なら有難いんだけど ってかどうせFindObjectで全検索するのでいいかも←それも１個しか来ないけども
+∟床判定できたとき、前回座標と次回座標で角度を求める 66度以下であれば移動可能 66度超は前回座標に戻す
+各オブジェクトに属性付与して管理は
+Defaultはそもそも判定しないため付加形式であればいらない 変更形式ならいる
+Field,地形オブジェクト 可動オブジェクトの地形判定対象
+Entity,可動オブジェクト 自身で動くことができる
+noGravity,重力無効 重力無効化
+Default:Neutral,中立オブジェクト Player,Enemyの攻撃判定対象
+Enemy,敵オブジェクト Playerの攻撃判定対象
+Player, プレイヤーオブジェクト Enemyの攻撃判定対象
+
+Default:Safe, 非攻撃性オブジェクト 衝突判定時に攻撃判定を行わない
+Strike, 攻撃性オブジェクト 衝突判定時に攻撃判定を行う
+
+Objectの付加値アレコレ
+power:0 常に自身が向いている方向へ動く力
+killTime:600(frame) 最大生存秒数 -1は消えない
+antiGravity:0(0~1 割合) 重力のかかり具合 
+
+・PlayerはObjectを全検索し、isLandがあればレイを飛ばし判定する 重そうであればdistanceで制限かけてもいい 長距離など見ないので
+
+Object
+・全ゲームオブジェクト
+・初期配置用 ほぼGameObjectと同じ
+・特に特別な機能は無い
+・何か判定する際はここで基本的な機能を記述する
+・isLand;
+
+Field extends Object
+・常に表示される
+・isLand = true;
+
+Cube extends Field
+・四角形
+
+RTP extends Field
+・直三角柱
+
+Cylinder extends Field
+・円柱
+
+Water extends Field
+・水
+・isLand = false;
+・重力影響1/2 最大落下速度=重力9.8
+
+Entity extends Object
+・プレイヤー基準で表示されなくなる 判定はPlayerではなくこっちで
+・コリジョンが存在する
+・isGravity = true; 重力判定が行われる
+・isInvinsible = false; 無敵判定
+
+Block extends Entity
+・壊せるブロック
+・破壊時にItemを生成するかもしれない GetParent()を親にして自分はKill
+・isGravity = false;
+・isLand = true;
+
+Enemy extends Entity
+・Enemy属性付与目的
+・各種敵オブジェクトはここから派生する
+
+Neutral extends Entity

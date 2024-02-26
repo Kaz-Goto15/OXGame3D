@@ -54,6 +54,9 @@
     <Filter Include="01Engine\ResourceManager\CSV">
       <UniqueIdentifier>{70832517-5a65-429b-81b2-cc6f0f77de7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Obj">
+      <UniqueIdentifier>{81254ac1-a20f-4b4c-81aa-898135db4c6f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -220,6 +223,10 @@
     <ClCompile Include="TextLoader.cpp">
       <Filter>01Engine\ResourceManager\Text</Filter>
     </ClCompile>
+    <ClCompile Include="GameSceneObject.cpp">
+      <Filter>Game Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="MapLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -386,6 +393,10 @@
     <ClInclude Include="TextLoader.h">
       <Filter>01Engine\ResourceManager\Text</Filter>
     </ClInclude>
+    <ClInclude Include="GameSceneObject.h">
+      <Filter>Game Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="MapLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
@@ -411,6 +422,9 @@
     </None>
     <None Include="Assets\charTextSource.json">
       <Filter>01Engine\ResourceManager\Text</Filter>
+    </None>
+    <None Include="Assets\map1.json">
+      <Filter>Game Obj</Filter>
     </None>
   </ItemGroup>
 </Project>

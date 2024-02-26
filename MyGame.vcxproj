@@ -171,6 +171,8 @@
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
     <ClCompile Include="HelpBar.cpp" />
+    <ClCompile Include="GameSceneObject.cpp" />
+    <ClCompile Include="MapLoader.cpp" />
     <ClCompile Include="OptionScreen.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Sample.cpp" />
@@ -233,6 +235,8 @@
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="HelpBar.h" />
+    <ClInclude Include="GameSceneObject.h" />
+    <ClInclude Include="MapLoader.h" />
     <ClInclude Include="OptionScreen.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Sample.h" />
@@ -280,6 +284,7 @@
   <ItemGroup>
     <None Include="Assets\audioSource.json" />
     <None Include="Assets\charTextSource.json" />
+    <None Include="Assets\map1.json" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\memo.txt" />
