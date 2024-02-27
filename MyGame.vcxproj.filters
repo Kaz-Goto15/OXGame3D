@@ -57,6 +57,9 @@
     <Filter Include="Game Obj">
       <UniqueIdentifier>{81254ac1-a20f-4b4c-81aa-898135db4c6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01Engine\ResourceManager\Model">
+      <UniqueIdentifier>{e5f69688-5602-499d-ab78-6c9c0a6051e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -93,9 +96,6 @@
       <Filter>01Engine\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Image.cpp">
-      <Filter>01Engine\ResourceManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Model.cpp">
       <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Main.cpp">
@@ -226,7 +226,25 @@
     <ClCompile Include="GameSceneObject.cpp">
       <Filter>Game Obj</Filter>
     </ClCompile>
-    <ClCompile Include="MapLoader.cpp" />
+    <ClCompile Include="MapLoader.cpp">
+      <Filter>Game Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="Field.cpp">
+      <Filter>Game Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Model.cpp">
+      <Filter>01Engine\ResourceManager\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelLoader.cpp">
+      <Filter>01Engine\ResourceManager\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Game Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="Status.cpp" />
+    <ClCompile Include="TestEntity.cpp">
+      <Filter>Game Obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -263,9 +281,6 @@
       <Filter>01Engine\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Image.h">
-      <Filter>01Engine\ResourceManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Model.h">
       <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Global.h">
@@ -396,7 +411,25 @@
     <ClInclude Include="GameSceneObject.h">
       <Filter>Game Obj</Filter>
     </ClInclude>
-    <ClInclude Include="MapLoader.h" />
+    <ClInclude Include="MapLoader.h">
+      <Filter>Game Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Field.h">
+      <Filter>Game Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Model.h">
+      <Filter>01Engine\ResourceManager\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelLoader.h">
+      <Filter>01Engine\ResourceManager\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Game Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Status.h" />
+    <ClInclude Include="TestEntity.h">
+      <Filter>Game Obj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
@@ -425,6 +458,9 @@
     </None>
     <None Include="Assets\map1.json">
       <Filter>Game Obj</Filter>
+    </None>
+    <None Include="Assets\modelSource.json">
+      <Filter>01Engine\ResourceManager\Model</Filter>
     </None>
   </ItemGroup>
 </Project>

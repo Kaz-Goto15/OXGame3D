@@ -170,15 +170,20 @@
     <ClCompile Include="Engine\Text.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Field.cpp" />
     <ClCompile Include="HelpBar.cpp" />
     <ClCompile Include="GameSceneObject.cpp" />
     <ClCompile Include="MapLoader.cpp" />
+    <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="OptionScreen.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="StageData.cpp" />
     <ClCompile Include="StageView.cpp" />
+    <ClCompile Include="Status.cpp" />
+    <ClCompile Include="TestEntity.cpp" />
     <ClCompile Include="TextLoader.cpp" />
     <ClCompile Include="TitleButton.cpp" />
     <ClCompile Include="TitleScene.cpp" />
@@ -234,15 +239,20 @@
     <ClInclude Include="Engine\Text.h" />
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Field.h" />
     <ClInclude Include="HelpBar.h" />
     <ClInclude Include="GameSceneObject.h" />
     <ClInclude Include="MapLoader.h" />
+    <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="OptionScreen.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Sample.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="StageData.h" />
     <ClInclude Include="StageView.h" />
+    <ClInclude Include="Status.h" />
+    <ClInclude Include="TestEntity.h" />
     <ClInclude Include="TextLoader.h" />
     <ClInclude Include="TitleButton.h" />
     <ClInclude Include="TitleScene.h" />
@@ -285,6 +295,7 @@
     <None Include="Assets\audioSource.json" />
     <None Include="Assets\charTextSource.json" />
     <None Include="Assets\map1.json" />
+    <None Include="Assets\modelSource.json" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\memo.txt" />

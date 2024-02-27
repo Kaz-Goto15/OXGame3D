@@ -9,9 +9,9 @@ protected:
         OBJ_FIELD,
         OBJ_ENTITY
     };
-    bool isLand;
+    bool isLand = false;
 public:
-    GameSceneObject(GameObject* parent, const std::string& name= "Button");    //コンストラクタ
+    GameSceneObject(GameObject* parent, const std::string& name);    //コンストラクタ
     ~GameSceneObject();                     //デストラクタ
     virtual void Initialize() override = 0; //初期化
     virtual void Update() override = 0;     //更新

@@ -10,23 +10,3 @@ GameSceneObject::GameSceneObject(GameObject* parent, const std::string& name)
 GameSceneObject::~GameSceneObject()
 {
 }
-
-//‰Šú‰»
-void GameSceneObject::Initialize()
-{
-}
-
-//XV
-void GameSceneObject::Update()
-{
-}
-
-//•`‰æ
-void GameSceneObject::Draw()
-{
-}
-
-//ŠJ•ú
-void GameSceneObject::Release()
-{
-}

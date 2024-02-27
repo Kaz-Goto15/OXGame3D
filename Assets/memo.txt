@@ -14,6 +14,26 @@ charTextSource.json‚ÉKey‚Åenum‚ğAfile‚Éƒtƒ@ƒCƒ‹–¼A‚P•¶š‚Ìw/h, ‰¡‚Ì•¶š”‚ğ‹L
 EnemyŠÜ‚Ş”j‰óŒnƒIƒuƒWƒFƒNƒg‚Í‚ÍƒRƒŠƒWƒ‡ƒ“•t—^
 ƒvƒŒƒCƒ„[‚Í‘SŒŸõ‚ÅˆÚ“®•ûŒüA’n–ÊA“Vˆä‚ÉƒŒƒCƒLƒƒƒXƒg
 
+ƒ}ƒbƒvjsond—l
+field:“Á‚É°‚â•Ç‚È‚ÇˆÈŠO‚Ì–ğ–Ú‚ğ‚½‚È‚¢‚½‚¾‚ÌƒuƒƒbƒNƒIƒuƒWƒFƒNƒg
+activeField:‰½‚ç‚©‚ÌƒAƒNƒVƒ‡ƒ“‚ğs‚¤ƒtƒB[ƒ‹ƒhƒIƒuƒWƒFƒNƒg ’Ç‰Á—\’è‚Í–³‚¢‚ªƒ_ƒ[ƒW°‚â…‚È‚Ç
+entity:ŒÂ•Ê‚ÅƒAƒNƒVƒ‡ƒ“‚ğs‚¤ƒIƒuƒWƒFƒNƒg ƒRƒŠƒWƒ‡ƒ“‚ğ‚¿A”j‰ó‚³‚ê‚é
+
+field:modelƒnƒ“ƒhƒ‹‚ÆTransform‚Ì\‘¢‘ÌƒŠƒXƒg
+activeField:GameObjectƒ|ƒCƒ“ƒ^ƒŠƒXƒg‚ÅŠi”[
+entity:GameObjectƒ|ƒCƒ“ƒ^ƒŠƒXƒg‚ÅŠi”[
+
+ModelLoaderƒNƒ‰ƒX
+E‘Sƒ‚ƒfƒ‹‚ğenum‚ÅŠÇ—
+Eƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹–¼‚Íjson
+EModel‚ÌModify‚ÍModel:: Load‚Ì‚İModelLoader ‚Ü‚Æ‚ß‚½‚Ù‚¤‚ª‚¢‚¢‚¾‚ë
+
+FieldƒNƒ‰ƒX
+Eƒ‚ƒfƒ‹ƒnƒ“ƒhƒ‹‚Æ•ÏŒ`ƒf[ƒ^‚ğ‚Ü‚Æ‚ß‚½\‘¢‘Ì‚ğ‚Â
+E•\¦‚·‚é‹@”\‚µ‚©‚È‚¢
+Eƒ[ƒh‚Í“ü‚ê‚é‘O‚ÌƒNƒ‰ƒX‚È‚Ç•ÊƒNƒ‰ƒX‚Å
+
+EntityƒNƒ‰ƒX
 
 FieldObject
 Ebool unbreak = true;

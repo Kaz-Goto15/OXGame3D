@@ -23,6 +23,7 @@ FbxParts.cpp内にマイナスにしている箇所が２か所ありました。確認してください。
 #include "global.h"
 #include "RootObject.h"
 #include "Model.h"
+#include "../ModelLoader.h"
 #include "Image.h"
 #include "Camera.h"
 #include "Input.h"
@@ -79,6 +80,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Audio::Initialize();
 	AudioManager::Init();
 
+	ModelLoader::Init();
 	//ルートオブジェクト準備
 	//すべてのゲームオブジェクトの親となるオブジェクト
 	RootObject* pRootObject = new RootObject;
