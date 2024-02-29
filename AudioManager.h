@@ -3,8 +3,13 @@ namespace AudioManager
 {
 	enum AUDIO_SOURCE {
 		TST,
-		SE_BUTTON,
+		SE_DECIDE,
+		SE_CANCEL,
+		SE_THROW,
+		SE_HIT,
+		SE_DAMAGED,
 		BGM_LOBBY,
+		BGM_PLAY_0,
 		MAX
 	};
 

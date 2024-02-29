@@ -5,15 +5,45 @@
     "maxPlay": 1,
     "attribute": 0
   },
-  "SE_BUTTON": {
-    "file": "bgm_GAME.wav",
+  "SE_DECIDE": {
+    "file": "se_DECISION.wav",
     "loop": false,
     "maxPlay": 1,
     "attribute": 1
   },
+  "SE_CANCEL": {
+    "file": "se_CANCEL.wav",
+    "loop": false,
+    "maxPlay": 1,
+    "attribute": 1
+  },
+  "SE_THROW": {
+    "file": "se_THROW2.wav",
+    "loop": false,
+    "maxPlay": 3,
+    "attribute": 1
+  },
+  "SE_HIT": {
+    "file": "se_HIT.wav",
+    "loop": false,
+    "maxPlay": 3,
+    "attribute": 1
+  },
+  "SE_DAMAGED": {
+    "file": "se_DAMAGED.wav",
+    "loop": false,
+    "maxPlay": 3,
+    "attribute": 1
+  },
   "BGM_LOBBY": {
     "file": "bgm_GAME.wav",
-    "loop": false,
+    "loop": true,
+    "maxPlay": 1,
+    "attribute": 0
+  },
+  "BGM_PLAY_0": {
+    "file": "n08.mp3",
+    "loop": true,
     "maxPlay": 1,
     "attribute": 0
   }
