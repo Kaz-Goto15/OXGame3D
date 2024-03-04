@@ -3,7 +3,7 @@
 #include "Engine/GameObject.h"
 #include "Screen.h"
 class DebugText;
-class Button;
+class ButtonGP;
 //クレジット画面を管理するクラス
 class CreditScreen : public Screen
 {
@@ -20,7 +20,7 @@ class CreditScreen : public Screen
     XMFLOAT3 framePos;
 
     DebugText* debugtext;
-    Button* backBtn;
+    ButtonGP* backBtn;
     std::string debugStr[20];
 public:
     CreditScreen(GameObject* parent);

@@ -9,6 +9,7 @@
 #include "Model.h"
 #include "Image.h"
 #include "Audio.h"
+#include "..\AudioManager.h"
 
 //コンストラクタ
 SceneManager::SceneManager(GameObject * parent):
@@ -35,7 +36,7 @@ void SceneManager::Update()
 		KillAllChildren();
 
 		//ロードしたデータを全削除
-		//Audio::Release();
+		if(!AudioManager::isLoadAllFile())AudioManager::Release();
 		Model::AllRelease();
 		Image::AllRelease();
 

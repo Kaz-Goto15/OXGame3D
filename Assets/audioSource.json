@@ -35,14 +35,26 @@
     "maxPlay": 3,
     "attribute": 1
   },
+  "SE_HEAL": {
+    "file": "se_HEAL.wav",
+    "loop": false,
+    "maxPlay": 3,
+    "attribute": 1
+  },
+  "SE_CLEAR": {
+    "file": "se_CLEAR.wav",
+    "loop": false,
+    "maxPlay": 1,
+    "attribute": 1
+  },
   "BGM_LOBBY": {
-    "file": "bgm_GAME.wav",
+    "file": "n08.wav",
     "loop": true,
     "maxPlay": 1,
     "attribute": 0
   },
   "BGM_PLAY_0": {
-    "file": "n08.mp3",
+    "file": "Comet.wav",
     "loop": true,
     "maxPlay": 1,
     "attribute": 0

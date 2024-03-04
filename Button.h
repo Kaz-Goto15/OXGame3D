@@ -1,6 +1,8 @@
 #pragma once
 #include "Engine/GameObject.h"
 #include "Engine/Text.h"
+#include "AudioManager.h"
+
 //ボタンを管理するクラス
 class Button : public GameObject
 {
@@ -20,6 +22,8 @@ protected:
     int actHandle_;
     //XMINT4 clip = { 0,0,128,128 };
     bool nextIdle;
+    STATE ActTiming;
+    AudioManager::AUDIO_SOURCE sound;
 public:
     STATE state;
 
@@ -34,6 +38,7 @@ public:
     //自身(ボタン)と親の選択ステートを紐づける
     void SetAction(int hAct);
 
+    void SetSound(AudioManager::AUDIO_SOURCE audioSource) { sound = audioSource; }
     //テキスト設定系
     void SetTextAlignment(Text::HORIZONAL_ALIGNMENT h, Text::VERTICAL_ALIGNMENT v);
     void SetFont(const char* fileName, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength);

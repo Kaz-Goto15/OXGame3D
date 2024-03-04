@@ -245,6 +245,9 @@
     <ClCompile Include="TestEntity.cpp">
       <Filter>Game Obj</Filter>
     </ClCompile>
+    <ClCompile Include="ButtonGP.cpp">
+      <Filter>BaseObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -429,6 +432,9 @@
     <ClInclude Include="Status.h" />
     <ClInclude Include="TestEntity.h">
       <Filter>Game Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonGP.h">
+      <Filter>BaseObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

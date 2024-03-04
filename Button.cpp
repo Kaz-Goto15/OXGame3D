@@ -2,6 +2,8 @@
 #include "Engine/Image.h"
 #include "Engine/Input.h"
 #include "SystemConfig.h"
+#include "AudioManager.h"
+
 //コンストラクタ
 Button::Button(GameObject* parent, const std::string& name) :
 	GameObject(parent, name),
@@ -11,7 +13,9 @@ Button::Button(GameObject* parent, const std::string& name) :
 	actHandle_(-1),
 	hAl(Text::HORIZONAL_ALIGNMENT::CENTER),
 	vAl(Text::VERTICAL_ALIGNMENT::CENTER),
-	nextIdle(false)
+	nextIdle(false),
+	ActTiming(SELECTED),
+	sound(AudioManager::AUDIO_SOURCE::SE_DECIDE)
 {
 	std::fill_n(hImg_, MAX, -1);
 }
@@ -165,8 +169,13 @@ void Button::UpdateIdle()
 void Button::UpdateSelect()
 {
 	if (Input::IsMouseButtonDown(0)) {
-		state = PUSH;
-		return;
+		if (ActTiming == SELECTED) {
+			state = PUSH;
+			return;
+		}
+		else if (ActTiming == PUSH) {
+			UpdateSelected();
+		}
 	}
 
 	if (IsMovedMouse() && !IsEntered()) {
@@ -189,6 +198,7 @@ void Button::UpdatePush()
 
 void Button::UpdateSelected()
 {
+	AudioManager::Play(sound);
 	GameObject* obj = (GameObject*)GetParent();
 	obj->ButtonAct(actHandle_);
 	nextIdle = true;

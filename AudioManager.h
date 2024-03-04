@@ -8,6 +8,8 @@ namespace AudioManager
 		SE_THROW,
 		SE_HIT,
 		SE_DAMAGED,
+		SE_HEAL,
+		SE_CLEAR,
 		BGM_LOBBY,
 		BGM_PLAY_0,
 		MAX
@@ -16,6 +18,8 @@ namespace AudioManager
 	void Init();
 	void Play(int sourceID);
 	void Stop(int sourceID);
+	void Release();
 	void SetPitch(int sourceID, float pitch);
+	bool isLoadAllFile();
 };
 

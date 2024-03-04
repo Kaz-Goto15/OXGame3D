@@ -1,6 +1,9 @@
 {
   "Source": {
     "DEFAULT": "Cube.fbx",
-    "Cube":"Cube.fbx"
+    "Cube": "Cube.fbx",
+    "Cylinder": "Cylinder.fbx",
+    "Hanger": "Hanger.fbx",
+    "Player": "Player.fbx"
   }
 }

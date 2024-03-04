@@ -4,7 +4,7 @@
 
 #include "SystemConfig.h"
 #include "DebugText.h"
-#include "Button.h"
+#include "ButtonGP.h"
 
 //コンストラクタ
 CreditScreen::CreditScreen(GameObject* parent):
@@ -36,11 +36,12 @@ void CreditScreen::Initialize()
         debugtext->AddStrPtr(&debugStr[i]);
     }
     frameMargin = { 50,50,150,50 };   //コンストラクタでやるとxが-1になる 原因不明のためこっちで
-    backBtn = Instantiate<Button>(this);
+    backBtn = Instantiate<ButtonGP>(this);
     backBtn->SetText("BACK");
     backBtn->SetAction(0);
     backBtn->SetPosition(0, 266, 0);
-    backBtn->SetScale(2,0.66f,1);
+    backBtn->SetScale(2,1,1);
+    backBtn->SetSound(AudioManager::SE_CANCEL);
     
 }
 

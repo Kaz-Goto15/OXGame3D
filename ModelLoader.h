@@ -3,7 +3,9 @@ namespace ModelLoader {
 	enum MODEL {
 		DEFAULT,
 		Cube,
-		Cylinder
+		Cylinder,
+		Hanger,
+		Player
 	};
 	void Init();
 	int Load(MODEL model);

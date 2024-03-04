@@ -32,6 +32,7 @@ TitleScene::TitleScene(GameObject* parent)
 {}
 
 void TitleScene::Initialize() {
+	AudioManager::Play(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
 	for (int i = 0; i < Img::PIC_MAX; i++) {
 		hPict_[i] = Image::Load(TitleImgFileName(static_cast<Img>(i)));
 	}
@@ -87,7 +88,7 @@ void TitleScene::ButtonAct(int hAct)
 		//pScreen = Instantiate<OptionScreen>(GetParent());
 		//pScreen->SetPrevScene(this);
 		//pScreen->Run();
-		AudioManager::Play(AudioManager::AUDIO_SOURCE::TST);
+		
 		//option実装してないのでカスサイトへのリンクを渡している
 		ShellExecute(NULL, "open", "https://horikogasa.studio.site/", NULL, NULL, SW_SHOWNORMAL);
 

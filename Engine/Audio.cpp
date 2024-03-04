@@ -4,6 +4,7 @@
 #include <cmath>
 #include "Audio.h"
 #include "../SystemConfig.h"
+#include <assert.h>
 
 #define SAFE_DELETE_ARRAY(p) if(p){delete[] p; p = nullptr;}
 
@@ -81,8 +82,11 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum, ATTRIBUTE at)
 	Confirm(&isSucc, ReadFile(hFile, &wave, 4, &dwBytes, NULL), "wave");
 
 	Chunk formatChunk = { 0 };
+	int count = 0;
 	while (formatChunk.id[0] != 'f') {
+		count++;
 		Confirm(&isSucc, ReadFile(hFile, &formatChunk.id, 4, &dwBytes, NULL), "format chunk id");
+		assert (count < 100);
 	}
 	Confirm(&isSucc, ReadFile(hFile, &formatChunk.size, 4, &dwBytes, NULL), "format chunk size");
 
@@ -107,9 +111,9 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum, ATTRIBUTE at)
 		Confirm(&isSucc, ReadFile(hFile, &data.id, 4, &dwBytes, NULL), "next data id");
 
 		//「data」だったらループを抜けて次に進む
-		if (strcmp(data.id, "data") == 0)
+		if (strcmp(data.id, "data") == 0 || data.id[0] == '\0') {
 			break;
-
+		}
 		//それ以外の情報ならサイズ調べて読み込む→使わない
 		else
 		{
@@ -134,7 +138,7 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum, ATTRIBUTE at)
 	AudioData ad;
 
 	ad.fileName = fileName;
-
+	
 	ad.buf.pAudioData = (BYTE*)pBuffer;
 	ad.buf.Flags = XAUDIO2_END_OF_STREAM;
 
@@ -245,6 +249,7 @@ bool Audio::Confirm(bool *prevSucc, BOOL b, std::string msg = "fail")
 	if (!prevSucc)return false;
 	if (b == FALSE) {
 		MessageBox(NULL, msg.c_str(), "Audio Error", MB_OK);
+		exit(0);
 		return false;
 	}
 	return true;

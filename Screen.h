@@ -9,7 +9,7 @@ protected:
     void DebugAction();
     GameObject* pPrevObject;
 public:
-    Screen(GameObject* parent, const std::string& name = "Screen");
+    Screen(GameObject* parent, const std::string& name);
     ~Screen();
     virtual void Initialize() override = 0;
     virtual void Update() override= 0;

@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ButtonGP.cpp" />
     <ClCompile Include="ButtonGroup.cpp" />
     <ClCompile Include="ceiling.cpp" />
     <ClCompile Include="ConfigKey.cpp" />
@@ -206,6 +207,7 @@
   <ItemGroup>
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="ButtonGP.h" />
     <ClInclude Include="ButtonGroup.h" />
     <ClInclude Include="ceiling.h" />
     <ClInclude Include="ConfigKey.h" />
