@@ -259,3 +259,18 @@ bool Audio::Confirm(bool prevSucc, BOOL b, std::string msg)
 {
 	return Confirm(&prevSucc, b, msg);
 }
+
+bool Audio::IsPlaying(int ID)
+{
+	for (int i = 0; i < audioDatas[ID].svNum; i++)
+	{
+		XAUDIO2_VOICE_STATE state;
+		audioDatas[ID].pSourceVoice[i]->GetState(&state);
+		if (state.pCurrentBufferContext == &(audioDatas[ID].buf)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+}

@@ -41,5 +41,6 @@ namespace Audio
 
 	bool Confirm(bool* prevSucc, BOOL b, std::string msg);
 	bool Confirm(bool prevSucc, BOOL b, std::string msg);
+	bool IsPlaying(int ID);
 };
 
