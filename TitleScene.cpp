@@ -89,8 +89,8 @@ void TitleScene::ButtonAct(int hAct)
 		//pScreen->SetPrevScene(this);
 		//pScreen->Run();
 		
-		//option実装してないのでカスサイトへのリンクを渡している
-		ShellExecute(NULL, "open", "https://horikogasa.studio.site/", NULL, NULL, SW_SHOWNORMAL);
+		//option実装してないのでgithubリンクを渡している
+		ShellExecute(NULL, "open", "https://github.com/Kaz-Goto15/MyGame", NULL, NULL, SW_SHOWNORMAL);
 
 		break;
 	case TitleScene::S_SEL_EXIT:
