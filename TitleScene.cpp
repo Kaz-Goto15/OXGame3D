@@ -32,7 +32,7 @@ TitleScene::TitleScene(GameObject* parent)
 {}
 
 void TitleScene::Initialize() {
-	AudioManager::Play(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
+	AudioManager::Play(AudioManager::AUDIO_SOURCE::BGM_PLAY_0);
 	for (int i = 0; i < Img::PIC_MAX; i++) {
 		hPict_[i] = Image::Load(TitleImgFileName(static_cast<Img>(i)));
 	}
@@ -90,7 +90,7 @@ void TitleScene::ButtonAct(int hAct)
 		//pScreen->Run();
 		
 		//optionŽÀ‘•‚µ‚Ä‚È‚¢‚Ì‚ÅgithubƒŠƒ“ƒN‚ð“n‚µ‚Ä‚¢‚é
-		ShellExecute(NULL, "open", "https://github.com/Kaz-Goto15/MyGame", NULL, NULL, SW_SHOWNORMAL);
+		ShellExecute(NULL, "open", "https://github.com/Kaz-Goto15/GraySide", NULL, NULL, SW_SHOWNORMAL);
 
 		break;
 	case TitleScene::S_SEL_EXIT:

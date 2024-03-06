@@ -2,7 +2,9 @@
 
 //コンストラクタ
 ButtonGP::ButtonGP(GameObject* parent) :
-	Button(parent, "Button")
+	Button(parent, "Button"),
+	hButtonShadow_(-1),
+	shadowXY(5)
 {
 }
 
@@ -28,14 +30,14 @@ std::string ButtonGP::LinkImageFile(STATE _state)
 void ButtonGP::Init()
 {
 	ActTiming = PUSH;
-	hButtonShadow_ = Image::Load("buttonDef2Shadow.png");
-	transform_.scale_ = { 0.5f, 0.5f,1.0f };
+	hButtonShadow_ = Image::Load("Default\\buttonDef2Shadow.png");
+	SetFont(GAKUMARU_32px);
 }
 void ButtonGP::DrawIdle()
 {
 	Transform shadowTra = transform_;
-	shadowTra.position_.x += 10;
-	shadowTra.position_.y += 10;
+	shadowTra.position_.x += shadowXY;
+	shadowTra.position_.y += shadowXY;
 	Image::SetTransform(hButtonShadow_, shadowTra);
 	Image::Draw(hButtonShadow_);
 	Image::SetTransform(hImg_[IDLE], transform_);
@@ -45,8 +47,10 @@ void ButtonGP::DrawIdle()
 void ButtonGP::DrawSelect()
 {
 	Transform shadowTra = transform_;
-	shadowTra.position_.x += 10;
-	shadowTra.position_.y += 10;
+	shadowTra.position_.x += shadowXY;
+	shadowTra.position_.y += shadowXY;
+	Image::SetTransform(hButtonShadow_, shadowTra);
+	Image::Draw(hButtonShadow_);
 	Image::SetTransform(hImg_[SELECT], transform_);
 	Image::Draw(hImg_[SELECT]);
 }
@@ -54,8 +58,10 @@ void ButtonGP::DrawSelect()
 void ButtonGP::DrawPush()
 {
 	Transform shadowTra = transform_;
-	shadowTra.position_.x += 10;
-	shadowTra.position_.y += 10;
+	shadowTra.position_.x += shadowXY;
+	shadowTra.position_.y += shadowXY;
+	Image::SetTransform(hButtonShadow_, shadowTra);
+	Image::Draw(hButtonShadow_);
 	Image::SetTransform(hImg_[PUSH], transform_);
 	Image::Draw(hImg_[PUSH]);
 }
@@ -63,8 +69,10 @@ void ButtonGP::DrawPush()
 void ButtonGP::DrawSelected()
 {
 	Transform shadowTra = transform_;
-	shadowTra.position_.x += 10;
-	shadowTra.position_.y += 10;
+	shadowTra.position_.x += shadowXY;
+	shadowTra.position_.y += shadowXY;
+	Image::SetTransform(hButtonShadow_, shadowTra);
+	Image::Draw(hButtonShadow_);
 	Image::SetTransform(hImg_[SELECTED], transform_);
 	Image::Draw(hImg_[SELECTED]);
 }

@@ -42,6 +42,7 @@ public:
     //テキスト設定系
     void SetTextAlignment(Text::HORIZONAL_ALIGNMENT h, Text::VERTICAL_ALIGNMENT v);
     void SetFont(const char* fileName, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength);
+    void SetFont(TEXT_MEDIA tm);
     void SetText(std::string buttonName);
 protected:
     //初期化追加時の処理

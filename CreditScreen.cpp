@@ -39,8 +39,8 @@ void CreditScreen::Initialize()
     backBtn = Instantiate<ButtonGP>(this);
     backBtn->SetText("BACK");
     backBtn->SetAction(0);
-    backBtn->SetPosition(0, 266, 0);
-    backBtn->SetScale(2,1,1);
+    backBtn->SetPosition(0, 280, 0);
+    backBtn->SetScale(0.75f);
     backBtn->SetSound(AudioManager::SE_CANCEL);
     
 }

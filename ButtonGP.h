@@ -14,4 +14,5 @@ private:
     void DrawPush() override;
     void DrawSelected() override;
     int hButtonShadow_;
+    int shadowXY;
 };
