@@ -114,3 +114,7 @@ Neutral extends Entity
 
 ***************Playerについて***************
 方向系はTankGameを ハンガーはSTGを 移動はPackmanを参考にする ここで過去の活用ができる
+
+Init(vector<audioList>)からのPlay<List>したら
+audiOListを初期化時に用意する必要
+どうせ変わらない

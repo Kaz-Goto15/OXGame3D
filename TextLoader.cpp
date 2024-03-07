@@ -9,7 +9,7 @@ using namespace nameof;
 
 void TextLoader::Load(TEXT_MEDIA tm, std::string &fileName, unsigned int &charWidth, unsigned int &charHeight, unsigned int &rowLength)
 {
-	std::ifstream f("charTextSource.json");
+	std::ifstream f("Data\\charTextSource.json");
 	json data = json::parse(f);
 
 	fileName = data[NAMEOF_ENUM(tm)]["fileName"];

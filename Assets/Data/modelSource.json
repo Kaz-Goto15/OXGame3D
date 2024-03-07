@@ -1,0 +1,23 @@
+{
+  "Source": {
+    "DEFAULT": "Cube.fbx",
+    "Cube": "Cube.fbx",
+    "Cylinder": "Cylinder.fbx",
+    "Hanger": "Hanger.fbx",
+    "Player": {
+      "file": "Player.fbx",
+      "anim": [
+        {
+          "name": "idle",
+          "start": 1,
+          "end": 2
+        },
+        {
+          "name": "run",
+          "start": 4,
+          "end": 6
+        }
+      ]
+    }
+  }
+}

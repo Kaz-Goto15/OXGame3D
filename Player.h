@@ -3,10 +3,25 @@
 
 class Player : public GameObject
 {
-    int hModel_;
+    enum class STATE {
+        S_IDLE,
+        S_MOVE,
+        S_JUMP,
+        S_FALL,
+        S_DAMAGED,
+        S_THROW,
+        S_DOWN
+    }state_;
+    enum AUDIO_ASSET {
+        SE_JUMP,
+        SE_LAND,
+        SE_THROW,
+        SE_MAX
+    };
     float velY;
     float maxVel;
-    int hSound_[3]; //サウンド番号
+    int hSound_[SE_MAX]; //サウンド番号
+    int hModel_;
     bool nowFly;
 
     float knockback;
@@ -31,4 +46,14 @@ public:
     void Release() override;
     void OnCollision(GameObject* pTarget);
     float GetPositionY();
+private:
+    void UpdateAct(STATE state_);
+
 };
+
+/*
+S_IDLE
+S_MOVE,
+S_
+
+*/

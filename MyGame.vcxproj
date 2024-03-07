@@ -294,10 +294,10 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\audioSource.json" />
+    <None Include="Assets\Data\audioSource.json" />
     <None Include="Assets\charTextSource.json" />
     <None Include="Assets\map1.json" />
-    <None Include="Assets\modelSource.json" />
+    <None Include="Assets\Data\modelSource.json" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\memo.txt" />

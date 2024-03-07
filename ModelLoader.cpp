@@ -13,11 +13,18 @@ namespace ModelLoader {
 }
 void ModelLoader::Init()
 {
-	std::ifstream f("modelSource.json");
+	std::ifstream f("Data\\modelSource.json");
 	data = json::parse(f);
 }
 
 int ModelLoader::Load(MODEL model)
 {
 	return Model::Load(data["Source"][NAMEOF_ENUM(model)]);
+}
+
+void ModelLoader::ChangeAnim()
+{
+	Model::SetAnimFrame(
+		data["Source"][NAMEOF_ENUM(model)]["anim"]);
+	)
 }

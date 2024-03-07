@@ -33,8 +33,8 @@ void MapLoader::Load(GameObject* pParent, vector<Field::FIELD_DATA>* pFieldData,
 	std::ifstream f;
 	switch (mID)
 	{
-	case MapLoader::M_001:	f.open("map1.json");	break;
-	case MapLoader::M_002:	f.open("map2.json");	break;
+	case MapLoader::M_001:	f.open("Data\\map1.json");	break;
+	case MapLoader::M_002:	f.open("Data\\map2.json");	break;
 	default: MessageBox(NULL, ((string)(NAMEOF_ENUM(mID))).c_str(), "Error:Open map json", MB_OK);
 	}
 	json data = json::parse(f);

@@ -1,16 +1,19 @@
 #include "Player.h"
+#include "ModelLoader.h"
+#include "AudioManager.h"
 #include "Engine/Model.h"
 #include "Engine/Input.h"
 #include "Ground.h"
 #include "Needle.h"
 #include "KeyConfig.h"
 #include "Engine/Debug.h"
-#include "Engine/Audio.h"
 #include "GameData.h"
 
 //コンストラクタ
-Player::Player(GameObject* parent)
-    :GameObject(parent, "Player"),hModel_(-1)/*, hSound_(-1)*/
+Player::Player(GameObject* parent):
+    GameObject(parent, "Player"),
+    state_(S_IDLE),
+    hModel_(-1)/*, hSound_(-1)*/
 {
     std::fill(hSound_, hSound_ + 3, -1);
     nowFly = false;
@@ -28,11 +31,11 @@ Player::~Player()
 void Player::Initialize()
 {
     //モデルデータのロード
-    hModel_ = Model::Load("Player.fbx");
+    hModel_ = ModelLoader::Load(ModelLoader::MODEL::Player);
     assert(hModel_ >= 0);
+
     maxVel = -0.15f; //自然落下の最高速
 
-    transform_.position_.x -= 5;
     //当たり判定
     SphereCollider* collision = new SphereCollider(XMFLOAT3(0, 1.05f, 0), 0.35f);
     AddCollider(collision);
@@ -42,7 +45,7 @@ void Player::Initialize()
     //サウンドのロード
     std::string audioFileName_[] = { "se_JUMP.wav", "se_LAND.wav", "se_HIT.wav" };
     for (int i = 0; i < sizeof(audioFileName_) / sizeof(audioFileName_[0]); i++) {
-        hSound_[i] = Audio::Load(audioFileName_[i], false, 1);
+        hSound_[i] = AudioManager::Load(&audioFileName_);
 
         assert(hSound_[i] >= 0);
     }
@@ -53,7 +56,7 @@ void Player::Initialize()
 void Player::Update()
 {
     if (GameData::GetHealth() <= 0) {
-        hasHealth = false;
+        AUDIO_ASSET
     }
     else {
         hasHealth = true;
@@ -153,4 +156,29 @@ void Player::OnCollision(GameObject* pTarget){
 float Player::GetPositionY()
 {
     return transform_.position_.y;
+}
+
+void Player::UpdateAct(STATE state)
+{
+    switch (state)
+    {
+    case Player::STATE::S_IDLE:
+        Model::SetAnimFrame(hModel_, 0, 1, 1);
+        Model::Se
+        break;
+    case Player::STATE::S_MOVE:
+        break;
+    case Player::STATE::S_JUMP:
+        break;
+    case Player::STATE::S_FALL:
+        break;
+    case Player::STATE::S_DAMAGED:
+        break;
+    case Player::STATE::S_THROW:
+        break;
+    case Player::STATE::S_DOWN:
+        break;
+    default:
+        break;
+    }
 }

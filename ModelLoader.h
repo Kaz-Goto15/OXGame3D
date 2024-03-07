@@ -9,5 +9,6 @@ namespace ModelLoader {
 	};
 	void Init();
 	int Load(MODEL model);
+	void ChangeAnim();
 };
 

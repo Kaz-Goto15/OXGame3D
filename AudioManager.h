@@ -16,10 +16,18 @@ namespace AudioManager
 	};
 
 	void Init();
+	void Load(int sourceID);
 	void Play(int sourceID);
 	void Stop(int sourceID);
 	void Release();
 	void SetPitch(int sourceID, float pitch);
 	bool isLoadAllFile();
+
+	template<typename... Args>
+	void Load(int sourceID, Args... args) {
+		std::cout << sourceID << " ";
+		Load(args...);
+	}
+
 };
 

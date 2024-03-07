@@ -471,7 +471,7 @@
     <Text Include="Assets\memo.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\audioSource.json">
+    <None Include="Assets\Data\audioSource.json">
       <Filter>01Engine\ResourceManager\Audio</Filter>
     </None>
     <None Include="Assets\charTextSource.json">
@@ -480,7 +480,7 @@
     <None Include="Assets\map1.json">
       <Filter>Game Obj</Filter>
     </None>
-    <None Include="Assets\modelSource.json">
+    <None Include="Assets\Data\modelSource.json">
       <Filter>01Engine\ResourceManager\Model</Filter>
     </None>
   </ItemGroup>
