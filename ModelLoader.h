@@ -1,14 +1,18 @@
 #pragma once
+#include <string>
+using std::string;
+
 namespace ModelLoader {
 	enum MODEL {
 		DEFAULT,
 		Cube,
 		Cylinder,
 		Hanger,
-		Player
+		Player,
+		MAX,
 	};
 	void Init();
 	int Load(MODEL model);
-	void ChangeAnim();
+	void ChangeAnim(MODEL model, string animName,float speed = 1);
 };
 

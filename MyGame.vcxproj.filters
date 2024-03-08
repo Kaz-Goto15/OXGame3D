@@ -202,9 +202,6 @@
     <ClCompile Include="Engine\Audio.cpp">
       <Filter>01Engine\ResourceManager\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="AudioManager.cpp">
-      <Filter>01Engine\ResourceManager\Audio</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Text.cpp">
       <Filter>01Engine\ResourceManager\Text</Filter>
     </ClCompile>
@@ -257,6 +254,10 @@
     <ClCompile Include="TransitionAnimBase.cpp">
       <Filter>old</Filter>
     </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>01Engine\ResourceManager\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Switch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -396,9 +397,6 @@
     <ClInclude Include="Engine\Audio.h">
       <Filter>01Engine\ResourceManager\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="AudioManager.h">
-      <Filter>01Engine\ResourceManager\Audio</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Text.h">
       <Filter>01Engine\ResourceManager\Text</Filter>
     </ClInclude>
@@ -451,6 +449,10 @@
     <ClInclude Include="TransitionAnimBase.h">
       <Filter>old</Filter>
     </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>01Engine\ResourceManager\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Switch.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
@@ -474,10 +476,10 @@
     <None Include="Assets\Data\audioSource.json">
       <Filter>01Engine\ResourceManager\Audio</Filter>
     </None>
-    <None Include="Assets\charTextSource.json">
+    <None Include="Assets\Data\charTextSource.json">
       <Filter>01Engine\ResourceManager\Text</Filter>
     </None>
-    <None Include="Assets\map1.json">
+    <None Include="Assets\Data\map1.json">
       <Filter>Game Obj</Filter>
     </None>
     <None Include="Assets\Data\modelSource.json">

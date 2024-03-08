@@ -13,7 +13,7 @@
 Player::Player(GameObject* parent):
     GameObject(parent, "Player"),
     state_(S_IDLE),
-    hModel_(-1)/*, hSound_(-1)*/
+    hModel_(-1)
 {
     std::fill(hSound_, hSound_ + 3, -1);
     nowFly = false;
@@ -43,12 +43,15 @@ void Player::Initialize()
     AddCollider(collision1);
   
     //サウンドのロード
-    std::string audioFileName_[] = { "se_JUMP.wav", "se_LAND.wav", "se_HIT.wav" };
-    for (int i = 0; i < sizeof(audioFileName_) / sizeof(audioFileName_[0]); i++) {
-        hSound_[i] = AudioManager::Load(&audioFileName_);
+    using AudioManager::AUDIO_SOURCE;
+    AudioManager::Load(AUDIO_SOURCE::SE_DAMAGED, AUDIO_SOURCE::SE_THROW);
+    //std::string audioFileName_[] = { "se_JUMP.wav", "se_LAND.wav", "se_HIT.wav" };
+    //for (int i = 0; i < sizeof(audioFileName_) / sizeof(audioFileName_[0]); i++) {
+    //    using AudioManager::AUDIO_SOURCE;
+    //    AudioManager::Load(AUDIO_SOURCE::SE_DAMAGED);
 
-        assert(hSound_[i] >= 0);
-    }
+    //    assert(hSound_[i] >= 0);
+    //}
 
 }
 
@@ -143,6 +146,10 @@ void Player::Release()
 //当たった時の処理
 void Player::OnCollision(GameObject* pTarget){
         //当たったときの処理
+    if (pTarget->ExistTag("Enemy", "Neutral")) {    //タグがあるオブジェクトに当たった時の処理
+        ChangeState(S_DAMAGED);
+    }
+    if(pTarget->ExistTag("item"))
         if (pTarget->GetObjectName() == "Needle")//Bulletに当たったら敵が消える処理
         {
             Audio::Play(hSound_[2]);
@@ -160,11 +167,12 @@ float Player::GetPositionY()
 
 void Player::UpdateAct(STATE state)
 {
+    bool doOnce
     switch (state)
     {
     case Player::STATE::S_IDLE:
-        Model::SetAnimFrame(hModel_, 0, 1, 1);
-        Model::Se
+        ModelLoader::ChangeAnim(hModel_, "idle");
+        
         break;
     case Player::STATE::S_MOVE:
         break;
@@ -177,6 +185,33 @@ void Player::UpdateAct(STATE state)
     case Player::STATE::S_THROW:
         break;
     case Player::STATE::S_DOWN:
+        break;
+    default:
+        break;
+    }
+}
+
+void Player::ChangeState(STATE state)
+{
+    state_ = state;
+
+    //各stateのdoonce的処理を行う
+    switch (state)
+    {
+    case Player::S_IDLE:
+        ModelLoader::ChangeAnim(hModel_, "idle");
+        break;
+    case Player::S_MOVE:
+        break;
+    case Player::S_JUMP:
+        break;
+    case Player::S_FALL:
+        break;
+    case Player::S_DAMAGED:
+        break;
+    case Player::S_THROW:
+        break;
+    case Player::S_DOWN:
         break;
     default:
         break;

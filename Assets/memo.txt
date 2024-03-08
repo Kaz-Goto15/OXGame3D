@@ -118,3 +118,5 @@ Neutral extends Entity
 Init(vector<audioList>)‚©‚ç‚ÌPlay<List>‚µ‚½‚ç
 audiOList‚ğ‰Šú‰»‚É—pˆÓ‚·‚é•K—v
 ‚Ç‚¤‚¹•Ï‚í‚ç‚È‚¢
+
+https://qiita.com/hoshianaaa/items/108ae9edab791fe5e77d

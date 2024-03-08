@@ -25,7 +25,6 @@ namespace AudioManager
 
 	template<typename... Args>
 	void Load(int sourceID, Args... args) {
-		std::cout << sourceID << " ";
 		Load(args...);
 	}
 

@@ -135,7 +135,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonGP.cpp" />
     <ClCompile Include="ButtonGroup.cpp" />
@@ -181,9 +180,11 @@
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="StageData.cpp" />
     <ClCompile Include="StageView.cpp" />
     <ClCompile Include="Status.cpp" />
+    <ClCompile Include="Switch.cpp" />
     <ClCompile Include="TestEntity.cpp" />
     <ClCompile Include="TextLoader.cpp" />
     <ClCompile Include="TitleButton.cpp" />
@@ -205,7 +206,6 @@
     <ClCompile Include="TransitionAnimBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonGP.h" />
     <ClInclude Include="ButtonGroup.h" />
@@ -251,9 +251,11 @@
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Sample.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="StageData.h" />
     <ClInclude Include="StageView.h" />
     <ClInclude Include="Status.h" />
+    <ClInclude Include="Switch.h" />
     <ClInclude Include="TestEntity.h" />
     <ClInclude Include="TextLoader.h" />
     <ClInclude Include="TitleButton.h" />
@@ -295,8 +297,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Data\audioSource.json" />
-    <None Include="Assets\charTextSource.json" />
-    <None Include="Assets\map1.json" />
+    <None Include="Assets\Data\charTextSource.json" />
+    <None Include="Assets\Data\map1.json" />
     <None Include="Assets\Data\modelSource.json" />
   </ItemGroup>
   <ItemGroup>

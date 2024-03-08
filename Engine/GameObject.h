@@ -1,6 +1,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include <list>
+#include <vector>
 #include <string>
 #include <assert.h>
 #include "SphereCollider.h"
@@ -29,7 +30,10 @@ protected:
 	std::string				objectName_;
 
 	//衝突判定リスト
-	std::list<Collider*>	colliderList_;	
+	std::list<Collider*>	colliderList_;
+
+	//オブジェクトタグ
+	std::vector<std::string>	objectTag_;
 
 public:
 	//コンストラクタ
@@ -96,6 +100,15 @@ public:
 	//オブジェクトの名前を取得
 	//戻値：名前
 	const std::string& GetObjectName(void) const;
+
+	//オブジェクトタグ検索
+	bool ExistTag(const std::string& name){return std::find(objectTag_.begin(), objectTag_.end(),name) != objectTag_.end();}
+
+	template<typename... Args>
+	bool ExistTag(const std::string& name, Args... args) {
+		if (ExistTag(name))return true;
+		return ExistTag(args...);
+	}
 
 	//子オブジェクトを追加（リストの最後へ）
 	//引数：追加するオブジェクト

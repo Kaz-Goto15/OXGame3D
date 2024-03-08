@@ -8,14 +8,34 @@
       "file": "Player.fbx",
       "anim": [
         {
-          "name": "idle",
+          "name": "jump",
           "start": 1,
-          "end": 2
+          "end": 114
         },
         {
           "name": "run",
-          "start": 4,
-          "end": 6
+          "start": 115,
+          "end": 158
+        },
+        {
+          "name": "down",
+          "start": 159,
+          "end": 434
+        },
+        {
+          "name": "throw",
+          "start": 435,
+          "end": 633
+        },
+        {
+          "name": "damaged",
+          "start": 634,
+          "end": 713
+        },
+        {
+          "name": "idle",
+          "start": 714,
+          "end": 1309
         }
       ]
     }

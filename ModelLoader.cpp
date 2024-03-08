@@ -9,6 +9,7 @@
 using json = nlohmann::json;
 using namespace nameof;
 namespace ModelLoader {
+	int handle[MODEL::MAX];
 	json data;
 }
 void ModelLoader::Init()
@@ -19,12 +20,16 @@ void ModelLoader::Init()
 
 int ModelLoader::Load(MODEL model)
 {
-	return Model::Load(data["Source"][NAMEOF_ENUM(model)]);
+	handle[model] = Model::Load(data["Source"][NAMEOF_ENUM(model)]);
+	return handle[model];
 }
 
-void ModelLoader::ChangeAnim()
-{
+void ModelLoader::ChangeAnim(MODEL model, string animName, float speed){
 	Model::SetAnimFrame(
-		data["Source"][NAMEOF_ENUM(model)]["anim"]);
-	)
+		handle[model],
+		data["Source"][NAMEOF_ENUM(model)]["anim"][animName]["start"],
+		data["Source"][NAMEOF_ENUM(model)]["anim"][animName]["end"],
+		speed
+	);
 }
+

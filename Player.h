@@ -3,7 +3,7 @@
 
 class Player : public GameObject
 {
-    enum class STATE {
+    enum STATE {
         S_IDLE,
         S_MOVE,
         S_JUMP,
@@ -12,12 +12,14 @@ class Player : public GameObject
         S_THROW,
         S_DOWN
     }state_;
+
     enum AUDIO_ASSET {
         SE_JUMP,
         SE_LAND,
         SE_THROW,
         SE_MAX
     };
+
     float velY;
     float maxVel;
     int hSound_[SE_MAX]; //ÉTÉEÉìÉhî‘çÜ
@@ -48,6 +50,7 @@ public:
     float GetPositionY();
 private:
     void UpdateAct(STATE state_);
+    void ChangeState(STATE state);
 
 };
 
