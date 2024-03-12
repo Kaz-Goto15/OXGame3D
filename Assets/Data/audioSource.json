@@ -1,10 +1,4 @@
 {
-  "TST": {
-    "file": "bgm_GAME.wav",
-    "loop": false,
-    "maxPlay": 1,
-    "attribute": 0
-  },
   "SE_SELECT": {
     "file": "se_select.wav",
     "loop": false,

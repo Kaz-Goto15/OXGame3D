@@ -1,0 +1,40 @@
+{
+  "mapData": {
+    "field": [
+      {
+        "obj": "Cube",
+        "pos": [ 0, 0, 0 ],
+        "rot": [ 0, 0, 0 ],
+        "sca": [ 1, 1, 1 ]
+      },
+      {
+        "obj": "Cylinder",
+        "pos": [ 0, 0, 0 ],
+        "rot": [ 0, 0, 0 ],
+        "sca": [ 1, 1, 1 ]
+      }
+    ],
+    "activeField": [
+
+    ],
+    "entity": [
+      {
+        "obj": "Player",
+        "pos": [ 0, 0, 0 ],
+        "rot": [ 0, 0, 0 ],
+        "sca": [ 1, 1, 1 ],
+        "collider": {
+          "type": "box",
+          "pos": [ 0, 0, 0 ],
+          "sca": [ 1, 1, 1 ]
+        }
+      },
+      {
+        "obj": "Mushroom",
+        "pos": [ 0, 0, 0 ],
+        "rot": [ 0, 0, 0 ],
+        "sca": [ 1, 1, 1 ]
+      }
+    ]
+  }
+}

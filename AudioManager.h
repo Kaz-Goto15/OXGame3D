@@ -2,7 +2,6 @@
 namespace AudioManager
 {
 	enum AUDIO_SOURCE {
-		TST,
 		SE_SELECT,
 		SE_DECIDE,
 		SE_CANCEL,
