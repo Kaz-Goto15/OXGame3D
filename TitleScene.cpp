@@ -55,11 +55,14 @@ void TitleScene::Update() {
 			AudioManager::Play(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
 			//É{É^Éìï`âÊ(ëΩèd)
 			for (int i = 0; i < S_SEL_MAX; i++) {
+				btn[i]->Enter();
 				btn[i]->Visible();
 			}
 
 			state_ = S_MAIN;
 			progress = 0;
+			Image::SetAlpha(hPict_[PIC_TITLE], ALPHA_MAX);
+			Image::SetAlpha(hPict_[PIC_BACKGROUND], ALPHA_MAX);
 		}
 	}
 	//debug 0 : splash
@@ -185,6 +188,7 @@ void TitleScene::InitButton(SELECT_STATE ss, std::string text, XMINT2 pos)
 	btn[ss]->SetText(text);
 	btn[ss]->SetAction(ss);
 	btn[ss]->SetPosition(pos.x, pos.y, 0);
+	btn[ss]->Leave();
 	btn[ss]->Invisible();
 }
 

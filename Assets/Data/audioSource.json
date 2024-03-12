@@ -8,7 +8,7 @@
   "SE_SELECT": {
     "file": "se_select.wav",
     "loop": false,
-    "maxPlay": 1,
+    "maxPlay": 30,
     "attribute": 1
   },
   "SE_DECIDE": {
