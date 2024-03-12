@@ -178,6 +178,7 @@
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="OptionScreen.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="AudioManager.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="OptionScreen.h" />
     <ClInclude Include="PlayScene.h" />
+    <ClInclude Include="ResultScene.h" />
     <ClInclude Include="Sample.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="AudioManager.h" />

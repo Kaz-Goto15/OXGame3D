@@ -258,6 +258,9 @@
       <Filter>01Engine\ResourceManager\Audio</Filter>
     </ClCompile>
     <ClCompile Include="Switch.cpp" />
+    <ClCompile Include="ResultScene.cpp">
+      <Filter>C_Scene/Screen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -453,6 +456,9 @@
       <Filter>01Engine\ResourceManager\Audio</Filter>
     </ClInclude>
     <ClInclude Include="Switch.h" />
+    <ClInclude Include="ResultScene.h">
+      <Filter>C_Scene/Screen</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

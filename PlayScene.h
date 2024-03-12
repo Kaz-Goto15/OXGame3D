@@ -13,6 +13,11 @@ class PlayScene : public GameObject
 	Field* pField_;
 	vector<GameObject*> pActiveFieldList_;
 	vector<Entity*> pEntityList_;
+
+	int temp;
+	int count;
+	const int MAX_COUNT = 300;
+
 public:
 	PlayScene(GameObject* parent);
 	void Initialize() override;

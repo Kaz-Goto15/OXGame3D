@@ -154,10 +154,7 @@ void TitleScene::ButtonAct(int hAct)
 	{
 	case TitleScene::S_SEL_START:
 		pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_SPLASH);
-		//pSceneManager->ChangeScene(SCENE_ID_PLAY);
-		
-		//ゲームシーン実装してないのでスプラッシュシーンへの遷移を記述している
+		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 		//ファイル選択を実装できるならFileScreenを噛む
 		break;
 	case TitleScene::S_SEL_CREDIT:
