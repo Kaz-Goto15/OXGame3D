@@ -16,6 +16,7 @@ namespace Model
 	//モデルをロード
 	int Load(std::string fileName)
 	{
+		fileName = "Model\\" + fileName;
 			ModelData* pData = new ModelData;
 
 			//開いたファイル一覧から同じファイル名のものが無いか探す

@@ -301,6 +301,7 @@
     <None Include="Assets\Data\audioSource.json" />
     <None Include="Assets\Data\charTextSource.json" />
     <None Include="Assets\Data\map1.json" />
+    <None Include="Assets\Data\map2.json" />
     <None Include="Assets\Data\modelSource.json" />
   </ItemGroup>
   <ItemGroup>

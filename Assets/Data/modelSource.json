@@ -5,7 +5,7 @@
     "Cylinder": "Cylinder.fbx",
     "Hanger": "Hanger.fbx",
     "Player": {
-      "file": "Player.fbx",
+      "file": "HNSG\\Player.fbx",
       "anim": [
         {
           "name": "jump",

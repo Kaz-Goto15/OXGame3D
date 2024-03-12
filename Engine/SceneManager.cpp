@@ -22,9 +22,9 @@ SceneManager::SceneManager(GameObject * parent):
 void SceneManager::Initialize()
 {
 	//最初のシーンを準備
-	currentSceneID_ = SCENE_ID_SPLASH;
+	currentSceneID_ = SCENE_ID_PLAY;
 	nextSceneID_ = currentSceneID_;
-	Instantiate<SplashScene>(this);
+	Instantiate<PlayScene>(this);
 }
 
 //更新

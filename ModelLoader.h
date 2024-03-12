@@ -5,6 +5,7 @@ using std::string;
 namespace ModelLoader {
 	enum MODEL {
 		DEFAULT,
+		Plane,
 		Cube,
 		Cylinder,
 		Hanger,

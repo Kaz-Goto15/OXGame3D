@@ -12,7 +12,7 @@ class PlayScene : public GameObject
 {
 	Field* pField_;
 	vector<GameObject*> pActiveFieldList_;
-	vector<Entity*> pEntityList_;
+	vector<GameObject*> pEntityList_;
 
 	int temp;
 	int count;

@@ -20,7 +20,7 @@ void ModelLoader::Init()
 
 int ModelLoader::Load(MODEL model)
 {
-	handle[model] = Model::Load(data["Source"][NAMEOF_ENUM(model)]);
+	handle[model] = Model::Load(data["Source"][NAMEOF_ENUM(model)]["file"]);
 	return handle[model];
 }
 

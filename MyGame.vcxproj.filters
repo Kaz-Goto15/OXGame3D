@@ -123,9 +123,6 @@
     <ClCompile Include="Needle.cpp">
       <Filter>old\B_GameScene</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>old\B_GameScene</Filter>
-    </ClCompile>
     <ClCompile Include="RivalObject.cpp">
       <Filter>old\B_GameScene</Filter>
     </ClCompile>
@@ -261,6 +258,9 @@
     <ClCompile Include="ResultScene.cpp">
       <Filter>C_Scene/Screen</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Game Obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -319,9 +319,6 @@
       <Filter>old\B_GameScene</Filter>
     </ClInclude>
     <ClInclude Include="Needle.h">
-      <Filter>old\B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
       <Filter>old\B_GameScene</Filter>
     </ClInclude>
     <ClInclude Include="RivalObject.h">
@@ -459,6 +456,9 @@
     <ClInclude Include="ResultScene.h">
       <Filter>C_Scene/Screen</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Game Obj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
@@ -490,6 +490,9 @@
     </None>
     <None Include="Assets\Data\modelSource.json">
       <Filter>01Engine\ResourceManager\Model</Filter>
+    </None>
+    <None Include="Assets\Data\map2.json">
+      <Filter>Game Obj</Filter>
     </None>
   </ItemGroup>
 </Project>

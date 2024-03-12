@@ -8,6 +8,8 @@
 //以下にはゲームプレイオブジェクトを全include
 #include "Sample.h"
 #include "TestEntity.h"
+#include "Player.h"
+
 using json = nlohmann::json;
 using namespace nameof;
 
@@ -27,7 +29,7 @@ void MapLoader::Init()
 }
 
 
-void MapLoader::Load(GameObject* pParent, vector<Field::FIELD_DATA>* pFieldData, vector<GameObject*>* pActiveFieldList, vector<Entity*>* pEntityList, MAP mID)
+void MapLoader::Load(GameObject* pParent, vector<Field::FIELD_DATA>* pFieldData, vector<GameObject*>* pActiveFieldList, vector<GameObject*>* pEntityList, MAP mID)
 {
 	//マップjson開く
 	std::ifstream f;
@@ -72,23 +74,28 @@ void MapLoader::Load(GameObject* pParent, vector<Field::FIELD_DATA>* pFieldData,
 	}
 
 	//個別オブジェクト生成 
-	for (auto& entity : data["mapData"]["entity"]) {
-		Entity* gso = nullptr;
+	json locate = data["mapData"]["entity"];
+	for (int i = 0; i < locate.size();i++) {
+		GameObject* gso = nullptr;
 
-		OBJECT d = entity["obj"].template get<MapLoader::OBJECT>();
+		OBJECT d = locate[i]["obj"].template get<MapLoader::OBJECT>();
 		switch (d)
 		{
 		case MapLoader::NONE:			gso = Instantiate<TestEntity>(pParent);	break;
-		case MapLoader::OBJ_E_PLAYER:	gso = Instantiate<TestEntity>(pParent);	break;
+		case MapLoader::OBJ_E_PLAYER:	gso = Instantiate<Player>(pParent);	break;
 		case MapLoader::OBJ_E_HANGER:	gso = Instantiate<TestEntity>(pParent);	break;
 		case MapLoader::OBJ_E_BOMB:		gso = Instantiate<TestEntity>(pParent);	break;
 		case MapLoader::OBJ_E_MUSHROOM:	gso = Instantiate<TestEntity>(pParent);	break;
 		default: MessageBox(NULL, ((string)(NAMEOF_ENUM(d))).c_str(), "Error:Instantiate Entity", MB_OK);
 		}
 
-		gso->SetPosition((float)entity["pos"][0], (float)entity["pos"][1], (float)entity["pos"][2]);
-		gso->SetRotate((float)entity["rot"][0], (float)entity["rot"][1], (float)entity["rot"][2]);
-		gso->SetScale((float)entity["sca"][0], (float)entity["sca"][1], (float)entity["sca"][2]);
+		gso->SetPosition((float)locate[i]["pos"][0], (float)locate[i]["pos"][1], (float)locate[i]["pos"][2]);
+		gso->SetRotate((float)locate[i]["rot"][0], (float)locate[i]["rot"][1], (float)locate[i]["rot"][2]);
+		gso->SetScale((float)locate[i]["sca"][0], (float)locate[i]["sca"][1], (float)locate[i]["sca"][2]);
+		//コライダー関連の処理
+		// ない
+		///////////////////////////
+
 		pEntityList->push_back(gso);
 	}
 	

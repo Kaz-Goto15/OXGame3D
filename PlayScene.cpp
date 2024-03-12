@@ -11,11 +11,12 @@ PlayScene::PlayScene(GameObject* parent)
 {}
 void PlayScene::Initialize() {
 	temp = Image::Load("Temp\\play.png");
-	//pField_ = Instantiate<Field>(this);
-	//vector<Field::FIELD_DATA> fieldData;
-	//MapLoader::Load(this,&fieldData, &pActiveFieldList_, &pEntityList_, MapLoader::MAP::M_001);
 
-	//pField_->SetFieldData(fieldData);
+	pField_ = Instantiate<Field>(this);
+	vector<Field::FIELD_DATA> fieldData;
+	MapLoader::Load(this,&fieldData, &pActiveFieldList_, &pEntityList_, MapLoader::MAP::M_001);
+
+	pField_->SetFieldData(fieldData);
 }
 void PlayScene::Update() {
 	count++;

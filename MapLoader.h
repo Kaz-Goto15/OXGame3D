@@ -42,7 +42,7 @@ namespace MapLoader
 			{OBJ_E_MUSHROOM,"Mushroom" }
 		});
 	void Init();
-	void Load(GameObject* pParent, vector<Field::FIELD_DATA>* pFieldData, vector<GameObject*>* pActiveFieldList, vector<Entity*>* pEntityList, MAP mID);
+	void Load(GameObject* pParent, vector<Field::FIELD_DATA>* pFieldData, vector<GameObject*>* pActiveFieldList, vector<GameObject*>* pEntityList, MAP mID);
 	
 	template<typename BasicJsonType>
 	inline void to_json(BasicJsonType& j, const OBJECT& e);
