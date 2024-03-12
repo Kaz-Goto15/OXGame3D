@@ -10,6 +10,7 @@ namespace SystemConfig {
 	int volSE = 0;
 	int FPS = 0;
 	bool isFullScreen = false;
+	bool debug = false;
 
 	void SetVolBGM(int vol) {
 		volBGM = vol;
@@ -40,5 +41,10 @@ namespace SystemConfig {
 		SetVolSE(GetPrivateProfileInt(section, "vol_se", volSE, iniFile));			//SE
 		SetFPS(GetPrivateProfileInt(section, "fps", 60, iniFile));					//FPS（画面更新速度）
 		EnableFullScreen(GetPrivateProfileInt(section, "enFullScreen", 0, iniFile));//フルスクリーンの有効無効
+		debug = GetPrivateProfileInt(section, "debug", 0, iniFile);
+	}
+	bool IsDebug()
+	{
+		return debug;
 	}
 }

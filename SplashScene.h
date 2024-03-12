@@ -18,6 +18,8 @@ private:
 	static const int DRAW_TIME = 30;
 	static const int FADE_TIME = 60;
 	static const int FADEIN_EASE_NO = 23, FADEOUT_EASE_NO = 22;
+	static const int ALPHA_MAX = 265, ALPHA_ZERO = 0;
+
 	int hLogo_[LOGO_COUNT];
 	int queue_, drawTime_, fadeTime_;
 	int imageAlpha_;

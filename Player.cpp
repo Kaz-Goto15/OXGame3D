@@ -13,7 +13,9 @@
 Player::Player(GameObject* parent):
     GameObject(parent, "Player"),
     state_(S_IDLE),
-    hModel_(-1)
+    hModel_(-1),
+    nowIFrame(0),
+    iFrame(300)
 {
     std::fill(hSound_, hSound_ + 3, -1);
     nowFly = false;
@@ -58,75 +60,78 @@ void Player::Initialize()
 //更新
 void Player::Update()
 {
-    if (GameData::GetHealth() <= 0) {
-        AUDIO_ASSET
-    }
-    else {
-        hasHealth = true;
-    }
-    if (hasHealth) {
-        //左右の移動と移動範囲
-        if (Input::IsKey(KeyConfig::GetKey(KEY_ID_RIGHT))) {
-            transform_.position_.x += 0.1f;
-            if (transform_.position_.x > -3)transform_.position_.x = -3;
-        }
-        if (Input::IsKey(KeyConfig::GetKey(KEY_ID_LEFT))) {
-            transform_.position_.x -= 0.1f;
-            if (transform_.position_.x < -9)transform_.position_.x = -9;
-        }
+    //switch (state_) {
 
-        //ジャンプ
-        if (Input::IsKeyDown(KeyConfig::GetKey(KEY_ID_UP_JUMP))) {
-            nowFly = true;
-            Debug::Log("FLY", true);
-            Audio::Play(hSound_[0]);
-            velY = 0.6f;
-        }
-    }
-    //最高高度
-    if (transform_.position_.y > 10) {
-        transform_.position_.y = 10;
-        velY = 0;
-    }
+    //}
+    //if (GameData::GetHealth() <= 0) {
+    //    //AUDIO_ASSET
+    //}
+    //else {
+    //    hasHealth = true;
+    //}
+    //if (hasHealth) {
+    //    //左右の移動と移動範囲
+    //    if (Input::IsKey(KeyConfig::GetKey(KEY_ID_RIGHT))) {
+    //        transform_.position_.x += 0.1f;
+    //        if (transform_.position_.x > -3)transform_.position_.x = -3;
+    //    }
+    //    if (Input::IsKey(KeyConfig::GetKey(KEY_ID_LEFT))) {
+    //        transform_.position_.x -= 0.1f;
+    //        if (transform_.position_.x < -9)transform_.position_.x = -9;
+    //    }
 
-    //knockback
-    if (knockback > 0) {
-        transform_.position_.x -= knockback;
-        if (transform_.position_.x < -9)transform_.position_.x = -9;
-        knockback -= 0.05f;
-    }
+    //    //ジャンプ
+    //    if (Input::IsKeyDown(KeyConfig::GetKey(KEY_ID_UP_JUMP))) {
+    //        nowFly = true;
+    //        Debug::Log("FLY", true);
+    //        Audio::Play(hSound_[0]);
+    //        velY = 0.6f;
+    //    }
+    //}
+    ////最高高度
+    //if (transform_.position_.y > 10) {
+    //    transform_.position_.y = 10;
+    //    velY = 0;
+    //}
 
-    //重力降下
-    velY -= 0.05f;
-    
-    //自然落下の最高速を上回るとき上書きする
-    if (maxVel > velY)velY = maxVel;
-    //下の高速落下(上書)
-    if (Input::IsKey(KeyConfig::GetKey(KEY_ID_DOWN)))velY = -0.55f;
+    ////knockback
+    //if (knockback > 0) {
+    //    transform_.position_.x -= knockback;
+    //    if (transform_.position_.x < -9)transform_.position_.x = -9;
+    //    knockback -= 0.05f;
+    //}
 
-    transform_.position_.y += velY;
+    ////重力降下
+    //velY -= 0.05f;
+    //
+    ////自然落下の最高速を上回るとき上書きする
+    //if (maxVel > velY)velY = maxVel;
+    ////下の高速落下(上書)
+    //if (Input::IsKey(KeyConfig::GetKey(KEY_ID_DOWN)))velY = -0.55f;
 
-    Debug::Log(transform_.position_.y, true);
+    //transform_.position_.y += velY;
 
-    Ground* pGround = (Ground*)FindObject("Ground");
-    int hGroundModel = pGround->GetModelHandle();
-    RayCastData rayData;
-    rayData.start = transform_.position_;   //レイの発射位置
-    rayData.start.y = 0;
-    rayData.dir = XMFLOAT3(0, -1, 0);       //レイの方向
-    Model::RayCast(hGroundModel, &rayData); //レイを発射
-    
-    //着地処理
-    if (rayData.hit){
-        if (transform_.position_.y < 0.01) {
-            if (nowFly) {
-                nowFly = false;
-                Debug::Log("LAND", true);
-                Audio::Play(hSound_[1]);
-            }
-            transform_.position_.y = -rayData.dist;
-        }
-    }
+    //Debug::Log(transform_.position_.y, true);
+
+    //Ground* pGround = (Ground*)FindObject("Ground");
+    //int hGroundModel = pGround->GetModelHandle();
+    //RayCastData rayData;
+    //rayData.start = transform_.position_;   //レイの発射位置
+    //rayData.start.y = 0;
+    //rayData.dir = XMFLOAT3(0, -1, 0);       //レイの方向
+    //Model::RayCast(hGroundModel, &rayData); //レイを発射
+    //
+    ////着地処理
+    //if (rayData.hit){
+    //    if (transform_.position_.y < 0.01) {
+    //        if (nowFly) {
+    //            nowFly = false;
+    //            Debug::Log("LAND", true);
+    //            Audio::Play(hSound_[1]);
+    //        }
+    //        transform_.position_.y = -rayData.dist;
+    //    }
+    //}
 
 }
 
@@ -144,20 +149,23 @@ void Player::Release()
 }
 
 //当たった時の処理
-void Player::OnCollision(GameObject* pTarget){
-        //当たったときの処理
+void Player::OnCollision(GameObject* pTarget) {
+    //当たったときの処理
     if (pTarget->ExistTag("Enemy", "Neutral")) {    //タグがあるオブジェクトに当たった時の処理
-        ChangeState(S_DAMAGED);
-    }
-    if(pTarget->ExistTag("item"))
-        if (pTarget->GetObjectName() == "Needle")//Bulletに当たったら敵が消える処理
-        {
-            Audio::Play(hSound_[2]);
-            knockback = 0.4f;
+        if (nowIFrame <= 0) {
+            nowIFrame += iFrame;
+            ChangeState(S_DAMAGED);
         }
+    }
 
-        //当たったときの処理
-
+    if (pTarget->ExistTag("item")) {
+        //pTarget.
+        //if (pTarget->GetObjectName() == "Needle")//Bulletに当たったら敵が消える処理
+        //{
+        //    Audio::Play(hSound_[2]);
+        //    knockback = 0.4f;
+        //}
+    }
 }
 
 float Player::GetPositionY()
@@ -167,11 +175,13 @@ float Player::GetPositionY()
 
 void Player::UpdateAct(STATE state)
 {
-    bool doOnce
+    if (state_ != state) {
+        ChangeState(state);
+    }
     switch (state)
     {
     case Player::STATE::S_IDLE:
-        ModelLoader::ChangeAnim(hModel_, "idle");
+        //Move();
         
         break;
     case Player::STATE::S_MOVE:
@@ -199,19 +209,25 @@ void Player::ChangeState(STATE state)
     switch (state)
     {
     case Player::S_IDLE:
-        ModelLoader::ChangeAnim(hModel_, "idle");
+        ModelLoader::ChangeAnim(static_cast<ModelLoader::MODEL>(hModel_), "idle");
         break;
     case Player::S_MOVE:
+        ModelLoader::ChangeAnim(static_cast<ModelLoader::MODEL>(hModel_), "run");
         break;
     case Player::S_JUMP:
+        ModelLoader::ChangeAnim(static_cast<ModelLoader::MODEL>(hModel_), "jump");
         break;
     case Player::S_FALL:
+        ModelLoader::ChangeAnim(static_cast<ModelLoader::MODEL>(hModel_), "jump");
         break;
     case Player::S_DAMAGED:
+        ModelLoader::ChangeAnim(static_cast<ModelLoader::MODEL>(hModel_), "damaged");
         break;
     case Player::S_THROW:
+        ModelLoader::ChangeAnim(static_cast<ModelLoader::MODEL>(hModel_), "throw");
         break;
     case Player::S_DOWN:
+        ModelLoader::ChangeAnim(static_cast<ModelLoader::MODEL>(hModel_), "down");
         break;
     default:
         break;

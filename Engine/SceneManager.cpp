@@ -21,9 +21,9 @@ SceneManager::SceneManager(GameObject * parent):
 void SceneManager::Initialize()
 {
 	//最初のシーンを準備
-	currentSceneID_ = SCENE_ID_EASE;
+	currentSceneID_ = SCENE_ID_SPLASH;
 	nextSceneID_ = currentSceneID_;
-	Instantiate<EaseScene>(this);
+	Instantiate<SplashScene>(this);
 }
 
 //更新

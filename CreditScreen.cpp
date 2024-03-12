@@ -27,7 +27,7 @@ CreditScreen::~CreditScreen()
 void CreditScreen::Initialize()
 {
     hPict_[PIC_BACKGROUND] = Image::Load("Screen/black.png");
-    hPict_[PIC_BASIC_FRAME_TEX] = Image::Load("Screen/frame256.png");
+    hPict_[PIC_BASIC_FRAME_TEX] = Image::Load("Screen/frame256_2.png");
     hPict_[PIC_DESCRIPTION] = Image::Load("Screen/descr.png");
     Image::SetAlpha(hPict_[PIC_BACKGROUND], 128);
     
@@ -48,23 +48,25 @@ void CreditScreen::Initialize()
 //çXêV
 void CreditScreen::Update()
 {
-    //Ç‡Ç«ÇÈ
-    if (Input::IsKeyDown(DIK_P)) {
-        Prev();
-    }
+    if (SystemConfig::IsDebug()) {
+        //Ç‡Ç«ÇÈ
+        if (Input::IsKeyDown(DIK_P)) {
+            Prev();
+        }
 
-    //ògÇ™ägèkÇ∑ÇÈ
-    if (Input::IsKey(DIK_6)) {
-        frameScale -= 0.01f;
-    }
-    if (Input::IsKey(DIK_7)) {
-        frameScale += 0.01f;
-    }
-    if (Input::IsKey(DIK_8)) {
-        framePos.y -= 1.0f;
-    }
-    if (Input::IsKey(DIK_9)) {
-        framePos.y += 1.0f;
+        //ògÇ™ägèkÇ∑ÇÈ
+        if (Input::IsKey(DIK_6)) {
+            frameScale -= 0.01f;
+        }
+        if (Input::IsKey(DIK_7)) {
+            frameScale += 0.01f;
+        }
+        if (Input::IsKey(DIK_8)) {
+            framePos.y -= 1.0f;
+        }
+        if (Input::IsKey(DIK_9)) {
+            framePos.y += 1.0f;
+        }
     }
 }
 

@@ -52,7 +52,7 @@ void SplashScene::End()
 	//全部表示したらシーン切り替え
 	if (queue_ >= LOGO_COUNT) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_EASE);
+		pSceneManager->ChangeScene(SCENE_ID_TITLE);
 	}
 	else {
 		drawTime_ = 0;
@@ -63,7 +63,7 @@ void SplashScene::End()
 void SplashScene::FadeIn()
 {
 	fadeTime_++;
-	imageAlpha_ = (int)Easing::Calc(FADEIN_EASE_NO, fadeTime_, FADE_TIME, 0.0f, 255.0f);
+	imageAlpha_ = (int)Easing::Calc(FADEIN_EASE_NO, fadeTime_, FADE_TIME, ALPHA_ZERO, ALPHA_MAX);
 
 	if (fadeTime_ > FADE_TIME) {
 		drawTime_ = 0;
@@ -88,7 +88,7 @@ void SplashScene::Idle()
 void SplashScene::FadeOut()
 {
 	fadeTime_++;
-	imageAlpha_ = (int)Easing::Calc(FADEOUT_EASE_NO, fadeTime_, FADE_TIME, 255, 0);
+	imageAlpha_ = (int)Easing::Calc(FADEOUT_EASE_NO, fadeTime_, FADE_TIME, ALPHA_MAX, ALPHA_ZERO);
 
 	if (fadeTime_ > FADE_TIME) {
 		state_ = S_SPLASH_END;
@@ -99,6 +99,6 @@ void SplashScene::FadeOut()
 
 void SplashScene::Skip()
 {
-	imageAlpha_ = 0;
+	imageAlpha_ = ALPHA_ZERO;
 	state_ = S_SPLASH_END;
 }

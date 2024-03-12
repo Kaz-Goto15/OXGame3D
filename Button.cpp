@@ -168,7 +168,10 @@ void Button::SetText(std::string buttonName)
 
 void Button::UpdateIdle()
 {
-	if(IsMovedMouse() && IsEntered())state = SELECT;
+	if (IsMovedMouse() && IsEntered()) {
+		state = SELECT;
+		AudioManager::Play(AudioManager::AUDIO_SOURCE::SE_SELECT);
+	}
 }
 
 void Button::UpdateSelect()

@@ -37,4 +37,6 @@ namespace SystemConfig {
 
 	/// ‰Šú‰»
 	void Init();
+
+	bool IsDebug();
 }

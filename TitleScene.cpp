@@ -5,7 +5,7 @@
 #include "Easing.h"
 #include "Engine/Text.h"
 
-#include "TitleButton.h"
+#include "ButtonGP.h"
 #include "DebugText.h"
 #include "CreditScreen.h"
 
@@ -18,34 +18,50 @@ std::string TitleScene::TitleImgFileName(Img E_IMG)
 	string dir = "Title\\";
 	switch (E_IMG)
 	{
-	case Img::PIC_BACKGROUND:		return dir + "bg.png";
-	case Img::PIC_TITLE:			return dir + "title.png";
-	case Img::PIC_CHARACTER:		return dir + "chara.png";
+	case Img::PIC_BACKGROUND:		return dir + "bg2.png";
+	case Img::PIC_TITLE:			return dir + "title3.png";
+	case Img::PIC_WHITE:			return dir + "white.png";
 	}
 	return "null.png";
 }
 
-TitleScene::TitleScene(GameObject* parent)
-	: GameObject(parent, "TitleScene"),
+TitleScene::TitleScene(GameObject* parent):
+	GameObject(parent, "TitleScene"),
+	state_(S_STANDBY),
 	selectState_(S_SEL_START),
-	pSceneManager(nullptr)
+	pSceneManager(nullptr),
+	txtPressStart(nullptr)
 {}
 
 void TitleScene::Initialize() {
-	AudioManager::Play(AudioManager::AUDIO_SOURCE::BGM_PLAY_0);
+	//AudioManager::Play(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
 	for (int i = 0; i < Img::PIC_MAX; i++) {
 		hPict_[i] = Image::Load(TitleImgFileName(static_cast<Img>(i)));
 	}
+	txtPressStart = new Text();
+	txtPressStart->Initialize(GAKUMARU_16px);
+
 	debugText = Instantiate<DebugText>(this);
 	for (int i = 0; i < 20; i++) debugText->AddStrPtr(&debugStr[i]);
 
-	InitButton(S_SEL_START, "START", { 180,-240 });
-	InitButton(S_SEL_CREDIT, "CREDIT", { 180,-80 });
-	InitButton(S_SEL_OPTION, "OPTION", { 180,80 });
-	InitButton(S_SEL_EXIT, "EXIT", { 180, 240 });
-
+	InitButton(S_SEL_START,	"START",	{ (int)(-buttonXSpace * 1.5),buttonPosYMove[0] });
+	InitButton(S_SEL_CREDIT,"CREDIT",	{ (int)(-buttonXSpace*0.5)	,buttonPosYMove[0] });
+	InitButton(S_SEL_OPTION,"OPTION",	{ (int)(buttonXSpace*0.5)	,buttonPosYMove[0] });
+	InitButton(S_SEL_EXIT,	"EXIT",		{ (int)(buttonXSpace*1.5)	,buttonPosYMove[0] });
 }
 void TitleScene::Update() {
+	if (state_ == S_STANDBY) {
+		if(Input::IsKeyDown(DIK_SPACE)) {
+			AudioManager::Play(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
+			//ボタン描画(多重)
+			for (int i = 0; i < S_SEL_MAX; i++) {
+				btn[i]->Visible();
+			}
+
+			state_ = S_MAIN;
+			progress = 0;
+		}
+	}
 	//debug 0 : splash
 	if (Input::IsKeyDown(DIK_0)) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
@@ -53,9 +69,72 @@ void TitleScene::Update() {
 	}
 }
 void TitleScene::Draw() {
-	for (int i = 0; i < PIC_MAX; i++) {
-		Image::Draw(hPict_[i]);
+	switch (state_)
+	{
+	case TitleScene::S_STANDBY:
+		maxProgress = 60;
+		if(progress < TitleProgPt[1])progress++;
+		if (Between(progress, PROGRESS_ZERO, TitleProgPt[0])) {
+			//いずれ別クラスで上に黒を被せる方式にしたい
+			Image::SetAlpha(hPict_[PIC_TITLE],
+				Easing::Calc(1, progress, TitleProgPt[0], ALPHA_ZERO, ALPHA_MAX)
+			);
+
+			Image::Draw(hPict_[PIC_TITLE]);
+			txtPressStart->SetAlpha(Easing::Calc(1, progress, TitleProgPt[0], ALPHA_ZERO, ALPHA_MAX));
+			txtPressStart->Draw(txtPos.x, txtPos.y, txt);
+			break;
+		}
+		else if (Between(progress, TitleProgPt[0], TitleProgPt[1])) {
+			//Image::SetAlpha(hPict_[PIC_BACKGROUND],
+			//	Easing::Calc(1, progress, TitleProgPt[1], ALPHA_ZERO, ALPHA_MAX)
+			//);
+			Image::SetAlpha(hPict_[PIC_TITLE], ALPHA_MAX);
+			txtPressStart->SetAlpha(ALPHA_MAX);
+			//Image::Draw(hPict_[PIC_BACKGROUND]);
+			Image::Draw(hPict_[PIC_TITLE]);
+			txtPressStart->Draw(txtPos.x, txtPos.y, txt);
+			break;
+		}
+		else {
+			//state_ = S_MAIN;
+			//progress = 0;
+		}
+
+	case TitleScene::S_MAIN:
+		maxProgress = 60;
+		if (progress < maxProgress) {
+			progress++;
+			//背景
+			Image::Draw(hPict_[PIC_BACKGROUND]);
+			//タイトル
+			Transform tra;
+			tra.position_.y = Easing::Calc(23, progress, maxProgress, titlePosYMove[0], titlePosYMove[1]);
+			Image::SetTransform(hPict_[PIC_TITLE], tra);
+			Image::Draw(hPict_[PIC_TITLE]);
+			//ボタン描画(多重)
+			for (int i = 0; i < S_SEL_MAX; i++) {
+				//もっといい計算方法でできるかも
+				XMFLOAT3 pos = btn[i]->GetPosition();
+				pos.y = Easing::Calc(23, progress, maxProgress, buttonPosYMove[0], buttonPosYMove[1]);
+				btn[i]->SetPosition(pos);
+			}
+			//白 いずれ別クラスで実装(描画順の関係でボタンが上にいくため)
+			Image::SetAlpha(hPict_[PIC_WHITE],
+				Easing::Calc(1, progress, maxProgress, ALPHA_MAX, ALPHA_ZERO)
+			);
+			Image::Draw(hPict_[PIC_WHITE]);
+
+			break;
+		}
+
+	case TitleScene::S_SELECT:
+	default:
+		Image::Draw(hPict_[PIC_BACKGROUND]);
+		Image::Draw(hPict_[PIC_TITLE]);
+		break;
 	}
+
 	XMFLOAT3 mousePos = Input::GetMousePosition();
 	//debugStr[0] = "imgSize: " + std::to_string(Image::GetWidth(hImg_)) + ", " + std::to_string(Image::GetHeight(hImg_));
 	//debugStr[1] = "imgScale: " + std::to_string(nullScale_.x) + ", " + std::to_string(nullScale_.y);
@@ -73,8 +152,8 @@ void TitleScene::ButtonAct(int hAct)
 	case TitleScene::S_SEL_START:
 		pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_SPLASH);
-		//GameScene?
-
+		//pSceneManager->ChangeScene(SCENE_ID_PLAY);
+		
 		//ゲームシーン実装してないのでスプラッシュシーンへの遷移を記述している
 		//ファイル選択を実装できるならFileScreenを噛む
 		break;
@@ -100,12 +179,13 @@ void TitleScene::ButtonAct(int hAct)
 	}
 }
 
-void TitleScene::InitButton(SELECT_STATE ss, std::string text, XMFLOAT2 pos)
+void TitleScene::InitButton(SELECT_STATE ss, std::string text, XMINT2 pos)
 {
-	btn[ss] = Instantiate <TitleButton>(this);
+	btn[ss] = Instantiate <ButtonGP>(this);
 	btn[ss]->SetText(text);
 	btn[ss]->SetAction(ss);
-	btn[ss]->SetPosition(pos.x, pos.y, 0.0f);
+	btn[ss]->SetPosition(pos.x, pos.y, 0);
+	btn[ss]->Invisible();
 }
 
 /*

@@ -5,6 +5,12 @@
     "maxPlay": 1,
     "attribute": 0
   },
+  "SE_SELECT": {
+    "file": "se_select.wav",
+    "loop": false,
+    "maxPlay": 1,
+    "attribute": 1
+  },
   "SE_DECIDE": {
     "file": "se_DECISION.wav",
     "loop": false,
@@ -48,7 +54,7 @@
     "attribute": 1
   },
   "BGM_LOBBY": {
-    "file": "n08.wav",
+    "file": "n08_re.wav",
     "loop": true,
     "maxPlay": 1,
     "attribute": 0

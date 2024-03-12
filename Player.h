@@ -28,6 +28,8 @@ class Player : public GameObject
 
     float knockback;
     bool hasHealth;
+
+    float nowIFrame, iFrame;
 public:
     //コンストラクタ
     Player(GameObject* parent);
@@ -49,14 +51,7 @@ public:
     void OnCollision(GameObject* pTarget);
     float GetPositionY();
 private:
-    void UpdateAct(STATE state_);
-    void ChangeState(STATE state);
+    void UpdateAct(STATE state_);   
+    void ChangeState(STATE state);  //状態遷移
 
 };
-
-/*
-S_IDLE
-S_MOVE,
-S_
-
-*/
