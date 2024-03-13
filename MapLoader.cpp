@@ -3,6 +3,7 @@
 #include <fstream>
 #include "Include/nameof.hpp"
 
+#include "Engine/Image.h"
 #include "ModelLoader.h"
 #include "Field.h"
 //以下にはゲームプレイオブジェクトを全include
@@ -29,7 +30,7 @@ void MapLoader::Init()
 }
 
 
-void MapLoader::Load(GameObject* pParent, vector<Field::FIELD_DATA>* pFieldData, vector<GameObject*>* pActiveFieldList, vector<GameObject*>* pEntityList, MAP mID)
+void MapLoader::Load(GameObject* pParent, int& hBackground, vector<Field::FIELD_DATA>* pFieldData, vector<GameObject*>* pActiveFieldList, vector<GameObject*>* pEntityList, MAP mID)
 {
 	//マップjson開く
 	std::ifstream f;
@@ -43,7 +44,11 @@ void MapLoader::Load(GameObject* pParent, vector<Field::FIELD_DATA>* pFieldData,
 
 	//背景生成
 	//とりあえずImageLoader作る予定が無いためここでファイル名直指定する
-	
+	//↑いらないと感じた ただでさえ画像多いからフォルダ分けたのにLoaderまで要るかといった印象
+	//でも結局ここでファイル名を文字列で記述してもプログラム終了まで残るので悩ましい まあいいか
+	//良い案が浮かばないのでjsonにファイル名を直書きしました
+	string file = "Background\\" + (string)data["mapData"]["background"];
+	hBackground = Image::Load(file);
 	
 	//地形オブジェクト生成
 	for (auto& field : data["mapData"]["field"]) {

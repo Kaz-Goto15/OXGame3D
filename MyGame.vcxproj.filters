@@ -63,6 +63,9 @@
     <Filter Include="old\B_GameScene">
       <UniqueIdentifier>{5a1252d3-be04-4a39-9177-473d69588329}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01Engine\ResourceManager\Image">
+      <UniqueIdentifier>{a0669233-fea1-4999-852f-f4faa35d930c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\BoxCollider.cpp">
@@ -97,9 +100,6 @@
     </ClCompile>
     <ClCompile Include="Engine\RootObject.cpp">
       <Filter>01Engine\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Image.cpp">
-      <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Main.cpp">
       <Filter>01Engine</Filter>
@@ -261,6 +261,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>Game Obj</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Image.cpp">
+      <Filter>01Engine\ResourceManager\Image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -295,9 +298,6 @@
     </ClInclude>
     <ClInclude Include="Engine\RootObject.h">
       <Filter>01Engine\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Image.h">
-      <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Global.h">
       <Filter>01Engine</Filter>
@@ -458,6 +458,9 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Game Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Image.h">
+      <Filter>01Engine\ResourceManager\Image</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

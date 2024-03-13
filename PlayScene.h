@@ -10,6 +10,7 @@ class Entity;
 
 class PlayScene : public GameObject
 {
+	int hBackground_;
 	Field* pField_;
 	vector<GameObject*> pActiveFieldList_;
 	vector<GameObject*> pEntityList_;

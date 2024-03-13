@@ -17,9 +17,7 @@ namespace MapLoader
 		M_001,
 		M_002
 	};
-	enum BACKGROUND {
-		DEFAULT
-	};
+
 	enum OBJECT {
 		NONE,
 		OBJ_F_CUBE,
@@ -45,7 +43,7 @@ namespace MapLoader
 			{OBJ_E_MUSHROOM,"Mushroom" }
 		});
 	void Init();
-	void Load(GameObject* pParent, vector<Field::FIELD_DATA>* pFieldData, vector<GameObject*>* pActiveFieldList, vector<GameObject*>* pEntityList, MAP mID);
+	void Load(GameObject* pParent, int& hBackground, vector<Field::FIELD_DATA>* pFieldData, vector<GameObject*>* pActiveFieldList, vector<GameObject*>* pEntityList, MAP mID);
 	
 	template<typename BasicJsonType>
 	inline void to_json(BasicJsonType& j, const OBJECT& e);
