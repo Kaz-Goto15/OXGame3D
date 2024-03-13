@@ -41,9 +41,13 @@ void MapLoader::Load(GameObject* pParent, vector<Field::FIELD_DATA>* pFieldData,
 	}
 	json data = json::parse(f);
 
+	//背景生成
+	//とりあえずImageLoader作る予定が無いためここでファイル名直指定する
+	
+	
 	//地形オブジェクト生成
 	for (auto& field : data["mapData"]["field"]) {
-		int hModel = ModelLoader::Load(field["obj"]);
+		int hModel = ModelLoader::Load(field["obj"]);	//str to enumしないとかも
 		Transform modelTra;
 		modelTra.position_ = { (float)field["pos"][0], (float)field["pos"][1], (float)field["pos"][2] };
 		modelTra.rotate_   = { (float)field["rot"][0], (float)field["rot"][1], (float)field["rot"][2] };

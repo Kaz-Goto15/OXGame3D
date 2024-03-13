@@ -15,6 +15,7 @@ namespace Image
 	//画像をロード
 	int Load(std::string fileName, bool isBlendAdd)
 	{
+		fileName = "Image\\" + fileName;
 		ImageData* pData = new ImageData;
 
 		//開いたファイル一覧から同じファイル名のものが無いか探す

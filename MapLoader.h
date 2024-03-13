@@ -17,6 +17,9 @@ namespace MapLoader
 		M_001,
 		M_002
 	};
+	enum BACKGROUND {
+		DEFAULT
+	};
 	enum OBJECT {
 		NONE,
 		OBJ_F_CUBE,
