@@ -14,6 +14,6 @@ namespace ModelLoader {
 	};
 	void Init();
 	int Load(MODEL model);
-	void ChangeAnim(MODEL model, string animName,float speed = 1);
+	void ChangeAnim(int handle, string animName,float speed = 1);
 };
 

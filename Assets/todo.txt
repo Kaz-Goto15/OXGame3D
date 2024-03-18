@@ -17,6 +17,8 @@
 [i004] Audio Pitch そういえば動くんだったか
 [i005] Modeljson変更
 [i006] Model(Imageもだけど)１個アニメフレーム変えると全部変わるよなって
+[i007] Model::GetmodelName Model\\を含むデータを返している
+[i008] ModelLoader::ChangeAnim 名前部分を数値で指定できないらしい そりゃそう
 
 [s001] ゲームプレイシーンが何も出来てない...
 

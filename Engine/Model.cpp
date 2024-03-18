@@ -188,4 +188,8 @@ namespace Model
 
 			_datas[handle]->pFbx->RayCast(data); 
 	}
+	std::string GetModelName(int handle)
+	{
+		return _datas[handle]->fileName;
+	}
 }

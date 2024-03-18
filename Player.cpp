@@ -55,6 +55,7 @@ void Player::Initialize()
     //    assert(hSound_[i] >= 0);
     //}
 
+    ChangeState(S_JUMP);
 }
 
 //çXêV
@@ -215,7 +216,7 @@ void Player::ChangeState(STATE state)
         ModelLoader::ChangeAnim(static_cast<ModelLoader::MODEL>(hModel_), "run");
         break;
     case Player::S_JUMP:
-        ModelLoader::ChangeAnim(static_cast<ModelLoader::MODEL>(hModel_), "jump");
+        ModelLoader::ChangeAnim(hModel_, "jump");
         break;
     case Player::S_FALL:
         ModelLoader::ChangeAnim(static_cast<ModelLoader::MODEL>(hModel_), "jump");

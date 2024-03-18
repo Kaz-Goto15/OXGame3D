@@ -1,11 +1,7 @@
 {
   "Source": {
-    "DEFAULT": "Cube.fbx",
-    "Cube": "Cube.fbx",
-    "Cylinder": "Cylinder.fbx",
-    "Hanger": "Hanger.fbx",
     "Player": {
-      "file": "HNSG\\Player.fbx",
+      "file": "HNSG\\grayman.fbx",
       "anim": [
         {
           "name": "jump",
