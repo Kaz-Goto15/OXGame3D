@@ -28,5 +28,6 @@ void PlayScene::Update() {
 }
 void PlayScene::Draw() {
 	Image::Draw(hBackground_);
+	Image::Draw(temp);
 }
 void PlayScene::Release() {}

@@ -21,24 +21,29 @@ void ModelLoader::Init()
 
 int ModelLoader::Load(MODEL model)
 {
-	handle[model] = Model::Load(data["Source"][NAMEOF_ENUM(model)]["file"]);
-	return handle[model];
+	for (auto& j : data["Source"]) {
+		if (j["name"] == (std::string)NAMEOF_ENUM(model)) {
+			handle[model] = Model::Load(j["file"]);
+			return handle[model];
+		}
+	}
+	return -1;
+	//handle[model] = Model::Load(data["Source"][NAMEOF_ENUM(model)]["file"]);
+	//return handle[model];
 }
 
 void ModelLoader::ChangeAnim(int handle, string animName, float speed){
 	std::string name = Model::GetModelName(handle);	//モデル名取得
 
 	//モデル名のキーと合致したら
-	for (int i = 0; i < data["Source"].size(); i++) {
-		if (data["Source"][i]["file"] == name) {
-
-			//そのキー内のanim/nameを検索
-			for (int j = 0; j < data["Source"][i]["anim"].size(); j++) {
-				if (data["Source"][i]["anim"][j]["name"] == animName) {
+	for (auto& src : data["Source"]) {
+		if (src["file"] == name) {
+			for (auto& anm : src["anim"]) {
+				if (anm["name"] == animName) {
 					Model::SetAnimFrame(
 						handle,
-						data["Source"][i]["anim"][j]["start"],
-						data["Source"][i]["anim"][j]["end"],
+						anm["start"],
+						anm["end"],
 						speed
 					);
 					break;
@@ -46,6 +51,23 @@ void ModelLoader::ChangeAnim(int handle, string animName, float speed){
 			}
 		}
 	}
+	//for (int i = 0; i < data["Source"].size(); i++) {
+	//	if (data["Source"][i]["file"] == name) {
+
+	//		//そのキー内のanim/nameを検索
+	//		for (int j = 0; j < data["Source"][i]["anim"].size(); j++) {
+	//			if (data["Source"][i]["anim"][j]["name"] == animName) {
+	//				Model::SetAnimFrame(
+	//					handle,
+	//					data["Source"][i]["anim"][j]["start"],
+	//					data["Source"][i]["anim"][j]["end"],
+	//					speed
+	//				);
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 /*
