@@ -2,7 +2,7 @@
   "Source": [
     {
       "name": "Player",
-      "file": "HNSG\\grayman.fbx",
+      "file": "HNSG\\grayman3.fbx",
       "anim": [
         {
           "name": "jump",
@@ -37,40 +37,9 @@
       ]
     },
     {
-      "name": "Player",
-      "file": "HNSG\\grayman2.fbx",
-      "anim": [
-        {
-          "name": "jump",
-          "start": 1,
-          "end": 114
-        },
-        {
-          "name": "run",
-          "start": 115,
-          "end": 158
-        },
-        {
-          "name": "down",
-          "start": 159,
-          "end": 434
-        },
-        {
-          "name": "throw",
-          "start": 435,
-          "end": 633
-        },
-        {
-          "name": "damaged",
-          "start": 634,
-          "end": 713
-        },
-        {
-          "name": "idle",
-          "start": 714,
-          "end": 1309
-        }
-      ]
+      "name": "Hanger",
+      "file": "HNSG\\hanger.fbx"
+
     }
   ]
 }

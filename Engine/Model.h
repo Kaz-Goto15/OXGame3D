@@ -11,6 +11,8 @@
 //-----------------------------------------------------------
 namespace Model
 {
+	const int NULL_HANDLE = -1;
+
 	//ƒ‚ƒfƒ‹î•ñ
 	struct ModelData
 	{

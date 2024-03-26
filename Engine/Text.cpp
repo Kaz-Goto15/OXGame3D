@@ -42,10 +42,10 @@ HRESULT Text::Initialize(const char* fileName, const unsigned int charWidth, con
 	return Initialize();
 }
 //初期化（オリジナルの画像）
-HRESULT Text::Initialize(TEXT_MEDIA tm)
+HRESULT Text::Initialize(TEXT_SOURCE source)
 {
 	std::string str;
-	Load(tm, str, width_, height_, rowLength_);
+	Load(source, str, width_, height_, rowLength_);
 	str = "Text\\" + str;
 	strcpy_s(fileName_, str.c_str());
 

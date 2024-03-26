@@ -95,7 +95,7 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum, ATTRIBUTE at)
 	//https://learn.microsoft.com/ja-jp/windows/win32/api/mmeapi/ns-mmeapi-waveformatex
 	WAVEFORMATEX fmt;
 	Confirm(&isSucc, ReadFile(hFile, &fmt.wFormatTag,		2, &dwBytes, NULL), "format tag");				//形式
-	Confirm(&isSucc, ReadFile(hFile, &fmt.nChannels,			2, &dwBytes, NULL), "format channel");			//チャンネル（モノラル/ステレオ）
+	Confirm(&isSucc, ReadFile(hFile, &fmt.nChannels,		2, &dwBytes, NULL), "format channel");			//チャンネル（モノラル/ステレオ）
 	Confirm(&isSucc, ReadFile(hFile, &fmt.nSamplesPerSec,	4, &dwBytes, NULL), "format sps");				//サンプリング数
 	Confirm(&isSucc, ReadFile(hFile, &fmt.nAvgBytesPerSec,	4, &dwBytes, NULL), "format byte per sec");		//1秒あたりのバイト数
 	Confirm(&isSucc, ReadFile(hFile, &fmt.nBlockAlign,		2, &dwBytes, NULL), "format block align");		//ブロック配置
@@ -158,7 +158,7 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum, ATTRIBUTE at)
 	audioDatas.push_back(ad);
 
 	//SAFE_DELETE_ARRAY(pBuffer);
-	if (isSucc == false)return -1;
+	if (isSucc == false)return NULL_HANDLE;
 	return (int)audioDatas.size() - 1;
 }
 

@@ -38,7 +38,7 @@ public:
 	//戻値：成功／失敗
 	HRESULT Initialize(const char* fileName, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength);
 
-	HRESULT Initialize(TEXT_MEDIA tm);
+	HRESULT Initialize(TEXT_SOURCE scr);
 
 	//描画（文字列）
 	//引数：x, y	表示位置（左上）

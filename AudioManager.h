@@ -17,6 +17,7 @@ namespace AudioManager
 
 	void Init();
 	void Load(int sourceID);
+	void Load(AUDIO_SOURCE source);
 	void Play(int sourceID);
 	void Stop(int sourceID);
 	void Release();
@@ -25,6 +26,11 @@ namespace AudioManager
 
 	template<typename... Args>
 	void Load(int sourceID, Args... args) {
+		Load(args...);
+	}
+
+	template<typename... Args>
+	void Load(AUDIO_SOURCE source, Args... args) {
 		Load(args...);
 	}
 

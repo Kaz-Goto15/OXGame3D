@@ -41,7 +41,7 @@ namespace Model
 					//ŠJ‚¯‚È‚©‚Á‚½
 					SAFE_DELETE(pData->pFbx);
 					SAFE_DELETE(pData);
-					return -1;
+					return NULL_HANDLE;
 				}
 
 				//–³Ž–ŠJ‚¯‚½

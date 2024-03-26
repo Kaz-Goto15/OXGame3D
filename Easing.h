@@ -4,6 +4,7 @@
 
 namespace Easing
 {
+
 	enum Ease {
 		LINEAR = 1,
 		IN_QUAD,

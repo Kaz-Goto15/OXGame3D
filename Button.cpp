@@ -156,9 +156,9 @@ void Button::SetFont(const char* fileName, const unsigned int charWidth, const u
 	buttonTextObj_->Initialize(fileName, charWidth, charHeight, rowLength);
 }
 
-void Button::SetFont(TEXT_MEDIA tm)
+void Button::SetFont(TEXT_SOURCE textScr)
 {
-	buttonTextObj_->Initialize(tm);
+	buttonTextObj_->Initialize(textScr);
 }
 
 void Button::SetText(std::string buttonName)

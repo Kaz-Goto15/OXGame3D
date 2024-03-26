@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 namespace TextLoader {
-	enum TEXT_MEDIA {
+	enum TEXT_SOURCE {
 		DEFAULT,
 		RE_32px,
 		GAKUMARU_32px,
@@ -12,6 +12,6 @@ namespace TextLoader {
 		KUROKANE_AQUA_64px,
 		STICK_B_PURPLE_35px,
 	};
-	void Load(TEXT_MEDIA tm, std::string &fileName,  unsigned int &charWidth,  unsigned int &charHeight,  unsigned int &rowLength);
+	void Load(TEXT_SOURCE source, std::string &fileName,  unsigned int &charWidth,  unsigned int &charHeight,  unsigned int &rowLength);
 };
 

@@ -14,35 +14,34 @@ namespace AudioManager {
 	int handle[AUDIO_SOURCE::MAX];
 	json data;
 	bool loadAllFile = false;	//初期化時に全音声ファイルを読み込むか
+	const char dataFile[] = "Data\\audioSource.json";	//ファイル
 }
 
 void AudioManager::Init()
 {
-	std::ifstream f("Data\\audioSource.json");
+	std::ifstream f(dataFile);
 	data = json::parse(f);
 	if (loadAllFile) {
-		for (AUDIO_SOURCE as = static_cast<AUDIO_SOURCE>(0); as < AUDIO_SOURCE::MAX; as = static_cast<AUDIO_SOURCE>(as + 1)) {
-			handle[as] = Audio::Load(
-				data[NAMEOF_ENUM(as)]["file"],
-				data[NAMEOF_ENUM(as)]["loop"],
-				data[NAMEOF_ENUM(as)]["maxPlay"],
-				data[NAMEOF_ENUM(as)]["attribute"]
-			);
-			assert(handle[as] >= 0);
+		for (int scrID = 0; scrID < AUDIO_SOURCE::MAX; scrID++) {
+			Load(scrID);
 		}
 	}
 }
 
 void AudioManager::Load(int sourceID)
 {
-	AUDIO_SOURCE as = static_cast<AUDIO_SOURCE>(sourceID);
-	handle[sourceID] = Audio::Load(
-		data[NAMEOF_ENUM(as)]["file"],
-		data[NAMEOF_ENUM(as)]["loop"],
-		data[NAMEOF_ENUM(as)]["maxPlay"],
-		data[NAMEOF_ENUM(as)]["attribute"]
+	Load(static_cast<AUDIO_SOURCE>(sourceID));
+}
+
+void AudioManager::Load(AUDIO_SOURCE source)
+{
+	handle[source] = Audio::Load(
+		data[NAMEOF_ENUM(source)]["file"],
+		data[NAMEOF_ENUM(source)]["loop"],
+		data[NAMEOF_ENUM(source)]["maxPlay"],
+		data[NAMEOF_ENUM(source)]["attribute"]
 	);
-	assert(handle[sourceID] >= 0);
+	assert(handle[source] >= 0);
 }
 
 void AudioManager::Play(int sourceID)

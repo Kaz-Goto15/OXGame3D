@@ -15,6 +15,28 @@ namespace Easing {
 	float begin;
 	float change;
 
+	static const int NUM_0 = 0;
+	static const int NUM_1 = 1;
+	static const int NUM_2 = 2;
+	static const int NUM_3 = 3;
+	static const int NUM_4 = 4;
+	static const int NUM_5 = 5;
+	static const int NUM_10 = 10;
+	static const float NUM_p5 = 0.5f;
+	static const float NUM_p75 = 0.75f;
+	static const float NUM_p001 = 0.001f;
+	static const float NUM_p0005 = 0.0005f;
+	static const float NUM_p3 = 0.3f;
+	static const float NUM_1p5 = 1.5f;
+	static const float NUM_2p75 = 2.75f;
+	static const float NUM_7p5625 = 7.5625f;
+	static const float NUM_p625 = 0.625;
+	static const float NUM_2p5 = 2.5f;
+	static const float NUM_2p25 = 2.25f;
+	static const float NUM_2p625 = 2.625f;
+	static const float NUM_p9375 = 0.9375f;
+	static const float NUM_p984375 = 0.984375f;
+
 	float CalcTBCD(Ease e, float _time, float _begin, float change, float _duration) {
 		return Calc(e, _time, _duration, _begin, change + _begin);
 	}
@@ -27,170 +49,170 @@ namespace Easing {
 	//2
 	float InQuad() {
 		time /= duration;
-		return change * powf(time, 2) + begin;
+		return change * powf(time, NUM_2) + begin;
 	}
 
 	//3
 	float OutQuad() {
 		time /= duration;
-		return -change * time * (time - 2) + begin;
+		return -change * time * (time - NUM_2) + begin;
 	}
 
 	//4
 	float InOutQuad() {
-		time = time / duration * 2;
-		if (time < 1) {
-			return(change / 2 * powf(time, 2) + begin);
+		time = time / duration * NUM_2;
+		if (time < NUM_1) {
+			return(change / NUM_2 * powf(time, NUM_2) + begin);
 		}
 		else {
-			return(-change / 2 * ((time - 1) * (time - 3) - 1) + begin);
+			return(-change / NUM_2 * ((time - NUM_1) * (time - NUM_3) - NUM_1) + begin);
 		}
 	}
 
 	//5
 	float OutInQuad() {
-		if (time < duration / 2) {
-			return CalcTBCD(OUT_QUAD, time * 2, begin, change / 2, duration);
+		if (time < duration / NUM_2) {
+			return CalcTBCD(OUT_QUAD, time * NUM_2, begin, change / NUM_2, duration);
 		}
 		else {
-			return CalcTBCD(IN_QUAD, (time * 2) - duration, begin + change / 2, change / 2, duration);
+			return CalcTBCD(IN_QUAD, (time * NUM_2) - duration, begin + change / NUM_2, change / NUM_2, duration);
 		}
 	}
 
 	//6
 	float InCubic() {
 		time = time / duration;
-		return (change * powf(time, 3) + begin);
+		return (change * powf(time, NUM_3) + begin);
 	}
 
 	//7
 	float OutCubic() {
-		time = time / duration - 1;
-		return (change * (powf(time, 3) + 1) + begin);
+		time = time / duration - NUM_1;
+		return (change * (powf(time, NUM_3) + NUM_1) + begin);
 	}
 
 	//8
 	float InOutCubic() {
-		time = time / duration * 2;
-		if (time < 1) {
-			return (change / 2 * time * time * time + begin);
+		time = time / duration * NUM_2;
+		if (time < NUM_1) {
+			return (change / NUM_2 * time * time * time + begin);
 		}
 		else {
-			time = time - 2;
-			return (change / 2 * (time * time * time + 2) + begin);
+			time = time - NUM_2;
+			return (change / NUM_2 * (time * time * time + NUM_2) + begin);
 		}
 	}
 
 	//9
 	float OutInCubic() {
-		if (time < duration / 2) {
-			return CalcTBCD(OUT_CUBIC, time * 2, begin, change / 2, duration);
+		if (time < duration / NUM_2) {
+			return CalcTBCD(OUT_CUBIC, time * NUM_2, begin, change / NUM_2, duration);
 		}
 		else {
-			return CalcTBCD(IN_CUBIC, (time * 2) - duration, begin + change / 2, change / 2, duration);
+			return CalcTBCD(IN_CUBIC, (time * NUM_2) - duration, begin + change / NUM_2, change / NUM_2, duration);
 		}
 	}
 
 	//10
 	float InQuart() {
 		time = time / duration;
-		return (change * powf(time, 4) + begin);
+		return (change * powf(time, NUM_4) + begin);
 	}
 
 	//11
 	float OutQuart() {
-		time = time / duration - 1;
-		return (-change * (powf(time, 4) - 1) + begin);
+		time = time / duration - NUM_1;
+		return (-change * (powf(time, NUM_4) - NUM_1) + begin);
 	}
 
 	//12
 	float InOutQuart() {
-		time = time / duration * 2;
-		if (time < 1) {
-			return (change / 2 * powf(time, 4) + begin);
+		time = time / duration * NUM_2;
+		if (time < NUM_1) {
+			return (change / NUM_2 * powf(time, NUM_4) + begin);
 		}
 		else {
-			time = time - 2;
-			return (-change / 2 * (powf(time, 4) - 2) + begin);
+			time -= NUM_2;
+			return (-change / NUM_2 * (powf(time, NUM_4) - NUM_2) + begin);
 		}
 	}
 
 	//13
 	float OutInQuart() {
-		if (time < duration / 2) {
-			return CalcTBCD(OUT_QUART, time * 2, begin, change / 2, duration);
+		if (time < duration / NUM_2) {
+			return CalcTBCD(OUT_QUART, time * NUM_2, begin, change / NUM_2, duration);
 		}
 		else {
-			return CalcTBCD(IN_QUART, (time * 2) - duration, begin + change / 2, change / 2, duration);
+			return CalcTBCD(IN_QUART, (time * NUM_2) - duration, begin + change / NUM_2, change / NUM_2, duration);
 		}
 	}
 
 	//14
 	float InQuint() {
 		time = time / duration;
-		return (change * powf(time, 5) + begin);
+		return (change * powf(time, NUM_5) + begin);
 	}
 
 	//15
 	float OutQuint() {
-		time = time / duration - 1;
-		return (change * (powf(time, 5) + 1) + begin);
+		time = time / duration - NUM_1;
+		return (change * (powf(time, NUM_5) + NUM_1) + begin);
 	}
 
 	//16
 	float InOutQuint() {
-		time = time / duration * 2;
-		if (time < 1) {
-			return (change / 2 * powf(time, 5) + begin);
+		time = time / duration * NUM_2;
+		if (time < NUM_1) {
+			return (change / NUM_2 * powf(time, NUM_5) + begin);
 		}
 		else {
-			time = time - 2;
-			return (change / 2 * (powf(time, 5) + 2) + begin);
+			time = time - NUM_2;
+			return (change / NUM_2 * (powf(time, NUM_5) + NUM_2) + begin);
 		}
 	}
 
 	//17
 	float OutInQuint() {
-		if (time < duration / 2) {
-			return CalcTBCD(OUT_QUINT, time * 2, begin, change / 2, duration);
+		if (time < duration / NUM_2) {
+			return CalcTBCD(OUT_QUINT, time * NUM_2, begin, change / NUM_2, duration);
 		}
 		else {
-			return CalcTBCD(IN_QUINT, (time * 2) - duration, begin + change / 2, change / 2, duration);
+			return CalcTBCD(IN_QUINT, (time * NUM_2) - duration, begin + change / NUM_2, change / NUM_2, duration);
 		}
 	}
 
 	//18
 	float InSine() {
-		return (-change * cosf(time / duration * (pi / 2)) + change + begin);
+		return (-change * cosf(time / duration * (pi / NUM_2)) + change + begin);
 	}
 
 	//19
 	float OutSine() {
-		return (change * sinf(time / duration * (pi / 2)) + begin);
+		return (change * sinf(time / duration * (pi / NUM_2)) + begin);
 	}
 	
 	//20
 	float InOutSine() {
-		return (-change / 2 * (cosf(pi * time / duration) - 1) + begin);
+		return (-change / NUM_2 * (cosf(pi * time / duration) - NUM_1) + begin);
 	}
 
 	//21
 	float OutInSine() {
-		if (time < duration / 2) {
-			return CalcTBCD(OUT_SINE, time * 2, begin, change / 2, duration);
+		if (time < duration / NUM_2) {
+			return CalcTBCD(OUT_SINE, time * NUM_2, begin, change / NUM_2, duration);
 		}
 		else {
-			return CalcTBCD(IN_SINE, (time * 2) - duration, begin + change / 2, change / 2, duration);
+			return CalcTBCD(IN_SINE, (time * NUM_2) - duration, begin + change / NUM_2, change / NUM_2, duration);
 		}
 	}
 
 	//22
 	float InExpo() {
-		if (time == 0) {
+		if (time == NUM_0) {
 			return (begin);
 		}
 		else {
-			return (change * powf(2, 10 * (time / duration - 1)) + begin - change * 0.001f);
+			return (change * powf(NUM_2, NUM_10 * (time / duration - NUM_1)) + begin - change * NUM_p001);
 		}
 	}
 
@@ -200,209 +222,209 @@ namespace Easing {
 			return (begin + change);
 		}
 		else {
-			return (change * 1.001f * (-powf(2, -10 * time / duration) + 1) + begin);
+			return (change * (NUM_1 + NUM_p001) * (-powf(NUM_2, -NUM_10 * time / duration) + NUM_1) + begin);
 		}
 	}
 
 	//24
 	float InOutExpo() {
-		if (time == 0) { return (begin); }
+		if (time == NUM_0) { return (begin); }
 		if (time == duration) { return (begin + change); }
-		time = time / duration * 2;
-		if (time < 1) {
-			return (change / 2 * powf(2, 10 * (time - 1)) + begin - change * 0.0005f);
+		time = time / duration * NUM_2;
+		if (time < NUM_1) {
+			return (change / NUM_2 * powf(NUM_2, NUM_10 * (time - NUM_1)) + begin - change * NUM_p0005);
 		}
 		else {
-			time = time - 1;
-			return (change / 2 * 1.0005f * (-powf(2, -10 * time) + 2) + begin);
+			time = time - NUM_1;
+			return (change / NUM_2 * (NUM_1 + NUM_p0005) * (-powf(NUM_2, -NUM_10 * time) + NUM_2) + begin);
 		}
 	}
 
 	//25
 	float OutInExpo() {
-		if (time < duration / 2) {
-			return CalcTBCD(OUT_EXPO, time * 2, begin, change / 2, duration);
+		if (time < duration / NUM_2) {
+			return CalcTBCD(OUT_EXPO, time * NUM_2, begin, change / NUM_2, duration);
 		}
 		else {
-			return CalcTBCD(IN_EXPO, (time * 2) - duration, begin + change / 2, change / 2, duration);
+			return CalcTBCD(IN_EXPO, (time * NUM_2) - duration, begin + change / NUM_2, change / NUM_2, duration);
 		}
 	}
 
 	//26
 	float InCirc() {
 		time = time / duration;
-		return (-change * (sqrtf(1 - powf(time, 2)) - 1) + begin);
+		return (-change * (sqrtf(NUM_1 - powf(time, NUM_2)) - NUM_1) + begin);
 	}
 
 	//27
 	float OutCirc() {
-		time = time / duration - 1;
-		return (change * sqrtf(1 - powf(time, 2)) + begin);
+		time = time / duration - NUM_1;
+		return (change * sqrtf(NUM_1 - powf(time, NUM_2)) + begin);
 	}
 
 	//28
 	float InOutCirc() {
-		time = time / duration * 2;
-		if (time < 1) {
-			return (-change / 2 * (sqrtf(1 - time * time) - 1) + begin);
+		time = time / duration * NUM_2;
+		if (time < NUM_1) {
+			return (-change / NUM_2 * (sqrtf(NUM_1 - time * time) - NUM_1) + begin);
 		}
 		else {
-			time = time - 2;
-			return (change / 2 * (sqrtf(1 - time * time) + 1) + begin);
+			time = time - NUM_2;
+			return (change / NUM_2 * (sqrtf(NUM_1 - time * time) + NUM_1) + begin);
 		}
 	}
 
 	//29
 	float OutInCirc() {
-		if (time < duration / 2) {
-			return CalcTBCD(OUT_CIRC, time * 2, begin, change / 2, duration);
+		if (time < duration / NUM_2) {
+			return CalcTBCD(OUT_CIRC, time * NUM_2, begin, change / NUM_2, duration);
 		}
 		else {
-			return CalcTBCD(IN_CIRC, (time * 2) - duration, begin + change / 2, change / 2, duration);
+			return CalcTBCD(IN_CIRC, (time * NUM_2) - duration, begin + change / NUM_2, change / NUM_2, duration);
 		}
 	}
 
 	//30
 	float InElastic() {
-		if (time == 0) return begin;
+		if (time == NUM_0) return begin;
 		time = time / duration;
-		if (time == 1) return (begin + change);
-		float period = duration * 0.3f;
+		if (time == NUM_1) return (begin + change);
+		float period = duration * NUM_p3;
 		float shift;
-		float amplitude = 0;
+		float amplitude = NUM_0;
 		if (amplitude < abs(change)) {
 			amplitude = change;
-			shift = period / 4;
+			shift = period / NUM_4;
 		}
 		else {
-			shift = period / (2 * pi) * asinf(change / amplitude);
+			shift = period / (NUM_2 * pi) * asinf(change / amplitude);
 		}
 
 		time--;
 
-		return (-(amplitude * powf(2, 10 * time) * sinf((time * duration - shift) * (2 * pi) / period)) + begin);
+		return (-(amplitude * powf(NUM_2, NUM_10 * time) * sinf((time * duration - shift) * (NUM_2 * pi) / period)) + begin);
 	}
 	
 	//31
 	float OutElastic() {
-		if (time == 0) return begin;
+		if (time == NUM_0) return begin;
 		time = time / duration;
-		if (time == 1) return (begin + change);
-		float period = duration * 0.3f;
+		if (time == NUM_1) return (begin + change);
+		float period = duration * NUM_p3;
 		float shift;
-		float amplitude = 0;
+		float amplitude = NUM_0;
 		if (amplitude < abs(change)) {
 			amplitude = change;
-			shift = period / 4;
+			shift = period / NUM_4;
 		}
 		else {
-			shift = period / (2 * pi) * asinf(change / amplitude);
+			shift = period / (NUM_2 * pi) * asinf(change / amplitude);
 		}
-		return (amplitude * powf(2, -10 * time) * sinf((time * duration - shift) * (2 * pi) / period) + change + begin);
+		return (amplitude * powf(NUM_2, -NUM_10 * time) * sinf((time * duration - shift) * (NUM_2 * pi) / period) + change + begin);
 	}
 
 	//32
 	float InOutElastic() {
-		if (time == 0) return begin;
+		if (time == NUM_0) return begin;
 
-		time = time / duration * 2;
+		time = time / duration * NUM_2;
 
-		if (time == 2) return (begin + change);
+		if (time == NUM_2) return (begin + change);
 
-		float period = duration * (0.3f * 1.5f);
-		float amplitude = 0;
+		float period = duration * (NUM_p3 * NUM_1p5);
+		float amplitude = NUM_0;
 		float shift;
 		if (!amplitude || amplitude < abs(change)) {
 			amplitude = change;
-			shift = period / 4;
+			shift = period / NUM_4;
 		}
 		else {
-			shift = period / (2 * pi) * asinf(change / amplitude);
+			shift = period / (NUM_2 * pi) * asinf(change / amplitude);
 		}
-		if (time < 1) {
-			time = time - 1;
-			return (-0.5f * (amplitude * powf(2, 10 * time) * sinf((time * duration - shift) * (2 * pi) / period)) + begin);
+		if (time < NUM_1) {
+			time = time - NUM_1;
+			return (-NUM_p5 * (amplitude * powf(NUM_2, NUM_10 * time) * sinf((time * duration - shift) * (NUM_2 * pi) / period)) + begin);
 		}
 		else {
-			time = time - 1;
-			return (amplitude * powf(2, -10 * time) * sinf((time * duration - shift) * (2 * pi) / period) * 0.5f + change + begin);
+			time = time - NUM_1;
+			return (amplitude * powf(NUM_2, -NUM_10 * time) * sinf((time * duration - shift) * (NUM_2 * pi) / period) * NUM_p5 + change + begin);
 		}
-
+		 
 	}
 
 	//33
 	float OutInElastic() {
-		if (time < duration / 2) {
-			return CalcTBCD(OUT_ELASTIC, time * 2, begin, change / 2, duration);
+		if (time < duration / NUM_2) {
+			return CalcTBCD(OUT_ELASTIC, time * NUM_2, begin, change / NUM_2, duration);
 		}
 		else {
-			return CalcTBCD(IN_ELASTIC, (time * 2) - duration, begin + change / 2, change / 2, duration);
+			return CalcTBCD(IN_ELASTIC, (time * NUM_2) - duration, begin + change / NUM_2, change / NUM_2, duration);
 		}
 	}
 
 	//34
+	static const float BACK_SHIFT = 1.70158f;
 	float InBack() {
-		float shift = 1.70158f;
 		time = time / duration;
-		return (change * time * time * ((shift + 1) * time - shift) + begin);
+		return (change * time * time * ((BACK_SHIFT + NUM_1) * time - BACK_SHIFT) + begin);
 	}
 	
 	//35
 	float OutBack() {
-		float shift = 1.70158f;
-		time = time / duration - 1;
-		return (change * (time * time * ((shift + 1) * time + shift) + 1) + begin);
+		time = time / duration - NUM_1;
+		return (change * (time * time * ((BACK_SHIFT + NUM_1) * time + BACK_SHIFT) + NUM_1) + begin);
 	}
 
 	//36
+	static const float IN_OUT_BACK_SHIFT = BACK_SHIFT * 1.525f;
 	float InOutBack() {
-		float shift = 1.70158f;
-		shift = shift * 1.525f;
-
-		time = time / duration * 2;
-		if (time < 1) {
-			return (change / 2 * (time * time * ((shift + 1) * time - shift)) + begin);
+		time = time / duration * NUM_2;
+		if (time < NUM_1) {
+			return (change / NUM_2 * (time * time * ((IN_OUT_BACK_SHIFT + NUM_1) * time - IN_OUT_BACK_SHIFT)) + begin);
 		}
 		else {
-			time = time - 2;
-			return (change / 2 * (time * time * ((shift + 1) * time + shift) + 2) + begin);
+			time -= NUM_2;
+			return (change / NUM_2 * (time * time * ((IN_OUT_BACK_SHIFT + NUM_1) * time + IN_OUT_BACK_SHIFT) + NUM_2) + begin);
 		}
 	}
 
 	//37
 	float OutInBack() {
-		if (time < duration / 2) {
-			return CalcTBCD(OUT_BACK, time * 2, begin, change / 2, duration);
+		if (time < duration / NUM_2) {
+			return CalcTBCD(OUT_BACK, time * NUM_2, begin, change / NUM_2, duration);
 		}
 		else {
-			return CalcTBCD(IN_BACK, (time * 2) - duration, begin + change / 2, change / 2, duration);
+			return CalcTBCD(IN_BACK, (time * NUM_2) - duration, begin + change / NUM_2, change / NUM_2, duration);
 		}
 	}
 
 	//38
 	float InBounce() {
-		return (change - CalcTBCD(OUT_BOUNCE, duration - time, 0, change, duration) + begin);
+		return (change - CalcTBCD(OUT_BOUNCE, duration - time, NUM_0, change, duration) + begin);
 	}
 
 	//39
+	//2.5, 2.25, 2.625, 0.9375, 0.984375は一度しか使わない...が、可読性が終わる →可読性を説くならhalfとかmul等関数も導入するべきではないか
+	//機能自体はTWEENERの移植になる都合上そもそも原来が数値指定であるため難しいところ
+	//一旦全ての数値を排除した書き方をする
 	float OutBounce() {
 		time = time / duration;
-		if (time < 1 / 2.75f) {
-			return (change * (7.5625f * time * time) + begin);
+		if (time < NUM_1 / NUM_2p75) {
+			return (change * (NUM_7p5625 * time * time) + begin);
 		}
 		else {
-			if (time < 2 / 2.75f) {
-				time = time - (1.5f / 2.75f);
-				return (change * (7.5625f * time * time + 0.75f) + begin);
+			if (time < NUM_2 / NUM_2p75) {
+				time = time - (NUM_1p5 / NUM_2p75);
+				return (change * (NUM_7p5625 * time * time + NUM_p75) + begin);
 			}
 			else {
-				if (time < 2.5f / 2.75f) {
-					time = time - (2.25f / 2.75f);
-					return (change * (7.5625f * time * time + 0.9375f) + begin);
+				if (time < (NUM_2p5) / NUM_2p75) {
+					time = time - (NUM_2p25 / NUM_2p75);
+					return (change * (NUM_7p5625 * time * time + NUM_p9375) + begin);
 				}
 				else {
-					time = time - (2.625f / 2.75f);
-					return (change * (7.5625f * time * time + 0.984375f) + begin);
+					time = time - ((NUM_2 + NUM_p625) / NUM_2p75);
+					return (change * (NUM_7p5625 * time * time + NUM_p984375) + begin);
 				}
 			}
 		}
@@ -410,28 +432,28 @@ namespace Easing {
 
 	//40
 	float InOutBounce() {
-		if (time < duration / 2) {
-			return (CalcTBCD(IN_BOUNCE, time * 2, 0, change, duration) * 0.5f + begin);
+		if (time < duration / NUM_2) {
+			return (CalcTBCD(IN_BOUNCE, time * NUM_2, NUM_0, change, duration) * NUM_p5 + begin);
 		}
 		else {
-			return (CalcTBCD(OUT_BOUNCE, time * 2 - duration, 0, change, duration) * 0.5f + change * 0.5f + begin);
+			return (CalcTBCD(OUT_BOUNCE, time * NUM_2 - duration, NUM_0, change, duration) * NUM_p5 + change * NUM_p5 + begin);
 		}
 	}
 	
 	//41
 	float OutInBounce() {
-		if (time < duration / 2) {
-			return CalcTBCD(OUT_BOUNCE, time * 2, begin, change / 2, duration);
+		if (time < duration / NUM_2) {
+			return CalcTBCD(OUT_BOUNCE, time * NUM_2, begin, change / NUM_2, duration);
 		}
 		else {
-			return CalcTBCD(IN_BOUNCE, (time * 2) - duration, begin + change / 2, change / 2, duration) + change;
+			return CalcTBCD(IN_BOUNCE, (time * NUM_2) - duration, begin + change / NUM_2, change / NUM_2, duration) + change;
 		}
 	}
 
 
 
 	float Calc(int _easeNum, float _nowTime, float _endTime, float _begin, float _end) {
-		if (_easeNum > 0 && _easeNum < MAX) {
+		if (_easeNum > NUM_0 && _easeNum < MAX) {
 			return Calc(static_cast<Ease>(_easeNum), _nowTime, _endTime, _begin, _end);
 		}
 		else {

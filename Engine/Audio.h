@@ -6,6 +6,9 @@
 //-----------------------------------------------------------
 namespace Audio
 {
+
+	const int NULL_HANDLE = -1;
+
 	enum ATTRIBUTE {
 		BGM,
 		SE,
