@@ -23,6 +23,7 @@
 [i007] Model::GetmodelName Model\\を含むデータを返している
 ✅[i008] ModelLoader::ChangeAnim 名前部分を数値で指定できないらしい そりゃそう
 [i009] 画面サイズ変えたときボタンの判定が狂う→[a011]
+[i010] グレイマンが見えない モデルが影響それに対応してない機構も影響
 
 [s001] ゲームプレイシーンが何も出来てない...
 
@@ -69,7 +70,171 @@
 　・Frameオブジェクトに分割はアリだと思う 
 
 
-[Patch 24.03.26]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[v23.11.24]
+プロジェクト始動
+
+[v23.11.28]
+[ 新 ]SplashScene 追加
+[ 新 ]Assets/Spl スプラッシュ画面表示画像追加
+[ 新 ]SystemConfig 実質的追加 過去の産物から各部分の定数化を施しほんの少し軽量化
+
+[v23.11.30]
+[ 新 ]Transition 追加 過去の流用
+
+[v23.12.04]
+[ 新 ]Easing 追加 Tweenerをベースに作られたeasing_traを参考に実装
+[ 新 ]Image 画像座標が-1~1の管理であるためピクセル単位の座標を割合変換する関数を追加
+
+[v23.12.05]
+[調整]Easing 全関数の戻り値をdouble型からfloat型に変更
+[ 新 ]TitleScene 仮配置
+
+[v23.12.07]
+[ 新 ]TitleScene Stateによる状態管理を実装
+
+[v23.12.08]
+[ 新 ]CreditScene 仮配置
+
+[v23.12.11]
+[調整]Helpbar 整理
+
+[v24.01.09]
+[ 新 ]EditScene 仮配置 読書機能追加
+[ 新 ]Screen 追加 シーン内コンテナとして機能 AviUtlのグループ化
+
+[v24.01.16]
+[ 新 ]Sample 追加 GameObjectのテンプレ 作業用
+[調整]Texture 脱字修正
+[ 新 ]StageData 追加 ステージデータ系まとめたクラス
+[ 新 ]StageView 追加 "均等間隔での"ステージ描画をする つまり使わない
+
+[v24.01.18]
+[ 新 ]EaseScene 追加 デバッグ用 Easing視覚化
+
+[v24.01.23]
+[調整]デフォルト背景色を#000000に変更
+[ 新 ]DebugText 追加 string入れたらそのまま画面に表示されるクラス
+[調整]SplashScene 構造完成
+
+[v24.01.29]
+[ 新 ]TitleButton 追加(25日)、タイトル画面で使用するボタン
+
+[v24.01.30]
+[ 新 ]Text 垂直・水平方向揃えを追加 左右中央、上中下
+[調整]Image 画像の座標を-1~1から中心-640~640のようにスクリーンサイズの半分を端とするピクセル単位に変更
+[ 新 ]TitleButton 押下機構追加
+
+[v24.02.01]
+[ 新 ]GameObject フラグによって更新・描画を行うか判定
+
+[v24.02.02]
+[ 新 ]PlayScene プレイ画面 ガワだけ
+[ 新 ]TitleScene 実装してない部分にURLをいれた
+[調整]DebugText 軽量化
+[ 新 ]Screen 前シーンの指定や挙動自体の追加 ベースオブジェクトとして完成
+
+[v24.02.08]
+整理とか
+
+[v24.02.09]
+[ 新 ]CreditScreen 追加 マージンで描画される枠を実装
+[ 新 ]Transform SetterをTransformクラスの段階で追加
+[ 新 ]Button 新規追加 TitleButtonをButtonを継承させるようにしたいという思い
+[ 新 ]ButtonGroup 新規追加 Buttonの集合を管理するが いらない 現行使ってない
+[ 新 ]GameObject Act関数を追加 Button押下時に呼ばれる overrideで中身を書く
+[ 新 ]SystemConfig スクリーンサイズをiniから持ってくるようにした Mainにも初期化を記述
+
+[v24.02.13]
+[ 新 ]Transform リサイズフィルタ追加 中心点指定の拡縮項目追加
+[調整]TitleButton 親クラスをButtonに変更
+
+[v24.02.19]
+[ 新 ]nameof 追加
+[ 新 ]json 追加
+[ 新 ]AudioManager 追加 音声ファイルの管理クラス
+[削除]SceneManager シーン切替時のオーディオ読み込み解除を無効化
+
+[v24.02.20]
+[調整]AudioManager 音声ファイルの読込を全てAssets/Audio/内で管理
+[ 新 ]TextLoader 追加 テキスト系集約させたクラス
+[ 新 ]Audio/AudioManager/audioSource.json 音声ファイルにSE/BGMの属性を追加 各属性で設定してある音量で再生される
+
+[v24.02.26]
+[ 新 ]MapLoader 追加 プレイ中の地形・オブジェクトの管理クラス
+[ 新 ]GameSceneObject 追加 プレイ中の全オブジェクトのベースクラス
+
+[v24.02.27]
+[ 新 ]ModelLoader 追加 モデルの管理クラス
+[ 新 ]Entity 追加 エンティティ(ゲーム中の動的オブジェクト)のベースとなるクラス 基底はGameSceneObject
+[ 新 ]Field 追加 格納された地形データ(モデルと変形情報)から全部描画する
+
+[v24.02.29]
+音声ファイルの大量追加
+
+[v24.03.04]
+[調整]AudioManager 初期化時に全ての音声ファイルを読み込むか逐次読み込むかの切替をする機構を作成
+[ 新 ]Button デフォルトでクリック時に音鳴るようにした
+[ 新 ]ButtonGP 追加 押した瞬間実行される100おれ形式のボタン GPってなんですか？疲れていたかこの時
+[調整]CreditScreen ButtonをButtonGPに変更
+[ 新 ]Audio IsPlaying関数を追加 現在再生中かをT/Fで
+
+[v24.03.05]
+[ 新 ]自サークルのモデルを大量に引っ張ってきた
+[調整]音声ファイルを再生できるように加工
+[ 新 ]ロゴとクレジットの画像を作成
+
+[v24.03.06]
+[ 新 ]Button SetFont関数を追加
+[調整]ButtonGP マジックナンバーの変数/定数化
+
+[v24.03.07]
+[ 新 ]AudioManager Load関数を追加 保持しているjsonからデータ抜き取る処理をまとめた
+[調整]各種json Assets/Data/内に格納
+
+[v24.03.08]
+[ 新 ]GameObject タグ、タグ検索関数を追加 各オブジェクトの名前と同じような挙動をする
+[ 新 ]ModelLoader ChangeAnim関数を追加 モデルのアニメーションを変更する 存在しない場合エラーは吐かずアニメーションを変更しない
+
+[v24.03.13]
+[調整]枠の画像を若干修正
+[ 新 ]SystemConf.ini debugキーを追加
+[ 新 ]SystemConfig debug変数を追加(boolean) IsDebug()等基本処理も追加
+[調整]DebugText SystemConfigのdebugが1のとき描画しない
+[調整]TitleScene ButtonをButtonGPに変更
+[調整]SplashScene 遷移するシーンをデバッグシーンからタイトルシーンに変更 アルファ値の数値直打ちを定数化
+[ 新 ]READMEを追加
+[調整]TitleScene ボタン初期化時にボタンの更新・描画を停止
+[ 新 ]PlayScene/ResultScene 仮実装 5秒後に次のシーンに遷移するだけのシーン
+[ 新 ]実行ファイル・README・動画をSubmitフォルダへ全部ブチこむ
+[調整]MapLoader 読み込めなかった問題を修正
+[調整]Image 画像ファイルはAssets/Image/内から参照するように変更
+[ 新 ]MapLoader/map.json 背景関連の処理・画像追加
+
+[v24.03.19]
+[ 新 ]Model GetModelName関数を追加 格納してあるfileName変数をそのまま返す つまり拡張子まで出す
+
+[v24.03.25]
+[ 新 ]グレイマンfbxを新たに追加
+[調整]CreditScene 画像内テキストにSE制作を追加
+[調整]実行ファイル用アセットフォルダの更新
+[調整]ModelLoader jsonの読み込みできない問題を解決
+
+[v24.03.26]
 [調整]Modelのハンドル初期値をconstに変更
 [調整]Easing 数値直接書いていた部分を全てstatic constに変更(メモリ消費量低下)
 [調整]ModelLoader コード整理&Model初期値変更への対応
@@ -77,3 +242,6 @@
 [調整]Audioのハンドル初期値をconstに変更
 [調整]AudioManager AUDIO_SOURCEでロードをメインとする処理に変更(処理時間:int<AUDIO_SOURCE → int>AUDIO_SOURCE)
 [調整]TextLoader TEXT_MEDIA→TEXT_SOURCE
+
+[v24.04.11]
+[ 新 ]パッチノート的なのを記述
