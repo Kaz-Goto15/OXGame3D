@@ -173,6 +173,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Frame.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="HelpBar.cpp" />
     <ClCompile Include="GameSceneObject.cpp" />
     <ClCompile Include="MapLoader.cpp" />
@@ -246,6 +247,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="Frame.h" />
+    <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="HelpBar.h" />
     <ClInclude Include="GameSceneObject.h" />
     <ClInclude Include="MapLoader.h" />
