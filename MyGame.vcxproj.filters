@@ -265,6 +265,8 @@
       <Filter>01Engine\ResourceManager\Image</Filter>
     </ClCompile>
     <ClCompile Include="Frame.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="ControlSlider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -464,6 +466,8 @@
       <Filter>01Engine\ResourceManager\Image</Filter>
     </ClInclude>
     <ClInclude Include="Frame.h" />
+    <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="ControlSlider.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
