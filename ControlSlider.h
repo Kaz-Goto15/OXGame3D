@@ -5,7 +5,9 @@
 class ControlSlider : public GameObject
 {
 private:
-    int trackSize;  //トラックの長さ
+    int trackWidth, trackHeight;  //トラックのH,W
+    const int defScrX = 1280;
+    const int defScrY = 720;
     int value, minValue, maxValue; //値、最大最小
     POINT thumbPos; //可変 サム位置
 
@@ -22,6 +24,10 @@ private:
     int hImg_[IMAGE::MAX];
 public:
     int GetValue() { return value; }
+    bool IsEntered();
+    void SetImage(IMAGE img, std::string fileName);
+    void SetHeight(int height);
+    void SetWidth(int width);
 protected:
     virtual void InitValue() = 0;   //中に最大最小と現在値を初期化するコードを書く
 

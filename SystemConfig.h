@@ -29,11 +29,22 @@ namespace SystemConfig {
 
 	/// フルスクリーンを有効にするか
 	/// <param name="b">true=有効 false=無効</param>
-	void EnableFullScreen(bool b);
+	void SetFullScreen(bool b);
 
 	/// フルスクリーンが有効かどうか
 	/// <returns>有効であればtrue</returns>
 	bool IsFullScreen();
+
+	/// スクリーン高さ変更
+	/// <param name="h">新規高さ</param>
+	void SetScrHeight(int h);
+
+	/// スクリーン幅変更
+	/// <param name="w">新規幅</param>
+	void SetScrWidth(int w);
+
+	/// 設定保存
+	void SaveConfig();
 
 	/// 初期化
 	void Init();
