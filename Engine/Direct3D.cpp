@@ -515,4 +515,10 @@ namespace Direct3D
 		}
 	}
 
+	void SetFullScreen(BOOL fullscreen)
+	{
+		pSwapChain_->SetFullscreenState(fullscreen, NULL);
+
+	}
+
 }

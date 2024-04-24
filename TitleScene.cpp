@@ -8,6 +8,7 @@
 #include "ButtonGP.h"
 #include "DebugText.h"
 #include "CreditScreen.h"
+#include "OptionScreen.h"
 
 #include "AudioManager.h"
 
@@ -164,12 +165,12 @@ void TitleScene::ButtonAct(int hAct)
 		break;
 	case TitleScene::S_SEL_OPTION:
 
-		//pScreen = Instantiate<OptionScreen>(GetParent());
-		//pScreen->SetPrevScene(this);
-		//pScreen->Run();
+		pScreen = Instantiate<OptionScreen>(GetParent());
+		pScreen->SetPrevScene(this);
+		pScreen->Run();
 		
 		//optionŽÀ‘•‚µ‚Ä‚È‚¢‚Ì‚ÅgithubƒŠƒ“ƒN‚ð“n‚µ‚Ä‚¢‚é
-		ShellExecute(NULL, "open", "https://github.com/Kaz-Goto15/GraySide", NULL, NULL, SW_SHOWNORMAL);
+		//ShellExecute(NULL, "open", "https://github.com/Kaz-Goto15/GraySide", NULL, NULL, SW_SHOWNORMAL);
 
 		break;
 	case TitleScene::S_SEL_EXIT:

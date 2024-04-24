@@ -42,13 +42,15 @@ void OptionScreen::Initialize()
     backBtn->SetPosition(0, 266, 0);
     backBtn->SetScale(2, 0.66f, 1);
 
-    string testText[] = { "640,360", "1280x720", "1600x900", "fs on", "fs off"};
-    for (int i = 0; i < 5; i++) {
+    string testText[] = { "640x360", "1280x720", "1600x900", "1920x1080","fs on", "fs off"};
+    for (int i = 0; i < 6; i++) {
         testBtn[i] = Instantiate<ButtonGP>(this);
         testBtn[i]->SetText(testText[i]);
         testBtn[i]->SetAction(i+1);
-        testBtn[i]->SetPosition(0, 50 + i * 50, 0);
-        testBtn[i]->SetScale(1, 0.66f, 1);
+        if(i < 3)testBtn[i]->SetPosition(-320, -180 + i * 150, 0);
+        else if(i < 6)testBtn[i]->SetPosition(320, -180 + (i-3) * 150, 0);
+        //testBtn[i]->SetPosition(0, -600 + i * 200, 0);
+        //testBtn[i]->SetScale(1, 0.66f, 1);
     }
 }
 
@@ -73,6 +75,16 @@ void OptionScreen::Update()
     if (Input::IsKey(DIK_9)) {
         framePos.y += 1.0f;
     }
+    UpdateStr();
+}
+
+void OptionScreen::UpdateStr()
+{
+    using std::to_string;
+    debugStr[0] = "scrH:" + to_string(SystemConfig::screenHeight) + "scrW:" + to_string(SystemConfig::screenWidth);
+    debugStr[1] = "mousePos:(" + to_string(Input::GetMousePosition().x) + ", " + to_string(Input::GetMousePosition().y) + ")";
+    debugStr[2] = "scale(optionscreen):" + to_string(transform_.scale_.x);
+    debugStr[3] = "scale(optionscreen):" + to_string(transform_.scale_.x);
 }
 
 //•`‰æ
@@ -171,8 +183,9 @@ void OptionScreen::ButtonAct(int hAct)
     case 1: SystemConfig::SetScreenSize(640, 360); break;
     case 2: SystemConfig::SetScreenSize(1280, 720); break;
     case 3: SystemConfig::SetScreenSize(1600, 900); break;
-    case 4: SystemConfig::SetFullScreen(true);  break;
-    case 5: SystemConfig::SetFullScreen(false); break;
+    case 4: SystemConfig::SetScreenSize(1920, 1080); break;
+    case 5: SystemConfig::SetFullScreen(true);  break;
+    case 6: SystemConfig::SetFullScreen(false); break;
 
     }
 }

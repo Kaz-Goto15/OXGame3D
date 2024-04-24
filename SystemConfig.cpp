@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <string>
 #include "./Include/inicpp.h"
+#include "./Engine/Direct3D.h"
 //#include <stdlib.h>
 
 namespace SystemConfig {
@@ -43,6 +44,8 @@ namespace SystemConfig {
 	void SetFullScreen(bool b) {
 		isFullScreen = b;
 		confIni[section]["enFullScreen"] = b;
+
+		Direct3D::SetFullScreen(b);
 	}
 
 	bool IsFullScreen() { return isFullScreen; }
