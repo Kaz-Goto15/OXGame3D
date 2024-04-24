@@ -31,8 +31,8 @@ void Frame::Update()
 //•`‰æ
 void Frame::Draw()
 {
-    for (int h = FRAME_H::TOP; h < FRAME_H::MAX; h++) {
-        for (int w = FRAME_W::LEFT; w < FRAME_W::MAX; w++) {
+    for (int h = FRAME_H::H_TOP; h < FRAME_H::H_MAX; h++) {
+        for (int w = FRAME_W::W_LEFT; w < FRAME_W::W_MAX; w++) {
             Image::SetRect(hFrameImg_, w * edge, h * edge, edge, edge);
             Image::SetTransform(hFrameImg_, tra[h][w]);
             Image::Draw(hFrameImg_);
@@ -53,33 +53,33 @@ void Frame::TransformFrame(int up, int right, int down, int left)
     const int DEFAULT_POSITION_Y = 0;
     using namespace SystemConfig;
     //frame\’z
-    for (int y = FRAME_H::TOP; y < FRAME_H::MAX; y++) {
-        for (int x = FRAME_W::LEFT; x < FRAME_W::MAX; x++) {
+    for (int y = FRAME_H::H_TOP; y < FRAME_H::H_MAX; y++) {
+        for (int x = FRAME_W::W_LEFT; x < FRAME_W::W_MAX; x++) {
             switch (y) {
-            case FRAME_H::TOP:
+            case FRAME_H::H_TOP:
                 tra[y][x].position_.y = Half(-screenHeight + (up + down + edge));
                 tra[y][x].scale_.y = DEFAULT_SCALE;
                 break;
-            case FRAME_H::CENTER:
+            case FRAME_H::H_CENTER:
                 tra[y][x].position_.y = DEFAULT_POSITION_Y;
                 tra[y][x].scale_.y = (float)(screenHeight - (up + down + edge + edge)) / (float)edge;
                 break;
-            case FRAME_H::BOTTOM:
+            case FRAME_H::H_BOTTOM:
                 tra[y][x].position_.y = Half(screenHeight - (up + down + edge));
                 tra[y][x].scale_.y = DEFAULT_SCALE;
                 break;
             }
 
             switch (x) {
-            case FRAME_W::LEFT:
+            case FRAME_W::W_LEFT:
                 tra[y][x].position_.x = Half(-screenWidth + (right + left + edge));
                 tra[y][x].scale_.x = DEFAULT_SCALE;
                 break;
-            case FRAME_W::CENTER:
+            case FRAME_W::W_CENTER:
                 tra[y][x].position_.x = DEFAULT_POSITION_X;
                 tra[y][x].scale_.x = (float)(screenWidth - (right + left + edge + edge)) / (float)edge;
                 break;
-            case FRAME_W::RIGHT:
+            case FRAME_W::W_RIGHT:
                 tra[y][x].position_.x = Half(screenWidth - (right + left + edge));
                 tra[y][x].scale_.x = DEFAULT_SCALE;
                 break;

@@ -42,6 +42,7 @@ const char* WIN_CLASS_NAME = "SampleGame";	//ウィンドウクラス名
 
 //プロトタイプ宣言
 HWND InitApp(HINSTANCE hInstance, int screenWidth, int screenHeight, int nCmdShow);
+void ResizeWindow(HWND hwnd);
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
@@ -134,7 +135,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				FPS++;						//画面更新回数をカウントする
 
 
-
+				//画面サイズ更新の確認
+				if (SystemConfig::IsResized())ResizeWindow(hWnd);
 
 				//入力（キーボード、マウス、コントローラー）情報を更新
 				Input::Update();
@@ -236,7 +238,11 @@ HWND InitApp(HINSTANCE hInstance, int screenWidth, int screenHeight, int nCmdSho
 	return hWnd;
 }
 
-
+void ResizeWindow(HWND hwnd) {
+	RECT winRect = { 0, 0, SystemConfig::screenWidth, SystemConfig::screenHeight };
+	AdjustWindowRect(&winRect, WS_OVERLAPPEDWINDOW, FALSE);
+	SetWindowPos(hwnd, NULL, 0, 0, winRect.right - winRect.left, winRect.bottom - winRect.top, SWP_NOZORDER | SWP_NOMOVE);
+}
 //ウィンドウプロシージャ（何かあった時によばれる関数）
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -251,6 +257,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		Input::SetMousePosition(LOWORD(lParam), HIWORD(lParam));
 		return 0;
+	case WM_SIZE:
+		//static bool isProcessing = false;	//処理中フラグ
+		//if (!isProcessing) {
+		//	static int sizeXPrev = 1;
+		//	static int sizeYPrev = 1;
+		//	RECT rc;
+		//	GetClientRect(hWnd, &rc);
+		//	SetWindowPos
+		//}
+		return 0;
+		//resize
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }

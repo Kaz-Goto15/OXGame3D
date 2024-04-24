@@ -43,6 +43,12 @@ namespace SystemConfig {
 	/// <param name="w">新規幅</param>
 	void SetScrWidth(int w);
 
+	/// スクリーンサイズ変更
+	/// <param name="w">Width</param>
+	/// <param name="h">Height</param>
+	void SetScreenSize(int w, int h);
+
+	bool IsResized();
 	/// 設定保存
 	void SaveConfig();
 

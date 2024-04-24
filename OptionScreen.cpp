@@ -4,7 +4,7 @@
 
 #include "SystemConfig.h"
 #include "DebugText.h"
-#include "Button.h"
+#include "ButtonGP.h"
 
 //コンストラクタ
 OptionScreen::OptionScreen(GameObject* parent) :
@@ -26,9 +26,9 @@ OptionScreen::~OptionScreen()
 //初期化
 void OptionScreen::Initialize()
 {
-    hPict_[PIC_BACKGROUND] = Image::Load("black.png");
-    hPict_[PIC_BASIC_FRAME_TEX] = Image::Load("frame256.png");
-    hPict_[PIC_DESCRIPTION] = Image::Load("descr.png");
+    hPict_[PIC_BACKGROUND] = Image::Load("Screen/black.png");
+    hPict_[PIC_BASIC_FRAME_TEX] = Image::Load("Screen/frame256.png");
+    //hPict_[PIC_DESCRIPTION] = Image::Load("descr.png");
     Image::SetAlpha(hPict_[PIC_BACKGROUND], 128);
 
     debugtext = Instantiate<DebugText>(this);
@@ -36,12 +36,20 @@ void OptionScreen::Initialize()
         debugtext->AddStrPtr(&debugStr[i]);
     }
     frameMargin = { 50,50,150,50 };   //コンストラクタでやるとxが-1になる 原因不明のためこっちで
-    backBtn = Instantiate<Button>(this);
+    backBtn = Instantiate<ButtonGP>(this);
     backBtn->SetText("BACK");
     backBtn->SetAction(0);
     backBtn->SetPosition(0, 266, 0);
     backBtn->SetScale(2, 0.66f, 1);
 
+    string testText[] = { "640,360", "1280x720", "1600x900", "fs on", "fs off"};
+    for (int i = 0; i < 5; i++) {
+        testBtn[i] = Instantiate<ButtonGP>(this);
+        testBtn[i]->SetText(testText[i]);
+        testBtn[i]->SetAction(i+1);
+        testBtn[i]->SetPosition(0, 50 + i * 50, 0);
+        testBtn[i]->SetScale(1, 0.66f, 1);
+    }
 }
 
 //更新
@@ -156,5 +164,15 @@ void OptionScreen::ButtonAct(int hAct)
 {
     if (hAct == 0) {
         Prev();
+    }
+
+    //test
+    switch (hAct) {
+    case 1: SystemConfig::SetScreenSize(640, 360); break;
+    case 2: SystemConfig::SetScreenSize(1280, 720); break;
+    case 3: SystemConfig::SetScreenSize(1600, 900); break;
+    case 4: SystemConfig::SetFullScreen(true);  break;
+    case 5: SystemConfig::SetFullScreen(false); break;
+
     }
 }

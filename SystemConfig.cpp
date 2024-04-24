@@ -14,6 +14,7 @@ namespace SystemConfig {
 	bool isFullScreen = false;
 	bool debug = false;
 	ini::IniFile confIni;
+	bool isResized = false;
 
 	const char* section = "System";
 	const char* directory = "Assets";
@@ -56,6 +57,24 @@ namespace SystemConfig {
 	{
 		screenWidth = w;
 		confIni[section]["width"] = w;
+	}
+
+	void SetScreenSize(int w, int h)
+	{
+		screenHeight = h;
+		screenWidth = w;
+		confIni[section]["height"] = h;
+		confIni[section]["width"] = w;
+		isResized = true;
+		//RECT winRect = { 0, 0, w, h };
+		//AdjustWindowRect(&winRect, WS_OVERLAPPEDWINDOW, FALSE);
+		//SetWindowPos(hwnd, NULL, 0, 0, winRect.right - winRect.left, winRect.bottom - winRect.top, SWP_NOZORDER | SWP_NOMOVE);
+		
+	}
+
+	bool IsResized()
+	{
+		return isResized;
 	}
 
 	void SaveConfig()

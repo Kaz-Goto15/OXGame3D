@@ -4,6 +4,7 @@
 #include "Engine/Image.h"
 #include "Easing.h"
 #include "Engine/Text.h"
+#include "OptionScreen.h"
 
 TestScene::TestScene(GameObject* parent)
 	: GameObject(parent, "TestScene"),
@@ -39,6 +40,14 @@ void TestScene::Update(){
 	//AD ; Show easing_tra ease
 	if (Input::IsKeyDown(DIK_A))easeNum--;
 	if (Input::IsKeyDown(DIK_D))easeNum++;
+
+	//O : Option Screen
+	if (Input::IsKeyDown(DIK_O)) {
+		pScreen = Instantiate<OptionScreen>(GetParent());
+		pScreen->SetPrevScene(this);
+		pScreen->Run();
+	}
+	//Instantiate<OptionScreen>(this);
 
 }
 void TestScene::Draw(){

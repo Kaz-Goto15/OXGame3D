@@ -22,6 +22,8 @@ private:
         MAX
     };
     int hImg_[IMAGE::MAX];
+    //’l‚ª”ÍˆÍ“à‚©
+    bool Between(float value, float min, float max);
 public:
     int GetValue() { return value; }
     bool IsEntered();
