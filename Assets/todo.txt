@@ -73,7 +73,16 @@
 ・*********** マウスを前提とする振る舞いにします！！！！！！！！！！(100おれや多くのブラウザゲー、バトロワ系の仕様) ***********
 ・つまりは選択中のアレを撤廃する そこは間違いなく、絶対欲しいと言われる程度の機能ではない
 
-
+[SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH]
+ウチの憧れゲーの解像度とフルスクリーンの設定位置をしらべる
+・starchaser→OKを押したとき 解像度設定は無い fullscreen/windowedのみ
+・minecraft
+・100ore
+・Rabi-Ribi/Tevi
+・氷をとかそう3D
+・
+場合によってはChangeScreenSize的な関数を用意して適用時に呼ぶようにしないといけない
+[SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH]
 
 
 

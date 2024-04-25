@@ -93,7 +93,8 @@ namespace SystemConfig {
 		volBGM = confIni[section]["vol_bgm"].as<int>();
 		volSE = confIni[section]["vol_se"].as<int>();
 		FPS = confIni[section]["fps"].as<int>();
-		isFullScreen = confIni[section]["enFullScreen"].as<int>();
+		//isFullScreen = confIni[section]["enFullScreen"].as<int>();
+		SetFullScreen(confIni[section]["enFullScreen"].as<int>());
 		debug = confIni[section]["debug"].as<int>();
 		//screenWidth = GetPrivateProfileInt("Screen", "width", screenWidth, iniFile);		//スクリーンの幅
 		//screenHeight = GetPrivateProfileInt("Screen", "height", screenHeight, iniFile);	//スクリーンの高さ
