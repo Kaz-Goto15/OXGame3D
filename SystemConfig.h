@@ -1,8 +1,9 @@
 #pragma once
+#include <Windows.h>
 
 namespace SystemConfig {
-	extern int screenHeight;
-	extern int screenWidth;
+	extern int windowHeight;
+	extern int windowWidth;
 	/// BGM音量設定 0-100
 	/// <param name="vol">音量(%)</param>
 	void SetVolBGM(int vol);
@@ -35,18 +36,18 @@ namespace SystemConfig {
 	/// <returns>有効であればtrue</returns>
 	bool IsFullScreen();
 
-	/// スクリーン高さ変更
+	/// ウィンドウ高さ変更
 	/// <param name="h">新規高さ</param>
-	void SetScrHeight(int h);
+	void SetWindowHeight(int h);
 
-	/// スクリーン幅変更
+	/// ウィンドウ幅変更
 	/// <param name="w">新規幅</param>
-	void SetScrWidth(int w);
+	void SetWindowWidth(int w);
 
-	/// スクリーンサイズ変更
+	/// ウィンドウサイズ変更
 	/// <param name="w">Width</param>
 	/// <param name="h">Height</param>
-	void SetScreenSize(int w, int h);
+	void SetWindowSize(int w, int h);
 
 	bool IsResized();
 	/// 設定保存
@@ -56,4 +57,7 @@ namespace SystemConfig {
 	void Init();
 
 	bool IsDebug();
+
+	void SetWindowHandle(HWND hwnd);
+	HWND GetWindowHandle();
 }

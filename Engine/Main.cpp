@@ -87,6 +87,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//=========================== 追加 ===============================//
 	KeyConfig::Init("keyconfig.csv");
 	SystemConfig::Init();
+	SystemConfig::SetWindowHandle(hWnd);
 	//================================================================//
 
 	//メッセージループ（何か起きるのを待つ）
@@ -136,7 +137,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 				//画面サイズ更新の確認
-				if (SystemConfig::IsResized())ResizeWindow(hWnd);
+				if (SystemConfig::IsResized()) {
+					ResizeWindow(hWnd);
+				}
 
 				//入力（キーボード、マウス、コントローラー）情報を更新
 				Input::Update();
@@ -239,7 +242,7 @@ HWND InitApp(HINSTANCE hInstance, int screenWidth, int screenHeight, int nCmdSho
 }
 
 void ResizeWindow(HWND hwnd) {
-	RECT winRect = { 0, 0, SystemConfig::screenWidth, SystemConfig::screenHeight };
+	RECT winRect = { 0, 0, SystemConfig::windowWidth, SystemConfig::windowHeight };
 	AdjustWindowRect(&winRect, WS_OVERLAPPEDWINDOW, FALSE);
 	SetWindowPos(hwnd, NULL, 0, 0, winRect.right - winRect.left, winRect.bottom - winRect.top, SWP_NOZORDER | SWP_NOMOVE);
 }
@@ -258,6 +261,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		Input::SetMousePosition(LOWORD(lParam), HIWORD(lParam));
 		return 0;
 	case WM_SIZE:
+		//SystemConfig::SetWindowSize()
 		//static bool isProcessing = false;	//処理中フラグ
 		//if (!isProcessing) {
 		//	static int sizeXPrev = 1;

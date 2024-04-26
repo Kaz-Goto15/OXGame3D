@@ -95,30 +95,30 @@ void CreditScreen::Draw()
             for (int y = 0; y < 3; y++) {
                 switch (y) {
                 case 0:
-                    frameTra.position_.y = (float)(-screenHeight + (frameMargin.x + frameMargin.z + edge)) / 2.0f;
+                    frameTra.position_.y = (float)(-windowHeight + (frameMargin.x + frameMargin.z + edge)) / 2.0f;
                     frameTra.scale_.y = 1;
                     break;
                 case 1:
                     frameTra.position_.y = 0;
-                    frameTra.scale_.y = (float)(screenHeight - (frameMargin.x + frameMargin.z + edge + edge)) / (float)edge;
+                    frameTra.scale_.y = (float)(windowHeight - (frameMargin.x + frameMargin.z + edge + edge)) / (float)edge;
                     break;
                 case 2:
-                    frameTra.position_.y = (float)(screenHeight - (frameMargin.x + frameMargin.z + edge)) / 2.0f;
+                    frameTra.position_.y = (float)(windowHeight - (frameMargin.x + frameMargin.z + edge)) / 2.0f;
                     frameTra.scale_.y = 1;
                     break;
                 }
                 for (int x = 0; x < 3; x++) {
                     switch (x) {
                     case 0:
-                        frameTra.position_.x = (float)(-screenWidth + (frameMargin.y + frameMargin.w + edge)) / 2.0f;
+                        frameTra.position_.x = (float)(-windowWidth + (frameMargin.y + frameMargin.w + edge)) / 2.0f;
                         frameTra.scale_.x = 1;
                         break;
                     case 1:
                         frameTra.position_.x = 0;
-                        frameTra.scale_.x = (float)(screenWidth - (frameMargin.y + frameMargin.w + edge + edge)) / (float)edge;
+                        frameTra.scale_.x = (float)(windowWidth - (frameMargin.y + frameMargin.w + edge + edge)) / (float)edge;
                         break;
                     case 2:
-                        frameTra.position_.x = (float)(screenWidth - (frameMargin.y + frameMargin.w + edge)) / 2.0f;
+                        frameTra.position_.x = (float)(windowWidth - (frameMargin.y + frameMargin.w + edge)) / 2.0f;
                         frameTra.scale_.x = 1;
                         break;
                     }

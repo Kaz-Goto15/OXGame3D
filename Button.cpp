@@ -123,17 +123,17 @@ std::string Button::GetDebugStr(int i)
 	switch (i) {
 	case 0:	return "imageSize: " + std::to_string(Image::GetSize(hImg_[0]).x) + "," + std::to_string(Image::GetSize(hImg_[0]).y);
 	case 1:	return "null vertex:(" +
-		std::to_string((int)(SystemConfig::screenWidth / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::screenHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(SystemConfig::screenWidth / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::screenHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(SystemConfig::screenWidth / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::screenHeight / 2.0f + imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(SystemConfig::screenWidth / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::screenHeight / 2.0f + imageSize.y / 2.0f)) + ")";
-	case 2: return "windowsize: " + std::to_string(SystemConfig::screenWidth) + ", " + std::to_string(SystemConfig::screenHeight);
+		std::to_string((int)(SystemConfig::windowWidth / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::windowHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(SystemConfig::windowWidth / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::windowHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(SystemConfig::windowWidth / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::windowHeight / 2.0f + imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(SystemConfig::windowWidth / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::windowHeight / 2.0f + imageSize.y / 2.0f)) + ")";
+	case 2: return "windowsize: " + std::to_string(SystemConfig::windowWidth) + ", " + std::to_string(SystemConfig::windowHeight);
 	case 3: return "windowsize: " + std::to_string(GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini"));
 	case 4:	return "between:(" +
-		std::to_string((int)(buttonTra.position_.x + SystemConfig::screenWidth / 2.0f - imageSize.x / 2.0f)) + ")" +
-		"(" + std::to_string((int)(buttonTra.position_.x + SystemConfig::screenWidth / 2.0f + imageSize.x / 2.0f)) + ")" +
-		"(" + std::to_string((int)(buttonTra.position_.y + SystemConfig::screenHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(buttonTra.position_.y + SystemConfig::screenHeight / 2.0f + imageSize.y / 2.0f)) + ")";
+		std::to_string((int)(buttonTra.position_.x + SystemConfig::windowWidth / 2.0f - imageSize.x / 2.0f)) + ")" +
+		"(" + std::to_string((int)(buttonTra.position_.x + SystemConfig::windowWidth / 2.0f + imageSize.x / 2.0f)) + ")" +
+		"(" + std::to_string((int)(buttonTra.position_.y + SystemConfig::windowHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
+		"(" + std::to_string((int)(buttonTra.position_.y + SystemConfig::windowHeight / 2.0f + imageSize.y / 2.0f)) + ")";
 	case 5:	return "buttonPos: " + std::to_string(buttonTra.position_.x) + "," + std::to_string(buttonTra.position_.y);
 	//case 6:	return "clip: " + std::to_string(clip.x) + "," + std::to_string(clip.y) + "," + std::to_string(clip.z) + "," + std::to_string(clip.w);
 	}
@@ -225,11 +225,11 @@ bool Button::IsEntered()
 	XMFLOAT3 mousePos = Input::GetMousePosition();
 	if (
 		Between(mousePos.x,
-			buttonTra.position_.x + SystemConfig::screenWidth / 2.0f - imageSize.x / 2.0f,
-			buttonTra.position_.x + SystemConfig::screenWidth / 2.0f + imageSize.x / 2.0f) &&
+			buttonTra.position_.x + SystemConfig::windowWidth / 2.0f - imageSize.x / 2.0f,
+			buttonTra.position_.x + SystemConfig::windowWidth / 2.0f + imageSize.x / 2.0f) &&
 		Between(mousePos.y,
-			buttonTra.position_.y + SystemConfig::screenHeight / 2.0f - imageSize.y / 2.0f,
-			buttonTra.position_.y + SystemConfig::screenHeight / 2.0f + imageSize.y / 2.0f)
+			buttonTra.position_.y + SystemConfig::windowHeight / 2.0f - imageSize.y / 2.0f,
+			buttonTra.position_.y + SystemConfig::windowHeight / 2.0f + imageSize.y / 2.0f)
 		) {
 		return true;
 	}

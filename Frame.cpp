@@ -57,30 +57,30 @@ void Frame::TransformFrame(int up, int right, int down, int left)
         for (int x = FRAME_W::W_LEFT; x < FRAME_W::W_MAX; x++) {
             switch (y) {
             case FRAME_H::H_TOP:
-                tra[y][x].position_.y = Half(-screenHeight + (up + down + edge));
+                tra[y][x].position_.y = Half(-windowHeight + (up + down + edge));
                 tra[y][x].scale_.y = DEFAULT_SCALE;
                 break;
             case FRAME_H::H_CENTER:
                 tra[y][x].position_.y = DEFAULT_POSITION_Y;
-                tra[y][x].scale_.y = (float)(screenHeight - (up + down + edge + edge)) / (float)edge;
+                tra[y][x].scale_.y = (float)(windowHeight - (up + down + edge + edge)) / (float)edge;
                 break;
             case FRAME_H::H_BOTTOM:
-                tra[y][x].position_.y = Half(screenHeight - (up + down + edge));
+                tra[y][x].position_.y = Half(windowHeight - (up + down + edge));
                 tra[y][x].scale_.y = DEFAULT_SCALE;
                 break;
             }
 
             switch (x) {
             case FRAME_W::W_LEFT:
-                tra[y][x].position_.x = Half(-screenWidth + (right + left + edge));
+                tra[y][x].position_.x = Half(-windowWidth + (right + left + edge));
                 tra[y][x].scale_.x = DEFAULT_SCALE;
                 break;
             case FRAME_W::W_CENTER:
                 tra[y][x].position_.x = DEFAULT_POSITION_X;
-                tra[y][x].scale_.x = (float)(screenWidth - (right + left + edge + edge)) / (float)edge;
+                tra[y][x].scale_.x = (float)(windowWidth - (right + left + edge + edge)) / (float)edge;
                 break;
             case FRAME_W::W_RIGHT:
-                tra[y][x].position_.x = Half(screenWidth - (right + left + edge));
+                tra[y][x].position_.x = Half(windowWidth - (right + left + edge));
                 tra[y][x].scale_.x = DEFAULT_SCALE;
                 break;
             }

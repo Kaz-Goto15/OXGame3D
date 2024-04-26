@@ -81,10 +81,16 @@ void OptionScreen::Update()
 void OptionScreen::UpdateStr()
 {
     using std::to_string;
-    debugStr[0] = "scrH:" + to_string(SystemConfig::screenHeight) + "scrW:" + to_string(SystemConfig::screenWidth);
+    debugStr[0] = "scrH:" + to_string(SystemConfig::windowHeight) + "scrW:" + to_string(SystemConfig::windowWidth);
     debugStr[1] = "mousePos:(" + to_string(Input::GetMousePosition().x) + ", " + to_string(Input::GetMousePosition().y) + ")";
     debugStr[2] = "scale(optionscreen):" + to_string(transform_.scale_.x);
     debugStr[3] = "scale(optionscreen):" + to_string(transform_.scale_.x);
+    debugStr[4] = "monitorX:" + to_string(GetSystemMetrics(SM_CXSCREEN));
+    debugStr[5] = "monitorY:" + to_string(GetSystemMetrics(SM_CYSCREEN));
+    RECT r;
+    GetWindowRect(SystemConfig::GetWindowHandle(), &r);
+    debugStr[6] = "windowX:" + to_string(r.left);
+    debugStr[7] = "windowY:" + to_string(r.top);
 }
 
 //•`‰æ
@@ -103,30 +109,30 @@ void OptionScreen::Draw()
             for (int y = 0; y < 3; y++) {
                 switch (y) {
                 case 0:
-                    frameTra.position_.y = (float)(-screenHeight + (frameMargin.x + frameMargin.z + edge)) / 2.0f;
+                    frameTra.position_.y = (float)(-windowHeight + (frameMargin.x + frameMargin.z + edge)) / 2.0f;
                     frameTra.scale_.y = 1;
                     break;
                 case 1:
                     frameTra.position_.y = 0;
-                    frameTra.scale_.y = (float)(screenHeight - (frameMargin.x + frameMargin.z + edge + edge)) / (float)edge;
+                    frameTra.scale_.y = (float)(windowHeight - (frameMargin.x + frameMargin.z + edge + edge)) / (float)edge;
                     break;
                 case 2:
-                    frameTra.position_.y = (float)(screenHeight - (frameMargin.x + frameMargin.z + edge)) / 2.0f;
+                    frameTra.position_.y = (float)(windowHeight - (frameMargin.x + frameMargin.z + edge)) / 2.0f;
                     frameTra.scale_.y = 1;
                     break;
                 }
                 for (int x = 0; x < 3; x++) {
                     switch (x) {
                     case 0:
-                        frameTra.position_.x = (float)(-screenWidth + (frameMargin.y + frameMargin.w + edge)) / 2.0f;
+                        frameTra.position_.x = (float)(-windowWidth + (frameMargin.y + frameMargin.w + edge)) / 2.0f;
                         frameTra.scale_.x = 1;
                         break;
                     case 1:
                         frameTra.position_.x = 0;
-                        frameTra.scale_.x = (float)(screenWidth - (frameMargin.y + frameMargin.w + edge + edge)) / (float)edge;
+                        frameTra.scale_.x = (float)(windowWidth - (frameMargin.y + frameMargin.w + edge + edge)) / (float)edge;
                         break;
                     case 2:
-                        frameTra.position_.x = (float)(screenWidth - (frameMargin.y + frameMargin.w + edge)) / 2.0f;
+                        frameTra.position_.x = (float)(windowWidth - (frameMargin.y + frameMargin.w + edge)) / 2.0f;
                         frameTra.scale_.x = 1;
                         break;
                     }
@@ -152,7 +158,7 @@ void OptionScreen::Draw()
                     //                    ;
 
                 }
-                //debugStr[9] = "scr:" + std::to_string(screenWidth) + "," + std::to_string(screenHeight);
+                //debugStr[9] = "scr:" + std::to_string(windowWidth) + "," + std::to_string(windowHeight);
                 //debugStr[10] = "mousePos: " + std::to_string(Input::GetMousePosition().x - 640) + ", " + std::to_string(Input::GetMousePosition().y - 360);
                 //debugStr[11] = "center:" + std::to_string(framePos.x) + "," + std::to_string(framePos.y);
                 //debugStr[12] = "resize:" + std::to_string(frameScale);
@@ -180,10 +186,10 @@ void OptionScreen::ButtonAct(int hAct)
 
     //test
     switch (hAct) {
-    case 1: SystemConfig::SetScreenSize(640, 360); break;
-    case 2: SystemConfig::SetScreenSize(1280, 720); break;
-    case 3: SystemConfig::SetScreenSize(1600, 900); break;
-    case 4: SystemConfig::SetScreenSize(1920, 1080); break;
+    case 1: SystemConfig::SetWindowSize(640, 360); break;
+    case 2: SystemConfig::SetWindowSize(1280, 720); break;
+    case 3: SystemConfig::SetWindowSize(1600, 900); break;
+    case 4: SystemConfig::SetWindowSize(1920, 1080); break;
     case 5: SystemConfig::SetFullScreen(true);  break;
     case 6: SystemConfig::SetFullScreen(false); break;
 
