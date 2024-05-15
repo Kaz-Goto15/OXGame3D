@@ -42,13 +42,14 @@ void OptionScreen::Initialize()
     backBtn->SetPosition(0, 266, 0);
     backBtn->SetScale(2, 0.66f, 1);
 
-    string testText[] = { "640x360", "1280x720", "1600x900", "1920x1080","fs on", "fs off"};
-    for (int i = 0; i < 6; i++) {
+    string testText[] = { "640x360", "1280x720", "1600x900", "1920x1080","fs on", "fs off","iniSave" };
+    for (int i = 0; i < 7; i++) {
         testBtn[i] = Instantiate<ButtonGP>(this);
         testBtn[i]->SetText(testText[i]);
-        testBtn[i]->SetAction(i+1);
-        if(i < 3)testBtn[i]->SetPosition(-320, -180 + i * 150, 0);
-        else if(i < 6)testBtn[i]->SetPosition(320, -180 + (i-3) * 150, 0);
+        testBtn[i]->SetAction(i + 1);
+        if (i < 3)testBtn[i]->SetPosition(-320, -180 + i * 150, 0);
+        else if (i < 6)testBtn[i]->SetPosition(0, -180 + (i - 3) * 150, 0);
+        else if (i < 9)testBtn[i]->SetPosition(320, -180 + (i - 6) * 150, 0);
         //testBtn[i]->SetPosition(0, -600 + i * 200, 0);
         //testBtn[i]->SetScale(1, 0.66f, 1);
     }
@@ -192,6 +193,6 @@ void OptionScreen::ButtonAct(int hAct)
     case 4: SystemConfig::SetWindowSize(1920, 1080); break;
     case 5: SystemConfig::SetFullScreen(true);  break;
     case 6: SystemConfig::SetFullScreen(false); break;
-
+    case 7: SystemConfig::SaveConfig(); break;
     }
 }

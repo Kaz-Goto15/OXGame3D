@@ -21,7 +21,7 @@ class OptionScreen : public Screen
 
     DebugText* debugtext;
     ButtonGP* backBtn;
-    ButtonGP* testBtn[6];
+    ButtonGP* testBtn[7];
     std::string debugStr[20];
     void UpdateStr();
 public:

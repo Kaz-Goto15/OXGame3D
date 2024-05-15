@@ -80,7 +80,7 @@
 ・100ore
 ・Rabi-Ribi/Tevi
 ・氷をとかそう3D
-・
+・aliceincradle
 場合によってはChangeScreenSize的な関数を用意して適用時に呼ぶようにしないといけない
 [SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH][SEARCH]
 
