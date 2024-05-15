@@ -6,6 +6,9 @@
 #include "./Engine/Direct3D.h"
 //#include <stdlib.h>
 
+namespace FileRead {
+
+}
 namespace SystemConfig {
 	int screenWidth = 800;
 	int screenHeight = 600;
@@ -104,7 +107,7 @@ namespace SystemConfig {
 		//isFullScreen = confIni[section]["enFullScreen"].as<int>();
 		SetFullScreen(confIni[section]["enFullScreen"].as<int>());	//フルスクリーンフラグ
 		debug = confIni[section]["debug"].as<int>();			//デバッグフラグ
-		SystemConfig::AspectRatio::Init();	//アス比関連の機能初期化
+		AspectRatio::Init();	//アス比関連の機能初期化
 	}
 
 	bool IsDebug(){	return debug;	}
@@ -112,33 +115,43 @@ namespace SystemConfig {
 	void SetWindowHandle(HWND hwnd)	{	windowHandle = hwnd;	}
 	HWND GetWindowHandle()	{	return windowHandle;	}
 
-	namespace AspectRatio {
-		int aspectRatioX;
-		int aspectRatioY;
-
-		void Init() {
-			const char* section = "Aspect Ratio";
-			aspectRatioX = SystemConfig::confIni[section]["width"].as<int>();
-			aspectRatioY = SystemConfig::confIni[section]["height"].as<int>();
-		}
-		bool Between(int val, int min, int max) {
-			return (min <= val && val <= max);
-		}
-		void ConvertWindowSize(int& w, int& h) {
-			RECT rc;
-			GetWindowRect(SystemConfig::GetWindowHandle(), &rc);
-			int windowX = rc.left;
-			int windowY = rc.top;
-
-			if (w > screenWidth)w = screenWidth;	//ウィンドウ幅の最大をスクリーン幅に
-			h = w * aspectRatioY / aspectRatioX;	//幅とアス比から高さを求める
-			if (h > screenHeight)h = screenHeight;	//ウィンドウ高さの最大をスクリーン高さに
-			w = h * aspectRatioX / aspectRatioY;	//高さとアス比から幅を求める
-
-			//ウィンドウ座標左上や右下がスクリーン外だったりしたらスクリーンサイズからウィンドウサイズ引いた値にする
-			//デュアルは考慮してない
-			if (!Between(windowX, 0, screenWidth - windowX)) windowX = screenWidth - w;
-			if (!Between(windowY, 0, screenHeight - windowY)) windowY = screenHeight - h;
-		}
-	}
 }
+namespace AspectRatio {
+	int aspectRatioX;
+	int aspectRatioY;
+
+	void Init() {
+		const char* section = "Aspect Ratio";
+		aspectRatioX = SystemConfig::confIni[section]["width"].as<int>();
+		aspectRatioY = SystemConfig::confIni[section]["height"].as<int>();
+	}
+	bool Between(int val, int min, int max) {
+		return (min <= val && val <= max);
+	}
+	void ConvertWindowSize(int& w, int& h) {
+		RECT rc;
+		GetWindowRect(SystemConfig::GetWindowHandle(), &rc);
+		int windowX = rc.left;
+		int windowY = rc.top;
+
+		if (w > SystemConfig::screenWidth)w = SystemConfig::screenWidth;	//ウィンドウ幅の最大をスクリーン幅に
+		h = w * aspectRatioY / aspectRatioX;	//幅とアス比から高さを求める
+		if (h > SystemConfig::screenHeight)h = SystemConfig::screenHeight;	//ウィンドウ高さの最大をスクリーン高さに
+		w = h * aspectRatioX / aspectRatioY;	//高さとアス比から幅を求める
+
+		//ウィンドウ座標左上や右下がスクリーン外だったりしたらスクリーンサイズからウィンドウサイズ引いた値にする
+		//デュアルは考慮してない
+		if (!Between(windowX, 0, SystemConfig::screenWidth - windowX)) windowX = SystemConfig::screenWidth - w;
+		if (!Between(windowY, 0, SystemConfig::screenHeight - windowY)) windowY = SystemConfig::screenHeight - h;
+	}
+};
+
+namespace SystemConfig {
+
+}
+/*
+FileRead データ読込 外部ファイルを直接的に扱う データは外部から読み込んだファイルがtmpで存在する
+SystemConfig データ本体 外部クラスでの使用・変更を行う データ自体もここにある
+AspectRatio:アス比関連の処理 サブの運用 アス比だけでもけっこうな量になったのでまとめた
+こんなふうにしたい 可読性？知らん
+*/
