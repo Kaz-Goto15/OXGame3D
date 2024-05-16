@@ -262,7 +262,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		Input::SetMousePosition(LOWORD(lParam), HIWORD(lParam));
 		return 0;
 	case WM_SIZE:
-		bool a;
+		RECT rc;
+		GetClientRect(hWnd, &rc);
+		SystemConfig::SetWindowSize(rc.right, rc.bottom);
 		//SystemConfig::SetWindowSize()
 		//static bool isProcessing = false;	//èàóùíÜÉtÉâÉO
 		//if (!isProcessing) {
