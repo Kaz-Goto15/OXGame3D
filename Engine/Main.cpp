@@ -243,6 +243,7 @@ HWND InitApp(HINSTANCE hInstance, int screenWidth, int screenHeight, int nCmdSho
 
 void ResizeWindow(HWND hwnd) {
 	RECT winRect = { 0, 0, SystemConfig::windowWidth, SystemConfig::windowHeight };
+	
 	AdjustWindowRect(&winRect, WS_OVERLAPPEDWINDOW, FALSE);
 	SetWindowPos(hwnd, NULL, 0, 0, winRect.right - winRect.left, winRect.bottom - winRect.top, SWP_NOZORDER | SWP_NOMOVE);
 }
@@ -261,6 +262,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		Input::SetMousePosition(LOWORD(lParam), HIWORD(lParam));
 		return 0;
 	case WM_SIZE:
+		bool a;
 		//SystemConfig::SetWindowSize()
 		//static bool isProcessing = false;	//èàóùíÜÉtÉâÉO
 		//if (!isProcessing) {

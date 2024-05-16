@@ -89,9 +89,13 @@ void OptionScreen::UpdateStr()
     debugStr[4] = "monitorX:" + to_string(GetSystemMetrics(SM_CXSCREEN));
     debugStr[5] = "monitorY:" + to_string(GetSystemMetrics(SM_CYSCREEN));
     RECT r;
-    GetWindowRect(SystemConfig::GetWindowHandle(), &r);
+    //GetWindowRect(SystemConfig::GetWindowHandle(), &r);
+    GetClientRect(SystemConfig::GetWindowHandle(), &r);
+    //AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, FALSE);
     debugStr[6] = "windowX:" + to_string(r.left);
     debugStr[7] = "windowY:" + to_string(r.top);
+    debugStr[8] = "windowR:" + to_string(r.right);
+    debugStr[9] = "windowB:" + to_string(r.bottom);
 }
 
 //•`‰æ
