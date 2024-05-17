@@ -80,14 +80,6 @@ namespace SystemConfig {
 		IniManager::confIni[section]["width"] = w;
 	}
 
-	void SetWindowSize(int w, int h)
-	{
-		windowHeight = h;
-		windowWidth = w;
-		IniManager::confIni[section]["height"] = h;
-		IniManager::confIni[section]["width"] = w;
-		isResized = true;
-	}
 
 	//bool IsResized()
 	//{
@@ -147,19 +139,39 @@ namespace AspectRatio {
 	/// </summary>
 	/// <param name="w">ƒEƒBƒ“ƒhƒEƒTƒCƒY‰¡</param>
 	/// <param name="h">ƒEƒBƒ“ƒhƒEƒTƒCƒYc</param>
-	void ConvertWindowSize(int& w, int& h) {
+	void ConvertWindowSize(int& w, int& h, int prevW, int prevH) {
 		//Œ»İ‚ÌƒEƒBƒ“ƒhƒE‚ÌˆÊ’u‚ğæ“¾
 		RECT rc;
 		GetWindowRect(SystemConfig::GetWindowHandle(), &rc);
+		RECT windowSize;
+		GetClientRect(SystemConfig::GetWindowHandle(), &windowSize);
 		int windowX = rc.left;	//ƒEƒBƒ“ƒhƒE¶
 		int windowY = rc.top;	//ƒEƒBƒ“ƒhƒEã
+		int tmpW = -1, tmpH = -1;
+		bool modX = false, modY = false;
+		if (windowSize.right != SystemConfig::windowWidth) {
+			if (w > SystemConfig::screenWidth)w = SystemConfig::screenWidth;	//ƒEƒBƒ“ƒhƒE•‚ÌÅ‘å‚ğƒXƒNƒŠ[ƒ“•‚É
+			tmpH = w * aspectRatioH / aspectRatioW;	//•‚ÆƒAƒX”ä‚©‚ç‚‚³‚ğ‹‚ß‚é
+			modX = true;
 
-		if (w > SystemConfig::screenWidth)w = SystemConfig::screenWidth;	//ƒEƒBƒ“ƒhƒE•‚ÌÅ‘å‚ğƒXƒNƒŠ[ƒ“•‚É
-		h = w * aspectRatioH / aspectRatioW;	//•‚ÆƒAƒX”ä‚©‚ç‚‚³‚ğ‹‚ß‚é
-		if (h > SystemConfig::screenHeight)h = SystemConfig::screenHeight;	//ƒEƒBƒ“ƒhƒE‚‚³‚ÌÅ‘å‚ğƒXƒNƒŠ[ƒ“‚‚³‚É
-		w = h * aspectRatioW / aspectRatioH;	//‚‚³‚ÆƒAƒX”ä‚©‚ç•‚ğ‹‚ß‚é
+		}
+		if (windowSize.bottom != SystemConfig::windowHeight) {
+			if (h > SystemConfig::screenHeight)h = SystemConfig::screenHeight;	//ƒEƒBƒ“ƒhƒE‚‚³‚ÌÅ‘å‚ğƒXƒNƒŠ[ƒ“‚‚³‚É
+			tmpW = h * aspectRatioW / aspectRatioH;	//‚‚³‚ÆƒAƒX”ä‚©‚ç•‚ğ‹‚ß‚é
+			modY = true;
+		}
+		if (modX && !modY) {
+			h = tmpH;
+		}
+		if (!modX && modY) {
+			w = tmpW;
+		}
+		if (modX && modY) {
+			if (w > tmpW)h = tmpH;
+			else w = tmpW;
+		}
 
-		//ƒEƒBƒ“ƒhƒEÀ•W¶ã‚â‰E‰º‚ªƒXƒNƒŠ[ƒ“ŠO‚¾‚Á‚½‚è‚µ‚½‚çƒXƒNƒŠ[ƒ“ƒTƒCƒY‚©‚çƒEƒBƒ“ƒhƒEƒTƒCƒYˆø‚¢‚½’l‚É‚·‚é
+		//ƒEƒBƒ“ƒhƒEÀ•W¶ã‚ªƒXƒNƒŠ[ƒ“ŠO‚¾‚Á‚½‚è‚µ‚½‚çƒXƒNƒŠ[ƒ“ƒTƒCƒY‚©‚çƒEƒBƒ“ƒhƒEƒTƒCƒYˆø‚¢‚½’l‚É‚·‚é
 		//ƒfƒ…ƒAƒ‹‚Íl—¶‚µ‚Ä‚È‚¢
 		if (!Between(windowX, 0, SystemConfig::screenWidth - windowX)) {
 			windowX = SystemConfig::screenWidth - w;
@@ -169,10 +181,12 @@ namespace AspectRatio {
 };
 
 namespace SystemConfig {
+	bool initFlag = false;
 	void Init() {
 		IniManager::Load();
 		SystemConfig::Initialize();
 		AspectRatio::Init();
+		initFlag = true;
 	}
 
 	bool IsResized()
@@ -180,10 +194,23 @@ namespace SystemConfig {
 		if (isResized) {
 
 			isResized = false;
-			AspectRatio::ConvertWindowSize(SystemConfig::windowWidth, SystemConfig::windowHeight);
+			/*AspectRatio::ConvertWindowSize(SystemConfig::windowWidth, SystemConfig::windowHeight);*/
 			return true;
 		}
 		return isResized;
+	}
+	void SetWindowSize(int w, int h)
+	{
+		if (initFlag) {
+			AspectRatio::ConvertWindowSize(w, h, SystemConfig::windowWidth, SystemConfig::windowHeight);
+			windowHeight = h;
+			windowWidth = w;
+			IniManager::confIni[section]["height"] = h;
+			IniManager::confIni[section]["width"] = w;
+
+
+			isResized = true;
+		}
 	}
 
 }
@@ -192,4 +219,5 @@ IniManager ƒf[ƒ^“Ç ŠO•”ƒtƒ@ƒCƒ‹‚ğ’¼Ú“I‚Éˆµ‚¤ ƒf[ƒ^‚ÍŠO•”‚©‚ç“Ç‚İ‚ñ‚¾ƒtƒ@ƒ
 SystemConfig ƒf[ƒ^–{‘Ì ŠO•”ƒNƒ‰ƒX‚Å‚Ìg—pE•ÏX‚ğs‚¤ ƒf[ƒ^©‘Ì‚à‚±‚±‚É‚ ‚é
 AspectRatio:ƒAƒX”äŠÖ˜A‚Ìˆ— ƒTƒu‚Ì‰^—p ƒAƒX”ä‚¾‚¯‚Å‚à‚¯‚Á‚±‚¤‚È—Ê‚É‚È‚Á‚½‚Ì‚Å‚Ü‚Æ‚ß‚½
 ‚±‚ñ‚È‚Ó‚¤‚É‚µ‚½‚¢ ‰Â“Ç«H’m‚ç‚ñ
+
 */

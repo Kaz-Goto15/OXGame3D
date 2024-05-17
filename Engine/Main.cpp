@@ -37,7 +37,7 @@ FbxParts.cpp内にマイナスにしている箇所が２か所ありました。確認してください。
 #pragma comment(lib,"Winmm.lib")
 
 //定数宣言
-const char* WIN_CLASS_NAME = "SampleGame";	//ウィンドウクラス名
+const char* WIN_CLASS_NAME = "GraySide";	//ウィンドウクラス名
 
 
 //プロトタイプ宣言
@@ -241,6 +241,7 @@ HWND InitApp(HINSTANCE hInstance, int screenWidth, int screenHeight, int nCmdSho
 	return hWnd;
 }
 
+//ウィンドウのリサイズ
 void ResizeWindow(HWND hwnd) {
 	RECT winRect = { 0, 0, SystemConfig::windowWidth, SystemConfig::windowHeight };
 	
