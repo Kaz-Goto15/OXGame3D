@@ -26,7 +26,7 @@ private:
     bool Between(float value, float min, float max);
 public:
     int GetValue() { return value; }
-    bool IsEntered();
+    bool IsEntered();   //マウス範囲内かを判定
     void SetImage(IMAGE img, std::string fileName);
     void SetHeight(int height);
     void SetWidth(int width);
@@ -41,3 +41,11 @@ public:
     void Draw() override;       //描画
     void Release() override;    //解放
 };
+
+/*
+デフォルトのウィンドウサイズとトラック幅、トラック高さを指定
+ウィンドウサイズとトラック幅、ウィンドウサイズとトラック高さからそれぞれ割合を計算
+scale,posを求め座標指定
+
+
+*/
