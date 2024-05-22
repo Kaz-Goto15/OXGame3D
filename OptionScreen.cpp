@@ -5,6 +5,7 @@
 #include "SystemConfig.h"
 #include "DebugText.h"
 #include "ButtonGP.h"
+#include "ControlSlider.h"
 
 //コンストラクタ
 OptionScreen::OptionScreen(GameObject* parent) :
@@ -53,6 +54,8 @@ void OptionScreen::Initialize()
         //testBtn[i]->SetPosition(0, -600 + i * 200, 0);
         //testBtn[i]->SetScale(1, 0.66f, 1);
     }
+
+    Instantiate<ControlSlider>(this);
 }
 
 //更新

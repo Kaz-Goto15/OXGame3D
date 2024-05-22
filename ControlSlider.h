@@ -6,22 +6,25 @@ class ControlSlider : public GameObject
 {
 private:
     int trackWidth, trackHeight;  //トラックのH,W
+    int thumbSize;  //ボタンサイズ
     const int defScrX = 1280;
     const int defScrY = 720;
     int value, minValue, maxValue; //値、最大最小
     POINT thumbPos; //可変 サム位置
-
+    float rc = 0;
     //いずれグリッド形式にもできるように
     //bool freeMove;
     //int gridNum;
 
     enum IMAGE {
-        SLIDER_THUMB,
-        SLIDER_FORE,
         SLIDER_BK,
+        SLIDER_FORE,
+        SLIDER_THUMB,
         MAX
     };
     int hImg_[IMAGE::MAX];
+    Transform traImage[IMAGE::MAX];	//各変形情報
+
     //値が範囲内か
     bool Between(float value, float min, float max);
 public:
@@ -31,7 +34,7 @@ public:
     void SetHeight(int height);
     void SetWidth(int width);
 protected:
-    virtual void InitValue() = 0;   //中に最大最小と現在値を初期化するコードを書く
+    //virtual void InitValue() = 0;   //中に最大最小と現在値を初期化するコードを書く
 
 public:
     ControlSlider(GameObject* parent);    //コンストラクタ

@@ -7,7 +7,8 @@
 ControlSlider::ControlSlider(GameObject* parent)
     :GameObject(parent, "ControlSlider"),
 	trackWidth(420),
-	trackHeight(50)
+	trackHeight(50),
+	thumbSize(75)
 {
 }
 
@@ -22,22 +23,42 @@ void ControlSlider::Initialize()
 	//画像読込
 	hImg_[SLIDER_THUMB] = Image::Load("Slider\\sliderThumb.png");
 	hImg_[SLIDER_FORE] = Image::Load("Slider\\sliderFore.png");
-	hImg_[SLIDER_BK] = Image::Load("Slider\\sliderBack.png");
+	hImg_[SLIDER_BK] = Image::Load("Slider\\sliderBk.png");
 
 	//トラックの幅
-	float trackWRatio = defScrX / trackWidth;
-	float trackHRatio = defScrY / trackHeight;
-	XMFLOAT3 imgSize[IMAGE::MAX];
+	//float trackWRatio = defScrX / trackWidth;
+	//float trackHRatio = defScrY / trackHeight;
+	//float trackThumbRatio = defScrX / thumbSize;
+	float trackWRatio = (float)(trackWidth)/( float)(defScrX);
+	float trackHRatio = (float)(trackHeight) / (float)(defScrY);
+	float trackThumbWRatio = (float)(thumbSize) / (float)(defScrX);
+	float trackThumbHRatio = (float)(thumbSize) / (float)(defScrY);
+	XMFLOAT3 imgSize[IMAGE::MAX];	//画像サイズ
 	imgSize[SLIDER_THUMB] = Image::GetSize(hImg_[SLIDER_THUMB]);
 	imgSize[SLIDER_FORE] = Image::GetSize(hImg_[SLIDER_FORE]);
 	imgSize[SLIDER_BK] = Image::GetSize(hImg_[SLIDER_BK]);
 	//int imgBackW = Image::GetWidth(hImg_[SLIDER_BK]);
 	//int imgBackH = Image::GetHeight(hImg_[SLIDER_BK]);
-	Transform traImage[IMAGE::MAX];
-	for (int i = 0; i < IMAGE::MAX; i++)
-		traImage[hImg_[i]].scale_.x = (float)SystemConfig::windowWidth * trackWRatio / (float)imgSize[i].x;
-		traImage[hImg_[i]].scale_.y = (float)SystemConfig::windowHeight * trackHRatio / (float)imgSize[i].x;
+	//Transform traImage[IMAGE::MAX];	//各変形情報
+	for (int i = 0; i < IMAGE::MAX; i++){
+		//FOREとBKは
+		//ウィンドウサイズ*トラック拡大率(デフォルトスクリーンサイズ/トラックサイズ) / 画像サイズ
+		switch (i) {
+		case IMAGE::SLIDER_FORE:
+			//fore,bkの横幅の半分をマイナスでcenterにする
+			traImage[i].SetCenter((float)imgSize[i].x * (float)trackWRatio / 2.0f);
+		case IMAGE::SLIDER_BK:
+			traImage[i].scale_.x = (float)SystemConfig::windowWidth * trackWRatio / (float)imgSize[i].x;
+			traImage[i].scale_.y = (float)SystemConfig::windowHeight * trackHRatio / (float)imgSize[i].x;
+			break;
+		case IMAGE::SLIDER_THUMB:
+			traImage[i].scale_.x = (float)SystemConfig::windowWidth * trackThumbWRatio / (float)imgSize[i].x;
+			traImage[i].scale_.y = (float)SystemConfig::windowHeight * trackThumbHRatio / (float)imgSize[i].x;
+			break;
+		}
+		Image::SetTransform(hImg_[i], traImage[i]);
 	}
+	
 	//traImageBack.scale_.x = (float)SystemConfig::windowWidth * trackWRatio / (float)imgBackW;
 	//traImageBack.scale_.y = (float)SystemConfig::windowHeight * trackHRatio / (float)imgBackH;
 	
@@ -58,25 +79,45 @@ void ControlSlider::Update()
 	}
 
 	if (Input::IsKey(DIK_1)) {
-		transform_.position_.x++;
+		traImage[SLIDER_BK].position_.x++;
 	}
 	if (Input::IsKey(DIK_2)) {
-		transform_.position_.x--;
+		traImage[SLIDER_BK].position_.x--;
 	}
 	if (Input::IsKey(DIK_3)) {
-		transform_.position_.y++;
+		traImage[SLIDER_BK].position_.y++;
 	}
 	if (Input::IsKey(DIK_4)) {
-		transform_.position_.y--;
+		traImage[SLIDER_BK].position_.y--;
+	}
+	if (Input::IsKey(DIK_5)) {
+		traImage[SLIDER_BK].scale_.x++;
+	}
+	if (Input::IsKey(DIK_6)) {
+		traImage[SLIDER_BK].scale_.x--;
+	}
+	if (Input::IsKey(DIK_7)) {
+		rc += 0.1f;
+		Image::SetRect(hImg_[SLIDER_FORE], 0, 0, rc, 20);
+		traImage[SLIDER_BK].scale_.y++;
+	}
+	if (Input::IsKey(DIK_8)) {
+		rc -= 0.1f;
+		Image::SetRect(hImg_[SLIDER_FORE], 0, 0, rc, 20);
+		traImage[SLIDER_BK].scale_.y--;
 	}
 }
 
 //描画
 void ControlSlider::Draw()
 {
+	//Image::SetTransform(hImg_[SLIDER_BK], traImage[SLIDER_BK]);
 	for (int& img : hImg_) {
 		Image::Draw(img);
 	}
+	//Image::Draw(hImg_[SLIDER_BK]);
+	//Image::Draw(hImg_[SLIDER_FORE]);
+	//Image::Draw(hImg_[SLIDER_THUMB]);
 }
 
 //開放
