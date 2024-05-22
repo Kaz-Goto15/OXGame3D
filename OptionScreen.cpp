@@ -55,6 +55,7 @@ void OptionScreen::Initialize()
         //testBtn[i]->SetScale(1, 0.66f, 1);
     }
 
+    framePos.y = -270;
     Instantiate<ControlSlider>(this);
 }
 
@@ -117,6 +118,7 @@ void OptionScreen::Draw()
             for (int y = 0; y < 3; y++) {
                 switch (y) {
                 case 0:
+                    //frameTra.position_.y = -270;
                     frameTra.position_.y = (float)(-windowHeight + (frameMargin.x + frameMargin.z + edge)) / 2.0f;
                     frameTra.scale_.y = 1;
                     break;

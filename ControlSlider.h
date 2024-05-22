@@ -23,6 +23,7 @@ private:
         MAX
     };
     int hImg_[IMAGE::MAX];
+    XMFLOAT3 imgSize[IMAGE::MAX];	//画像サイズ
     Transform traImage[IMAGE::MAX];	//各変形情報
 
     //値が範囲内か
