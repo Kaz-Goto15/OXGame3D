@@ -4,6 +4,7 @@
 #include "Screen.h"
 class DebugText;
 class ButtonGP;
+class ControlSlider;
 //クレジット画面を管理するクラス
 class OptionScreen : public Screen
 {
@@ -23,6 +24,7 @@ class OptionScreen : public Screen
     ButtonGP* backBtn;
     ButtonGP* testBtn[7];
     std::string debugStr[20];
+    ControlSlider* pSlider;
     void UpdateStr();
 public:
     OptionScreen(GameObject* parent);

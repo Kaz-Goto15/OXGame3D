@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "Debug.h"
+#include "../SystemConfig.h"
 namespace Input
 {
 
@@ -194,9 +195,13 @@ namespace Input
 	}
 
 	//マウスカーソルの位置を取得
-	XMFLOAT3 GetMousePosition()
+	XMFLOAT3 GetMousePosition(bool stdScreenCenter)
 	{
 		XMFLOAT3 result = XMFLOAT3((float)mousePos_.x, (float)mousePos_.y, 0);
+		if (stdScreenCenter) {
+			result.x -= SystemConfig::windowWidth / 2.0f;
+			result.y -= SystemConfig::windowHeight / 2.0f;
+		}
 		return result;
 	}
 

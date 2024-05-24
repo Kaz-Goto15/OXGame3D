@@ -56,7 +56,7 @@ void OptionScreen::Initialize()
     }
 
     framePos.y = -270;
-    Instantiate<ControlSlider>(this);
+    pSlider = Instantiate<ControlSlider>(this);
 }
 
 //XV
@@ -87,7 +87,7 @@ void OptionScreen::UpdateStr()
 {
     using std::to_string;
     debugStr[0] = "scrH:" + to_string(SystemConfig::windowHeight) + "scrW:" + to_string(SystemConfig::windowWidth);
-    debugStr[1] = "mousePos:(" + to_string(Input::GetMousePosition().x) + ", " + to_string(Input::GetMousePosition().y) + ")";
+    debugStr[1] = "mousePos:(" + to_string(Input::GetMousePosition(true).x) + ", " + to_string(Input::GetMousePosition(true).y) + ")";
     debugStr[2] = "scale(optionscreen):" + to_string(transform_.scale_.x);
     debugStr[3] = "scale(optionscreen):" + to_string(transform_.scale_.x);
     debugStr[4] = "monitorX:" + to_string(GetSystemMetrics(SM_CXSCREEN));
@@ -100,6 +100,9 @@ void OptionScreen::UpdateStr()
     debugStr[7] = "windowY:" + to_string(r.top);
     debugStr[8] = "windowR:" + to_string(r.right);
     debugStr[9] = "windowB:" + to_string(r.bottom);
+    debugStr[10] = pSlider->GetDebugStr(1);
+    debugStr[11] = pSlider->GetDebugStr(2);
+    debugStr[12] = pSlider->GetDebugStr(3);
 }
 
 //•`‰æ

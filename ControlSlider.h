@@ -25,6 +25,8 @@ private:
     int hImg_[IMAGE::MAX];
     XMFLOAT3 imgSize[IMAGE::MAX];	//画像サイズ
     Transform traImage[IMAGE::MAX];	//各変形情報
+    XMFLOAT2 sliderRangeLU, sliderRangeRB;
+    float trackWRatio= 0, trackHRatio = 0;
 
     //値が範囲内か
     bool Between(float value, float min, float max);
@@ -44,6 +46,7 @@ public:
     void Update() override;     //更新
     void Draw() override;       //描画
     void Release() override;    //解放
+    std::string GetDebugStr(int debugNum);
 };
 
 /*
@@ -51,5 +54,7 @@ public:
 ウィンドウサイズとトラック幅、ウィンドウサイズとトラック高さからそれぞれ割合を計算
 scale,posを求め座標指定
 
-
+・指定座標を中心にする関数、左中右揃え void SetCenterPos(float x, float y, hAlignment);
+・長さと基準幅を指定して幅指定する関数 void SetLength(int len, int stdWidth = SysCon::windowWidth);
+・範囲内かを返す関数 IsEntered();
 */

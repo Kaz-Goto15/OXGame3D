@@ -29,8 +29,8 @@ void ControlSlider::Initialize()
 	//float trackWRatio = defScrX / trackWidth;
 	//float trackHRatio = defScrY / trackHeight;
 	//float trackThumbRatio = defScrX / thumbSize;
-	float trackWRatio = (float)(trackWidth)/( float)(defScrX);
-	float trackHRatio = (float)(trackHeight) / (float)(defScrY);
+	trackWRatio = (float)(trackWidth)/( float)(defScrX);
+	trackHRatio = (float)(trackHeight) / (float)(defScrY);
 	float trackThumbWRatio = (float)(thumbSize) / (float)(defScrX);
 	float trackThumbHRatio = (float)(thumbSize) / (float)(defScrY);
 	//XMFLOAT3 imgSize[IMAGE::MAX];	//画像サイズ
@@ -122,33 +122,32 @@ void ControlSlider::Update()
 //描画
 void ControlSlider::Draw()
 {
-	Image::SetTransform(hImg_[SLIDER_FORE], traImage[SLIDER_FORE]);
+Image::SetTransform(hImg_[SLIDER_FORE], traImage[SLIDER_FORE]);
+	//float trackWRatio = (float)(trackWidth) / (float)(defScrX);
+	//float trackHRatio = (float)(trackHeight) / (float)(defScrY);
+	//Transform frameTra;
+	//frameTra.SetCenter((float)SystemConfig::windowWidth * (float)trackWRatio / 2.0f,0,0);   //中心点を移動して座標決めてるので注意 具体的には符号逆転する(中心点を動かすと必然的に逆側に移動するため)
+	//frameTra.IsCalcCenterPoint(true);
+	////int edge = 64;
 
-	float trackWRatio = (float)(trackWidth) / (float)(defScrX);
-	float trackHRatio = (float)(trackHeight) / (float)(defScrY);
-	Transform frameTra;
-	frameTra.SetCenter((float)SystemConfig::windowWidth * (float)trackWRatio / 2.0f,0,0);   //中心点を移動して座標決めてるので注意 具体的には符号逆転する(中心点を動かすと必然的に逆側に移動するため)
-	frameTra.IsCalcCenterPoint(true);
-	//int edge = 64;
-
-	using namespace SystemConfig;
-	//frame構築
-	frameTra.position_.y = 0;
-	frameTra.scale_.y = (float)(windowHeight - (imgSize[SLIDER_FORE].y + imgSize[SLIDER_FORE].y)) / (float)imgSize[SLIDER_FORE].y;
-	frameTra.position_.x = (float)(-windowWidth + (imgSize[SLIDER_FORE].x)) / 2.0f;
-	frameTra.scale_.x = 1;
-	Transform tmp = frameTra;
-	tmp.SetReSize((float)SystemConfig::windowWidth * trackWRatio / (float)imgSize[SLIDER_FORE].x, (float)SystemConfig::windowHeight * trackHRatio / (float)imgSize[SLIDER_FORE].x,1);
-	Image::SetTransform(hImg_[SLIDER_FORE], tmp);
-	Image::Draw(hImg_[SLIDER_FORE]);
+	//using namespace SystemConfig;
+	////frame構築
+	//frameTra.position_.y = 0;
+	//frameTra.scale_.y = (float)(windowHeight - (imgSize[SLIDER_FORE].y + imgSize[SLIDER_FORE].y)) / (float)imgSize[SLIDER_FORE].y;
+	//frameTra.position_.x = (float)(-windowWidth + (imgSize[SLIDER_FORE].x)) / 2.0f;
+	//frameTra.scale_.x = 1;
+	//Transform tmp = frameTra;
+	//tmp.SetReSize((float)SystemConfig::windowWidth * trackWRatio / (float)imgSize[SLIDER_FORE].x, (float)SystemConfig::windowHeight * trackHRatio / (float)imgSize[SLIDER_FORE].x,1);
+	////Image::SetTransform(hImg_[SLIDER_FORE], tmp);
+	//Image::Draw(hImg_[SLIDER_FORE]);
 
 
 	//for (int& img : hImg_) {
 	//	Image::Draw(img);
 	//}
-	//Image::Draw(hImg_[SLIDER_BK]);
-	//Image::Draw(hImg_[SLIDER_FORE]);
-	//Image::Draw(hImg_[SLIDER_THUMB]);
+	Image::Draw(hImg_[SLIDER_BK]);
+	Image::Draw(hImg_[SLIDER_FORE]);
+	Image::Draw(hImg_[SLIDER_THUMB]);
 }
 
 //開放
@@ -156,26 +155,34 @@ void ControlSlider::Release()
 {
 }
 
+std::string ControlSlider::GetDebugStr(int debugNum)
+{
+	switch (debugNum)
+	{
+	case 1: return "SLIDER_LU:" + std::to_string(sliderRangeLU.x) + "," + std::to_string(sliderRangeLU.y);
+	case 2: return "SLIDER_RB:" + std::to_string(sliderRangeRB.x) + "," + std::to_string(sliderRangeRB.y);
+	case 3: if (IsEntered())return "MOUSE ENTERED"; else return "MOUSE NOT ENTERED";
+	}
+	return "";
+}
+
+bool ControlSlider::Between(float value, float min, float max){
+	return (min <= value && value <= max);
+}
+
+//これ流用してスクリーンサイズ変わった時のバグを直そう！
 bool ControlSlider::IsEntered()
 {
-	////1280x720で生成されたものを現在のスクリーンサイズから
-	//Transform buttonTra = Image::GetTransform(hImg_[state]);
-	//
-	//XMFLOAT3 imageSize = {
-	//	Image::GetSize(hImg_[state]).x * transform_.scale_.x,
-	//	Image::GetSize(hImg_[state]).y * transform_.scale_.y,
-	//	Image::GetSize(hImg_[state]).z * transform_.scale_.z
-	//};
-	//XMFLOAT3 mousePos = Input::GetMousePosition();
-	//if (
-	//	Between(mousePos.x,
-	//		buttonTra.position_.x + SystemConfig::screenWidth / 2.0f - imageSize.x / 2.0f,
-	//		buttonTra.position_.x + SystemConfig::screenWidth / 2.0f + imageSize.x / 2.0f) &&
-	//	Between(mousePos.y,
-	//		buttonTra.position_.y + SystemConfig::screenHeight / 2.0f - imageSize.y / 2.0f,
-	//		buttonTra.position_.y + SystemConfig::screenHeight / 2.0f + imageSize.y / 2.0f)
-	//	) {
-	//	return true;
-	//}
+	sliderRangeLU = {
+		-(SystemConfig::windowWidth * trackWRatio / 2.0f),
+		-(SystemConfig::windowHeight * trackHRatio / 2.0f),
+	};
+	sliderRangeRB = {
+		(SystemConfig::windowWidth * (float)trackWRatio / 2.0f),
+		(SystemConfig::windowHeight * trackHRatio / 2.0f),
+	};
+	if (Between(Input::GetMousePosition(true).x, sliderRangeLU.x, sliderRangeRB.x) && Between(Input::GetMousePosition(true).y, sliderRangeLU.y, sliderRangeRB.y)) {
+		return true;
+	}
 	return false;
 }
