@@ -4,6 +4,17 @@
 #include "SystemConfig.h"
 #include "AudioManager.h"
 
+//1/2
+template <class T>
+T Half(T pValue) {
+	return pValue /= 2.0f;
+}
+//値が範囲内か
+template <class T>
+bool Between(T value, T min, T max) {
+	return (min <= value && value <= max);
+}
+
 //コンストラクタ
 Button::Button(GameObject* parent, const std::string& name) :
 	GameObject(parent, name),
@@ -118,23 +129,39 @@ std::string Button::GetDebugStr(int i)
 	Image::GetSize(hImg_[0]).y * transform_.scale_.y,
 	Image::GetSize(hImg_[0]).z * transform_.scale_.z
 	};
-
+	using std::to_string;
 	Transform buttonTra = Image::GetTransform(hImg_[0]);
 	switch (i) {
-	case 0:	return "imageSize: " + std::to_string(Image::GetSize(hImg_[0]).x) + "," + std::to_string(Image::GetSize(hImg_[0]).y);
-	case 1:	return "null vertex:(" +
-		std::to_string((int)(SystemConfig::windowWidth / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::windowHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(SystemConfig::windowWidth / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::windowHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(SystemConfig::windowWidth / 2.0f - imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::windowHeight / 2.0f + imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(SystemConfig::windowWidth / 2.0f + imageSize.x / 2.0f)) + "," + std::to_string((int)(SystemConfig::windowHeight / 2.0f + imageSize.y / 2.0f)) + ")";
-	case 2: return "windowsize: " + std::to_string(SystemConfig::windowWidth) + ", " + std::to_string(SystemConfig::windowHeight);
-	case 3: return "windowsize: " + std::to_string(GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini"));
-	case 4:	return "between:(" +
-		std::to_string((int)(buttonTra.position_.x + SystemConfig::windowWidth / 2.0f - imageSize.x / 2.0f)) + ")" +
-		"(" + std::to_string((int)(buttonTra.position_.x + SystemConfig::windowWidth / 2.0f + imageSize.x / 2.0f)) + ")" +
-		"(" + std::to_string((int)(buttonTra.position_.y + SystemConfig::windowHeight / 2.0f - imageSize.y / 2.0f)) + ")" +
-		"(" + std::to_string((int)(buttonTra.position_.y + SystemConfig::windowHeight / 2.0f + imageSize.y / 2.0f)) + ")";
-	case 5:	return "buttonPos: " + std::to_string(buttonTra.position_.x) + "," + std::to_string(buttonTra.position_.y);
+	case 0:
+		return "imageSize: " + 
+			to_string(Image::GetSize(hImg_[0]).x) + "," + 
+			to_string(Image::GetSize(hImg_[0]).y);
+	case 1:
+		return "null vertex:(" +
+			to_string((int)Half(SystemConfig::windowWidth - imageSize.x)) + "," + 
+			to_string((int)Half(SystemConfig::windowHeight - imageSize.y )) + ")" +
+		"(" + to_string((int)Half(SystemConfig::windowWidth + imageSize.x )) + "," +
+			to_string((int)Half(SystemConfig::windowHeight - imageSize.y )) + ")" +
+		"(" + to_string((int)Half(SystemConfig::windowWidth - imageSize.x )) + "," +
+			to_string((int)Half(SystemConfig::windowHeight + imageSize.y )) + ")" +
+		"(" + to_string((int)Half(SystemConfig::windowWidth + imageSize.x )) + "," + 
+			to_string((int)Half(SystemConfig::windowHeight + imageSize.y )) + ")";
+	case 2:
+		return "windowsize: " + 
+			to_string(SystemConfig::windowWidth) + ", " + 
+			to_string(SystemConfig::windowHeight);
+	case 3:
+		return "windowsize: " + 
+			to_string(GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini"));
+	case 4:
+		return "between:(" +
+		to_string((int)(buttonTra.position_.x + Half(SystemConfig::windowWidth  - imageSize.x ))) + ")" +
+		"(" + to_string((int)(buttonTra.position_.x + Half(SystemConfig::windowWidth  + imageSize.x ))) + ")" +
+		"(" + to_string((int)(buttonTra.position_.y + Half(SystemConfig::windowHeight  - imageSize.y ))) + ")" +
+		"(" + to_string((int)(buttonTra.position_.y + Half(SystemConfig::windowHeight  + imageSize.y ))) + ")";
+	case 5:
+		return "buttonPos: " + 
+			to_string(buttonTra.position_.x) + "," + to_string(buttonTra.position_.y);
 	//case 6:	return "clip: " + std::to_string(clip.x) + "," + std::to_string(clip.y) + "," + std::to_string(clip.z) + "," + std::to_string(clip.w);
 	}
 	return "invalid num";
@@ -235,6 +262,24 @@ bool Button::IsEntered()
 	}
 	return false;
 }
+
+//bool Button::IsEntered()
+//{
+//
+//	XMFLOAT2 sliderRangeLU = {
+//		-(Half(SystemConfig::windowWidth * trackWRatio)),
+//		-(Half(SystemConfig::windowHeight * trackHRatio)),
+//	};
+//	XMFLOAT2 sliderRangeRB = {
+//		(Half(SystemConfig::windowWidth * (float)trackWRatio)),
+//		(Half(SystemConfig::windowHeight * trackHRatio)),
+//	};
+//	if (Between(Input::GetMousePosition(true).x, sliderRangeLU.x, sliderRangeRB.x) && Between(Input::GetMousePosition(true).y, sliderRangeLU.y, sliderRangeRB.y)) {
+//		return true;
+//	}
+//	return false;
+//}
+
 
 bool Button::Between(float value, float min, float max)
 {

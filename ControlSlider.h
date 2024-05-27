@@ -28,8 +28,16 @@ private:
     XMFLOAT2 sliderRangeLU, sliderRangeRB;
     float trackWRatio= 0, trackHRatio = 0;
 
+    //1/2
+    template <class T>
+    T Half(T pValue) {
+        return pValue /= 2.0f;
+    }
     //値が範囲内か
-    bool Between(float value, float min, float max);
+    template <class T>
+    bool Between(T value, T min, T max) {
+        return (min <= value && value <= max);
+    }
 public:
     int GetValue() { return value; }
     bool IsEntered();   //マウス範囲内かを判定
@@ -56,5 +64,5 @@ scale,posを求め座標指定
 
 ・指定座標を中心にする関数、左中右揃え void SetCenterPos(float x, float y, hAlignment);
 ・長さと基準幅を指定して幅指定する関数 void SetLength(int len, int stdWidth = SysCon::windowWidth);
-・範囲内かを返す関数 IsEntered();
+・範囲内かを返す関数 IsEntered(); owari
 */

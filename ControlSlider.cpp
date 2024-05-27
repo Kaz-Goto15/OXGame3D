@@ -166,20 +166,17 @@ std::string ControlSlider::GetDebugStr(int debugNum)
 	return "";
 }
 
-bool ControlSlider::Between(float value, float min, float max){
-	return (min <= value && value <= max);
-}
-
 //これ流用してスクリーンサイズ変わった時のバグを直そう！
 bool ControlSlider::IsEntered()
 {
+
 	sliderRangeLU = {
-		-(SystemConfig::windowWidth * trackWRatio / 2.0f),
-		-(SystemConfig::windowHeight * trackHRatio / 2.0f),
+		-(Half(SystemConfig::windowWidth * trackWRatio)),
+		-(Half(SystemConfig::windowHeight * trackHRatio)),
 	};
 	sliderRangeRB = {
-		(SystemConfig::windowWidth * (float)trackWRatio / 2.0f),
-		(SystemConfig::windowHeight * trackHRatio / 2.0f),
+		(Half(SystemConfig::windowWidth * (float)trackWRatio)),
+		(Half(SystemConfig::windowHeight * trackHRatio)),
 	};
 	if (Between(Input::GetMousePosition(true).x, sliderRangeLU.x, sliderRangeRB.x) && Between(Input::GetMousePosition(true).y, sliderRangeLU.y, sliderRangeRB.y)) {
 		return true;
