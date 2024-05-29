@@ -162,6 +162,9 @@ std::string Button::GetDebugStr(int i)
 	case 5:
 		return "buttonPos: " + 
 			to_string(buttonTra.position_.x) + "," + to_string(buttonTra.position_.y);
+	case 7:
+		return "range: " +
+			to_string(rangeLU.x) + "," + to_string(rangeLU.y) + "," + to_string(rangeRB.x) + "," + to_string(rangeRB.y);
 	//case 6:	return "clip: " + std::to_string(clip.x) + "," + std::to_string(clip.y) + "," + std::to_string(clip.z) + "," + std::to_string(clip.w);
 	}
 	return "invalid num";
@@ -240,45 +243,54 @@ void Button::UpdateSelected()
 	nextIdle = true;
 }
 
-bool Button::IsEntered()
-{
-	Transform buttonTra = Image::GetTransform(hImg_[state]);
-
-	XMFLOAT3 imageSize = {
-		Image::GetSize(hImg_[state]).x * transform_.scale_.x,
-		Image::GetSize(hImg_[state]).y * transform_.scale_.y,
-		Image::GetSize(hImg_[state]).z * transform_.scale_.z
-	};
-	XMFLOAT3 mousePos = Input::GetMousePosition();
-	if (
-		Between(mousePos.x,
-			buttonTra.position_.x + SystemConfig::windowWidth / 2.0f - imageSize.x / 2.0f,
-			buttonTra.position_.x + SystemConfig::windowWidth / 2.0f + imageSize.x / 2.0f) &&
-		Between(mousePos.y,
-			buttonTra.position_.y + SystemConfig::windowHeight / 2.0f - imageSize.y / 2.0f,
-			buttonTra.position_.y + SystemConfig::windowHeight / 2.0f + imageSize.y / 2.0f)
-		) {
-		return true;
-	}
-	return false;
-}
-
 //bool Button::IsEntered()
 //{
+//	Transform buttonTra = Image::GetTransform(hImg_[state]);
 //
-//	XMFLOAT2 sliderRangeLU = {
-//		-(Half(SystemConfig::windowWidth * trackWRatio)),
-//		-(Half(SystemConfig::windowHeight * trackHRatio)),
+//	XMFLOAT3 imageSize = {
+//		Image::GetSize(hImg_[state]).x * transform_.scale_.x,
+//		Image::GetSize(hImg_[state]).y * transform_.scale_.y,
+//		Image::GetSize(hImg_[state]).z * transform_.scale_.z
 //	};
-//	XMFLOAT2 sliderRangeRB = {
-//		(Half(SystemConfig::windowWidth * (float)trackWRatio)),
-//		(Half(SystemConfig::windowHeight * trackHRatio)),
-//	};
-//	if (Between(Input::GetMousePosition(true).x, sliderRangeLU.x, sliderRangeRB.x) && Between(Input::GetMousePosition(true).y, sliderRangeLU.y, sliderRangeRB.y)) {
+//	XMFLOAT3 mousePos = Input::GetMousePosition();
+//	if (
+//		Between(mousePos.x,
+//			buttonTra.position_.x + SystemConfig::windowWidth / 2.0f - imageSize.x / 2.0f,
+//			buttonTra.position_.x + SystemConfig::windowWidth / 2.0f + imageSize.x / 2.0f) &&
+//		Between(mousePos.y,
+//			buttonTra.position_.y + SystemConfig::windowHeight / 2.0f - imageSize.y / 2.0f,
+//			buttonTra.position_.y + SystemConfig::windowHeight / 2.0f + imageSize.y / 2.0f)
+//		) {
 //		return true;
 //	}
 //	return false;
 //}
+
+bool Button::IsEntered()
+{
+	//デカさ：ウィンドウサイズ(可変)*ボタン比率 左上右下の判定のため1/2にしてぶち込む
+	//デカさ矯正：Image呼び出し元の拡大率 これImage内拡大率じゃだめか 多分ダメ 不変なので
+	//座標：画像の座標
+	// ポジションを指定するという必要がある
+	//zahyou naoseba kanpeki
+	rangeLU = {
+		transform_.scale_.x * - (Half(SystemConfig::windowWidth * Image::GetWindowRatio(hImg_[IDLE]).x)) + Image::GetTransform(hImg_[IDLE]).position_.x,
+		transform_.scale_.y * -(Half(SystemConfig::windowHeight * Image::GetWindowRatio(hImg_[IDLE]).y)) + Image::GetTransform(hImg_[IDLE]).position_.y
+	};
+	rangeRB = {
+		transform_.scale_.x* (Half(SystemConfig::windowWidth * Image::GetWindowRatio(hImg_[IDLE]).x)) + Image::GetTransform(hImg_[IDLE]).position_.x,
+		transform_.scale_.y* (Half(SystemConfig::windowHeight * Image::GetWindowRatio(hImg_[IDLE]).y)) + Image::GetTransform(hImg_[IDLE]).position_.y
+	};
+
+	//rangeLU.x *= transform_.scale_.x;
+	//rangeLU.y *= transform_.scale_.y;
+	//rangeRB.x *= transform_.scale_.x;
+	//rangeRB.y *= transform_.scale_.y;
+	if (Between(Input::GetMousePosition(true).x, rangeLU.x, rangeRB.x) && Between(Input::GetMousePosition(true).y, rangeLU.y, rangeRB.y)) {
+		return true;
+	}
+	return false;
+}
 
 
 bool Button::Between(float value, float min, float max)

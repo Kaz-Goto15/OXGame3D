@@ -31,12 +31,16 @@ namespace Image
 		//合成モード(bool 通常=false/加算=true)
 		bool isBlendAdd;
 
+		//ウィンドウと画像の比率(相対座標用)
+		XMFLOAT2 windowRatio;
+
 		//コンストラクタ
 		ImageData() : pSprite(nullptr)
 		{
 			fileName = "";
 			alpha = 1.0f;
 			pSprite = nullptr;
+			windowRatio = { 0,0 };
 		}
 	};
 
@@ -93,4 +97,7 @@ namespace Image
 	int GetHeight(int handle);
 	XMFLOAT3 GetSize(int handle);
 	Transform GetTransform(int handle);
+
+	void SetWindowRatio(int handle, int windowSizeX, int windowSizeY);
+	XMFLOAT2 GetWindowRatio(int handle);
 }

@@ -24,6 +24,8 @@ protected:
     bool nextIdle;
     STATE ActTiming;
     AudioManager::AUDIO_SOURCE sound;
+
+    XMFLOAT2 rangeLU, rangeRB;
 public:
     STATE state;
 

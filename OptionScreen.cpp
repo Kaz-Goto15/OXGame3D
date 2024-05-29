@@ -103,6 +103,8 @@ void OptionScreen::UpdateStr()
     debugStr[10] = pSlider->GetDebugStr(1);
     debugStr[11] = pSlider->GetDebugStr(2);
     debugStr[12] = pSlider->GetDebugStr(3);
+    debugStr[16] = testBtn[6]->GetDebugStr(7);
+    debugStr[19] = backBtn->GetDebugStr(7);
 }
 
 //•`‰æ
