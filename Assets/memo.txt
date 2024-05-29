@@ -1,131 +1,154 @@
-�����ǉ���
-Assets/Audio���Ɋi�[
-AudioManager.h��enum��ǉ�
-audioSource.json��Key��enum���Afile�Ƀt�@�C�����Aloop/maxPlay/attribute(BGM:0 SE:1)���L�q
-�g�������N���X��AudioManager���Ăяo���A���̂܂�Play(enum)
+﻿音声追加時
+Assets/Audio内に格納
+AudioManager.hにenumを追加
+audioSource.jsonにKeyでenumを、fileにファイル名、loop/maxPlay/attribute(BGM:0 SE:1)を記述
+使いたいクラスでAudioManagerを呼び出し、そのままPlay(enum)
 
-�t�H���g(char)�ǉ���
-Assets/Text���Ɋi�[
-TextLoader.h��enum��ǉ�
-charTextSource.json��Key��enum���Afile�Ƀt�@�C�����A�P������w/h, ���̕��������L�q
-�g�������N���X��Text���Ăяo���A���̂܂�Load(enum)
+フォント(char)追加時
+Assets/Text内に格納
+TextLoader.hにenumを追加
+charTextSource.jsonにKeyでenumを、fileにファイル名、１文字のw/h, 横の文字数を記述
+使いたいクラスでTextを呼び出し、そのままLoad(enum)
 
-�Փ˔���֌W�̎d�l
-Enemy�܂ޔj��n�I�u�W�F�N�g�͂̓R���W�����t�^
-�v���C���[�͑S�����ňړ������A�n�ʁA�V��Ƀ��C�L���X�g
+衝突判定関係の仕様
+Enemy含む破壊系オブジェクトははコリジョン付与
+プレイヤーは全検索で移動方向、地面、天井にレイキャスト
 
-�}�b�vjson�d�l
-field:���ɏ���ǂȂǈȊO�̖�ڂ������Ȃ������̃u���b�N�I�u�W�F�N�g
-activeField:���炩�̃A�N�V�������s���t�B�[���h�I�u�W�F�N�g �ǉ��\��͖������_���[�W���␅�Ȃ�
-entity:�ʂŃA�N�V�������s���I�u�W�F�N�g �R���W�����������A�j�󂳂��
+マップjson仕様
+field:特に床や壁など以外の役目を持たないただのブロックオブジェクト
+activeField:何らかのアクションを行うフィールドオブジェクト 追加予定は無いがダメージ床や水など
+entity:個別でアクションを行うオブジェクト コリジョンを持ち、破壊される
 
-field:model�n���h����Transform�̍\���̃��X�g
-activeField:GameObject�|�C���^���X�g�Ŋi�[
-entity:GameObject�|�C���^���X�g�Ŋi�[
+field:modelハンドルとTransformの構造体リスト
+activeField:GameObjectポインタリストで格納
+entity:GameObjectポインタリストで格納
 
-ModelLoader�N���X
-�E�S���f����enum�ŊǗ�
-�E���f���t�@�C������json
-�EModel��Modify��Model:: Load�̂�ModelLoader �܂Ƃ߂��ق�����������
+ModelLoaderクラス
+・全モデルをenumで管理
+・モデルファイル名はjson
+・ModelのModifyはModel:: LoadのみModelLoader まとめたほうがいいだろ
 
-Field�N���X
-�E���f���n���h���ƕό`�f�[�^���܂Ƃ߂��\���̂�����
-�E�\������@�\�����Ȃ�
-�E���[�h�͓����O�̃N���X�ȂǕʃN���X��
+Fieldクラス
+・モデルハンドルと変形データをまとめた構造体を持つ
+・表示する機能しかない
+・ロードは入れる前のクラスなど別クラスで
 
-Entity�N���X
+Entityクラス
 
 FieldObject
-�Ebool unbreak = true;
-�Eint hModel;
-�Ebool isDraw;
+・bool unbreak = true;
+・int hModel;
+・bool isDraw;
 if(dist(this,player)<SysCon::drawDistance)Draw(hModel);
 Enemy
-�Eunbreak = false;
-�E
+・unbreak = false;
+・
  
 Player
-�E�SFieldObject�ƃ��C�L���X�g�Ȃ񂩂��Ă���d�����邽�ߍi�肽��
-���G�Ȃǂ��܂܂�邩��@�n�`�����Ƃ��Ă������I�u�W�F�N�g�̂��߃L�c�C��
-���n�`��parent.Get�Ńv���C���[���������Ă���A�������e�n�`�I�u�W�F�N�g�ő���A�����Ƃ���ŉ������������Ȃ�
-������n�`�S���� �Œ�l���X�V����`�@�n�`�I�u�W�F�N�g1�Ȃ�L��񂾂��� ���Ă��ǂ���FindObject�őS��������̂ł���������������P�������Ȃ����ǂ�
-��������ł����Ƃ��A�O����W�Ǝ�����W�Ŋp�x�����߂� 66�x�ȉ��ł���Έړ��\ 66�x���͑O����W�ɖ߂�
-�e�I�u�W�F�N�g�ɑ����t�^���ĊǗ���
-Default�͂����������肵�Ȃ����ߕt���`���ł���΂���Ȃ� �ύX�`���Ȃ炢��
-Field,�n�`�I�u�W�F�N�g ���I�u�W�F�N�g�̒n�`����Ώ�
-Entity,���I�u�W�F�N�g ���g�œ������Ƃ��ł���
-noGravity,�d�͖��� �d�͖�����
-Default:Neutral,�����I�u�W�F�N�g Player,Enemy�̍U������Ώ�
-Enemy,�G�I�u�W�F�N�g Player�̍U������Ώ�
-Player, �v���C���[�I�u�W�F�N�g Enemy�̍U������Ώ�
+・全FieldObjectとレイキャストなんかしてたら重すぎるため絞りたい
+∟敵なども含まれるから　地形だけとしても複数オブジェクトのためキツイｗ
+∟地形にparent.Getでプレイヤー引っ張ってくる、距離を各地形オブジェクトで測定、したところで下方向しか見ない
+∟じゃ地形全部か 最低値を更新する形　地形オブジェクト1個なら有難いんだけど ってかどうせFindObjectで全検索するのでいいかも←それも１個しか来ないけども
+∟床判定できたとき、前回座標と次回座標で角度を求める 66度以下であれば移動可能 66度超は前回座標に戻す
+各オブジェクトに属性付与して管理は
+Defaultはそもそも判定しないため付加形式であればいらない 変更形式ならいる
+Field,地形オブジェクト 可動オブジェクトの地形判定対象
+Entity,可動オブジェクト 自身で動くことができる
+noGravity,重力無効 重力無効化
+Default:Neutral,中立オブジェクト Player,Enemyの攻撃判定対象
+Enemy,敵オブジェクト Playerの攻撃判定対象
+Player, プレイヤーオブジェクト Enemyの攻撃判定対象
 
-Default:Safe, ��U�����I�u�W�F�N�g �Փ˔��莞�ɍU��������s��Ȃ�
-Strike, �U�����I�u�W�F�N�g �Փ˔��莞�ɍU��������s��
+Default:Safe, 非攻撃性オブジェクト 衝突判定時に攻撃判定を行わない
+Strike, 攻撃性オブジェクト 衝突判定時に攻撃判定を行う
 
-Object�̕t���l�A���R��
-power:0 ��Ɏ��g�������Ă�������֓�����
-killTime:600(frame) �ő吶���b�� -1�͏����Ȃ�
-antiGravity:0(0~1 ����) �d�͂̂����� 
+Objectの付加値アレコレ
+power:0 常に自身が向いている方向へ動く力
+killTime:600(frame) 最大生存秒数 -1は消えない
+antiGravity:0(0~1 割合) 重力のかかり具合 
 
-�EPlayer��Object��S�������AisLand������΃��C���΂����肷�� �d�����ł����distance�Ő��������Ă����� �������Ȃǌ��Ȃ��̂�
+・PlayerはObjectを全検索し、isLandがあればレイを飛ばし判定する 重そうであればdistanceで制限かけてもいい 長距離など見ないので
 
 Object
-�E�S�Q�[���I�u�W�F�N�g
-�E�����z�u�p �ق�GameObject�Ɠ���
-�E���ɓ��ʂȋ@�\�͖���
-�E�������肷��ۂ͂����Ŋ�{�I�ȋ@�\���L�q����
-�EisLand;
+・全ゲームオブジェクト
+・初期配置用 ほぼGameObjectと同じ
+・特に特別な機能は無い
+・何か判定する際はここで基本的な機能を記述する
+・isLand;
 
 Field extends Object
-�E��ɕ\�������
-�EisLand = true;
+・常に表示される
+・isLand = true;
 
 Cube extends Field
-�E�l�p�`
+・四角形
 
 RTP extends Field
-�E���O�p��
+・直三角柱
 
 Cylinder extends Field
-�E�~��
+・円柱
 
 Water extends Field
-�E��
-�EisLand = false;
-�E�d�͉e��1/2 �ő嗎�����x=�d��9.8
+・水
+・isLand = false;
+・重力影響1/2 最大落下速度=重力9.8
 
 Entity extends Object
-�E�v���C���[��ŕ\������Ȃ��Ȃ� �����Player�ł͂Ȃ���������
-�E�R���W���������݂���
-�EisGravity = true; �d�͔��肪�s����
-�EisInvinsible = false; ���G����
+・プレイヤー基準で表示されなくなる 判定はPlayerではなくこっちで
+・コリジョンが存在する
+・isGravity = true; 重力判定が行われる
+・isInvinsible = false; 無敵判定
 
 Block extends Entity
-�E�󂹂�u���b�N
-�E�j�󎞂�Item�𐶐����邩������Ȃ� GetParent()��e�ɂ��Ď�����Kill
-�EisGravity = false;
-�EisLand = true;
+・壊せるブロック
+・破壊時にItemを生成するかもしれない GetParent()を親にして自分はKill
+・isGravity = false;
+・isLand = true;
 
 Enemy extends Entity
-�EEnemy�����t�^�ړI
-�E�e��G�I�u�W�F�N�g�͂�������h������
+・Enemy属性付与目的
+・各種敵オブジェクトはここから派生する
 
 Neutral extends Entity
 
-***************Player�ɂ���***************
-�����n��TankGame�� �n���K�[��STG�� �ړ���Packman���Q�l�ɂ��� �����ŉߋ��̊��p���ł���
+***************Playerについて***************
+方向系はTankGameを ハンガーはSTGを 移動はPackmanを参考にする ここで過去の活用ができる
 
-Init(vector<audioList>)�����Play<List>������
-audiOList�����������ɗp�ӂ���K�v
-�ǂ����ς��Ȃ�
+Init(vector<audioList>)からのPlay<List>したら
+audiOListを初期化時に用意する必要
+どうせ変わらない
 
 https://qiita.com/hoshianaaa/items/108ae9edab791fe5e77d
 
-**�����ɂ�**
-���Ƒ��R���e���c�̒m���ȂǊ��p����̂�TA�̖ʂ�������������Ȃ�
-�Q�[���̂���ꕔ�������������ق����]������邽�߁A�Ȃ��Ȃ�
+**合説にて**
+割と他コンテンツの知識など活用するのはTAの面が強いかもしれない
+ゲームのある一部分を特化させるほうが評価されるため、なかなか
 
-��肩�����������������Ĕ߂���.....
+わりかし今特化部分無くて悲しい.....
 
-�@�\�ǉ������C���ɂ��Ă���Ȃ�h�L�������g����邾���ł��傫��
-�g���Ă��炦��̂��ǂ�END �Q�[���͂��̒ǉ������@�\��O�ʂɏo�����̂����΂悢
+機能追加をメインにしているならドキュメントを作るだけでも大きい
+使ってもらえるのが良いEND ゲームはその追加した機能を前面に出すものを作ればよい
+
+
+
+ルービックキューブを元にしたゲームに
+ブロック
+・立方体
+・各地形は上下左右前奥に効果マスを設置可能
+・マスにより効果発動
+　<↑：隣が↑方向に90度回転
+  <>
+  ↑：両隣が↑方向に90度回転
+　●：対応する●へ移動　土管？転移？
+　Ｇ：このマスがある面が揃うとこのマスの上にフラッグが生成される　とるとクリア
+　□：このマスを踏むと色が出現する
+　
+💃▱
+ |/ ：隣接する面へ移動
+　□|点線四角：複製　まだ決めてない
+
+落下すると落下前の面の真ん中に移動する
+それだけのゲーム
+
+ゲ制の提出用なのでこれだけは完成させないと留年する
