@@ -243,49 +243,25 @@ void Button::UpdateSelected()
 	nextIdle = true;
 }
 
-//bool Button::IsEntered()
-//{
-//	Transform buttonTra = Image::GetTransform(hImg_[state]);
-//
-//	XMFLOAT3 imageSize = {
-//		Image::GetSize(hImg_[state]).x * transform_.scale_.x,
-//		Image::GetSize(hImg_[state]).y * transform_.scale_.y,
-//		Image::GetSize(hImg_[state]).z * transform_.scale_.z
-//	};
-//	XMFLOAT3 mousePos = Input::GetMousePosition();
-//	if (
-//		Between(mousePos.x,
-//			buttonTra.position_.x + SystemConfig::windowWidth / 2.0f - imageSize.x / 2.0f,
-//			buttonTra.position_.x + SystemConfig::windowWidth / 2.0f + imageSize.x / 2.0f) &&
-//		Between(mousePos.y,
-//			buttonTra.position_.y + SystemConfig::windowHeight / 2.0f - imageSize.y / 2.0f,
-//			buttonTra.position_.y + SystemConfig::windowHeight / 2.0f + imageSize.y / 2.0f)
-//		) {
-//		return true;
-//	}
-//	return false;
-//}
-
 bool Button::IsEntered()
 {
 	//デカさ：ウィンドウサイズ(可変)*ボタン比率 左上右下の判定のため1/2にしてぶち込む
 	//デカさ矯正：Image呼び出し元の拡大率 これImage内拡大率じゃだめか 多分ダメ 不変なので
 	//座標：画像の座標
-	// ポジションを指定するという必要がある
-	//zahyou naoseba kanpeki
+	// ポジションを指定する
 	rangeLU = {
-		transform_.scale_.x * - (Half(SystemConfig::windowWidth * Image::GetWindowRatio(hImg_[IDLE]).x)) + Image::GetTransform(hImg_[IDLE]).position_.x,
-		transform_.scale_.y * -(Half(SystemConfig::windowHeight * Image::GetWindowRatio(hImg_[IDLE]).y)) + Image::GetTransform(hImg_[IDLE]).position_.y
+		transform_.scale_.x * - (Half(SystemConfig::windowWidth * Image::GetWindowRatio(hImg_[IDLE]).x)) + 
+		Image::GetTransform(hImg_[IDLE]).position_.x * (float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImg_[IDLE]).x,
+		transform_.scale_.y * -(Half(SystemConfig::windowHeight * Image::GetWindowRatio(hImg_[IDLE]).y)) + 
+		Image::GetTransform(hImg_[IDLE]).position_.y * (float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImg_[IDLE]).y
 	};
 	rangeRB = {
-		transform_.scale_.x* (Half(SystemConfig::windowWidth * Image::GetWindowRatio(hImg_[IDLE]).x)) + Image::GetTransform(hImg_[IDLE]).position_.x,
-		transform_.scale_.y* (Half(SystemConfig::windowHeight * Image::GetWindowRatio(hImg_[IDLE]).y)) + Image::GetTransform(hImg_[IDLE]).position_.y
+		transform_.scale_.x* (Half(SystemConfig::windowWidth * Image::GetWindowRatio(hImg_[IDLE]).x)) + 
+		Image::GetTransform(hImg_[IDLE]).position_.x * (float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImg_[IDLE]).x,
+		transform_.scale_.y* (Half(SystemConfig::windowHeight * Image::GetWindowRatio(hImg_[IDLE]).y)) + 
+		Image::GetTransform(hImg_[IDLE]).position_.y * (float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImg_[IDLE]).y
 	};
 
-	//rangeLU.x *= transform_.scale_.x;
-	//rangeLU.y *= transform_.scale_.y;
-	//rangeRB.x *= transform_.scale_.x;
-	//rangeRB.y *= transform_.scale_.y;
 	if (Between(Input::GetMousePosition(true).x, rangeLU.x, rangeRB.x) && Between(Input::GetMousePosition(true).y, rangeLU.y, rangeRB.y)) {
 		return true;
 	}

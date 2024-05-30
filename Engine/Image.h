@@ -33,6 +33,7 @@ namespace Image
 
 		//ウィンドウと画像の比率(相対座標用)
 		XMFLOAT2 windowRatio;
+		XMINT2 stdWindowSize;
 
 		//コンストラクタ
 		ImageData() : pSprite(nullptr)
@@ -41,6 +42,7 @@ namespace Image
 			alpha = 1.0f;
 			pSprite = nullptr;
 			windowRatio = { 0,0 };
+			stdWindowSize = { 1280,720 };	//デフォルトの基準ウィンドウサイズ
 		}
 	};
 
@@ -100,4 +102,5 @@ namespace Image
 
 	void SetWindowRatio(int handle, int windowSizeX, int windowSizeY);
 	XMFLOAT2 GetWindowRatio(int handle);
+	XMINT2 GetStdWindowSize(int handle);
 }

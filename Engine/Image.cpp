@@ -6,9 +6,6 @@ namespace Image
 	//ロード済みの画像データ一覧
 	std::vector<ImageData*>	_datas;
 
-	//アス比計算のデフォルトサイズ
-	XMINT2 stdWindowSize = { 1280, 720 };
-
 	//初期化
 	void Initialize()
 	{
@@ -71,7 +68,7 @@ namespace Image
 		ResetRect(handle);
 		pData->isBlendAdd = isBlendAdd;
 
-		SetWindowRatio(handle, stdWindowSize.x, stdWindowSize.y);
+		SetWindowRatio(handle, pData->stdWindowSize.x, pData->stdWindowSize.y);
 		return handle;
 	}
 
@@ -241,6 +238,7 @@ namespace Image
 
 	void SetWindowRatio(int handle, int windowSizeX, int windowSizeY)
 	{
+		_datas[handle]->stdWindowSize = { windowSizeX, windowSizeY };
 		_datas[handle]->windowRatio = {
 			static_cast<float>(_datas[handle]->rect.right) / (float)windowSizeX,
 			static_cast<float>(_datas[handle]->rect.bottom) / (float)windowSizeY
@@ -250,6 +248,11 @@ namespace Image
 	XMFLOAT2 GetWindowRatio(int handle)
 	{
 		return _datas[handle]->windowRatio;
+	}
+
+	XMINT2 GetStdWindowSize(int handle)
+	{
+		return _datas[handle]->stdWindowSize;
 	}
 
 }
