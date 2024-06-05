@@ -5,6 +5,7 @@
 #include "Easing.h"
 #include "Engine/Text.h"
 #include "OptionScreen.h"
+#include "ModelTestScreen.h"
 
 TestScene::TestScene(GameObject* parent)
 	: GameObject(parent, "TestScene"),
@@ -44,6 +45,12 @@ void TestScene::Update(){
 	//O : Option Screen
 	if (Input::IsKeyDown(DIK_O)) {
 		pScreen = Instantiate<OptionScreen>(GetParent());
+		pScreen->SetPrevScene(this);
+		pScreen->Run();
+	}
+	//M : ModelTest Screen
+	if (Input::IsKeyDown(DIK_M)) {
+		pScreen = Instantiate<ModelTestScreen>(GetParent());
 		pScreen->SetPrevScene(this);
 		pScreen->Run();
 	}

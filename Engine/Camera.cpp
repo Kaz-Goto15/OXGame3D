@@ -1,6 +1,10 @@
 #include "camera.h"
 #include "Direct3D.h"
+#include "Model.h"
 
+int hModel;
+bool enTgtPtr;
+void enableTargetPointer(bool b) { enTgtPtr = b; }
 XMFLOAT3 _position;
 XMFLOAT3 _target;
 XMMATRIX _view;
@@ -15,6 +19,9 @@ void Camera::Initialize()
 
 	//プロジェクション行列
 	_proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, (FLOAT)Direct3D::screenWidth_ / (FLOAT)Direct3D::screenHeight_, 0.1f, 1000.0f);
+
+	enTgtPtr = true;
+	hModel = Model::Load("Ball.fbx");
 }
 
 //更新（ビュー行列作成）
@@ -30,6 +37,10 @@ void Camera::Update()
 	//http://marupeke296.com/DXG_No11_ComeOnBillboard.html
 	_billBoard = XMMatrixLookAtLH(XMVectorSet(0, 0, 0, 0), XMLoadFloat3(&_target)- XMLoadFloat3(&_position), XMVectorSet(0, 1, 0, 0));
 	_billBoard = XMMatrixInverse(nullptr, _billBoard);
+
+	Transform tra;
+	tra.position_ = _target;
+	Model::SetTransform(hModel, tra);
 }
 
 //焦点を設定

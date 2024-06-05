@@ -112,6 +112,11 @@ GameObject* GameObject::GetParent(void)
 {
 	return pParent_;
 }
+//親オブジェクトを取得
+void GameObject::SetParent(GameObject* parent)
+{
+	pParent_ = parent;
+}
 
 //名前でオブジェクトを検索（対象は自分の子供以下）
 GameObject* GameObject::FindChildObject(const std::string& name)
