@@ -152,3 +152,32 @@ https://qiita.com/hoshianaaa/items/108ae9edab791fe5e77d
 それだけのゲーム
 
 ゲ制の提出用なのでこれだけは完成させないと留年する
+
+Blockクラス
+Tile up,down,left,right, front, back;=nullptr;
+Tile nextUp, nextDown, nextLeft, nextRight, nextFront, nextBack;
+ROTATE{
+FRONT,
+BACK,
+CW,
+CCW
+}
+Rotate(ROTATE rot){
+switch(rot){
+case FRONT:
+nextPos GameConfig::GameSpeed
+}
+}
+pushButton(bHnd b)
+
+GameConfig{
+VIEWMODE{
+FPS,
+TPS,
+FREE
+}
+
+VIEWMODE viewmode = FPS; Get/Set
+bool enableFreeView = false; Get/Set
+
+}

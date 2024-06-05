@@ -40,6 +40,11 @@
       "name": "Hanger",
       "file": "HNSG\\hanger.fbx"
 
+    },
+    {
+      "name": "Cube",
+      "file": "cube.fbx"
+
     }
   ]
 }
