@@ -267,6 +267,10 @@
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="ControlSlider.cpp" />
+    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="ModelTestScreen.cpp">
+      <Filter>C_Scene/Screen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -468,6 +472,10 @@
     <ClInclude Include="Frame.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="ControlSlider.h" />
+    <ClInclude Include="Cube.h" />
+    <ClInclude Include="ModelTestScreen.h">
+      <Filter>C_Scene/Screen</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

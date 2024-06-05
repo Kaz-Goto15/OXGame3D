@@ -143,6 +143,7 @@
     <ClCompile Include="ConfigKey.cpp" />
     <ClCompile Include="ControlSlider.cpp" />
     <ClCompile Include="CreditScreen.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="EaseScene.cpp" />
     <ClCompile Include="Easing.cpp" />
@@ -180,6 +181,7 @@
     <ClCompile Include="GameSceneObject.cpp" />
     <ClCompile Include="MapLoader.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="ModelTestScreen.cpp" />
     <ClCompile Include="OptionScreen.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="ResultScene.cpp" />
@@ -218,6 +220,7 @@
     <ClInclude Include="ConfigKey.h" />
     <ClInclude Include="ControlSlider.h" />
     <ClInclude Include="CreditScreen.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="DebugText.h" />
     <ClInclude Include="EaseScene.h" />
     <ClInclude Include="Easing.h" />
@@ -255,6 +258,7 @@
     <ClInclude Include="GameSceneObject.h" />
     <ClInclude Include="MapLoader.h" />
     <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="ModelTestScreen.h" />
     <ClInclude Include="OptionScreen.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="ResultScene.h" />
