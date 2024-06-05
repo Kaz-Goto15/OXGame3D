@@ -114,6 +114,13 @@ void ModelTestScreen::CubeRotate(ROTATE rot, int col, float value)
     case ModelTestScreen::LEFT:
         break;
     case ModelTestScreen::RIGHT:
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
+                cube[x][y][0]->SetParent(cube[1][1][col]);
+                //cube[col][y][z]->SetParent(cube[col][1][1]);
+            }
+        }
+        cube[1][1][col]->SetRotate(0, 0, value);
         break;
     case ModelTestScreen::CW:
         break;
