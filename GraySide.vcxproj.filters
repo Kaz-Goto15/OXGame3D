@@ -434,9 +434,6 @@
     <ClInclude Include="Engine\Model.h">
       <Filter>01Engine\ResourceManager\Model</Filter>
     </ClInclude>
-    <ClInclude Include="ModelLoader.h">
-      <Filter>01Engine\ResourceManager\Model</Filter>
-    </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Game Obj</Filter>
     </ClInclude>
@@ -475,6 +472,9 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="ModelTestScreen.h">
       <Filter>C_Scene/Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelLoader.h">
+      <Filter>01Engine\ResourceManager\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

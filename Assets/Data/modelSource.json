@@ -44,7 +44,10 @@
     {
       "name": "Cube",
       "file": "cube.fbx"
-
+    },
+    {
+      "name": "COLOR_YELLOW",
+      "file": "color_yellow.fbx"
     }
   ]
 }

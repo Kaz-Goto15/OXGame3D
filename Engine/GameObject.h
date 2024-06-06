@@ -154,6 +154,7 @@ public:
 	XMFLOAT3 GetWorldPosition() { return Transform::Float3Add(GetParent()->transform_.position_ , transform_.position_); }
 	XMFLOAT3 GetWorldRotate() { return Transform::Float3Add(GetParent()->transform_.rotate_, transform_.rotate_); }
 	XMFLOAT3 GetWorldScale() { return Transform::Float3Add(GetParent()->transform_.scale_, transform_.scale_); }
+	Transform GetTransform() { return transform_; }
 	void SetPosition(XMFLOAT3 position) { transform_.position_ = position; }
 	void SetPosition(float x, float y, float z) { SetPosition(XMFLOAT3(x, y, z)); }
 	void SetPosition(int x, int y, int z) { SetPosition(XMFLOAT3((float)x, (float)y, (float)z)); }
@@ -164,10 +165,11 @@ public:
 	void SetRotateZ(float z) { SetRotate(transform_.rotate_.x, transform_.rotate_.y, z); }
 	void SetScale(XMFLOAT3 scale) { transform_.scale_ = scale; }
 	void SetScale(float x, float y, float z) { SetScale(XMFLOAT3(x, y, z)); }
-
 	//追加　拡縮関連
 	void SetScale(float all) { SetScale(XMFLOAT3(all, all, all)); }
 	void SetScale(float all, float oX, float oY, float oZ);	//指定座標を中心に拡縮（要検証）
+	void SetCenter(XMFLOAT3 center) { transform_.center_ = center; }
+	void IsCalcCenterPoint(bool b) { transform_.isCalcCenterPt_ = b; }
 
 
 private:

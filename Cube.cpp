@@ -17,6 +17,7 @@ Cube::~Cube()
 void Cube::Initialize()
 {
     hModel_ = ModelLoader::Load(ModelLoader::MODEL::Cube);
+    hModel_col = ModelLoader::Load(ModelLoader::MODEL::COLOR_YELLOW);
 }
 
 //çXêV
@@ -27,8 +28,10 @@ void Cube::Update()
 //ï`âÊ
 void Cube::Draw()
 {
-    Model::SetTransform(hModel_, transform_);
-    Model::Draw(hModel_);
+    //Model::SetTransform(hModel_, transform_);
+    //Model::Draw(hModel_);
+    Model::SetTransform(hModel_col, transform_);
+    Model::Draw(hModel_col);
 }
 
 //äJï˙

@@ -10,6 +10,7 @@ namespace ModelLoader {
 		Cylinder,
 		Hanger,
 		Player,
+		COLOR_YELLOW,
 		MAX,
 	};
 	void Init();
