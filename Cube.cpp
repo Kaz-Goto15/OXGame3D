@@ -28,8 +28,8 @@ void Cube::Update()
 //•`‰æ
 void Cube::Draw()
 {
-    //Model::SetTransform(hModel_, transform_);
-    //Model::Draw(hModel_);
+    Model::SetTransform(hModel_, transform_);
+    Model::Draw(hModel_);
     Model::SetTransform(hModel_col, transform_);
     Model::Draw(hModel_col);
 }

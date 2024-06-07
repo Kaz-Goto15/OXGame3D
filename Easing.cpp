@@ -15,6 +15,7 @@ namespace Easing {
 	float begin;
 	float change;
 
+	//ƒƒ‚ƒŠíŒ¸—p
 	static const int NUM_0 = 0;
 	static const int NUM_1 = 1;
 	static const int NUM_2 = 2;

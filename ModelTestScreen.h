@@ -15,6 +15,7 @@ class ModelTestScreen : public Screen
     DebugText* debugtext;
     std::string debugStr[20];
     vector<vector<vector<Cube*>>> cube;
+    vector<vector<vector<Transform>>> cubePrevTra;
     vector<vector<vector<Transform>>> cubeNextTra;
     void UpdateStr();
 
@@ -27,13 +28,14 @@ class ModelTestScreen : public Screen
         CCW
     };
 
-    void CalcCubeTrans(ROTATE_DIR rot, int col, float value);
+    void CalcCubeTrans();
 
     bool isMoving = false;
 
     const int angleOfRotate = 90;
     ROTATE_DIR dir;
     int rotateNo;
+    int rotTime = 0; 
 
     /// <summary>
     /// キューブ回転のトリガー 初期化処理とフラグ管理
