@@ -274,3 +274,138 @@ swap(y0zn⇔ynz0)
   022  122  222
  021  121  221
 020  120  220
+
+//〇×にしていいんじゃね
+毎回48回？いいえ 回転時は１～2面は判定しなくてもよい
+置いた場所は最大2～4カ所のみでよい
+
+
+//やばい天啓が降りた 奇数の反時計変形ができるやつ
+//考えていた挙動を逆にした挙動をしているが原理としては合っているためOK 偶数処理もした
+#include <iostream>
+#include <vector>
+using namespace std;
+void printArr(vector<vector<vector<int>>> arr, int singlePrintX = -1){
+    if(singlePrintX == -1){
+    for (int x = 0; x < arr.size();x++) {
+        cout << "x=" << x << endl;
+        for (int y = 0; y < arr[0].size();y++) {
+            for (int z = 0; z < arr[0][0].size();z++) {
+                cout << arr[x][y][z] << " ";
+            }
+            cout << endl;
+        }
+    }
+    }else{
+        
+        cout << "x=" << singlePrintX << endl;
+        for (int y = 0; y < arr[0].size();y++) {
+            for (int z = 0; z < arr[0][0].size();z++) {
+                cout << arr[singlePrintX][y][z] << " ";
+            }
+            cout << endl;
+        }
+    }
+}
+int main(void){
+    // Your code here!
+    int num = 10;
+    vector<vector<vector<int>>> arr;
+    arr.resize(num, vector<vector<int>>(num, vector<int>(num)));
+    for (int x = 0; x < arr.size();x++) {
+        for (int y = 0; y < arr[0].size();y++) {
+            for (int z = 0; z < arr[0][0].size();z++) {
+                arr[x][y][z] = x*100 + y*10 + z;
+            }
+        }
+    }
+    printArr(arr,0);
+    int swapCount = num;
+    for(int row = 0; row < num; row++){
+        cout << "row,swapCount:" << row << "," << swapCount << endl;
+        for(int col = num-swapCount; col < num; col++){
+            cout << "[" << row << "," << col <<"]<->[" << col << "," << num-1-row << "]" << endl;
+            swap(arr[0][row][col], arr[0][col][num-1-row]);
+        }
+        printArr(arr,0);
+        
+        cout << "row:" << row << endl;
+        if(row != num/2){
+            if(row > num/2){
+                swapCount++;
+            }else{
+                swapCount--;
+            }
+        }else{
+            if(num %2 == 0)swapCount++;
+        }
+        cout << "swapCount=" << swapCount << endl;
+    }
+    
+    printArr(arr,0);
+}
+
+//簡略化
+#include <iostream>
+#include <vector>
+using namespace std;
+void printArr(vector<vector<vector<int>>> arr, int singlePrintX = -1){
+    if(singlePrintX == -1){
+    for (int x = 0; x < arr.size();x++) {
+        cout << "x=" << x << endl;
+        for (int y = 0; y < arr[0].size();y++) {
+            for (int z = 0; z < arr[0][0].size();z++) {
+                cout << arr[x][y][z] << " ";
+            }
+            cout << endl;
+        }
+    }
+    }else{
+        
+        cout << "x=" << singlePrintX << endl;
+        for (int y = 0; y < arr[0].size();y++) {
+            for (int z = 0; z < arr[0][0].size();z++) {
+                cout << arr[singlePrintX][y][z] << " ";
+            }
+            cout << endl;
+        }
+    }
+}
+struct Point{
+    int x;
+    int y;
+};
+Point SwapPoint(int arrLen){
+    return Point();
+}
+int main(void){
+    // Your code here!
+    int num = 10;
+    vector<vector<vector<int>>> arr;
+    arr.resize(num, vector<vector<int>>(num, vector<int>(num)));
+    for (int x = 0; x < arr.size();x++) {
+        for (int y = 0; y < arr[0].size();y++) {
+            for (int z = 0; z < arr[0][0].size();z++) {
+                arr[x][y][z] = x*100 + y*10 + z;
+            }
+        }
+    }
+    printArr(arr,0);
+    
+    
+    int swapCount = num;
+    for(int row = 0; row < num; row++){
+        for(int col = num-swapCount; col < num; col++){
+            swap(arr[0][row][col], arr[0][col][num-1-row]);
+        }
+        
+        //スワップ数の変更
+        if(row != num/2){
+            if(row > num/2)    swapCount++;
+            else    swapCount--;
+        }else if(num %2 == 0)   swapCount++;
+
+    }
+    
+    printArr(arr,0);
+}

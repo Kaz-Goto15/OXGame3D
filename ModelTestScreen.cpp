@@ -101,9 +101,10 @@ void ModelTestScreen::UpdateStr()
 void ModelTestScreen::CalcCubeTrans()
 {
     rotTime++;
-    if (rotTime >= angleOfRotate){
+    if (rotTime >= angleOfRotate) {
         rotTime = 90;
         isMoving = false;
+    }
     switch (dir)
     {
     case ModelTestScreen::FRONT:
@@ -145,7 +146,7 @@ void ModelTestScreen::CalcCubeTrans()
             //rotateは0に戻す
             //positionも入れ替え後の座標にする これは最後に座標がその位置へ向かうため配列番号の移動のみで済む
             //→rotateを0にしてから、配列を入れ替える
-            std::rotateM
+            //std::rotateM
             break;
         case ModelTestScreen::BACK:
             break;
