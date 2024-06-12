@@ -27,7 +27,11 @@ class ModelTestScreen : public Screen
         CW,
         CCW
     };
-
+    enum MODE {
+        MODE_SET,       //○×を設置
+        MODE_ROTATE,    //キューブを回転
+        MODE_VIEW       //回転
+    };
     void CalcCubeTrans();
 
     bool isMoving = false;
@@ -53,3 +57,17 @@ public:
     void Draw() override;
     void Release() override;
 };
+
+/*
+SET,ROTATE
+SPACE:設置
+LSHIFT:切替
+WASD:上下左右移動/回転方向切替
+E:(ROTATEのみ)軸切替
+右クリック:VIEWへ移行
+VIEW
+SET,ROTATEで使うキー:前回モードへ移行
+右クリック押下中にドラッグ:視点回転
+
+
+*/

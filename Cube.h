@@ -10,16 +10,15 @@ class Cube : public GameObject
         BACK_COLOR,
         LEFT_COLOR,
     };
-    int hModel_;
-    int hModel_col;
     enum MARK {
-        MARK_BLANK = -1,
+        MARK_BLANK,
         MARK_O,
-        MARK_X
+        MARK_X,
+        MARK_MAX
     };
     enum ROTATE_DIR {
-        FRONT,
-        BACK,
+        UP,
+        DOWN,
         LEFT,
         RIGHT,
         CW,
@@ -36,8 +35,11 @@ class Cube : public GameObject
 
     };
 
+    int hModelCube;
+    //int hModel_col;
+    int hModelMark[MARK_MAX];
     MARK cubeData_[SURFACE_MAX];
-
+    XMFLOAT3 Surface2Rotate(SURFACE surface);
 public:
     Cube(GameObject* parent);    //コンストラクタ
     ~Cube();                     //デストラクタ
@@ -45,6 +47,9 @@ public:
     void Update() override;     //更新
     void Draw() override;       //描画
     void Release() override;    //解放
-    void RotateCube(ROTATE_DIR dir);    //前から見てその方向へ回転する
+
+    void SwapData(ROTATE_DIR dir);    //前から見た回転方向を指定し、各面のデータを入れ替える
+
     void SetMark(SURFACE surface, MARK mark);
+    MARK GetMark(SURFACE surface) { return cubeData_[surface]; }
 };
