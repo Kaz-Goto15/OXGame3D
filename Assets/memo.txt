@@ -349,63 +349,119 @@ int main(void){
 #include <iostream>
 #include <vector>
 using namespace std;
-void printArr(vector<vector<vector<int>>> arr, int singlePrintX = -1){
-    if(singlePrintX == -1){
-    for (int x = 0; x < arr.size();x++) {
-        cout << "x=" << x << endl;
-        for (int y = 0; y < arr[0].size();y++) {
-            for (int z = 0; z < arr[0][0].size();z++) {
-                cout << arr[x][y][z] << " ";
-            }
-            cout << endl;
-        }
-    }
-    }else{
-        
-        cout << "x=" << singlePrintX << endl;
-        for (int y = 0; y < arr[0].size();y++) {
-            for (int z = 0; z < arr[0][0].size();z++) {
-                cout << arr[singlePrintX][y][z] << " ";
-            }
-            cout << endl;
-        }
-    }
-}
-struct Point{
-    int x;
-    int y;
-};
-Point SwapPoint(int arrLen){
-    return Point();
-}
 int main(void){
-    // Your code here!
-    int num = 10;
+    int num = 5;
     vector<vector<vector<int>>> arr;
+
+    //初期化
     arr.resize(num, vector<vector<int>>(num, vector<int>(num)));
-    for (int x = 0; x < arr.size();x++) {
-        for (int y = 0; y < arr[0].size();y++) {
-            for (int z = 0; z < arr[0][0].size();z++) {
-                arr[x][y][z] = x*100 + y*10 + z;
+    for (int x = 0; x < arr.size(); x++) {
+        for (int y = 0; y < arr[0].size(); y++) {
+            for (int z = 0; z < arr[0][0].size(); z++) {
+                arr[x][y][z] = x * 1 + y * 10 + z*100;
             }
         }
     }
-    printArr(arr,0);
-    
-    
-    int swapCount = num;
-    for(int row = 0; row < num; row++){
-        for(int col = num-swapCount; col < num; col++){
-            swap(arr[0][row][col], arr[0][col][num-1-row]);
-        }
-        
-        //スワップ数の変更
-        if(row != num/2){
-            if(row > num/2)    swapCount++;
-            else    swapCount--;
-        }else if(num %2 == 0)   swapCount++;
 
-    }
-    
-    printArr(arr,0);
+    int swapCount = num;
+
+    //入れ替え回数の更新
+    auto ModifySwapCount = [num, &swapCount](int row) {
+        if (row != num / 2) {
+            if (row > num / 2)    swapCount++;
+            else    swapCount--;
+        }
+        else if (num % 2 == 0)   swapCount++;
+        };
+    enum ROTATE_AXIS {
+        X,
+        Y,
+        Z
+    };
+
+    //配列入替
+    //axisRot:回転軸 axisCol:[0][0][0]を基準に何行目を入れ替えるか isCC:エンジンの回転軸から時計回りかどうか
+    auto swapArr = [&num, &swapCount, &arr, &ModifySwapCount](ROTATE_AXIS axisRot, int axisCol, bool isCC) {
+        if (isCC) {
+            for (int row = 0; row < num; row++) {
+                for (int col = num - swapCount; col < num; col++) {
+                    switch (axisRot) {
+                    case ROTATE_AXIS::X:
+                        //x軸の時計回転 前から見て上
+                        swap(arr[axisCol][col][row], arr[axisCol][num - 1 - row][col]);
+                        break;
+                    case ROTATE_AXIS::Y:
+                        //y軸の時計回転 前から見て左
+                        swap(arr[col][axisCol][row], arr[num - 1 - row][axisCol][col]);
+                        break;
+                    case ROTATE_AXIS::Z:
+                        //z軸の時計回転 前から見て"反時計"
+                        swap(arr[col][row][axisCol], arr[num - 1 - row][col][axisCol]);
+                        break;
+                    default:
+                        //Messagebox();
+                        break;
+                    }
+                    ModifySwapCount(row);
+                }
+            }
+        }
+        else {
+            for (int row = 0; row < num; row++) {
+                for (int col = num - swapCount; col < num; col++) {
+                    switch (axisRot) {
+                    case ROTATE_AXIS::X:
+                        //x軸の反時計回転 前から見て下
+                        swap(arr[axisCol][row][col], arr[axisCol][col][num - 1 - row]);
+                        break;
+                        //y軸の反時計回転 前から見て右
+                    case ROTATE_AXIS::Y:
+                        swap(arr[row][axisCol][col], arr[col][axisCol][num - 1 - row]);
+                        break;
+                    case ROTATE_AXIS::Z:
+                        //z軸の反時計回転 前から見て"時計"
+                        swap(arr[row][col][axisCol], arr[col][num - 1 - row][axisCol]);
+                        break;
+                    default:
+                        //Messagebox();
+                        break;
+                    }
+                }
+                ModifySwapCount(row);
+            }
+        }
+    };
+
+    swapArr(ROTATE_AXIS::Z, 1, true);
 }
+
+==================================================
+上方向(x軸時計)
+　上後　前上
+左前右左下右
+　下　　後　
+
+下方向(x軸反時計)
+　上後　後下
+左前右左上右
+　下　　前　
+
+左方向(y軸時計)
+　上後　上左
+左前右前右後
+　下　　下　
+
+右方向(y軸反時計)
+　上後　上右
+左前右後左前
+　下　　下　
+
+時計方向(z軸反時計)
+　上後　左後
+左前右下前上
+　下　　右　
+
+反時計方向(z軸時計)
+　上後　右後
+左前右上前下
+　下　　左　

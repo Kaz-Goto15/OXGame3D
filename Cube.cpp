@@ -38,3 +38,29 @@ void Cube::Draw()
 void Cube::Release()
 {
 }
+
+void Cube::RotateCube(ROTATE_DIR dir)
+{
+    switch (dir)
+    {
+    case Cube::FRONT:
+        break;
+    case Cube::BACK:
+        break;
+    case Cube::LEFT:
+        break;
+    case Cube::RIGHT:
+        break;
+    case Cube::CW:
+        break;
+    case Cube::CCW:
+        break;
+    default:
+        break;
+    }
+}
+
+void Cube::SetMark(SURFACE surface, MARK mark)
+{
+    cubeData_[surface] = mark;
+}
