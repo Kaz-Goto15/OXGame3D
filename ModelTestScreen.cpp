@@ -3,7 +3,6 @@
 
 #include "SystemConfig.h"
 #include "DebugText.h"
-#include "Cube.h"
 #include "./Engine/Camera.h"
 #include "Easing.h"
 
@@ -52,9 +51,86 @@ void ModelTestScreen::Initialize()
 //更新
 void ModelTestScreen::Update()
 {
-    //もどる
+    //もどる(デバッグ)
     if (Input::IsKeyDown(DIK_P)) {
         Prev();
+    }
+    //操作状態がアイドルでなければ
+    if (control != CONTROL_IDLE) {
+        //現在のモードで処理
+        switch (mode)
+        {
+        case ModelTestScreen::MODE_SET:
+            //キー関連の記述は同時処理を防ぐため取り敢えずすべてelifで書く
+            //マーク設置
+            if (Input::IsKeyDown(DIK_SPACE)) {
+                //選択箇所が空白のときに設置する
+                if (cube[selectData.x][selectData.y][selectData.x]->GetMark(selectData.surface) == Cube::MARK_BLANK) {
+                    Cube::MARK mark;
+
+                    if (control == CONTROL_1P) {
+                        mark = Cube::MARK::MARK_O;
+                    }
+                    else {
+                        mark = Cube::MARK::MARK_X;
+                    }
+
+                    cube[selectData.x][selectData.y][selectData.x]->SetMark(selectData.surface, mark);
+                    TurnEnd();
+                }
+                else {
+                    //空白でないときのアニメーションがあればここに書く 選択を表す半透明モデルをずらすなど
+                }
+            }
+            else if (Input::IsKeyDown(DIK_LSHIFT)) {
+                mode = MODE_ROTATE;
+            }
+            else if (Input::IsKeyDown(DIK_W)) {
+                using SURFACE = Cube::SURFACE;
+                switch (selectData.surface)
+                {
+                case Cube::SURFACE_TOP:
+                    selectData.z++;
+                    if (selectData.z > 3) {
+                        selectData.z = 3;
+                        selectData.surface = SURFACE::SURFACE_BOTTOM;
+                    }
+                    break;
+                case Cube::SURFACE_BOTTOM:
+                    break;
+                case Cube::SURFACE_LEFT:
+                    break;
+                case Cube::SURFACE_RIGHT:
+                    break;
+                case Cube::SURFACE_FRONT:
+                    break;
+                case Cube::SURFACE_BACK:
+                    break;
+                case Cube::SURFACE_MAX:
+                    break;
+                default:
+                    break;
+                }
+                selectData.y--;
+                if (selectData.y == -1) {
+
+                }
+                //全てy-1になるときである
+                //前で上に行くとき：上に
+                //上で上に行くとき：後に
+                //後で上に行くとき：下に
+                //下で上に行くとき：前に
+                //左で上に行くとき：上に
+                //右で上に行くとき：上に
+            }
+            break;
+        case ModelTestScreen::MODE_ROTATE:
+            break;
+        case ModelTestScreen::MODE_VIEW:
+            break;
+        default:
+            break;
+        }
     }
 
     if (!isMoving) {
@@ -222,6 +298,38 @@ void ModelTestScreen::RotateCube(ROTATE_DIR rot, int col, float value)
     }
 }
 
+void ModelTestScreen::TurnEnd()
+{
+    if (control == CONTROL_1P) {
+        nextTurn = CONTROL_2P;
+    }
+    if (control == CONTROL_2P) {
+        nextTurn = CONTROL_1P;
+    }
+    control = CONTROL_IDLE;
+    
+    control = nextTurn; //今はアニメーションやディレイが無いのでここで次のターンにする
+}
+
+void ModelTestScreen::Judge()
+{
+    if (mode == MODE_SET) {
+        switch (selectData.surface)
+        {
+        case Cube::SURFACE::SURFACE_TOP:
+            cube[selectData.x]
+        default:
+            break;
+        }
+    }
+}
+
+bool Yoko() {
+    if()
+    return true;
+}
+bool Tate();
+bool Naname() { return true; }
 /*
 回転トリガー時、回転方向と回転列を指定し、回転フラグを有効化
 回転フラグが有効化されたら、回転方向と回転列に従い、回転　　      ※回転には回転前変形情報と回転後変形情報を用いる
@@ -243,4 +351,19 @@ void ModelTestScreen::RotateCube(ROTATE_DIR rot, int col, float value)
 
     swap(arr[0][1], arr[1][2]);
 
+*/
+
+/*
+ひとえに横判定といっても左右だとz、他はxで判定することになる
+縦判定だと前後左右がy、上下がz
+斜めだとさらに面倒で、前後はxy、左右はyz、上下はxzである
+
+選択場所によって斜めの判定を入れるかが問題となるが、
+上下だとx=0,2かつz=0,2
+左右だとy=0,2かつz=0,2
+前後だとx=0,2かつy=0,2
+で斜めが入る
+さらに、右上に上がるか右下に下がるかを求める必要もあり、
+上はx,z=0,0 2,2で右上 x,z=0,2 2,0で右下
+https://cpprefjp.github.io/lang/cpp11/variadic_templates.html
 */

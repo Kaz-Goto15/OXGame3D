@@ -3,6 +3,7 @@
 #include <vector>
 #include "Engine/GameObject.h"
 #include "Screen.h"
+#include "Cube.h"
 class Cube;
 class DebugText;
 
@@ -31,7 +32,23 @@ class ModelTestScreen : public Screen
         MODE_SET,       //○×を設置
         MODE_ROTATE,    //キューブを回転
         MODE_VIEW       //回転
+    }mode;
+    enum CONTROL {
+        CONTROL_IDLE,
+        CONTROL_1P,
+        CONTROL_2P
     };
+    CONTROL control, nextTurn;
+    struct SelectData {
+        int x, y, z;
+        Cube::SURFACE surface;
+        SelectData() {
+            x = 0;
+            y = 0;
+            z = 0;
+            surface = Cube::SURFACE::SURFACE_FRONT;
+        }
+    }selectData;
     void CalcCubeTrans();
 
     bool isMoving = false;
@@ -40,7 +57,7 @@ class ModelTestScreen : public Screen
     ROTATE_DIR dir;
     int rotateNo;
     int rotTime = 0; 
-
+    
     /// <summary>
     /// キューブ回転のトリガー 初期化処理とフラグ管理
     /// 
@@ -49,6 +66,8 @@ class ModelTestScreen : public Screen
     /// <param name="no">回転する行/列 [0][0][0]を基準とし、0,1,2で指定</param>
     /// <param name="angle">何度回転させるか</param>
     void RotateCube(ROTATE_DIR dir, int no, float angle = 90.0f);
+    void TurnEnd();
+    void Judge();
 public:
     ModelTestScreen(GameObject* parent);
     ~ModelTestScreen();

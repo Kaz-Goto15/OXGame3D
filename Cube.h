@@ -10,12 +10,14 @@ class Cube : public GameObject
         BACK_COLOR,
         LEFT_COLOR,
     };
+public:
     enum MARK {
-        MARK_BLANK,
+        MARK_BLANK = -1,
         MARK_O,
         MARK_X,
         MARK_MAX
     };
+private:
     enum ROTATE_DIR {
         UP,
         DOWN,
@@ -24,6 +26,7 @@ class Cube : public GameObject
         CW,
         CCW
     };
+public:
     enum SURFACE {
         SURFACE_TOP,
         SURFACE_BOTTOM,
@@ -34,9 +37,8 @@ class Cube : public GameObject
         SURFACE_MAX
 
     };
-
+private:
     int hModelCube;
-    //int hModel_col;
     int hModelMark[MARK_MAX];
     MARK cubeData_[SURFACE_MAX];
     XMFLOAT3 Surface2Rotate(SURFACE surface);

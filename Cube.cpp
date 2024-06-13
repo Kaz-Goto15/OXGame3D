@@ -33,8 +33,6 @@ Cube::~Cube()
 void Cube::Initialize()
 {
     hModelCube = ModelLoader::Load(ModelLoader::MODEL::Cube);
-    //hModel_col = ModelLoader::Load(ModelLoader::MODEL::COLOR_YELLOW);
-    hModelMark[MARK_BLANK] = ModelLoader::Load(ModelLoader::MODEL::MARK_BLANK);
     hModelMark[MARK_O] = ModelLoader::Load(ModelLoader::MODEL::MARK_O);
     hModelMark[MARK_X] = ModelLoader::Load(ModelLoader::MODEL::MARK_X);
 }
@@ -53,12 +51,12 @@ void Cube::Draw()
     Model::SetTransform(hModelCube, transform_);
     Model::Draw(hModelCube);
     for (SURFACE surface = static_cast<SURFACE>(0); surface < SURFACE_MAX; static_cast<SURFACE>(surface+1)) {
-        transform_.rotate_ = Surface2Rotate(surface);
-        Model::SetTransform(hModelMark[cubeData_[surface]], transform_);
-        Model::Draw(hModelMark[cubeData_[surface]]);
+        if (cubeData_[surface] != MARK_BLANK) {
+            transform_.rotate_ = Surface2Rotate(surface);
+            Model::SetTransform(hModelMark[cubeData_[surface]], transform_);
+            Model::Draw(hModelMark[cubeData_[surface]]);
+        }
     }
-    //Model::SetTransform(hModel_col, transform_);
-    //Model::Draw(hModel_col);
 }
 
 //ŠJ•ú
