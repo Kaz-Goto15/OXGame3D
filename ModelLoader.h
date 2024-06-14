@@ -11,6 +11,8 @@ namespace ModelLoader {
 		Hanger,
 		Player,
 		COLOR_YELLOW,
+		MARK_O,
+		MARK_X,
 		MAX,
 	};
 	void Init();

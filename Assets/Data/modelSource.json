@@ -48,6 +48,14 @@
     {
       "name": "COLOR_YELLOW",
       "file": "color_yellow3.fbx"
+    },
+    {
+      "name": "MARK_O",
+      "file": "mark_o.fbx"
+    },
+    {
+      "name": "MARK_X",
+      "file": "mark_x.fbx"
     }
   ]
 }

@@ -47,6 +47,9 @@ void Camera::Update()
 void Camera::SetTarget(XMFLOAT3 target) { _target = target; }
 
 //ˆÊ’u‚ğİ’è
+void Camera::SetPosition(XMVECTOR position) { XMStoreFloat3(&_position,position); }
+
+//ˆÊ’u‚ğİ’è
 void Camera::SetPosition(XMFLOAT3 position) { _position = position; }
 
 //Å“_‚ğæ“¾

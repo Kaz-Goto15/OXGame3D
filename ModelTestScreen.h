@@ -11,6 +11,7 @@ using std::vector;
 //管理するクラス
 class ModelTestScreen : public Screen
 {
+    int hImgBG;
     int hModel;
 
     DebugText* debugtext;
@@ -57,7 +58,21 @@ class ModelTestScreen : public Screen
     ROTATE_DIR dir;
     int rotateNo;
     int rotTime = 0; 
-    
+
+    //カメラ関連
+    Transform camTra;                       //カメラ変形情報
+    float rotSpdX, rotSpdY;                 //カメラ回転速度
+    bool isEnded;                           //ゲーム終了フラグ
+    const int CAM_DISTANCE = 10;            //カメラ距離 固定
+    //const float DC_VALUE = 0.05f;         //カメラ減速値
+    const float TH_ZEROSPEED = 0.3f;        //カメラ速度0にする閾値
+    const float DC_RATIO = 1.2f;            //カメラ減速割合
+    const float AT_RATIO = 0.5f;        //カメラ移動量に対する回転距離単位
+    const float MAX_CAM_ROTATE_X = 89.9999f;    //カメラX回転の最高角度制限
+    const float MIN_CAM_ROTATE_X = -89.9999f;   //カメラX回転の最低角度制限
+    const int LIMIT_CAM_ROTATE_Y = 360;         //カメラY回転の角度制限(オーバーフロー回避)
+    const int DEFAULT_SPEED = 0;                //カメラのデフォルト速度(0)
+
     /// <summary>
     /// キューブ回転のトリガー 初期化処理とフラグ管理
     /// 
@@ -68,6 +83,11 @@ class ModelTestScreen : public Screen
     void RotateCube(ROTATE_DIR dir, int no, float angle = 90.0f);
     void TurnEnd();
     void Judge();
+
+    /// カメラ関連の処理
+    void RotateCamera();
+    void FinishCamera();
+    
 public:
     ModelTestScreen(GameObject* parent);
     ~ModelTestScreen();

@@ -5,6 +5,9 @@
 #include "DebugText.h"
 #include "./Engine/Camera.h"
 #include "Easing.h"
+#include "./Engine/Image.h"
+#include <algorithm>
+
 
 //コンストラクタ
 ModelTestScreen::ModelTestScreen(GameObject* parent) :
@@ -22,6 +25,7 @@ ModelTestScreen::~ModelTestScreen()
 //初期化
 void ModelTestScreen::Initialize()
 {
+    hImgBG = Image::Load("Background\\bg_game.png");
     cube.resize(3, vector<vector<Cube*>>(3, vector<Cube*>(3, nullptr)));
     cubeNextTra.resize(3, vector<vector<Transform>>(3, vector<Transform>(3)));
     cubePrevTra.resize(3, vector<vector<Transform>>(3, vector<Transform>(3)));
@@ -51,6 +55,11 @@ void ModelTestScreen::Initialize()
 //更新
 void ModelTestScreen::Update()
 {
+    mode = MODE_VIEW;   //debug
+
+    RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
+
+
     //もどる(デバッグ)
     if (Input::IsKeyDown(DIK_P)) {
         Prev();
@@ -243,7 +252,7 @@ void ModelTestScreen::CalcCubeTrans()
 //描画
 void ModelTestScreen::Draw()
 {
-
+    Image::Draw(hImgBG);
 }
 
 //開放
@@ -317,19 +326,94 @@ void ModelTestScreen::Judge()
         switch (selectData.surface)
         {
         case Cube::SURFACE::SURFACE_TOP:
-            cube[selectData.x]
+            //cube[selectData.x]
         default:
             break;
         }
     }
 }
 
-bool Yoko() {
-    if()
-    return true;
+void ModelTestScreen::RotateCamera() {
+    //カメラ(後々実装：デバッグ)
+
+    bool moveFlag = false;
+    //ビューモードの場合、移動を許可
+    if (mode == MODE_VIEW) {
+        //左クリック中にドラッグで移動する(仮)
+        if (Input::IsMouseButton(0)) {
+            //camTra.rotate_.y += Input::GetMouseMove().x * AT_RATIO;
+            //camTra.rotate_.x += Input::GetMouseMove().y * AT_RATIO;
+            rotSpdY = Input::GetMouseMove().x * AT_RATIO;   //マウスx移動量でy軸回転
+            rotSpdX = Input::GetMouseMove().y * AT_RATIO;   //マウスy移動量でx軸回転
+            moveFlag = true;
+        }
+    }
+
+    //カメラ移動しなかったら速度減少
+    if (!moveFlag) {
+        //各速度が0でない場合割合減少 一定以下で0にする
+        if (rotSpdX != DEFAULT_SPEED) {
+            rotSpdX /= DC_RATIO;
+            if (std::abs(rotSpdX) < TH_ZEROSPEED)rotSpdX = DEFAULT_SPEED;
+        }
+        if (rotSpdY != DEFAULT_SPEED) {
+            rotSpdY /= DC_RATIO;
+            if (std::abs(rotSpdY) < TH_ZEROSPEED)rotSpdY = DEFAULT_SPEED;
+        }
+    }
+    //固定値減少 過去のカメラの対象の滑らかな移動をするコードから流用したがカメラ回転だと思った挙動にならないため没
+    //if (rotSpdX > 0) {
+    //    rotSpdX -= decSpd;
+    //    if (rotSpdX < 0)rotSpdX = 0;
+    //}
+    //else if (rotSpdX < 0) {
+    //    rotSpdX += decSpd;
+    //    if (rotSpdX > 0)rotSpdX = 0;
+    //}
+    //if (rotSpdY > 0) {
+    //    rotSpdY -= decSpd;
+    //    if (rotSpdY < 0)rotSpdY = 0;
+    //}
+    //else if (rotSpdY < 0) {
+    //    rotSpdY += decSpd;
+    //    if (rotSpdY > 0)rotSpdY = 0;
+    //}
+
+    //回転情報に加算
+    camTra.rotate_.y += rotSpdY;
+    camTra.rotate_.x += rotSpdX;
+
+    //範囲内処理(y軸は制限ないが∞に回転されて値あふれても困るのでコンバート 直接代入にすると一瞬固まるため加減する)
+    camTra.rotate_.x = std::clamp(camTra.rotate_.x, MIN_CAM_ROTATE_X, MAX_CAM_ROTATE_X);
+    if (camTra.rotate_.y > LIMIT_CAM_ROTATE_Y)camTra.rotate_.y -= LIMIT_CAM_ROTATE_Y;
+    if (camTra.rotate_.y > -LIMIT_CAM_ROTATE_Y)camTra.rotate_.y += LIMIT_CAM_ROTATE_Y;
+
+    XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(camTra.rotate_.y));   //Y軸でY回転量分回転させる行列
+    XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(camTra.rotate_.x));   //X軸でX回転量分回転させる行列
+
+    //カメラ設定 位置->対象の後方
+    XMVECTOR vCam = { 0,0,-CAM_DISTANCE,0 };                  //距離指定
+    vCam = XMVector3TransformCoord(vCam, mRotX * mRotY);    //変形:回転
+    Camera::SetPosition(vCam);            //セット
+
+    /*
+    ・移動系は対象が0, 0, 0で固定なので書かなくていい
+    ・対象との距離も今回は変える必要がまったくないので実装しない
+    */
 }
-bool Tate();
-bool Naname() { return true; }
+
+void ModelTestScreen::FinishCamera()
+{
+    //doonce作ってカメラ回転さしたいね
+    Transform toTra;
+    toTra.rotate_.x 
+}
+//bool Yoko() {
+//    if()
+//    return true;
+//}
+//bool Tate();
+//bool Naname() { return true; }
 /*
 回転トリガー時、回転方向と回転列を指定し、回転フラグを有効化
 回転フラグが有効化されたら、回転方向と回転列に従い、回転　　      ※回転には回転前変形情報と回転後変形情報を用いる

@@ -50,13 +50,13 @@ void Cube::Draw()
     transform_.rotate_ = { 0,0,0 };
     Model::SetTransform(hModelCube, transform_);
     Model::Draw(hModelCube);
-    for (SURFACE surface = static_cast<SURFACE>(0); surface < SURFACE_MAX; static_cast<SURFACE>(surface+1)) {
-        if (cubeData_[surface] != MARK_BLANK) {
-            transform_.rotate_ = Surface2Rotate(surface);
-            Model::SetTransform(hModelMark[cubeData_[surface]], transform_);
-            Model::Draw(hModelMark[cubeData_[surface]]);
-        }
-    }
+    //for (SURFACE surface = static_cast<SURFACE>(0); surface < SURFACE_MAX; static_cast<SURFACE>(surface+1)) {
+    //    if (cubeData_[surface] != MARK_BLANK) {
+    //        transform_.rotate_ = Surface2Rotate(surface);
+    //        Model::SetTransform(hModelMark[cubeData_[surface]], transform_);
+    //        Model::Draw(hModelMark[cubeData_[surface]]);
+    //    }
+    //}
 }
 
 //ŠJ•ú
