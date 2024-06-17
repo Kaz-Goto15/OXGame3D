@@ -271,6 +271,7 @@
     <ClCompile Include="ModelTestScreen.cpp">
       <Filter>C_Scene/Screen</Filter>
     </ClCompile>
+    <ClCompile Include="CubeSelectIndicator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -476,6 +477,7 @@
     <ClInclude Include="ModelLoader.h">
       <Filter>01Engine\ResourceManager\Model</Filter>
     </ClInclude>
+    <ClInclude Include="CubeSelectIndicator.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

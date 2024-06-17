@@ -30,6 +30,7 @@ void ModelTestScreen::Initialize()
     cubeNextTra.resize(3, vector<vector<Transform>>(3, vector<Transform>(3)));
     cubePrevTra.resize(3, vector<vector<Transform>>(3, vector<Transform>(3)));
 
+    //キューブ生成
     for (auto& cx : cube) {
         for (auto& cy : cx) {
             for (auto& cz : cy) {
@@ -37,6 +38,8 @@ void ModelTestScreen::Initialize()
             }
         }
     }
+
+    //キューブ座標指定
     for (int x = 0; x < cube.size();x++) {
         for (int y = 0; y < cube[0].size();y++) {
             for (int z = 0; z < cube[0][0].size();z++) {
@@ -58,7 +61,7 @@ void ModelTestScreen::Update()
     mode = MODE_VIEW;   //debug
 
     RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
-
+    
 
     //もどる(デバッグ)
     if (Input::IsKeyDown(DIK_P)) {
@@ -181,6 +184,12 @@ void ModelTestScreen::UpdateStr()
 {
     using std::to_string;
     debugStr[0] = "scrH:" + to_string(SystemConfig::windowHeight) + "scrW:" + to_string(SystemConfig::windowWidth);
+    switch (mode)
+    {
+    case ModelTestScreen::MODE_SET:     debugStr[1] = "SET";    break;
+    case ModelTestScreen::MODE_ROTATE:  debugStr[2] = "ROTATE";    break;
+    case ModelTestScreen::MODE_VIEW:    debugStr[3] = "VIEW";    break;
+    }
 }
 
 void ModelTestScreen::CalcCubeTrans()
@@ -341,8 +350,6 @@ void ModelTestScreen::RotateCamera() {
     if (mode == MODE_VIEW) {
         //左クリック中にドラッグで移動する(仮)
         if (Input::IsMouseButton(0)) {
-            //camTra.rotate_.y += Input::GetMouseMove().x * AT_RATIO;
-            //camTra.rotate_.x += Input::GetMouseMove().y * AT_RATIO;
             rotSpdY = Input::GetMouseMove().x * AT_RATIO;   //マウスx移動量でy軸回転
             rotSpdX = Input::GetMouseMove().y * AT_RATIO;   //マウスy移動量でx軸回転
             moveFlag = true;
@@ -406,7 +413,7 @@ void ModelTestScreen::FinishCamera()
 {
     //doonce作ってカメラ回転さしたいね
     Transform toTra;
-    toTra.rotate_.x 
+    //toTra.rotate_.x 
 }
 //bool Yoko() {
 //    if()

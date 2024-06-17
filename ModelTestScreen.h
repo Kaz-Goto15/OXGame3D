@@ -14,12 +14,9 @@ class ModelTestScreen : public Screen
     int hImgBG;
     int hModel;
 
-    DebugText* debugtext;
-    std::string debugStr[20];
     vector<vector<vector<Cube*>>> cube;
     vector<vector<vector<Transform>>> cubePrevTra;
     vector<vector<vector<Transform>>> cubeNextTra;
-    void UpdateStr();
 
     enum ROTATE_DIR {
         FRONT,
@@ -73,6 +70,11 @@ class ModelTestScreen : public Screen
     const int LIMIT_CAM_ROTATE_Y = 360;         //カメラY回転の角度制限(オーバーフロー回避)
     const int DEFAULT_SPEED = 0;                //カメラのデフォルト速度(0)
 
+    //デバッグテキスト
+    std::string debugStr[20];
+    DebugText* debugtext;
+    void UpdateStr();
+
     /// <summary>
     /// キューブ回転のトリガー 初期化処理とフラグ管理
     /// 
@@ -105,7 +107,7 @@ WASD:上下左右移動/回転方向切替
 E:(ROTATEのみ)軸切替
 右クリック:VIEWへ移行
 VIEW
-SET,ROTATEで使うキー:前回モードへ移行
+SET,ROTATEで使うキー:前回モードへ移行 Spaceでいいんじゃね
 右クリック押下中にドラッグ:視点回転
 
 

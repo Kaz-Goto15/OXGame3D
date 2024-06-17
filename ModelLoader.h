@@ -13,6 +13,7 @@ namespace ModelLoader {
 		COLOR_YELLOW,
 		MARK_O,
 		MARK_X,
+		CubeSelectIndicator,
 		MAX,
 	};
 	void Init();

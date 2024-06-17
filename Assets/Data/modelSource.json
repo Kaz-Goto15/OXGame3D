@@ -56,6 +56,17 @@
     {
       "name": "MARK_X",
       "file": "mark_x.fbx"
+    },
+    {
+      "name": "CubeSelectIndicator",
+      "file": "cubeindicator.fbx",
+      "anim": [
+        {
+          "name": "green",
+          "start": 1,
+          "end": 89
+        }
+      ]
     }
   ]
 }

@@ -144,6 +144,7 @@
     <ClCompile Include="ControlSlider.cpp" />
     <ClCompile Include="CreditScreen.cpp" />
     <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="CubeSelectIndicator.cpp" />
     <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="EaseScene.cpp" />
     <ClCompile Include="Easing.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="ControlSlider.h" />
     <ClInclude Include="CreditScreen.h" />
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="CubeSelectIndicator.h" />
     <ClInclude Include="DebugText.h" />
     <ClInclude Include="EaseScene.h" />
     <ClInclude Include="Easing.h" />
