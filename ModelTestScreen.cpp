@@ -7,7 +7,7 @@
 #include "Easing.h"
 #include "./Engine/Image.h"
 #include <algorithm>
-
+#include "CubeSelectIndicator.h"
 
 //コンストラクタ
 ModelTestScreen::ModelTestScreen(GameObject* parent) :
@@ -48,6 +48,11 @@ void ModelTestScreen::Initialize()
             }
         }
     }
+
+    //インジケーター生成・座標指定
+    indicator = Instantiate<CubeSelectIndicator>(this);
+    indicator->SetPosition(selectData.x - 1, selectData.y - 1, selectData.z - 1);
+    indicator->SetSurface(selectData.surface);
 
     debugtext = Instantiate<DebugText>(this);
     for (int i = 0; i < 20; i++) {

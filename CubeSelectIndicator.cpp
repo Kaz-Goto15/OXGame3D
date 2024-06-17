@@ -54,4 +54,5 @@ void CubeSelectIndicator::Release()
 
 void CubeSelectIndicator::SetSurface(Cube::SURFACE surface)
 {
+    transform_.rotate_ = Surface2Rotate(surface);
 }

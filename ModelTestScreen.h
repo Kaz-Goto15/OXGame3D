@@ -5,6 +5,7 @@
 #include "Screen.h"
 #include "Cube.h"
 class Cube;
+class CubeSelectIndicator;
 class DebugText;
 
 using std::vector;
@@ -17,7 +18,7 @@ class ModelTestScreen : public Screen
     vector<vector<vector<Cube*>>> cube;
     vector<vector<vector<Transform>>> cubePrevTra;
     vector<vector<vector<Transform>>> cubeNextTra;
-
+    CubeSelectIndicator* indicator;
     enum ROTATE_DIR {
         FRONT,
         BACK,
@@ -41,8 +42,8 @@ class ModelTestScreen : public Screen
         int x, y, z;
         Cube::SURFACE surface;
         SelectData() {
-            x = 0;
-            y = 0;
+            x = 1;
+            y = 1;
             z = 0;
             surface = Cube::SURFACE::SURFACE_FRONT;
         }
