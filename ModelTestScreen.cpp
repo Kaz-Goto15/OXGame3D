@@ -68,7 +68,7 @@ void ModelTestScreen::Update()
     mode = MODE_VIEW;   //debug
 
     RotateCamera();     //ƒJƒƒ‰‚Ìˆ— MODE_VIEW‚Å‚Ì•ªŠò‚à“à•ï
-    
+    MoveSelect();
 
     //‚à‚Ç‚é(ƒfƒoƒbƒO)
     if (Input::IsKeyDown(DIK_P)) {
@@ -106,50 +106,7 @@ void ModelTestScreen::Update()
             }
             else if (Input::IsKeyDown(DIK_W)) {
                 using SURFACE = Cube::SURFACE;
-                switch (selectData.surface)
-                {
-                case Cube::SURFACE_TOP:
-                    selectData.z++;
-                    if (selectData.z > 3) {
-                        selectData.z = 3;
-                        selectData.surface = SURFACE::SURFACE_BOTTOM;
-                    }
-                    break;
-                case Cube::SURFACE_BOTTOM:
-                    break;
-                case Cube::SURFACE_LEFT:
-                    selectData.y--;
-                    if (selectData.y < 0) {
-                        selectData.y = 0;
-                        selectData.surface = SURFACE::SURFACE_TOP;
-                    }
-                    break;
-                case Cube::SURFACE_RIGHT:
-                    selectData.y--;
-                    if (selectData.y < 0) {
-                        selectData.y = 0;
-                        selectData.surface = SURFACE::SURFACE_TOP;
-                    }
-                    break;
-                case Cube::SURFACE_FRONT:
-                    selectData.y--;
-                    if (selectData.y < 0) {
-                        selectData.y = 0;
-                        selectData.surface = SURFACE::SURFACE_TOP;
-                    }
-                    break;
-                case Cube::SURFACE_BACK:
-                    selectData.y--;
-                    if (selectData.y < 0) {
-                        selectData.y = 0;
-                        selectData.surface = SURFACE::SURFACE_TOP;
-                    }
-                    break;
-                case Cube::SURFACE_MAX:
-                    break;
-                default:
-                    break;
-                }
+
                 selectData.y--;
                 if (selectData.y == -1) {
 
@@ -213,6 +170,7 @@ void ModelTestScreen::UpdateStr()
     debugStr[0] = "scrH:" + to_string(SystemConfig::windowHeight) + "scrW:" + to_string(SystemConfig::windowWidth);
     debugStr[1] = "mode:" + (std::string)NAMEOF_ENUM(mode);
     debugStr[2] = "select:" + std::to_string(selectData.x) + "," + std::to_string(selectData.y) + "," + std::to_string(selectData.z) + "," + (std::string)NAMEOF_ENUM(selectData.surface);
+    debugStr[3] = "camTra:" + std::to_string(camTra.rotate_.x) + ", " + std::to_string(camTra.rotate_.y);
 }
 
 void ModelTestScreen::CalcCubeTrans()
@@ -281,68 +239,125 @@ void ModelTestScreen::CalcCubeTrans()
     }
 }
 
-void MoveSelectParts(DIR dir,Cube::SURFACE ) {
+void ModelTestScreen::MoveSelectParts(DIR dir, bool plus, Cube::SURFACE outSurface) {
 
+    int* target = nullptr;
+    switch (dir)
+    {
+    case ModelTestScreen::X:target = &selectData.x; break;
+    case ModelTestScreen::Y:target = &selectData.y; break;
+    case ModelTestScreen::Z:target = &selectData.z; break;
+    }
+
+    if (plus) {
+        *target+= 1;
+        if (*target >= PIECES) {
+            *target = PIECES - 1;
+            selectData.surface = outSurface;
+        }
+    }
+    else {
+        *target-= 1;
+        if (*target < 0) {
+            *target = 0;
+            selectData.surface = outSurface;
+        }
+    }
+    indicator->SetPosition(selectData.x - 1, selectData.y - 1, selectData.z - 1);
+    indicator->SetSurface(selectData.surface);
 }
 void ModelTestScreen::MoveSelect()
 {
+    using SURFACE = Cube::SURFACE;
+    vector<int> keys = {DIK_W,DIK_A,DIK_S,DIK_D};
+
     switch (selectData.surface)
     {
-    case Cube::SURFACE_TOP:
+    case SURFACE::SURFACE_TOP:
+        if (Between(camTra.rotate_.y, -45.0f, 45.0f)) {}
+        else if (Between(camTra.rotate_.y, 45.0f, 135.0f)) {
+            //WASD‚ðASDW‚É
+            int tmp = keys.front();
+            keys.erase(keys.begin());
+            keys.push_back(tmp);
+        }
+        else if (Between(camTra.rotate_.y, -135.0f, -45.0f)) {
+            //WASD‚ðDWAS‚É
+            int tmp = keys.back();
+            keys.pop_back();
+            keys.insert(keys.begin(), tmp);
+        }
+        else {
+            //WASD‚ðSDWA‚É
+            for (int i = 0; i < 2; i++) {
+                int tmp = keys.back();
+                keys.pop_back();
+                keys.insert(keys.begin(), tmp);
+            }
+        }
+        if (Input::IsKeyDown(keys[0]))  MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
+        if (Input::IsKeyDown(keys[1]))  MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
+        if (Input::IsKeyDown(keys[2]))  MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
+        if (Input::IsKeyDown(keys[3]))  MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
         break;
-    case Cube::SURFACE_BOTTOM:
+    case SURFACE::SURFACE_BOTTOM:
+        if (Between(camTra.rotate_.y, -45.0f, 45.0f)) {}
+        else if (Between(camTra.rotate_.y, 45.0f, 135.0f)) {
+            //WASD‚ðDWAS‚É
+            int tmp = keys.back();
+            keys.pop_back();
+            keys.insert(keys.begin(), tmp);
+        }
+        else if (Between(camTra.rotate_.y, -135.0f, -45.0f)) {
+            //WASD‚ðASDW‚É
+            int tmp = keys.front();
+            keys.erase(keys.begin());
+            keys.push_back(tmp);
+        }
+        else {
+            //WASD‚ðSDWA‚É
+            for (int i = 0; i < 2; i++) {
+                int tmp = keys.back();
+                keys.pop_back();
+                keys.insert(keys.begin(), tmp);
+            }
+        }
+
+        if (Input::IsKeyDown(keys[0]))  MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
+        if (Input::IsKeyDown(keys[1]))  MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
+        if (Input::IsKeyDown(keys[2]))  MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
+        if (Input::IsKeyDown(keys[3]))  MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
         break;
-    case Cube::SURFACE_LEFT:
-        if (Input::IsKeyDown(DIK_A)) {
-            selectData.z++;
-            if (selectData.z > 2) {
-                selectData.z = 2;
-                selectData.surface = Cube::SURFACE_BACK;
-            }
-        }
-        if (Input::IsKeyDown(DIK_S)) {
-            selectData.z--;
-            if (selectData.z < 0) {
-                selectData.z = 0;
-                selectData.surface = Cube::SURFACE_FRONT;
-            }
-        }
-    case Cube::SURFACE_RIGHT:
-        if (Input::IsKeyDown(DIK_S)) {
-            selectData.z++;
-            if (selectData.z > 2) {
-                selectData.z = 2;
-                selectData.surface = Cube::SURFACE_BACK;
-            }
-        }
-        if (Input::IsKeyDown(DIK_A)) {
-            selectData.z--;
-            if (selectData.z < 0) {
-                selectData.z = 0;
-                selectData.surface = Cube::SURFACE_FRONT;
-            }
-        }
-    case Cube::SURFACE_FRONT:
-    case Cube::SURFACE_BACK:
-        if (Input::IsKeyDown(DIK_W)) {
-            selectData.y--;
-            if (selectData.y < 0) {
-                selectData.y = 0;
-                selectData.surface = Cube::SURFACE_TOP;
-            }
-        }
-        if (Input::IsKeyDown(DIK_S)) {
-            selectData.y++;
-            if (selectData.y >= 3) {
-                selectData.y = 2;
-                selectData.surface = Cube::SURFACE_BOTTOM;
-            }
-        }
+    case SURFACE::SURFACE_LEFT:
+        if (Input::IsKeyDown(DIK_A))    MoveSelectParts(Z, true,  SURFACE::SURFACE_BACK);
+        if (Input::IsKeyDown(DIK_D))    MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
+        if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true,  SURFACE::SURFACE_TOP);
+        if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false,  SURFACE::SURFACE_BOTTOM);
         break;
-    default:
+    case SURFACE::SURFACE_RIGHT:
+        if (Input::IsKeyDown(DIK_A))    MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
+        if (Input::IsKeyDown(DIK_D))    MoveSelectParts(Z, true,  SURFACE::SURFACE_BACK);
+        if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true,  SURFACE::SURFACE_TOP);
+        if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false,  SURFACE::SURFACE_BOTTOM);
+        break;
+    case SURFACE::SURFACE_FRONT:
+        if (Input::IsKeyDown(DIK_A))    MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
+        if (Input::IsKeyDown(DIK_D))    MoveSelectParts(X, true,  SURFACE::SURFACE_RIGHT);
+        if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true,  SURFACE::SURFACE_TOP);
+        if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false, SURFACE::SURFACE_BOTTOM);
+        break;
+    case SURFACE::SURFACE_BACK:
+        if (Input::IsKeyDown(DIK_A))    MoveSelectParts(X, true,  SURFACE::SURFACE_RIGHT);
+        if (Input::IsKeyDown(DIK_D))    MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
+        if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true,  SURFACE::SURFACE_TOP);
+        if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false, SURFACE::SURFACE_BOTTOM);
         break;
     }
 
+}
+
+void ModelTestScreen::MoveIndicator()
+{
 }
 
 //•`‰æ
@@ -479,8 +494,12 @@ void ModelTestScreen::RotateCamera() {
 
     //”ÍˆÍ“àˆ—(yŽ²‚Í§ŒÀ‚È‚¢‚ª‡‚É‰ñ“]‚³‚ê‚Ä’l‚ ‚Ó‚ê‚Ä‚à¢‚é‚Ì‚ÅƒRƒ“ƒo[ƒg ’¼Ú‘ã“ü‚É‚·‚é‚ÆˆêuŒÅ‚Ü‚é‚½‚ß‰ÁŒ¸‚·‚é)
     camTra.rotate_.x = std::clamp(camTra.rotate_.x, MIN_CAM_ROTATE_X, MAX_CAM_ROTATE_X);
-    if (camTra.rotate_.y > LIMIT_CAM_ROTATE_Y)camTra.rotate_.y -= LIMIT_CAM_ROTATE_Y;
-    if (camTra.rotate_.y > -LIMIT_CAM_ROTATE_Y)camTra.rotate_.y += LIMIT_CAM_ROTATE_Y;
+    if (camTra.rotate_.y > LIMIT_CAM_ROTATE_Y) {
+        camTra.rotate_.y -= 2 * LIMIT_CAM_ROTATE_Y;
+    }
+    if (camTra.rotate_.y < -LIMIT_CAM_ROTATE_Y) {
+        camTra.rotate_.y += 2 * LIMIT_CAM_ROTATE_Y;
+    }
 
     XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(camTra.rotate_.y));   //YŽ²‚ÅY‰ñ“]—Ê•ª‰ñ“]‚³‚¹‚és—ñ
     XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(camTra.rotate_.x));   //XŽ²‚ÅX‰ñ“]—Ê•ª‰ñ“]‚³‚¹‚és—ñ
@@ -556,4 +575,9 @@ https://cpprefjp.github.io/lang/cpp11/variadic_templates.html
 YŽ²‚Å•Ï‚í‚éˆÚ“®
 ã
 WS‚ªZ+-AAD‚ªX-+
+
+À•WŒn‚ª‚È‚ñ‚Æ
+ +
+- +
+ -
 */
