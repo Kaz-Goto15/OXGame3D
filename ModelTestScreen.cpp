@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "CubeSelectIndicator.h"
 
+#include "./Include/nameof.hpp"
 //コンストラクタ
 ModelTestScreen::ModelTestScreen(GameObject* parent) :
     Screen(parent, "ModelTestScreen"),
@@ -54,6 +55,7 @@ void ModelTestScreen::Initialize()
     indicator->SetPosition(selectData.x - 1, selectData.y - 1, selectData.z - 1);
     indicator->SetSurface(selectData.surface);
 
+    //デバッグ
     debugtext = Instantiate<DebugText>(this);
     for (int i = 0; i < 20; i++) {
         debugtext->AddStrPtr(&debugStr[i]);
@@ -116,12 +118,32 @@ void ModelTestScreen::Update()
                 case Cube::SURFACE_BOTTOM:
                     break;
                 case Cube::SURFACE_LEFT:
+                    selectData.y--;
+                    if (selectData.y < 0) {
+                        selectData.y = 0;
+                        selectData.surface = SURFACE::SURFACE_TOP;
+                    }
                     break;
                 case Cube::SURFACE_RIGHT:
+                    selectData.y--;
+                    if (selectData.y < 0) {
+                        selectData.y = 0;
+                        selectData.surface = SURFACE::SURFACE_TOP;
+                    }
                     break;
                 case Cube::SURFACE_FRONT:
+                    selectData.y--;
+                    if (selectData.y < 0) {
+                        selectData.y = 0;
+                        selectData.surface = SURFACE::SURFACE_TOP;
+                    }
                     break;
                 case Cube::SURFACE_BACK:
+                    selectData.y--;
+                    if (selectData.y < 0) {
+                        selectData.y = 0;
+                        selectData.surface = SURFACE::SURFACE_TOP;
+                    }
                     break;
                 case Cube::SURFACE_MAX:
                     break;
@@ -189,12 +211,8 @@ void ModelTestScreen::UpdateStr()
 {
     using std::to_string;
     debugStr[0] = "scrH:" + to_string(SystemConfig::windowHeight) + "scrW:" + to_string(SystemConfig::windowWidth);
-    switch (mode)
-    {
-    case ModelTestScreen::MODE_SET:     debugStr[1] = "SET";    break;
-    case ModelTestScreen::MODE_ROTATE:  debugStr[2] = "ROTATE";    break;
-    case ModelTestScreen::MODE_VIEW:    debugStr[3] = "VIEW";    break;
-    }
+    debugStr[1] = "mode:" + (std::string)NAMEOF_ENUM(mode);
+    debugStr[2] = "select:" + std::to_string(selectData.x) + "," + std::to_string(selectData.y) + "," + std::to_string(selectData.z) + "," + (std::string)NAMEOF_ENUM(selectData.surface);
 }
 
 void ModelTestScreen::CalcCubeTrans()
@@ -261,6 +279,70 @@ void ModelTestScreen::CalcCubeTrans()
             break;
         }
     }
+}
+
+void MoveSelectParts(DIR dir,Cube::SURFACE ) {
+
+}
+void ModelTestScreen::MoveSelect()
+{
+    switch (selectData.surface)
+    {
+    case Cube::SURFACE_TOP:
+        break;
+    case Cube::SURFACE_BOTTOM:
+        break;
+    case Cube::SURFACE_LEFT:
+        if (Input::IsKeyDown(DIK_A)) {
+            selectData.z++;
+            if (selectData.z > 2) {
+                selectData.z = 2;
+                selectData.surface = Cube::SURFACE_BACK;
+            }
+        }
+        if (Input::IsKeyDown(DIK_S)) {
+            selectData.z--;
+            if (selectData.z < 0) {
+                selectData.z = 0;
+                selectData.surface = Cube::SURFACE_FRONT;
+            }
+        }
+    case Cube::SURFACE_RIGHT:
+        if (Input::IsKeyDown(DIK_S)) {
+            selectData.z++;
+            if (selectData.z > 2) {
+                selectData.z = 2;
+                selectData.surface = Cube::SURFACE_BACK;
+            }
+        }
+        if (Input::IsKeyDown(DIK_A)) {
+            selectData.z--;
+            if (selectData.z < 0) {
+                selectData.z = 0;
+                selectData.surface = Cube::SURFACE_FRONT;
+            }
+        }
+    case Cube::SURFACE_FRONT:
+    case Cube::SURFACE_BACK:
+        if (Input::IsKeyDown(DIK_W)) {
+            selectData.y--;
+            if (selectData.y < 0) {
+                selectData.y = 0;
+                selectData.surface = Cube::SURFACE_TOP;
+            }
+        }
+        if (Input::IsKeyDown(DIK_S)) {
+            selectData.y++;
+            if (selectData.y >= 3) {
+                selectData.y = 2;
+                selectData.surface = Cube::SURFACE_BOTTOM;
+            }
+        }
+        break;
+    default:
+        break;
+    }
+
 }
 
 //描画
@@ -462,4 +544,16 @@ void ModelTestScreen::FinishCamera()
 さらに、右上に上がるか右下に下がるかを求める必要もあり、
 上はx,z=0,0 2,2で右上 x,z=0,2 2,0で右下
 https://cpprefjp.github.io/lang/cpp11/variadic_templates.html
+
+移動問題
+カメラにかかわらない移動
+前後左右のWSはY-+、範囲外で上下へSURFACE転換で良い
+前のADはX-+、範囲外で左右
+右のADはZ-+、範囲外で前後
+左のADはZ+-、範囲外で後前
+後のADはX+-、範囲外で右左
+カメラにかかわる移動
+Y軸で変わる移動
+上
+WSがZ+-、ADがX-+
 */

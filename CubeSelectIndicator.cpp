@@ -11,8 +11,8 @@ XMFLOAT3 CubeSelectIndicator::Surface2Rotate(Cube::SURFACE surface)
     case Cube::SURFACE_BOTTOM:return { 180,0,0 };
     case Cube::SURFACE_LEFT:    return { 0,0,90 };
     case Cube::SURFACE_RIGHT:   return { 0,0,-90 };
-    case Cube::SURFACE_FRONT:   return { 90,0,0 };
-    case Cube::SURFACE_BACK:    return { -90,0,0 };
+    case Cube::SURFACE_FRONT:   return { -90,0,0 };
+    case Cube::SURFACE_BACK:    return { 90,0,0 };
     }
 }
 
@@ -32,7 +32,7 @@ CubeSelectIndicator::~CubeSelectIndicator()
 void CubeSelectIndicator::Initialize()
 {
     hModel = ModelLoader::Load(ModelLoader::CubeSelectIndicator);
-    ModelLoader::ChangeAnim(hModel, "green");
+    //ModelLoader::ChangeAnim(hModel, "green");
 }
 
 //çXêV

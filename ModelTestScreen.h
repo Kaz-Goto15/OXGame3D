@@ -57,6 +57,13 @@ class ModelTestScreen : public Screen
     int rotateNo;
     int rotTime = 0; 
 
+    //移動関連
+    enum DIR {
+        X,
+        Y,
+        Z
+    };
+    void MoveSelect();
     //カメラ関連
     Transform camTra;                       //カメラ変形情報
     float rotSpdX, rotSpdY;                 //カメラ回転速度

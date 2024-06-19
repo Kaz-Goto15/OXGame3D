@@ -251,7 +251,7 @@ namespace Direct3D
 			D3D11_RASTERIZER_DESC rdc = {};
 			rdc.CullMode = D3D11_CULL_BACK;
 			rdc.FillMode = D3D11_FILL_SOLID;
-			rdc.FrontCounterClockwise = FALSE;
+			rdc.FrontCounterClockwise = TRUE;
 			pDevice_->CreateRasterizerState(&rdc, &shaderBundle[SHADER_3D].pRasterizerState);
 		}
 

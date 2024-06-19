@@ -1,7 +1,7 @@
 #include "Cube.h"
 #include "./ModelLoader.h"
 #include "Engine/Model.h"
-
+#include "Engine/Input.h"
 XMFLOAT3 Cube::Surface2Rotate(SURFACE surface)
 {
     //モデルで上方向(0,1,0)に配置する
@@ -49,8 +49,8 @@ void Cube::Draw()
     //キューブは立方体なので回転しても影響を受けないが親オブジェクトの回転でワンチャンバグるから一番最初に代入
     transform_.rotate_ = { 0,0,0 };
     Model::SetTransform(hModelCube, transform_);
-    //Model::Draw(hModelCube);
-    //for (SURFACE surface = static_cast<SURFACE>(0); surface < SURFACE_MAX; static_cast<SURFACE>(surface+1)) {
+    if(Input::IsKey(DIK_3))
+    Model::Draw(hModelCube);
     //    if (cubeData_[surface] != MARK_BLANK) {
     //        transform_.rotate_ = Surface2Rotate(surface);
     //        Model::SetTransform(hModelMark[cubeData_[surface]], transform_);
