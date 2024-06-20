@@ -272,6 +272,7 @@
       <Filter>C_Scene/Screen</Filter>
     </ClCompile>
     <ClCompile Include="CubeSelectIndicator.cpp" />
+    <ClCompile Include="Include\EffekseeLib\EffekseerVFX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -478,6 +479,7 @@
       <Filter>01Engine\ResourceManager\Model</Filter>
     </ClInclude>
     <ClInclude Include="CubeSelectIndicator.h" />
+    <ClInclude Include="Include\EffekseeLib\EffekseerVFX.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

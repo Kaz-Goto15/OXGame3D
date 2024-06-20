@@ -27,9 +27,9 @@ ModelTestScreen::~ModelTestScreen()
 void ModelTestScreen::Initialize()
 {
     hImgBG = Image::Load("Background\\bg_game.png");
-    cube.resize(3, vector<vector<Cube*>>(3, vector<Cube*>(3, nullptr)));
-    cubeNextTra.resize(3, vector<vector<Transform>>(3, vector<Transform>(3)));
-    cubePrevTra.resize(3, vector<vector<Transform>>(3, vector<Transform>(3)));
+    cube.resize(PIECES, vector<vector<Cube*>>(PIECES, vector<Cube*>(PIECES, nullptr)));
+    cubeNextTra.resize(PIECES, vector<vector<Transform>>(PIECES, vector<Transform>(PIECES)));
+    cubePrevTra.resize(PIECES, vector<vector<Transform>>(PIECES, vector<Transform>(PIECES)));
 
     //キューブ生成
     for (auto& cx : cube) {
@@ -60,12 +60,21 @@ void ModelTestScreen::Initialize()
     for (int i = 0; i < 20; i++) {
         debugtext->AddStrPtr(&debugStr[i]);
     }
+
+    //エフェクシアのテスト
+    EFFEKSEERLIB::gEfk->AddEffect("lazer", "Effect\\laserrr.efk");
+    EFFEKSEERLIB::EFKTransform t;
+    DirectX::XMStoreFloat4x4(&(t.matrix), transform_.GetWorldMatrix());
+    t.isLoop = true;
+    t.maxFrame = 120;
+    t.speed = 1.0;
+    mt = EFFEKSEERLIB::gEfk->Play("lazer", t);
 }
 
 //更新
 void ModelTestScreen::Update()
 {
-    mode = MODE_VIEW;   //debug
+    DirectX::XMStoreFloat4x4(&(mt->matrix), this->GetWorldMatrix());
 
     RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
     MoveSelect();
@@ -73,6 +82,11 @@ void ModelTestScreen::Update()
     //もどる(デバッグ)
     if (Input::IsKeyDown(DIK_P)) {
         Prev();
+    }
+    if (Input::IsKeyDown(DIK_0)) {
+        if (mode == MODE_SET)mode = MODE_ROTATE;
+        else if (mode == MODE_ROTATE)mode = MODE_VIEW;
+        else if (mode == MODE_VIEW)mode = MODE_SET;
     }
     //操作状態がアイドルでなければ
     if (control != CONTROL_IDLE) {
@@ -167,10 +181,11 @@ void ModelTestScreen::Update()
 void ModelTestScreen::UpdateStr()
 {
     using std::to_string;
-    debugStr[0] = "scrH:" + to_string(SystemConfig::windowHeight) + "scrW:" + to_string(SystemConfig::windowWidth);
-    debugStr[1] = "mode:" + (std::string)NAMEOF_ENUM(mode);
-    debugStr[2] = "select:" + std::to_string(selectData.x) + "," + std::to_string(selectData.y) + "," + std::to_string(selectData.z) + "," + (std::string)NAMEOF_ENUM(selectData.surface);
-    debugStr[3] = "camTra:" + std::to_string(camTra.rotate_.x) + ", " + std::to_string(camTra.rotate_.y);
+    debugStr[0] = "";
+    debugStr[1] = "scrH:" + to_string(SystemConfig::windowHeight) + "scrW:" + to_string(SystemConfig::windowWidth);
+    debugStr[2] = "mode:" + (std::string)NAMEOF_ENUM(mode)+ "(Press '0' to change)";
+    debugStr[3] = "select:" + std::to_string(selectData.x) + "," + std::to_string(selectData.y) + "," + std::to_string(selectData.z) + "," + (std::string)NAMEOF_ENUM(selectData.surface);
+    debugStr[4] = "camTra:" + std::to_string(camTra.rotate_.x) + ", " + std::to_string(camTra.rotate_.y);
 }
 
 void ModelTestScreen::CalcCubeTrans()

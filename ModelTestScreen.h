@@ -4,6 +4,7 @@
 #include "Engine/GameObject.h"
 #include "Screen.h"
 #include "Cube.h"
+#include "./Include/EffekseeLib/EffekseerVFX.h"
 class Cube;
 class CubeSelectIndicator;
 class DebugText;
@@ -115,6 +116,7 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
+    std::shared_ptr<EFFEKSEERLIB::EFKTransform> mt;
 };
 
 /*

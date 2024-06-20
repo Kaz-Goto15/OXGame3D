@@ -488,3 +488,31 @@ Title:OXGame 3D
 　・○のみ ・両方
 ・回転後の回転
 　・有効/無効
+
+================================================
+【エフェクシア】
+エフェクトの補助ツール
+使用ヘッダに
+    #include "./Include/EffekseeLib/EffekseerVFX.h"
+    public:
+        std::shared_ptr<EFFEKSEERLIB::EFKTransform> mt;
+
+ソースに
+Initialize()内
+    EFFEKSEERLIB::gEfk->AddEffect("エフェクト名(任意)", "Effect\\〇〇〇.efk"); ※ファイル名は私の場合Assets/Effect/内にｍためEffetct\\をつける
+    EFFEKSEERLIB::EFKTransform t;
+    DirectX::XMStoreFloat4x4(&(t.matrix), transform_.GetWorldMatrix());
+    t.isLoop = true;    //ループするか
+    t.maxFrame = 120;   //最大フレーム指定
+    t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
+    mt = EFFEKSEERLIB::gEfk->Play("先述のエフェクト名", t);
+Update()内
+    DirectX::XMStoreFloat4x4(&(mt->matrix), this->GetWorldMatrix());    //これを記述するとこのオブジェクトの座標が変わるとエフェクトも動く
+エフェクトのエクスポート方法
+エディタでefkprojファイルを開く
+気に食わなければ速度を変えたりフレームを変える
+エクスポートしefkファイルを生成
+ModelとTextureをコピー(F2で使用アセットが見れるためそれだけ導入でもよい)
+
+(初期導入)
+libとincludeに追加、Mainにinitialize,update,draw,deltaTimeを追加する
