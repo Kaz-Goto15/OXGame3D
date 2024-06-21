@@ -60,21 +60,11 @@ void ModelTestScreen::Initialize()
     for (int i = 0; i < 20; i++) {
         debugtext->AddStrPtr(&debugStr[i]);
     }
-
-    //エフェクシアのテスト
-    EFFEKSEERLIB::gEfk->AddEffect("lazer", "Effect\\laserrr.efk");
-    EFFEKSEERLIB::EFKTransform t;
-    DirectX::XMStoreFloat4x4(&(t.matrix), transform_.GetWorldMatrix());
-    t.isLoop = true;
-    t.maxFrame = 120;
-    t.speed = 1.0;
-    mt = EFFEKSEERLIB::gEfk->Play("lazer", t);
 }
 
 //更新
 void ModelTestScreen::Update()
 {
-    DirectX::XMStoreFloat4x4(&(mt->matrix), this->GetWorldMatrix());
 
     RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
     MoveSelect();
@@ -88,6 +78,11 @@ void ModelTestScreen::Update()
         else if (mode == MODE_ROTATE)mode = MODE_VIEW;
         else if (mode == MODE_VIEW)mode = MODE_SET;
     }
+    if (Input::IsKeyDown(DIK_9)) {
+        if (control == CONTROL_IDLE)control = CONTROL_1P;
+        else if (control == CONTROL_1P)control = CONTROL_2P;
+        else if (control == CONTROL_2P)control = CONTROL_IDLE;
+    }
     //操作状態がアイドルでなければ
     if (control != CONTROL_IDLE) {
         //現在のモードで処理
@@ -98,7 +93,7 @@ void ModelTestScreen::Update()
             //マーク設置
             if (Input::IsKeyDown(DIK_SPACE)) {
                 //選択箇所が空白のときに設置する
-                if (cube[selectData.x][selectData.y][selectData.x]->GetMark(selectData.surface) == Cube::MARK_BLANK) {
+                if (cube[selectData.x][selectData.y][selectData.z]->GetMark(selectData.surface) == Cube::MARK_BLANK) {
                     Cube::MARK mark;
 
                     if (control == CONTROL_1P) {
@@ -108,30 +103,16 @@ void ModelTestScreen::Update()
                         mark = Cube::MARK::MARK_X;
                     }
 
-                    cube[selectData.x][selectData.y][selectData.x]->SetMark(selectData.surface, mark);
+                    cube[selectData.x][selectData.y][selectData.z]->SetMark(selectData.surface, mark);
                     TurnEnd();
                 }
                 else {
                     //空白でないときのアニメーションがあればここに書く 選択を表す半透明モデルをずらすなど
+                    //Audio::Play("select_fail.wav");
                 }
             }
             else if (Input::IsKeyDown(DIK_LSHIFT)) {
                 mode = MODE_ROTATE;
-            }
-            else if (Input::IsKeyDown(DIK_W)) {
-                using SURFACE = Cube::SURFACE;
-
-                selectData.y--;
-                if (selectData.y == -1) {
-
-                }
-                //全てy-1になるときである
-                //前で上に行くとき：上に
-                //上で上に行くとき：後に
-                //後で上に行くとき：下に
-                //下で上に行くとき：前に
-                //左で上に行くとき：上に
-                //右で上に行くとき：上に
             }
             break;
         case ModelTestScreen::MODE_ROTATE:
@@ -143,45 +124,45 @@ void ModelTestScreen::Update()
         }
     }
 
-    if (!isMoving) {
-        if (Input::IsKeyDown(DIK_R)) {
-            transform_.rotate_.z++;
-        }
-        //kaiten
-        int column = 0;
-        if (Input::IsKeyDown(DIK_LSHIFT)) {
-            if (Input::IsKey(DIK_LALT))column = 2;
-            else column = 1;
-        }
-        if (Input::IsKeyDown(DIK_Q)) {
-            RotateCube(CCW, column, 45);
-        }
-        if (Input::IsKeyDown(DIK_E)) {
-            RotateCube(CW, column, 45);
-        }
-        if (Input::IsKeyDown(DIK_W)) {
-            RotateCube(BACK, column, 45);
-        }
-        if (Input::IsKeyDown(DIK_S)) {
-            RotateCube(FRONT, column, 45);
-        }
-        if (Input::IsKeyDown(DIK_A)) {
-            RotateCube(LEFT, column, 45);
-        }
-        if (Input::IsKeyDown(DIK_D)) {
-            RotateCube(RIGHT, column, 45);
-        }
-    }
-    else {
-        ModelTestScreen::CalcCubeTrans();
-    }
+    //if (!isMoving) {
+    //    if (Input::IsKeyDown(DIK_R)) {
+    //        transform_.rotate_.z++;
+    //    }
+    //    //kaiten
+    //    int column = 0;
+    //    if (Input::IsKeyDown(DIK_LSHIFT)) {
+    //        if (Input::IsKey(DIK_LALT))column = 2;
+    //        else column = 1;
+    //    }
+    //    if (Input::IsKeyDown(DIK_Q)) {
+    //        RotateCube(CCW, column, 45);
+    //    }
+    //    if (Input::IsKeyDown(DIK_E)) {
+    //        RotateCube(CW, column, 45);
+    //    }
+    //    if (Input::IsKeyDown(DIK_W)) {
+    //        RotateCube(BACK, column, 45);
+    //    }
+    //    if (Input::IsKeyDown(DIK_S)) {
+    //        RotateCube(FRONT, column, 45);
+    //    }
+    //    if (Input::IsKeyDown(DIK_A)) {
+    //        RotateCube(LEFT, column, 45);
+    //    }
+    //    if (Input::IsKeyDown(DIK_D)) {
+    //        RotateCube(RIGHT, column, 45);
+    //    }
+    //}
+    //else {
+    //    ModelTestScreen::CalcCubeTrans();
+    //}
     UpdateStr();
 }
 
 void ModelTestScreen::UpdateStr()
 {
     using std::to_string;
-    debugStr[0] = "";
+    debugStr[0] = "control:" + (std::string)NAMEOF_ENUM(control) + "(Press '9' to change)";
     debugStr[1] = "scrH:" + to_string(SystemConfig::windowHeight) + "scrW:" + to_string(SystemConfig::windowWidth);
     debugStr[2] = "mode:" + (std::string)NAMEOF_ENUM(mode)+ "(Press '0' to change)";
     debugStr[3] = "select:" + std::to_string(selectData.x) + "," + std::to_string(selectData.y) + "," + std::to_string(selectData.z) + "," + (std::string)NAMEOF_ENUM(selectData.surface);
@@ -448,11 +429,27 @@ void ModelTestScreen::TurnEnd()
 
 void ModelTestScreen::Judge()
 {
+    /*
+    SETモードなら比較は自分のマークだけ
+    ROTAETモードなら自分と相手のマーク
+
+    揃ったときにマークを返す関数か、
+    →単純に２回判定する？
+    マークを渡して揃ったか判定する関数か
+    */
     if (mode == MODE_SET) {
-        switch (selectData.surface)
-        {
-        case Cube::SURFACE::SURFACE_TOP:
-            //cube[selectData.x]
+        switch (selectData.surface) {
+        case Cube::SURFACE::SURFACE_FRONT:
+        case Cube::SURFACE::SURFACE_BACK:
+            if (
+                CheckMarkVH(selectData.x, selectData.y, selectData.z, selectData.surface, X) ||
+                CheckMarkVH(selectData.x, selectData.y, selectData.z, selectData.surface, Y)
+                ) {
+                //win(control);
+            }
+            else if (IsCorner()) {
+                JudgePartsD();
+            }
         default:
             break;
         }
@@ -536,12 +533,117 @@ void ModelTestScreen::FinishCamera()
     Transform toTra;
     //toTra.rotate_.x 
 }
-//bool Yoko() {
-//    if()
-//    return true;
-//}
-//bool Tate();
-//bool Naname() { return true; }
+
+Cube::MARK ModelTestScreen::CheckMarkVH(int x, int y, int z, SURFACE surface, DIR dir)
+{
+    /*
+    揃ったとき、そのマークを返す
+    揃わなければ空白を返す
+    空白で揃っても空白を返す
+    */
+    switch (dir)
+    {
+    case ModelTestScreen::X:
+        if (MultiEquals(
+            cube[0][y][z]->GetMark(surface),
+            cube[1][y][z]->GetMark(surface),
+            cube[2][y][z]->GetMark(surface)
+        )) {
+            return cube[0][y][z]->GetMark(surface);
+        }
+        break;
+    case ModelTestScreen::Y:
+        if (MultiEquals(
+            cube[x][0][z]->GetMark(surface),
+            cube[x][1][z]->GetMark(surface),
+            cube[x][2][z]->GetMark(surface)
+        )) {
+            return cube[x][0][z]->GetMark(surface);
+        }
+        break;
+    case ModelTestScreen::Z:
+        if (MultiEquals(
+            cube[x][y][0]->GetMark(surface),
+            cube[x][y][1]->GetMark(surface),
+            cube[x][y][2]->GetMark(surface)
+        )) {
+            return cube[x][y][0]->GetMark(surface);
+        }
+        break;
+    }
+    return Cube::MARK::MARK_BLANK;
+}
+Cube::MARK ModelTestScreen::CheckMarkD(int x, int y, int z, SURFACE surface, DIAGONAL diag) {
+
+    vector<XMINT3> checkMarks;
+    for (int i = 0; i < PIECES; i++) {
+        XMINT3 check;
+        if (x < 0) {
+            if (x == -1)check.x = i;
+            if (x == -2)check.x = PIECES - 1 - i;
+        }
+        else {
+            check.x = x;
+        }
+        if (y < 0) {
+            if (y == -1)check.y = i;
+            if (y == -2)check.y = PIECES - 1 - i;
+        }
+        else {
+            check.y = y;
+        }
+        if (z < 0) {
+            if (z == -1)check.z = i;
+            if (z == -2)check.z = PIECES - 1 - i;
+        }
+        else {
+            check.z = z;
+        }
+
+
+        checkMarks.push_back(check);
+    }
+
+    if (MultiEquals(
+        cube[0][2][0]->GetMark(surface),
+        cube[x]
+    ))
+        switch (surface)
+        {
+        case SURFACE::SURFACE_TOP:
+            break;
+        case SURFACE::SURFACE_BOTTOM:
+            break;
+        case SURFACE::SURFACE_LEFT:
+            break;
+        case SURFACE::SURFACE_RIGHT:
+            break;
+        case SURFACE::SURFACE_FRONT:
+            break;
+        case SURFACE::SURFACE_BACK:
+            break;
+        }
+}
+
+Cube::MARK ModelTestScreen::CheckMark(vector<XMINT3> points, SURFACE surface)
+{
+    Cube::MARK mark = cube[points[0].x][points[0].y][points[0].z]->GetMark();   //揃ったときに返すマーク
+    assert(points.size() > 0);  //手違いで空の配列が来た時にassert
+    for (int i = 1; i < points.size(); i++) {   
+        if (cube[points[i].x][points[i].y][points[i].z]->GetMark() != mark) {
+            return Cube::MARK_BLANK;    //揃わなかったら
+        }
+    }
+    return mark;
+}
+
+Cube::MARK ModelTestScreen::CheckMarkDParts(bool isCrossAxis, DIR dir1, DIR dir2, bool param) {
+    switch (SURFACE)
+    {
+    default:
+        break;
+    }
+}
 /*
 回転トリガー時、回転方向と回転列を指定し、回転フラグを有効化
 回転フラグが有効化されたら、回転方向と回転列に従い、回転　　      ※回転には回転前変形情報と回転後変形情報を用いる

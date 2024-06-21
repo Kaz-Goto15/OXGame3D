@@ -39,8 +39,8 @@ public:
     };
 private:
     int hModelCube;
-    int hModelMark[MARK_MAX];
-    MARK cubeData_[SURFACE_MAX];
+    int hModelMark[MARK_MAX];       //マークのモデルデータハンドル
+    MARK cubeData_[SURFACE_MAX];    //キューブ側面のマークデータ
     XMFLOAT3 Surface2Rotate(SURFACE surface);
 public:
     Cube(GameObject* parent);    //コンストラクタ

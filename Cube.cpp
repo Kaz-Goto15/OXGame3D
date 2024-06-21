@@ -11,8 +11,8 @@ XMFLOAT3 Cube::Surface2Rotate(SURFACE surface)
     case Cube::SURFACE_BOTTOM:return { 180,0,0 };
     case Cube::SURFACE_LEFT:    return { 0,0,90 };
     case Cube::SURFACE_RIGHT:   return { 0,0,-90 };
-    case Cube::SURFACE_FRONT:   return { 90,0,0 };
-    case Cube::SURFACE_BACK:    return { -90,0,0 };
+    case Cube::SURFACE_FRONT:   return { -90,0,0 };
+    case Cube::SURFACE_BACK:    return { 90,0,0 };
     }
 }
 
@@ -51,12 +51,15 @@ void Cube::Draw()
     Model::SetTransform(hModelCube, transform_);
     if(!Input::IsKey(DIK_3))
     Model::Draw(hModelCube);
-    //    if (cubeData_[surface] != MARK_BLANK) {
-    //        transform_.rotate_ = Surface2Rotate(surface);
-    //        Model::SetTransform(hModelMark[cubeData_[surface]], transform_);
-    //        Model::Draw(hModelMark[cubeData_[surface]]);
-    //    }
-    //}
+
+    //マーク描画
+    for (SURFACE surface = static_cast<SURFACE>(0); surface < SURFACE_MAX; surface = static_cast<SURFACE>(surface + 1)) {
+        if (cubeData_[surface] != MARK_BLANK) {
+            transform_.rotate_ = Surface2Rotate(surface);
+            Model::SetTransform(hModelMark[cubeData_[surface]], transform_);
+            Model::Draw(hModelMark[cubeData_[surface]]);
+        }
+    }
 }
 
 //開放

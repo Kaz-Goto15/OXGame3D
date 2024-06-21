@@ -4,12 +4,12 @@
 #include "Engine/GameObject.h"
 #include "Screen.h"
 #include "Cube.h"
-#include "./Include/EffekseeLib/EffekseerVFX.h"
 class Cube;
 class CubeSelectIndicator;
 class DebugText;
 
 using std::vector;
+using SURFACE = Cube::SURFACE;
 //管理するクラス
 class ModelTestScreen : public Screen
 {
@@ -20,7 +20,7 @@ class ModelTestScreen : public Screen
     vector<vector<vector<Cube*>>> cube;
     vector<vector<vector<Transform>>> cubePrevTra;
     vector<vector<vector<Transform>>> cubeNextTra;
-    CubeSelectIndicator* indicator;
+    
     enum ROTATE_DIR {
         FRONT,
         BACK,
@@ -59,7 +59,8 @@ class ModelTestScreen : public Screen
     int rotateNo;
     int rotTime = 0; 
 
-    //移動関連
+    //選択場所・インジケーター移動関連
+    CubeSelectIndicator* indicator;
     enum DIR {
         X,
         Y,
@@ -73,6 +74,20 @@ class ModelTestScreen : public Screen
     template <class T>
     bool Between(T value, T min, T max) {
         return (min <= value && value <= max);
+    }
+
+    //複数の一致
+    template<class T, typename... Args>
+    bool MultiEquals(T val1, T val2, Args... values) {
+        if (MultiEquals(val2, values)) {
+            return true;
+        }
+        return false;
+    }
+
+    template <class T>
+    bool MultiEquals(T val1, T val2) {
+        return (val1 == val2);
     }
 
     //カメラ関連
@@ -93,6 +108,36 @@ class ModelTestScreen : public Screen
     std::string debugStr[20];
     DebugText* debugtext;
     void UpdateStr();
+
+    //判定関連
+    //縦横奥の判定を行う 揃ってればそのマークを返す
+    //揃ってない場合はBLANKを返す
+    //引数:xyz,surface,XYZ方向
+    Cube::MARK CheckMarkVH(int x, int y, int z, SURFACE surface, DIR dir);
+    //斜め判定を行う
+    //右斜め上(左斜下)ならtrue
+    //□　　　　上
+    //□□□□　前右後左
+    //□　　　　下　　　　で上下左右の角を指定する
+    enum DIAGONAL {
+        UP_RIGHT,
+        BOTTOM_RIGHT
+    };
+    enum DIAG_VAR {
+        UP = -1,
+        DOWN = -2
+    };
+    Cube::MARK CheckMarkD(int x, int y, int z, SURFACE surface, DIAGONAL diag);
+
+    //斜めの見る場所が両方++,--方向か
+    //方向1,方向2
+    //+-,-+の場合：+-方向がdir1ならtrue,dir2ならfalse
+    //++,--の場合：++方向がdir1ならtrue,dir2ならfalse
+    Cube::MARK CheckMarkDParts(bool isCrossAxis, DIR dir1, DIR dir2, bool param);
+
+
+    //xyz座標の配列と面で判定する
+    Cube::MARK CheckMark(vector<XMINT3> points, SURFACE surface);
 
     /// <summary>
     /// キューブ回転のトリガー 初期化処理とフラグ管理
@@ -116,7 +161,6 @@ public:
     void Update() override;
     void Draw() override;
     void Release() override;
-    std::shared_ptr<EFFEKSEERLIB::EFKTransform> mt;
 };
 
 /*
