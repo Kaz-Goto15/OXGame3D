@@ -437,23 +437,72 @@ void ModelTestScreen::Judge()
     →単純に２回判定する？
     マークを渡して揃ったか判定する関数か
     */
+    auto IsBlank = [](Cube::MARK mark) {    return mark == Cube::MARK_BLANK;    };
+    auto SetMark = [](Cube::MARK mark) {
+        if (mark != Cube::MARK_BLANK) {
+
+        }
+        };
+    auto test = [=](XMINT3 xyz, Cube::SURFACE surface) {
+        //毎回空白処理をするのは冗長じゃないか...?
+        Cube::MARK ret;
+        switch (surface)
+        {
+        case Cube::SURFACE_TOP:
+            break;
+        case Cube::SURFACE_BOTTOM:
+            break;
+        case Cube::SURFACE_LEFT:
+            break;
+        case Cube::SURFACE_RIGHT:
+            break;
+        case Cube::SURFACE_FRONT:
+            if (xyz.x == xyz.y) {   //同座標一致条件
+                ret = CheckMarkD(DIAG_VAR::UP, DIAG_VAR::UP, 0, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
+            if (PIECES - 1 - xyz.x == xyz.y) {  //交差条件
+                ret = CheckMarkD(DIAG_VAR::UP, DIAG_VAR::DOWN, 0, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
+            break;
+        case Cube::SURFACE_BACK:
+            if (xyz.x == xyz.y) {   //同座標一致条件
+                ret = CheckMarkD(DIAG_VAR::UP, DIAG_VAR::DOWN, 2, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
+            if (PIECES - 1 - xyz.x == xyz.y) {  //交差条件
+                ret = CheckMarkD(DIAG_VAR::UP, DIAG_VAR::DOWN, 0, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
+            break;
+        case Cube::SURFACE_MAX:
+            break;
+        default:
+            break;
+        }
+        };
+    
     if (mode == MODE_SET) {
         switch (selectData.surface) {
         case Cube::SURFACE::SURFACE_FRONT:
         case Cube::SURFACE::SURFACE_BACK:
             if (
-                CheckMarkVH(selectData.x, selectData.y, selectData.z, selectData.surface, X) ||
-                CheckMarkVH(selectData.x, selectData.y, selectData.z, selectData.surface, Y)
+                !IsBlank(CheckMarkVH(selectData.GetPos(), selectData.surface, X)) ||
+                CheckMarkVH(selectData.GetPos(), selectData.surface, Y) != Cube::MARK_BLANK
                 ) {
                 //win(control);
             }
-            else if (IsCorner()) {
-                JudgePartsD();
-            }
+            //else if (IsCorner()) {
+            //    //JudgePartsD();
+            //}
         default:
             break;
         }
     }
+    //rotateなら回転した軸のマス全てを判定する
+    //setなら置いたマスのみ判定する
+    //判定自体は別処理(CheckMarkVH,D)
 }
 
 void ModelTestScreen::RotateCamera() {
@@ -536,44 +585,30 @@ void ModelTestScreen::FinishCamera()
 
 Cube::MARK ModelTestScreen::CheckMarkVH(int x, int y, int z, SURFACE surface, DIR dir)
 {
-    /*
-    揃ったとき、そのマークを返す
-    揃わなければ空白を返す
-    空白で揃っても空白を返す
-    */
-    switch (dir)
-    {
-    case ModelTestScreen::X:
-        if (MultiEquals(
-            cube[0][y][z]->GetMark(surface),
-            cube[1][y][z]->GetMark(surface),
-            cube[2][y][z]->GetMark(surface)
-        )) {
-            return cube[0][y][z]->GetMark(surface);
+    vector<XMINT3> checkMarks;
+    for (int i = 0; i < PIECES; i++) {
+        switch (dir)
+        {
+        case ModelTestScreen::X:
+            checkMarks.push_back({ i,y,z });
+            break;
+        case ModelTestScreen::Y:
+            checkMarks.push_back({ x,i,z });
+            break;
+        case ModelTestScreen::Z:
+            checkMarks.push_back({ x,y,i });
+            break;
         }
-        break;
-    case ModelTestScreen::Y:
-        if (MultiEquals(
-            cube[x][0][z]->GetMark(surface),
-            cube[x][1][z]->GetMark(surface),
-            cube[x][2][z]->GetMark(surface)
-        )) {
-            return cube[x][0][z]->GetMark(surface);
-        }
-        break;
-    case ModelTestScreen::Z:
-        if (MultiEquals(
-            cube[x][y][0]->GetMark(surface),
-            cube[x][y][1]->GetMark(surface),
-            cube[x][y][2]->GetMark(surface)
-        )) {
-            return cube[x][y][0]->GetMark(surface);
-        }
-        break;
     }
-    return Cube::MARK::MARK_BLANK;
+    return CheckMark(checkMarks, surface);
 }
-Cube::MARK ModelTestScreen::CheckMarkD(int x, int y, int z, SURFACE surface, DIAGONAL diag) {
+
+Cube::MARK ModelTestScreen::CheckMarkVH(XMINT3 xyz, SURFACE surface, DIR dir)
+{
+    return CheckMarkVH(xyz.x, xyz.y, xyz.z, surface, dir);
+}
+
+Cube::MARK ModelTestScreen::CheckMarkD(int x, int y, int z, SURFACE surface) {
 
     vector<XMINT3> checkMarks;
     for (int i = 0; i < PIECES; i++) {
@@ -600,50 +635,34 @@ Cube::MARK ModelTestScreen::CheckMarkD(int x, int y, int z, SURFACE surface, DIA
             check.z = z;
         }
 
-
         checkMarks.push_back(check);
     }
+    return CheckMark(checkMarks, surface);
+}
 
-    if (MultiEquals(
-        cube[0][2][0]->GetMark(surface),
-        cube[x]
-    ))
-        switch (surface)
-        {
-        case SURFACE::SURFACE_TOP:
-            break;
-        case SURFACE::SURFACE_BOTTOM:
-            break;
-        case SURFACE::SURFACE_LEFT:
-            break;
-        case SURFACE::SURFACE_RIGHT:
-            break;
-        case SURFACE::SURFACE_FRONT:
-            break;
-        case SURFACE::SURFACE_BACK:
-            break;
-        }
+Cube::MARK ModelTestScreen::CheckMarkD(XMINT3 xyz, SURFACE surface)
+{
+    return CheckMarkD(xyz.x, xyz.y, xyz.z, surface);
 }
 
 Cube::MARK ModelTestScreen::CheckMark(vector<XMINT3> points, SURFACE surface)
 {
-    Cube::MARK mark = cube[points[0].x][points[0].y][points[0].z]->GetMark();   //揃ったときに返すマーク
+    /*
+    揃ったとき、そのマークを返す
+    揃わなければ空白を返す
+    空白で揃っても空白を返す
+    */
+
+    Cube::MARK mark = cube[points[0].x][points[0].y][points[0].z]->GetMark(surface);   //揃ったときに返すマーク
     assert(points.size() > 0);  //手違いで空の配列が来た時にassert
     for (int i = 1; i < points.size(); i++) {   
-        if (cube[points[i].x][points[i].y][points[i].z]->GetMark() != mark) {
-            return Cube::MARK_BLANK;    //揃わなかったら
+        if (cube[points[i].x][points[i].y][points[i].z]->GetMark(surface) != mark) {
+            return Cube::MARK_BLANK;    //揃わなかったら空白
         }
     }
     return mark;
 }
 
-Cube::MARK ModelTestScreen::CheckMarkDParts(bool isCrossAxis, DIR dir1, DIR dir2, bool param) {
-    switch (SURFACE)
-    {
-    default:
-        break;
-    }
-}
 /*
 回転トリガー時、回転方向と回転列を指定し、回転フラグを有効化
 回転フラグが有効化されたら、回転方向と回転列に従い、回転　　      ※回転には回転前変形情報と回転後変形情報を用いる

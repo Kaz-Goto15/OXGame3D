@@ -49,6 +49,7 @@ class ModelTestScreen : public Screen
             z = 0;
             surface = Cube::SURFACE::SURFACE_FRONT;
         }
+        XMINT3 GetPos() { return XMINT3(x, y, z); }
     }selectData;
     void CalcCubeTrans();
 
@@ -112,8 +113,9 @@ class ModelTestScreen : public Screen
     //判定関連
     //縦横奥の判定を行う 揃ってればそのマークを返す
     //揃ってない場合はBLANKを返す
-    //引数:xyz,surface,XYZ方向
+    //引数:xyz,surface,XYZ方向(見るマスの軸に沿った向き)
     Cube::MARK CheckMarkVH(int x, int y, int z, SURFACE surface, DIR dir);
+    Cube::MARK CheckMarkVH(XMINT3 xyz, SURFACE surface, DIR dir);
     //斜め判定を行う
     //右斜め上(左斜下)ならtrue
     //□　　　　上
@@ -127,14 +129,11 @@ class ModelTestScreen : public Screen
         UP = -1,
         DOWN = -2
     };
-    Cube::MARK CheckMarkD(int x, int y, int z, SURFACE surface, DIAGONAL diag);
-
-    //斜めの見る場所が両方++,--方向か
-    //方向1,方向2
-    //+-,-+の場合：+-方向がdir1ならtrue,dir2ならfalse
-    //++,--の場合：++方向がdir1ならtrue,dir2ならfalse
-    Cube::MARK CheckMarkDParts(bool isCrossAxis, DIR dir1, DIR dir2, bool param);
-
+    //斜め判定関数 立方体の1辺の大きさ分判定する
+    //XYZは0以上は固定値 -1は徐々に上昇、-2は徐々に下降する
+    //surfaceは判定面
+    Cube::MARK CheckMarkD(int x, int y, int z, SURFACE surface);
+    Cube::MARK CheckMarkD(XMINT3 xyz, SURFACE surface);
 
     //xyz座標の配列と面で判定する
     Cube::MARK CheckMark(vector<XMINT3> points, SURFACE surface);
