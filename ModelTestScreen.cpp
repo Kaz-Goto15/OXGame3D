@@ -97,12 +97,10 @@ void ModelTestScreen::Update()
                 //選択箇所が空白のときに設置する
                 if (cube[selectData.x][selectData.y][selectData.z]->GetMark(selectData.surface) == Cube::MARK_BLANK) {
                     Cube::MARK mark;
-
-                    if (control == CONTROL_1P) {
-                        mark = Cube::MARK::MARK_O;
-                    }
-                    else {
-                        mark = Cube::MARK::MARK_X;
+                    switch (control)
+                    {
+                    case ModelTestScreen::CONTROL_1P:   mark = Cube::MARK::MARK_O;  break;
+                    case ModelTestScreen::CONTROL_2P:   mark = Cube::MARK::MARK_X;  break;
                     }
                     cube[selectData.x][selectData.y][selectData.z]->SetMark(selectData.surface, mark);
                     Judge();
@@ -439,112 +437,152 @@ void ModelTestScreen::Judge()
     →単純に２回判定する？
     マークを渡して揃ったか判定する関数か
     */
-    auto IsBlank = [](Cube::MARK mark) {    return mark == Cube::MARK_BLANK;    };
-    auto SetMark = [](Cube::MARK mark) {
-        if (mark != Cube::MARK_BLANK) {
 
-        }
-        };
-
-    //斜め処理関数 先に揃ったほうが判定されてしまう
-    //vectorをポインタやら参照やらで持ってきて複数返し、
+    //斜め処理関数
+    //毎回空白処理をするのは冗長すぎたため、フラグで管理してセットするようにした
     // そのvectorで全てblankならblankを、
     // どちらか一つが揃えばそっちを、
     //両方揃ってたら相手のターンを返す関数を別で作ればいいのではないか
-    auto test = [=](XMINT3 xyz, Cube::SURFACE surface) {
-        //毎回空白処理をするのは冗長じゃないかとも思う
-        Cube::MARK ret;
+    vector<Cube::MARK> result;
+    auto test = [=](XMINT3 xyz, Cube::SURFACE surface, WinFlag& winFlag) {
+//□　　　　上
+//□□□□　前右後左
+//□　　　　下　　　
         switch (surface)
         {
         case Cube::SURFACE_TOP:     //左下が0,-,0
-            if (xyz.x == xyz.z) {   //同座標一致条件 右上
-                ret = CheckMarkD(DIAG_VAR::UP, PIECES - 1, DIAG_VAR::UP, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
-            }
-            if (PIECES - 1 - xyz.x == xyz.z) {  //交差条件 右下
-                ret = CheckMarkD(DIAG_VAR::UP, PIECES - 1, DIAG_VAR::DOWN, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
-            }
+            //探索座標2軸一致 右上
+            if (xyz.x == xyz.z)
+                winFlag.Set(CheckMarkD(DIAG_VAR::UP, PIECES - 1, DIAG_VAR::UP, surface));
+            //探索座標2軸交差 右下
+            if (PIECES - 1 - xyz.x == xyz.z)
+                winFlag.Set(CheckMarkD(DIAG_VAR::UP, PIECES - 1, DIAG_VAR::DOWN, surface));
             break;
         case Cube::SURFACE_BOTTOM:  //左上が0,-,0
             if (xyz.x == xyz.z) {   //同座標一致条件 右下
-                ret = CheckMarkD(DIAG_VAR::UP, 0, DIAG_VAR::UP, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
+                winFlag.Set(CheckMarkD(DIAG_VAR::UP, 0, DIAG_VAR::UP, surface));
             }
             if (PIECES - 1 - xyz.x == xyz.z) {  //交差条件 右上
-                ret = CheckMarkD(DIAG_VAR::UP, 0, DIAG_VAR::DOWN, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
+                winFlag.Set(CheckMarkD(DIAG_VAR::UP, 0, DIAG_VAR::DOWN, surface));
             }
             break;
         case Cube::SURFACE_LEFT:    //右下が-,0,0
             if (xyz.y == xyz.z) {   //同座標一致条件 右下
-                ret = CheckMarkD(0, DIAG_VAR::DOWN, DIAG_VAR::DOWN, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
+                winFlag.Set(CheckMarkD(0, DIAG_VAR::DOWN, DIAG_VAR::DOWN, surface));
             }
             if (PIECES - 1 - xyz.y == xyz.z) {  //交差条件 右上
-                ret = CheckMarkD(0, DIAG_VAR::UP, DIAG_VAR::DOWN, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
+                winFlag.Set(CheckMarkD(0, DIAG_VAR::UP, DIAG_VAR::DOWN, surface));
             }
             break;
         case Cube::SURFACE_RIGHT:   //左下が-,0,0
             if (xyz.y == xyz.z) {   //同座標一致条件 右上
-                ret = CheckMarkD(PIECES - 1, DIAG_VAR::UP, DIAG_VAR::UP, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
+                winFlag.Set(CheckMarkD(PIECES - 1, DIAG_VAR::UP, DIAG_VAR::UP, surface));
             }
             if (PIECES - 1 - xyz.y == xyz.z) {  //交差条件 右下
-                ret = CheckMarkD(PIECES - 1, DIAG_VAR::DOWN, DIAG_VAR::UP, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
+                winFlag.Set(CheckMarkD(PIECES - 1, DIAG_VAR::DOWN, DIAG_VAR::UP, surface));
             }
             break;
         case Cube::SURFACE_FRONT:   //左下が0,0,-
             if (xyz.x == xyz.y) {   //同座標一致条件 右上
-                ret = CheckMarkD(DIAG_VAR::UP, DIAG_VAR::UP, 0, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
+                winFlag.Set(CheckMarkD(DIAG_VAR::UP, DIAG_VAR::UP, 0, surface));
             }
             if (PIECES - 1 - xyz.x == xyz.y) {  //交差条件 右下
-                ret = CheckMarkD(DIAG_VAR::UP, DIAG_VAR::DOWN, 0, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
+                winFlag.Set(CheckMarkD(DIAG_VAR::UP, DIAG_VAR::DOWN, 0, surface));
             }
             break;
         case Cube::SURFACE_BACK:    //右下が0,0,-
             if (xyz.x == xyz.y) {   //同座標一致条件 右下
-                ret = CheckMarkD(DIAG_VAR::DOWN, DIAG_VAR::DOWN, PIECES - 1, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
+                winFlag.Set(CheckMarkD(DIAG_VAR::DOWN, DIAG_VAR::DOWN, PIECES - 1, surface));
             }
             if (PIECES - 1 - xyz.x == xyz.y) {  //交差条件 右上
-                ret = CheckMarkD(DIAG_VAR::DOWN, DIAG_VAR::UP, PIECES - 1, surface);
-                if (ret != Cube::MARK_BLANK)return ret;
+                winFlag.Set(CheckMarkD(DIAG_VAR::DOWN, DIAG_VAR::UP, PIECES - 1, surface));
             }
             break;
         }
-        return Cube::MARK_BLANK;
         };
 
-    //設置の場合
-    if (mode == MODE_SET) {
+    switch (mode)
+    {
+    case ModelTestScreen::MODE_SET:
+        //斜め判定
+        test(selectData.GetPos(), selectData.surface, winFlag);
         //必ず縦横方向は見る
-        if(CheckMarkVH(selectData.GetPos(), selectData.surface, X))
         switch (selectData.surface) {
         case Cube::SURFACE::SURFACE_FRONT:
         case Cube::SURFACE::SURFACE_BACK:
-            if (
-                !IsBlank(CheckMarkVH(selectData.GetPos(), selectData.surface, X)) ||
-                CheckMarkVH(selectData.GetPos(), selectData.surface, Y) != Cube::MARK_BLANK
-                ) {
-                //win(control);
-            }
-            //else if (IsCorner()) {
-            //    //JudgePartsD();
-            //}
+            winFlag.Set(CheckMarkVH(selectData.GetPos(), selectData.surface, X));
+            winFlag.Set(CheckMarkVH(selectData.GetPos(), selectData.surface, Y));
+        case Cube::SURFACE::SURFACE_LEFT:
+        case Cube::SURFACE::SURFACE_RIGHT:
+            winFlag.Set(CheckMarkVH(selectData.GetPos(), selectData.surface, Y));
+            winFlag.Set(CheckMarkVH(selectData.GetPos(), selectData.surface, Z));
+            break;
+        case Cube::SURFACE::SURFACE_TOP:
+        case Cube::SURFACE::SURFACE_BOTTOM:
+            winFlag.Set(CheckMarkVH(selectData.GetPos(), selectData.surface, X));
+            winFlag.Set(CheckMarkVH(selectData.GetPos(), selectData.surface, Z));
+            break;
+        }
+        break;
+    case ModelTestScreen::MODE_ROTATE:
+        for (Cube::SURFACE surface = static_cast<Cube::SURFACE>(0); surface < Cube::SURFACE_MAX; surface = static_cast<Cube::SURFACE>(surface + 1)) {
+            //selectData.rotate
+            /*
+            0,0,0をX軸で上下方向に移動した場合
+            X位置が固定
+            000front 010front 020front
+            020top 021top 022top
+            002back 012back 022back
+            000bottom 001bottom 002bottom
+            0,0,0をY軸で左右方向に移動した場合
+            Y位置が固定
+            000front 100front 200front
+            000left 001left 002left
+            002back 102back 202back
+            200right 201right 202right
+            0,0,0をZ軸で時計反時計方向に移動した場合
+            Z位置が固定
+            000left 010left 020left
+            020top 120top 220top
+            200right 210right 220right
+            000bottom 100bottom 200bottom
+            */
+        }
+        break;
+    }
+
+    auto win = [=](CONTROL control) {
+        switch (control)
+        {
+        case ModelTestScreen::CONTROL_1P:
+            debugStr[5] = "1p syouri";
+            break;
+        case ModelTestScreen::CONTROL_2P:
+            debugStr[5] = "2p syouri";
+            break;
         default:
             break;
         }
+    };
+    //ナナメ判定
+    test(selectData.GetPos(), selectData.surface, winFlag);
+
+    //勝利判定
+    if (control == CONTROL_1P) {
+        if (winFlag.p2) {
+            win(CONTROL_2P);
+        }
+        else if (winFlag.p1) {
+            win(CONTROL_1P);
+        }
     }
-    if (test(selectData.GetPos(), selectData.surface) != Cube::MARK_BLANK) {
-        debugStr[5] = "dokka syouri";
-    }
-    else {
-        debugStr[5] = "blank";
+    if (control == CONTROL_2P) {
+        if (winFlag.p1) {
+            win(CONTROL_1P);
+        }
+        else if (winFlag.p2) {
+            win(CONTROL_2P);
+        }
     }
     //rotateなら回転した軸のマス全てを判定する
     //setなら置いたマスのみ判定する

@@ -116,15 +116,6 @@ class ModelTestScreen : public Screen
     //引数:xyz,surface,XYZ方向(見るマスの軸に沿った向き)
     Cube::MARK CheckMarkVH(int x, int y, int z, SURFACE surface, DIR dir);
     Cube::MARK CheckMarkVH(XMINT3 xyz, SURFACE surface, DIR dir);
-    //斜め判定を行う
-    //右斜め上(左斜下)ならtrue
-    //□　　　　上
-    //□□□□　前右後左
-    //□　　　　下　　　　で上下左右の角を指定する
-    enum DIAGONAL {
-        UP_RIGHT,
-        BOTTOM_RIGHT
-    };
     enum DIAG_VAR {     //斜め判定時の座標指定時に使う列挙型 判定関数で0以上を指定したときは固定値とみなすため、ここの値は0未満にする
         UP = -1,
         DOWN = -2
@@ -137,7 +128,20 @@ class ModelTestScreen : public Screen
 
     //xyz座標の配列と面で判定する
     Cube::MARK CheckMark(vector<XMINT3> points, SURFACE surface);
+    struct WinFlag {
+        bool p1 = false;
+        bool p2 = false;
+        WinFlag() {
 
+        }
+        void Set(Cube::MARK mark) {
+            switch (mark)
+            {
+            case Cube::MARK_O:  p1 = true;  return;
+            case Cube::MARK_X:  p2 = true;  return;
+            }
+        }
+    }winFlag;
     /// <summary>
     /// キューブ回転のトリガー 初期化処理とフラグ管理
     /// 
