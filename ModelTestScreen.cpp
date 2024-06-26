@@ -10,6 +10,8 @@
 #include "CubeSelectIndicator.h"
 
 #include "./Include/nameof.hpp"
+#include "./Engine/Debug.h"
+
 //コンストラクタ
 ModelTestScreen::ModelTestScreen(GameObject* parent) :
     Screen(parent, "ModelTestScreen"),
@@ -102,8 +104,8 @@ void ModelTestScreen::Update()
                     else {
                         mark = Cube::MARK::MARK_X;
                     }
-
                     cube[selectData.x][selectData.y][selectData.z]->SetMark(selectData.surface, mark);
+                    Judge();
                     TurnEnd();
                 }
                 else {
@@ -246,14 +248,14 @@ void ModelTestScreen::MoveSelectParts(DIR dir, bool plus, Cube::SURFACE outSurfa
     }
 
     if (plus) {
-        *target+= 1;
+        *target += 1;
         if (*target >= PIECES) {
             *target = PIECES - 1;
             selectData.surface = outSurface;
         }
     }
     else {
-        *target-= 1;
+        *target -= 1;
         if (*target < 0) {
             *target = 0;
             selectData.surface = outSurface;
@@ -443,47 +445,85 @@ void ModelTestScreen::Judge()
 
         }
         };
+
+    //斜め処理関数 先に揃ったほうが判定されてしまう
+    //vectorをポインタやら参照やらで持ってきて複数返し、
+    // そのvectorで全てblankならblankを、
+    // どちらか一つが揃えばそっちを、
+    //両方揃ってたら相手のターンを返す関数を別で作ればいいのではないか
     auto test = [=](XMINT3 xyz, Cube::SURFACE surface) {
-        //毎回空白処理をするのは冗長じゃないか...?
+        //毎回空白処理をするのは冗長じゃないかとも思う
         Cube::MARK ret;
         switch (surface)
         {
-        case Cube::SURFACE_TOP:
+        case Cube::SURFACE_TOP:     //左下が0,-,0
+            if (xyz.x == xyz.z) {   //同座標一致条件 右上
+                ret = CheckMarkD(DIAG_VAR::UP, PIECES - 1, DIAG_VAR::UP, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
+            if (PIECES - 1 - xyz.x == xyz.z) {  //交差条件 右下
+                ret = CheckMarkD(DIAG_VAR::UP, PIECES - 1, DIAG_VAR::DOWN, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
             break;
-        case Cube::SURFACE_BOTTOM:
+        case Cube::SURFACE_BOTTOM:  //左上が0,-,0
+            if (xyz.x == xyz.z) {   //同座標一致条件 右下
+                ret = CheckMarkD(DIAG_VAR::UP, 0, DIAG_VAR::UP, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
+            if (PIECES - 1 - xyz.x == xyz.z) {  //交差条件 右上
+                ret = CheckMarkD(DIAG_VAR::UP, 0, DIAG_VAR::DOWN, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
             break;
-        case Cube::SURFACE_LEFT:
+        case Cube::SURFACE_LEFT:    //右下が-,0,0
+            if (xyz.y == xyz.z) {   //同座標一致条件 右下
+                ret = CheckMarkD(0, DIAG_VAR::DOWN, DIAG_VAR::DOWN, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
+            if (PIECES - 1 - xyz.y == xyz.z) {  //交差条件 右上
+                ret = CheckMarkD(0, DIAG_VAR::UP, DIAG_VAR::DOWN, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
             break;
-        case Cube::SURFACE_RIGHT:
+        case Cube::SURFACE_RIGHT:   //左下が-,0,0
+            if (xyz.y == xyz.z) {   //同座標一致条件 右上
+                ret = CheckMarkD(PIECES - 1, DIAG_VAR::UP, DIAG_VAR::UP, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
+            if (PIECES - 1 - xyz.y == xyz.z) {  //交差条件 右下
+                ret = CheckMarkD(PIECES - 1, DIAG_VAR::DOWN, DIAG_VAR::UP, surface);
+                if (ret != Cube::MARK_BLANK)return ret;
+            }
             break;
-        case Cube::SURFACE_FRONT:
-            if (xyz.x == xyz.y) {   //同座標一致条件
+        case Cube::SURFACE_FRONT:   //左下が0,0,-
+            if (xyz.x == xyz.y) {   //同座標一致条件 右上
                 ret = CheckMarkD(DIAG_VAR::UP, DIAG_VAR::UP, 0, surface);
                 if (ret != Cube::MARK_BLANK)return ret;
             }
-            if (PIECES - 1 - xyz.x == xyz.y) {  //交差条件
+            if (PIECES - 1 - xyz.x == xyz.y) {  //交差条件 右下
                 ret = CheckMarkD(DIAG_VAR::UP, DIAG_VAR::DOWN, 0, surface);
                 if (ret != Cube::MARK_BLANK)return ret;
             }
             break;
-        case Cube::SURFACE_BACK:
-            if (xyz.x == xyz.y) {   //同座標一致条件
-                ret = CheckMarkD(DIAG_VAR::UP, DIAG_VAR::DOWN, 2, surface);
+        case Cube::SURFACE_BACK:    //右下が0,0,-
+            if (xyz.x == xyz.y) {   //同座標一致条件 右下
+                ret = CheckMarkD(DIAG_VAR::DOWN, DIAG_VAR::DOWN, PIECES - 1, surface);
                 if (ret != Cube::MARK_BLANK)return ret;
             }
-            if (PIECES - 1 - xyz.x == xyz.y) {  //交差条件
-                ret = CheckMarkD(DIAG_VAR::UP, DIAG_VAR::DOWN, 0, surface);
+            if (PIECES - 1 - xyz.x == xyz.y) {  //交差条件 右上
+                ret = CheckMarkD(DIAG_VAR::DOWN, DIAG_VAR::UP, PIECES - 1, surface);
                 if (ret != Cube::MARK_BLANK)return ret;
             }
-            break;
-        case Cube::SURFACE_MAX:
-            break;
-        default:
             break;
         }
+        return Cube::MARK_BLANK;
         };
-    
+
+    //設置の場合
     if (mode == MODE_SET) {
+        //必ず縦横方向は見る
+        if(CheckMarkVH(selectData.GetPos(), selectData.surface, X))
         switch (selectData.surface) {
         case Cube::SURFACE::SURFACE_FRONT:
         case Cube::SURFACE::SURFACE_BACK:
@@ -499,6 +539,12 @@ void ModelTestScreen::Judge()
         default:
             break;
         }
+    }
+    if (test(selectData.GetPos(), selectData.surface) != Cube::MARK_BLANK) {
+        debugStr[5] = "dokka syouri";
+    }
+    else {
+        debugStr[5] = "blank";
     }
     //rotateなら回転した軸のマス全てを判定する
     //setなら置いたマスのみ判定する
@@ -614,27 +660,26 @@ Cube::MARK ModelTestScreen::CheckMarkD(int x, int y, int z, SURFACE surface) {
     for (int i = 0; i < PIECES; i++) {
         XMINT3 check;
         if (x < 0) {
-            if (x == -1)check.x = i;
-            if (x == -2)check.x = PIECES - 1 - i;
+            if (x == DIAG_VAR::UP)check.x = i;
+            if (x == DIAG_VAR::DOWN)check.x = PIECES - 1 - i;
         }
         else {
             check.x = x;
         }
         if (y < 0) {
-            if (y == -1)check.y = i;
-            if (y == -2)check.y = PIECES - 1 - i;
+            if (y == DIAG_VAR::UP)check.y = i;
+            if (y == DIAG_VAR::DOWN)check.y = PIECES - 1 - i;
         }
         else {
             check.y = y;
         }
         if (z < 0) {
-            if (z == -1)check.z = i;
-            if (z == -2)check.z = PIECES - 1 - i;
+            if (z == DIAG_VAR::UP)check.z = i;
+            if (z == DIAG_VAR::DOWN)check.z = PIECES - 1 - i;
         }
         else {
             check.z = z;
         }
-
         checkMarks.push_back(check);
     }
     return CheckMark(checkMarks, surface);
@@ -655,11 +700,15 @@ Cube::MARK ModelTestScreen::CheckMark(vector<XMINT3> points, SURFACE surface)
 
     Cube::MARK mark = cube[points[0].x][points[0].y][points[0].z]->GetMark(surface);   //揃ったときに返すマーク
     assert(points.size() > 0);  //手違いで空の配列が来た時にassert
-    for (int i = 1; i < points.size(); i++) {   
+    Debug::Log("判定：["+ std::to_string(points[0].x) + std::to_string(points[0].y) + std::to_string(points[0].z) +"]:" + (std::string)NAMEOF_ENUM(mark) +", ", false);
+    for (int i = 1; i < points.size(); i++) { 
+        Debug::Log("[" + std::to_string(points[i].x) + std::to_string(points[i].y) + std::to_string(points[i].z) + "]:" + (std::string)NAMEOF_ENUM(cube[points[i].x][points[i].y][points[i].z]->GetMark(surface)) + ", ", false);
         if (cube[points[i].x][points[i].y][points[i].z]->GetMark(surface) != mark) {
+            Debug::Log((std::string)NAMEOF_ENUM(mark) + "はそろわなかった", true);
             return Cube::MARK_BLANK;    //揃わなかったら空白
         }
     }
+    Debug::Log((std::string)NAMEOF_ENUM(mark) + "がそろった", true);
     return mark;
 }
 

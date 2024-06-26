@@ -125,7 +125,7 @@ class ModelTestScreen : public Screen
         UP_RIGHT,
         BOTTOM_RIGHT
     };
-    enum DIAG_VAR {
+    enum DIAG_VAR {     //斜め判定時の座標指定時に使う列挙型 判定関数で0以上を指定したときは固定値とみなすため、ここの値は0未満にする
         UP = -1,
         DOWN = -2
     };
