@@ -117,6 +117,11 @@ namespace SystemConfig {
 	void SetWindowHandle(HWND hwnd)	{	windowHandle = hwnd;	}
 	HWND GetWindowHandle()	{	return windowHandle;	}
 
+	int GetKey(KEY key)
+	{
+		return key;
+	}
+
 }
 namespace AspectRatio {
 	int aspectRatioW;	//ÉAÉXî‰â°

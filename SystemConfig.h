@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-
+#include "Engine/Input.h"
 namespace SystemConfig {
 	extern int windowHeight;
 	extern int windowWidth;
@@ -60,4 +60,19 @@ namespace SystemConfig {
 
 	void SetWindowHandle(HWND hwnd);
 	HWND GetWindowHandle();
+
+	//まとめるためだけに実装した超簡潔キーコン 修正必至
+	enum KEY {
+		KEY_UP = DIK_W,
+		KEY_DOWN = DIK_S,
+		KEY_LEFT = DIK_A,
+		KEY_RIGHT = DIK_D,
+		KEY_ESC = DIK_ESCAPE,
+		KEY_ACT = DIK_SPACE,
+		KEY_CHANGE = DIK_LSHIFT,
+		KEY_CHANGE_AXIS = DIK_E
+	};
+
+	//キーバインド実装などで役立つため一応ゲッターは用意しておく
+	int GetKey(KEY key);
 }

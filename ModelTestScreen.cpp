@@ -12,6 +12,10 @@
 #include "./Include/nameof.hpp"
 #include "./Engine/Debug.h"
 
+#include "OptionScreen.h"
+
+using KEY = SystemConfig::KEY;
+using SystemConfig::GetKey;
 //コンストラクタ
 ModelTestScreen::ModelTestScreen(GameObject* parent) :
 	Screen(parent, "ModelTestScreen"),
@@ -60,6 +64,8 @@ void ModelTestScreen::Initialize()
 	indicator = Instantiate<CubeSelectIndicator>(this);
 	indicator->SetPosition(selectData.x - 1, selectData.y - 1, selectData.z - 1);
 	indicator->SetSurface(selectData.surface);
+	indicator->SetCubeScale(PIECES);
+	indicator->SetCubeRotate(CubeSelectIndicator::ROT_CCW);
 
 	//デバッグ
 	debugtext = Instantiate<DebugText>(this);
@@ -74,7 +80,7 @@ void ModelTestScreen::Update()
 
 	RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
 
-	//もどる(デバッグ)
+	//デバッグボタン
 	if (Input::IsKeyDown(DIK_P)) {
 		Prev();
 	}
@@ -88,16 +94,28 @@ void ModelTestScreen::Update()
 		else if (control == CONTROL_1P)control = CONTROL_2P;
 		else if (control == CONTROL_2P)control = CONTROL_IDLE;
 	}
+	if (Input::IsKeyDown(DIK_8)) {
+		indicator->SetCubeRotate(CubeSelectIndicator::ROT_CCW);
+	}
+
+	//finishなどステートが進まない限り操作を受け付けるやつ 現状finish時以外できるため直打ち
+	if (!finished) {
+		if (Input::IsKeyDown(GetKey(KEY::KEY_ESC))) {
+			pScreen = Instantiate<OptionScreen>(GetParent());
+			pScreen->SetPrevScene(this);
+			pScreen->Run();
+		}
+	}
 	//操作状態がアイドルでなければ
 	if (control != CONTROL_IDLE) {
 		//現在のモードで処理
 		switch (mode)
 		{
 		case ModelTestScreen::MODE_SET:
-			MoveSelect();
+			MoveSelect(mode);
 			//キー関連の記述は同時処理を防ぐため取り敢えずすべてelifで書く
 			//マーク設置
-			if (Input::IsKeyDown(DIK_SPACE)) {
+			if (Input::IsKeyDown(GetKey(KEY::KEY_ACT))) {
 				//選択箇所が空白のときに設置する
 				if (cube[selectData.x][selectData.y][selectData.z]->GetMark(selectData.surface) == Cube::MARK_BLANK) {
 					switch (control)
@@ -115,29 +133,56 @@ void ModelTestScreen::Update()
 					//Audio::Play("select_fail.wav");
 				}
 			}
-			else if (Input::IsKeyDown(DIK_LSHIFT)) {
+			else if (Input::IsKeyDown(SystemConfig::GetKey(KEY::KEY_CHANGE))) {	//モード切替
 				mode = MODE_ROTATE;
+				indicator->SetDrawMode(indicator->DRAWMODE_SINGLE);
+				RotateModeInit();	//現在の選択位置から軸を指定したりする
 			}
 
 			break;
 		case ModelTestScreen::MODE_ROTATE:
-			//回転
-			if (Input::IsKeyDown(DIK_SPACE)) {
-				//情報を回転する関数
-				//RotateCube();?
-				Judge();
+			//回転軸切替
+			if (Input::IsKeyDown(GetKey(KEY::KEY_CHANGE_AXIS))) {
+
 			}
-			else if (Input::IsKeyDown(DIK_LSHIFT)) {	//モード切替
+			//回転
+			else if (Input::IsKeyDown(GetKey(KEY::KEY_ACT))) {
+				//操作の無効化
+				control = CONTROL_IDLE;
+				//キューブの移動後の座標を更新
+				CalcCubeTrans();
+				//回転中フラグの有効化
+				isRotating = true;
+
+				//移動処理・移動完了後のフラグ・勝利判定・ターン移行は別で
+			}
+			else if (Input::IsKeyDown(GetKey(KEY::KEY_CHANGE))) {	//モード切替
 				mode = MODE_SET;
+				indicator->SetDrawMode(indicator->DRAWMODE_SINGLE);
 			}
 			break;
 		case ModelTestScreen::MODE_VIEW:
-			if (Input::IsKeyDown(DIK_SPACE)) {
-				mode = prevMode;
+			if (Input::IsKeyDown(GetKey(KEY::KEY_ACT))) {
+				mode = prevMode;		//ビューモードの前のモードに戻す
+				indicator->Visible();	//インジケータを再表示
 			}
 			break;
-		default:
-			break;
+		}
+	}
+	else {
+		if (isRotating) {
+			rotProgress++;
+			//描画終了時の処理 以上が条件のシステム処理後に条件なしの回転処理をしているため、
+			//最終フレームで回転処理とシステム処理が同時に行える
+			if (rotProgress >= maxRotProgress) {
+				rotProgress = maxRotProgress;
+				isRotating = false;
+				Judge();
+				TurnEnd();
+			}
+
+			//回転処理 現在進捗と最大進捗、値を入れる座標と移動前座標と移動後座標
+			//RotateCube(selectData.dir,selectData.)
 		}
 	}
 
@@ -291,91 +336,99 @@ void ModelTestScreen::MoveSelectParts(DIR dir, bool plus, Cube::SURFACE outSurfa
 	indicator->SetPosition(selectData.x - 1, selectData.y - 1, selectData.z - 1);
 	indicator->SetSurface(selectData.surface);
 }
-void ModelTestScreen::MoveSelect()
+void ModelTestScreen::MoveSelect(MODE mode)
 {
 	using SURFACE = Cube::SURFACE;
 	vector<int> keys = { DIK_W,DIK_A,DIK_S,DIK_D };
 
-	switch (selectData.surface)
+	switch (mode)
 	{
-	case SURFACE::SURFACE_TOP:
-		if (Between(camTra.rotate_.y, -45.0f, 45.0f)) {}
-		else if (Between(camTra.rotate_.y, 45.0f, 135.0f)) {
-			//WASDをASDWに
-			int tmp = keys.front();
-			keys.erase(keys.begin());
-			keys.push_back(tmp);
-		}
-		else if (Between(camTra.rotate_.y, -135.0f, -45.0f)) {
-			//WASDをDWASに
-			int tmp = keys.back();
-			keys.pop_back();
-			keys.insert(keys.begin(), tmp);
-		}
-		else {
-			//WASDをSDWAに
-			for (int i = 0; i < 2; i++) {
+	case ModelTestScreen::MODE_SET:
+		switch (selectData.surface)
+		{
+		case SURFACE::SURFACE_TOP:
+			if (Between(camTra.rotate_.y, -45.0f, 45.0f)) {}
+			else if (Between(camTra.rotate_.y, 45.0f, 135.0f)) {
+				//WASDをASDWに
+				int tmp = keys.front();
+				keys.erase(keys.begin());
+				keys.push_back(tmp);
+			}
+			else if (Between(camTra.rotate_.y, -135.0f, -45.0f)) {
+				//WASDをDWASに
 				int tmp = keys.back();
 				keys.pop_back();
 				keys.insert(keys.begin(), tmp);
 			}
-		}
-		if (Input::IsKeyDown(keys[0]))  MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
-		if (Input::IsKeyDown(keys[1]))  MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
-		if (Input::IsKeyDown(keys[2]))  MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
-		if (Input::IsKeyDown(keys[3]))  MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
-		break;
-	case SURFACE::SURFACE_BOTTOM:
-		if (Between(camTra.rotate_.y, -45.0f, 45.0f)) {}
-		else if (Between(camTra.rotate_.y, 45.0f, 135.0f)) {
-			//WASDをDWASに
-			int tmp = keys.back();
-			keys.pop_back();
-			keys.insert(keys.begin(), tmp);
-		}
-		else if (Between(camTra.rotate_.y, -135.0f, -45.0f)) {
-			//WASDをASDWに
-			int tmp = keys.front();
-			keys.erase(keys.begin());
-			keys.push_back(tmp);
-		}
-		else {
-			//WASDをSDWAに
-			for (int i = 0; i < 2; i++) {
+			else {
+				//WASDをSDWAに
+				for (int i = 0; i < 2; i++) {
+					int tmp = keys.back();
+					keys.pop_back();
+					keys.insert(keys.begin(), tmp);
+				}
+			}
+			if (Input::IsKeyDown(keys[0]))  MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
+			if (Input::IsKeyDown(keys[1]))  MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
+			if (Input::IsKeyDown(keys[2]))  MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
+			if (Input::IsKeyDown(keys[3]))  MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
+			break;
+		case SURFACE::SURFACE_BOTTOM:
+			if (Between(camTra.rotate_.y, -45.0f, 45.0f)) {}
+			else if (Between(camTra.rotate_.y, 45.0f, 135.0f)) {
+				//WASDをDWASに
 				int tmp = keys.back();
 				keys.pop_back();
 				keys.insert(keys.begin(), tmp);
 			}
-		}
+			else if (Between(camTra.rotate_.y, -135.0f, -45.0f)) {
+				//WASDをASDWに
+				int tmp = keys.front();
+				keys.erase(keys.begin());
+				keys.push_back(tmp);
+			}
+			else {
+				//WASDをSDWAに
+				for (int i = 0; i < 2; i++) {
+					int tmp = keys.back();
+					keys.pop_back();
+					keys.insert(keys.begin(), tmp);
+				}
+			}
 
-		if (Input::IsKeyDown(keys[0]))  MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
-		if (Input::IsKeyDown(keys[1]))  MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
-		if (Input::IsKeyDown(keys[2]))  MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
-		if (Input::IsKeyDown(keys[3]))  MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
+			if (Input::IsKeyDown(keys[0]))  MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
+			if (Input::IsKeyDown(keys[1]))  MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
+			if (Input::IsKeyDown(keys[2]))  MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
+			if (Input::IsKeyDown(keys[3]))  MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
+			break;
+		case SURFACE::SURFACE_LEFT:
+			if (Input::IsKeyDown(DIK_A))    MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
+			if (Input::IsKeyDown(DIK_D))    MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
+			if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true, SURFACE::SURFACE_TOP);
+			if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false, SURFACE::SURFACE_BOTTOM);
+			break;
+		case SURFACE::SURFACE_RIGHT:
+			if (Input::IsKeyDown(DIK_A))    MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
+			if (Input::IsKeyDown(DIK_D))    MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
+			if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true, SURFACE::SURFACE_TOP);
+			if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false, SURFACE::SURFACE_BOTTOM);
+			break;
+		case SURFACE::SURFACE_FRONT:
+			if (Input::IsKeyDown(DIK_A))    MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
+			if (Input::IsKeyDown(DIK_D))    MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
+			if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true, SURFACE::SURFACE_TOP);
+			if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false, SURFACE::SURFACE_BOTTOM);
+			break;
+		case SURFACE::SURFACE_BACK:
+			if (Input::IsKeyDown(DIK_A))    MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
+			if (Input::IsKeyDown(DIK_D))    MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
+			if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true, SURFACE::SURFACE_TOP);
+			if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false, SURFACE::SURFACE_BOTTOM);
+			break;
+		}
 		break;
-	case SURFACE::SURFACE_LEFT:
-		if (Input::IsKeyDown(DIK_A))    MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
-		if (Input::IsKeyDown(DIK_D))    MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
-		if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true, SURFACE::SURFACE_TOP);
-		if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false, SURFACE::SURFACE_BOTTOM);
-		break;
-	case SURFACE::SURFACE_RIGHT:
-		if (Input::IsKeyDown(DIK_A))    MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
-		if (Input::IsKeyDown(DIK_D))    MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
-		if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true, SURFACE::SURFACE_TOP);
-		if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false, SURFACE::SURFACE_BOTTOM);
-		break;
-	case SURFACE::SURFACE_FRONT:
-		if (Input::IsKeyDown(DIK_A))    MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
-		if (Input::IsKeyDown(DIK_D))    MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
-		if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true, SURFACE::SURFACE_TOP);
-		if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false, SURFACE::SURFACE_BOTTOM);
-		break;
-	case SURFACE::SURFACE_BACK:
-		if (Input::IsKeyDown(DIK_A))    MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
-		if (Input::IsKeyDown(DIK_D))    MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
-		if (Input::IsKeyDown(DIK_W))    MoveSelectParts(Y, true, SURFACE::SURFACE_TOP);
-		if (Input::IsKeyDown(DIK_S))    MoveSelectParts(Y, false, SURFACE::SURFACE_BOTTOM);
+	case ModelTestScreen::MODE_ROTATE:
+		//回転モード中のキー移動時の処理
 		break;
 	}
 
@@ -534,6 +587,7 @@ void ModelTestScreen::JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag,
 	case Cube::SURFACE::SURFACE_BACK:
 		if (filter != DISABLE_VERTICAL_SEARCH)  flag.Set(CheckMarkVH(pos, surface, X));
 		if (filter != DISABLE_HORIZONTAL_SEARCH)flag.Set(CheckMarkVH(pos, surface, Y));
+		break;
 	case Cube::SURFACE::SURFACE_LEFT:
 	case Cube::SURFACE::SURFACE_RIGHT:
 		if (filter != DISABLE_HORIZONTAL_SEARCH)flag.Set(CheckMarkVH(pos, surface, Y));

@@ -7,6 +7,7 @@
 #include "ButtonGP.h"
 #include "ControlSlider.h"
 
+using KEY = SystemConfig::KEY;
 //コンストラクタ
 OptionScreen::OptionScreen(GameObject* parent) :
     Screen(parent, "OptionScreen"),
@@ -63,7 +64,7 @@ void OptionScreen::Initialize()
 void OptionScreen::Update()
 {
     //もどる
-    if (Input::IsKeyDown(DIK_P)) {
+    if (Input::IsKeyDown(SystemConfig::GetKey(KEY::KEY_ESC))) {
         Prev();
     }
 

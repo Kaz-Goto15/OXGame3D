@@ -6,6 +6,7 @@
 #include "Cube.h"
 class Cube;
 class CubeSelectIndicator;
+class Screen;
 class DebugText;
 
 using std::vector;
@@ -22,6 +23,7 @@ public:
 	void Release() override;
 private:
 	int hImgBG;
+	Screen* pScreen;	//スクリーン呼出のためのポインタ
 
 	const int PIECES = 3;
 	vector<vector<vector<Cube*>>> cube;
@@ -67,8 +69,9 @@ private:
 
 	void CalcCubeTrans();
 
-	bool isMoving = false;
-
+	bool isRotating = false;
+	int rotProgress;
+	const int maxRotProgress = 100;	//回転描写にかけるフレーム数
 	const int angleOfRotate = 90;
 	ROTATE_DIR dir;
 	int rotateNo;
@@ -82,7 +85,7 @@ private:
 		Z
 	};
 	void MoveSelectParts(DIR dir, bool plus, Cube::SURFACE outSurface);
-	void MoveSelect();
+	void MoveSelect(MODE mode);
 	void MoveIndicator();
 
 	//値が範囲内か
@@ -142,6 +145,7 @@ private:
 		}
 	}winFlag;
 
+	bool finished;
 	//斜め判定時の座標指定時に使う列挙型
 	//これを用いて判定する関数では0以上を指定したときに固定値とみなすため、ここの値は0未満にする
 	enum DIAG_VAR {
