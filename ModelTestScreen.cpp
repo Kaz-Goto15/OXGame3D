@@ -135,7 +135,7 @@ void ModelTestScreen::Update()
 			}
 			else if (Input::IsKeyDown(SystemConfig::GetKey(KEY::KEY_CHANGE))) {	//モード切替
 				mode = MODE_ROTATE;
-				indicator->SetDrawMode(indicator->DRAWMODE_SINGLE);
+				indicator->SetDrawMode(indicator->DRAWMODE_SINGLE);			//インジケータの描画モードを単一描画に
 				RotateModeInit();	//現在の選択位置から軸を指定したりする
 			}
 
@@ -150,7 +150,7 @@ void ModelTestScreen::Update()
 				//操作の無効化
 				control = CONTROL_IDLE;
 				//キューブの移動後の座標を更新
-				CalcCubeTrans();
+				UpdateCubeNextTransform();
 				//回転中フラグの有効化
 				isRotating = true;
 
@@ -182,6 +182,7 @@ void ModelTestScreen::Update()
 			}
 
 			//回転処理 現在進捗と最大進捗、値を入れる座標と移動前座標と移動後座標
+			CalcCubeTrans();
 			//RotateCube(selectData.dir,selectData.)
 		}
 	}
@@ -232,6 +233,41 @@ void ModelTestScreen::Release()
 {
 }
 
+void ModelTestScreen::RotateModeInit()
+{
+	switch (selectData.dir)
+	{
+	case ModelTestScreen::UP:
+	case ModelTestScreen::DOWN:
+		break;
+	case ModelTestScreen::LEFT:
+		break;
+	case ModelTestScreen::RIGHT:
+		break;
+	case ModelTestScreen::CW:
+		break;
+	case ModelTestScreen::CCW:
+		break;
+	default:
+		break;
+	}
+}
+
+void ModelTestScreen::SetModeInit()
+{
+	int count = 0;
+	for (int minAngle = -15; minAngle <= 45; minAngle += ) {
+
+	}
+	XMFLOAT3 camPos = Camera::GetPosition();
+	float absCamY = abs(camPos.y);
+
+	//z指定
+	for(int z = 2;)
+	if (absCamY > (180 - 45)) selectData.z = PIECES - 1;
+
+}
+
 void ModelTestScreen::UpdateStr()
 {
 	using std::to_string;
@@ -251,7 +287,7 @@ void ModelTestScreen::CalcCubeTrans()
 	}
 	switch (dir)
 	{
-	case ModelTestScreen::FRONT:
+	case ModelTestScreen::UP:
 		for (int y = 0; y < 3; y++) {
 			for (int z = 0; z < 3; z++) {
 				//座標はそのまま変える
@@ -267,7 +303,7 @@ void ModelTestScreen::CalcCubeTrans()
 				);
 			}
 		}
-	case ModelTestScreen::BACK:
+	case ModelTestScreen::DOWN:
 		break;
 	case ModelTestScreen::LEFT:
 		break;
@@ -285,14 +321,14 @@ void ModelTestScreen::CalcCubeTrans()
 
 		switch (dir)
 		{
-		case ModelTestScreen::FRONT:
+		case ModelTestScreen::UP:
 			//配列の入れ替えを行い、タイルの方向も変える
 			//rotateは0に戻す
 			//positionも入れ替え後の座標にする これは最後に座標がその位置へ向かうため配列番号の移動のみで済む
 			//→rotateを0にしてから、配列を入れ替える
 			//std::rotateM
 			break;
-		case ModelTestScreen::BACK:
+		case ModelTestScreen::DOWN:
 			break;
 		case ModelTestScreen::LEFT:
 			break;
@@ -507,8 +543,8 @@ void ModelTestScreen::CheckMarkRotate(XMINT3 pos, ROTATE_DIR dir, WinFlag& flag)
 {
 	switch (dir)
 	{
-	case ModelTestScreen::FRONT:
-	case ModelTestScreen::BACK:
+	case ModelTestScreen::UP:
+	case ModelTestScreen::DOWN:
 		CheckMarkRotate(pos, DIR::X, flag);
 	case ModelTestScreen::LEFT:
 	case ModelTestScreen::RIGHT:
@@ -602,7 +638,7 @@ void ModelTestScreen::JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag,
 }
 
 
-void ModelTestScreen::RotateCube(ROTATE_DIR rot, int col, float value)
+void ModelTestScreen::UpdateCubeNextTransform(ROTATE_DIR rot, int col, float value)
 {
 	rotateNo = col;
 	dir = rot;
@@ -612,7 +648,7 @@ void ModelTestScreen::RotateCube(ROTATE_DIR rot, int col, float value)
 	//次の座標指定 回転は一時的なのでしない、移動後にキューブ情報を更新する=変形後のタイル情報 これもここで指定していいかも(とりあえず未実装)
 	switch (rot)
 	{
-	case ModelTestScreen::FRONT:
+	case ModelTestScreen::UP:
 		for (int y = 0; y < 3; y++) {
 			for (int z = 0; z < 3; z++) {
 				cubePrevTra[col][y][z].position_ = cube[col][y][z]->GetPosition();
@@ -625,7 +661,7 @@ void ModelTestScreen::RotateCube(ROTATE_DIR rot, int col, float value)
 		}
 		//cube[col][1][1]->SetRotate(value, 0, 0);
 		break;
-	case ModelTestScreen::BACK:
+	case ModelTestScreen::DOWN:
 		break;
 	case ModelTestScreen::LEFT:
 		break;

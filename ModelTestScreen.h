@@ -31,8 +31,8 @@ private:
 	vector<vector<vector<Transform>>> cubeNextTra;
 	
 	enum ROTATE_DIR {
-		FRONT,
-		BACK,
+		UP,
+		DOWN,
 		LEFT,
 		RIGHT,
 		CW,
@@ -57,12 +57,14 @@ private:
 	struct SelectData {
 		int x, y, z;
 		ROTATE_DIR dir;
+		int rotCol;
 		Cube::SURFACE surface;
 		SelectData() {
 			x = 1;
 			y = 1;
 			z = 0;
 			surface = Cube::SURFACE::SURFACE_FRONT;
+			dir = ROTATE_DIR::UP;
 		}
 		XMINT3 GetPos() { return XMINT3(x, y, z); }
 	}selectData;
@@ -95,18 +97,21 @@ private:
 	}
 
 	//複数の一致
-	template<class T, typename... Args>
-	bool MultiEquals(T val1, T val2, Args... values) {
-		if (MultiEquals(val2, values)) {
-			return true;
-		}
-		return false;
-	}
+	//template<class T, typename... Args>
+	//bool MultiEquals(T val1, T val2, Args... values) {
+	//	if (MultiEquals(val2, values)) {
+	//		return true;
+	//	}
+	//	return false;
+	//}
 
-	template <class T>
-	bool MultiEquals(T val1, T val2) {
-		return (val1 == val2);
-	}
+	//template <class T>
+	//bool MultiEquals(T val1, T val2) {
+	//	return (val1 == val2);
+	//}
+
+	void RotateModeInit();
+	void SetModeInit();
 
 	//============================ カメラ関連 ============================
 	Transform camTra;                       //カメラ変形情報
@@ -198,6 +203,17 @@ private:
 	void JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& winFlag, FILTER filter);
 
 	//============================ 〇〇関連 ============================
+	enum WIN_STATE {	//勝利時の処理をステート管理 数値はそのステートが続くフレーム数
+		WIN_DRAWSTART = 100,	//黒半透明フェード
+		WIN_SHOW_WINNER = 150,	//勝利者の表示
+		WIN_DRAW_BUTTON = 100,
+		WIN_MAX
+	};
+	const int SHOW_WINNER_FADEIN_FRAMES = 30;	//勝利の画像出すときのフェードインフレーム数
+	bool winProcessFlag[WIN_MAX];
+	void WinProcess();
+	//↑これら全部temp
+
 
 	/// <summary>
 	/// キューブ回転のトリガー 初期化処理とフラグ管理
@@ -206,7 +222,7 @@ private:
 	/// <param name="dir">回転方向 前上から見て前(下)後(上))左右時計反時計</param>
 	/// <param name="no">回転する行/列 [0][0][0]を基準とし、0,1,2で指定</param>
 	/// <param name="angle">何度回転させるか</param>
-	void RotateCube(ROTATE_DIR dir, int no, float angle = 90.0f);
+	void UpdateCubeNextTransform(ROTATE_DIR dir, int no, float angle = 90.0f);
 
 	/// カメラ関連の処理
 	void RotateCamera();

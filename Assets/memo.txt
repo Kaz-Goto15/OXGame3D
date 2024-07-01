@@ -560,3 +560,50 @@ Top
 Bottom
 ⤴0-2 0 2-0
 ⤵0-2 0 0-2
+
+↓これカメラのXとY全部逆
+unit = 90/PIECES;(unit=30)
+15=Half(unit)
+2=PIECES-1
+
+if(camY > 45)surface=TOP; tmp=true;
+elif(camY < -45)surface=BOTTOM; tmp=true;
+
+y=1;
+
+//y指定
+int count = 0;
+for(int minAngle = -15; minAngle < = 45; minAngle += unit){
+	if(camY < minAngle){
+		y=count;
+		break;
+	}el count++;
+}
+//xz指定
+if(abs(cX)>105)z=2;
+elif(abs(cX)>75)z=1;
+el z=0;
+
+if(abs(cX)>165)x=1;
+elif(cX < -15)x=0;
+elif(cX > 15)x=2;
+el x=1;
+if(abs(cX) < 45)FRONT;
+elif(abs(cX) > 135)BACK;
+elif(cX < 0)LEFT;
+el RIGHT;
+
+/*
+if(-165 < cX < -135)x=0 z=2 BACK
+if(-135 < cX < -105)x=0 z=2 LEFT
+if(-105 < cX < -75)x=0 z=1 LEFT
+if(-75 < cX < -45)x=0 z=0 LEFT
+if(-45 < cX < -15)x=0 z=0 FRONT
+if(-15 < cX < 15)x=1 z=0 FRONT
+if(15<cX<45) x=2 z=0 FRONT
+if(45<cX<75) x=2 z=0 RIGHT
+if(75<cX<105) x=2 z=1 RIGHT
+if(105<cX<135) x=2 z=2 RIGHT
+if(135<cX<165) x=2 z=2 BACK
+if(165<cX or cX <-165) x=1 z=2 BACK
+*/
