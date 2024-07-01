@@ -80,6 +80,8 @@ void ModelTestScreen::Update()
 
 	RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
 
+	//デバッグで書いてる
+	SetModeInit();
 	//デバッグボタン
 	if (Input::IsKeyDown(DIK_P)) {
 		Prev();
@@ -150,7 +152,7 @@ void ModelTestScreen::Update()
 				//操作の無効化
 				control = CONTROL_IDLE;
 				//キューブの移動後の座標を更新
-				UpdateCubeNextTransform();
+				//UpdateCubeNextTransform();
 				//回転中フラグの有効化
 				isRotating = true;
 
@@ -255,17 +257,67 @@ void ModelTestScreen::RotateModeInit()
 
 void ModelTestScreen::SetModeInit()
 {
-	int count = 0;
-	for (int minAngle = -15; minAngle <= 45; minAngle += ) {
-
+	const int SET_MODE_UNIT = 90 / PIECES;
+	XMFLOAT3& camRot = camTra.rotate_;
+	float absCamY = abs(camRot.y);
+	SelectData testData;
+	//y指定
+	if (camRot.x >= 45)testData.y = PIECES-1;
+	else if (camRot.x <= -45)testData.y = 0;
+	else {
+		for (int y = 0; y < PIECES; y++) {
+			if (camRot.x < -45 + (y + 1) * SET_MODE_UNIT) {
+				testData.y = y;
+				break;
+			}
+		}
 	}
-	XMFLOAT3 camPos = Camera::GetPosition();
-	float absCamY = abs(camPos.y);
-
 	//z指定
-	for(int z = 2;)
-	if (absCamY > (180 - 45)) selectData.z = PIECES - 1;
+	if (absCamY >= 135)testData.z = PIECES-1;
+	else if (absCamY <= 45 )testData.z = 0;
+	else {
+		for (int z = 0; z < PIECES; z++) {
+			if (absCamY < 45 + (z + 1) * SET_MODE_UNIT) {
+				testData.z = z;
+				break;
+			}
+		}
+	}
 
+	//x指定
+	if (Between(camRot.y, 45.0f, 135.0f))testData.x = 0;
+	else if (Between(camRot.y, -135.0f, -45.0f))testData.x = PIECES-1;
+	else {
+		for (int x = 0; x < PIECES; x++) {
+			if(( fmod(camRot.y + 180,360.0f) -270) > 45 - (x + 1) * SET_MODE_UNIT) {
+				testData.x = x;
+				break;
+			}
+			//if (absCamY > 135) {
+			//	if (180 - camRot.y > 45 - (x + 1) * SET_MODE_UNIT) {
+			//		testData.x = x;
+			//		break;
+			//	}
+			//}
+			//else if (camRot.y > 45 - (x + 1) * SET_MODE_UNIT) {
+			//	testData.x = x;
+			//	break;
+			//}
+		}
+	}
+
+	//方向指定
+	if (camRot.x > 45)testData.surface = SURFACE::SURFACE_TOP;	//カメラが上側にある
+	else if (camRot.x < -45)testData.surface = SURFACE::SURFACE_BOTTOM;	//カメラが下側にある
+	else if (absCamY < 45)testData.surface = SURFACE::SURFACE_FRONT;	//カメラが正面にある
+	else if (absCamY > 135)testData.surface = SURFACE::SURFACE_BACK;	//カメラが裏側にある
+	else if (camRot.y > 0)testData.surface = SURFACE::SURFACE_LEFT;	//カメラが左側にある
+	else testData.surface = SURFACE::SURFACE_RIGHT;					//残るは右のみ
+
+	debugStr[6] = "setmodeinit:" + std::to_string(testData.x) + ","
+		+ std::to_string(testData.y) + ","
+		+ std::to_string(testData.z) + ","
+		+ (std::string)NAMEOF_ENUM(testData.surface);
 }
 
 void ModelTestScreen::UpdateStr()
@@ -565,52 +617,52 @@ void ModelTestScreen::JudgeDiag(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag
 	case Cube::SURFACE_TOP:     //左下が0,-,0
 		//探索座標2軸一致 右上
 		if (pos.x == pos.z) {
-			flag.Set(CheckMarkD(DIAG_VAR::UP, PIECES - 1, DIAG_VAR::UP, surface));
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, PIECES - 1, DIAG_VAR::DIAG_UP, surface));
 		}
 		//探索座標2軸交差 右下
 		if (PIECES - 1 - pos.x == pos.z) {
-			flag.Set(CheckMarkD(DIAG_VAR::UP, PIECES - 1, DIAG_VAR::DOWN, surface));
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, PIECES - 1, DIAG_VAR::DIAG_DOWN, surface));
 		}
 		break;
 	case Cube::SURFACE_BOTTOM:  //左上が0,-,0
 		//探索座標2軸一致 右下
 		if (pos.x == pos.z) {
-			flag.Set(CheckMarkD(DIAG_VAR::UP, 0, DIAG_VAR::UP, surface));
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, 0, DIAG_VAR::DIAG_UP, surface));
 		}
 		if (PIECES - 1 - pos.x == pos.z) {  //交差条件 右上
-			flag.Set(CheckMarkD(DIAG_VAR::UP, 0, DIAG_VAR::DOWN, surface));
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, 0, DIAG_VAR::DIAG_DOWN, surface));
 		}
 		break;
 	case Cube::SURFACE_LEFT:    //右下が-,0,0
 		if (pos.y == pos.z) {   //同座標一致条件 右下
-			flag.Set(CheckMarkD(0, DIAG_VAR::DOWN, DIAG_VAR::DOWN, surface));
+			flag.Set(CheckMarkD(0, DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_DOWN, surface));
 		}
 		if (PIECES - 1 - pos.y == pos.z) {  //交差条件 右上
-			flag.Set(CheckMarkD(0, DIAG_VAR::UP, DIAG_VAR::DOWN, surface));
+			flag.Set(CheckMarkD(0, DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_DOWN, surface));
 		}
 		break;
 	case Cube::SURFACE_RIGHT:   //左下が-,0,0
 		if (pos.y == pos.z) {   //同座標一致条件 右上
-			flag.Set(CheckMarkD(PIECES - 1, DIAG_VAR::UP, DIAG_VAR::UP, surface));
+			flag.Set(CheckMarkD(PIECES - 1, DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_UP, surface));
 		}
 		if (PIECES - 1 - pos.y == pos.z) {  //交差条件 右下
-			flag.Set(CheckMarkD(PIECES - 1, DIAG_VAR::DOWN, DIAG_VAR::UP, surface));
+			flag.Set(CheckMarkD(PIECES - 1, DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_UP, surface));
 		}
 		break;
 	case Cube::SURFACE_FRONT:   //左下が0,0,-
 		if (pos.x == pos.y) {   //同座標一致条件 右上
-			flag.Set(CheckMarkD(DIAG_VAR::UP, DIAG_VAR::UP, 0, surface));
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_UP, 0, surface));
 		}
 		if (PIECES - 1 - pos.x == pos.y) {  //交差条件 右下
-			flag.Set(CheckMarkD(DIAG_VAR::UP, DIAG_VAR::DOWN, 0, surface));
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_DOWN, 0, surface));
 		}
 		break;
 	case Cube::SURFACE_BACK:    //右下が0,0,-
 		if (pos.x == pos.y) {   //同座標一致条件 右下
-			flag.Set(CheckMarkD(DIAG_VAR::DOWN, DIAG_VAR::DOWN, PIECES - 1, surface));
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_DOWN, PIECES - 1, surface));
 		}
 		if (PIECES - 1 - pos.x == pos.y) {  //交差条件 右上
-			flag.Set(CheckMarkD(DIAG_VAR::DOWN, DIAG_VAR::UP, PIECES - 1, surface));
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_UP, PIECES - 1, surface));
 		}
 		break;
 	}
@@ -853,22 +905,22 @@ Cube::MARK ModelTestScreen::CheckMarkD(int x, int y, int z, SURFACE surface) {
 	for (int i = 0; i < PIECES; i++) {
 		XMINT3 check;
 		if (x < 0) {
-			if (x == DIAG_VAR::UP)check.x = i;
-			if (x == DIAG_VAR::DOWN)check.x = PIECES - 1 - i;
+			if (x == DIAG_VAR::DIAG_UP)check.x = i;
+			if (x == DIAG_VAR::DIAG_DOWN)check.x = PIECES - 1 - i;
 		}
 		else {
 			check.x = x;
 		}
 		if (y < 0) {
-			if (y == DIAG_VAR::UP)check.y = i;
-			if (y == DIAG_VAR::DOWN)check.y = PIECES - 1 - i;
+			if (y == DIAG_VAR::DIAG_UP)check.y = i;
+			if (y == DIAG_VAR::DIAG_DOWN)check.y = PIECES - 1 - i;
 		}
 		else {
 			check.y = y;
 		}
 		if (z < 0) {
-			if (z == DIAG_VAR::UP)check.z = i;
-			if (z == DIAG_VAR::DOWN)check.z = PIECES - 1 - i;
+			if (z == DIAG_VAR::DIAG_UP)check.z = i;
+			if (z == DIAG_VAR::DIAG_DOWN)check.z = PIECES - 1 - i;
 		}
 		else {
 			check.z = z;

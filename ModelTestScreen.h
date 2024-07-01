@@ -112,7 +112,7 @@ private:
 
 	void RotateModeInit();
 	void SetModeInit();
-
+	bool isMoving;
 	//============================ カメラ関連 ============================
 	Transform camTra;                       //カメラ変形情報
 	float rotSpdX, rotSpdY;                 //カメラ回転速度
@@ -154,8 +154,8 @@ private:
 	//斜め判定時の座標指定時に使う列挙型
 	//これを用いて判定する関数では0以上を指定したときに固定値とみなすため、ここの値は0未満にする
 	enum DIAG_VAR {
-		UP = -1,
-		DOWN = -2
+		DIAG_UP = -1,
+		DIAG_DOWN = -2
 	};
 
 	//特定の軸に沿った探索を行わないフィルタ
