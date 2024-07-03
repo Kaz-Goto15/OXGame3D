@@ -17,8 +17,9 @@ XMFLOAT3 Cube::Surface2Rotate(SURFACE surface)
 }
 
 //コンストラクタ
-Cube::Cube(GameObject* parent)
-    :GameObject(parent, "Cube")
+Cube::Cube(GameObject* parent):
+    GameObject(parent, "Cube"),
+    hModelCube(-1)
 {
     std::fill_n(hModelMark, MARK_MAX, -1);
     std::fill_n(cubeData_, SURFACE_MAX, MARK_BLANK);
@@ -72,42 +73,42 @@ void Cube::SwapData(ROTATE_DIR dir)
     MARK temp = cubeData_[SURFACE_FRONT];
     switch (dir)
     {
-    case Cube::UP:
+    case Cube::ROT_UP:
         temp = cubeData_[SURFACE_FRONT];
         cubeData_[SURFACE_FRONT] = cubeData_[SURFACE_BOTTOM];
         cubeData_[SURFACE_BOTTOM] = cubeData_[SURFACE_BACK];
         cubeData_[SURFACE_BACK] = cubeData_[SURFACE_TOP];
         cubeData_[SURFACE_TOP] = temp;
         break;
-    case Cube::DOWN:
+    case Cube::ROT_DOWN:
         temp = cubeData_[SURFACE_FRONT];
         cubeData_[SURFACE_FRONT] = cubeData_[SURFACE_TOP];
         cubeData_[SURFACE_TOP] = cubeData_[SURFACE_BACK];
         cubeData_[SURFACE_BACK] = cubeData_[SURFACE_BOTTOM];
         cubeData_[SURFACE_BOTTOM] = temp;
         break;
-    case Cube::LEFT:
+    case Cube::ROT_LEFT:
         temp = cubeData_[SURFACE_FRONT];
         cubeData_[SURFACE_FRONT] = cubeData_[SURFACE_RIGHT];
         cubeData_[SURFACE_RIGHT] = cubeData_[SURFACE_BACK];
         cubeData_[SURFACE_BACK] = cubeData_[SURFACE_LEFT];
         cubeData_[SURFACE_LEFT] = temp;
         break;
-    case Cube::RIGHT:
+    case Cube::ROT_RIGHT:
         temp = cubeData_[SURFACE_FRONT];
         cubeData_[SURFACE_FRONT] = cubeData_[SURFACE_LEFT];
         cubeData_[SURFACE_LEFT] = cubeData_[SURFACE_BACK];
         cubeData_[SURFACE_BACK] = cubeData_[SURFACE_RIGHT];
         cubeData_[SURFACE_RIGHT] = temp;
         break;
-    case Cube::CW:
+    case Cube::ROT_CW:
         temp = cubeData_[SURFACE_TOP];
         cubeData_[SURFACE_TOP] = cubeData_[SURFACE_LEFT];
         cubeData_[SURFACE_LEFT] = cubeData_[SURFACE_BOTTOM];
         cubeData_[SURFACE_BOTTOM] = cubeData_[SURFACE_RIGHT];
         cubeData_[SURFACE_RIGHT] = temp;
         break;
-    case Cube::CCW:
+    case Cube::ROT_CCW:
         temp = cubeData_[SURFACE_TOP];
         cubeData_[SURFACE_TOP] = cubeData_[SURFACE_RIGHT];
         cubeData_[SURFACE_RIGHT] = cubeData_[SURFACE_BOTTOM];
@@ -124,6 +125,12 @@ void Cube::SetMark(SURFACE surface, MARK mark)
     cubeData_[surface] = mark;
 }
 
+void Cube::SetPoint(XMINT3 point, float outerPoint)
+{
+    transform_.position_.x = (float)point.x - outerPoint;
+    transform_.position_.y = (float)point.y - outerPoint;
+    transform_.position_.z = (float)point.z - outerPoint;
+}
 /*
 上方向(x軸時計)
 　上後　　　　前上

@@ -1,18 +1,19 @@
 #include "ModelTestScreen.h"
-#include "Engine/Input.h"
-
-#include "SystemConfig.h"
-#include "DebugText.h"
-#include "./Engine/Camera.h"
-#include "Easing.h"
-#include "./Engine/Image.h"
-#include <algorithm>
-#include "CubeSelectIndicator.h"
 
 #include "./Include/nameof.hpp"
-#include "./Engine/Debug.h"
+#include "Easing.h"
+#include "Engine/Input.h"
+#include "SystemConfig.h"
+
+#include "./Engine/Image.h"
+#include "CubeSelectIndicator.h"
+#include "./Engine/Camera.h"
+#include <algorithm>
 
 #include "OptionScreen.h"
+
+#include "./Engine/Debug.h"
+#include "DebugText.h"
 
 using KEY = SystemConfig::KEY;
 using SystemConfig::GetKey;
@@ -62,10 +63,11 @@ void ModelTestScreen::Initialize()
 
 	//インジケーター生成・座標指定
 	indicator = Instantiate<CubeSelectIndicator>(this);
-	indicator->SetPosition(selectData.x - 1, selectData.y - 1, selectData.z - 1);
-	indicator->SetSurface(selectData.surface);
 	indicator->SetCubeScale(PIECES);
-	indicator->SetCubeRotate(CubeSelectIndicator::ROT_CCW);
+	indicator->SetDrawPoint(selectData.GetPos(), selectData.surface);
+	indicator->SetCubeRotate(selectData.dir);
+	indicator->SetRotateColumn(selectData.rotCol);
+	indicator->SetDrawMode(indicator->DRAWMODE_SINGLE);
 
 	//デバッグ
 	debugtext = Instantiate<DebugText>(this);
@@ -81,8 +83,8 @@ void ModelTestScreen::Update()
 	RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
 
 	//デバッグで書いてる
-	SetModeInit();
-	RotateModeInit();
+	//SetModeInit();
+	//RotateModeInit();
 	//デバッグボタン
 	if (Input::IsKeyDown(DIK_P)) {
 		Prev();
@@ -98,7 +100,7 @@ void ModelTestScreen::Update()
 		else if (control == CONTROL_2P)control = CONTROL_IDLE;
 	}
 	if (Input::IsKeyDown(DIK_8)) {
-		indicator->SetCubeRotate(CubeSelectIndicator::ROT_CCW);
+		indicator->SetCubeRotate(ROTATE_DIR::ROT_CCW);
 	}
 
 	//finishなどステートが進まない限り操作を受け付けるやつ 現状finish時以外できるため直打ち
@@ -111,11 +113,11 @@ void ModelTestScreen::Update()
 	}
 	//操作状態がアイドルでなければ
 	if (control != CONTROL_IDLE) {
+		MoveSelect(mode);
 		//現在のモードで処理
 		switch (mode)
 		{
 		case ModelTestScreen::MODE_SET:
-			MoveSelect(mode);
 			//キー関連の記述は同時処理を防ぐため取り敢えずすべてelifで書く
 			//マーク設置
 			if (Input::IsKeyDown(GetKey(KEY::KEY_ACT))) {
@@ -138,7 +140,7 @@ void ModelTestScreen::Update()
 			}
 			else if (Input::IsKeyDown(SystemConfig::GetKey(KEY::KEY_CHANGE))) {	//モード切替
 				mode = MODE_ROTATE;
-				indicator->SetDrawMode(indicator->DRAWMODE_SINGLE);			//インジケータの描画モードを単一描画に
+				indicator->SetDrawMode(indicator->DRAWMODE_CIRCLE);			//インジケータの描画モードを円形描画に
 				RotateModeInit();	//現在の選択位置から軸を指定したりする
 			}
 
@@ -146,7 +148,24 @@ void ModelTestScreen::Update()
 		case ModelTestScreen::MODE_ROTATE:
 			//回転軸切替
 			if (Input::IsKeyDown(GetKey(KEY::KEY_CHANGE_AXIS))) {
-
+				switch (selectData.dir)
+				{
+				case ROTATE_DIR::ROT_UP:
+				case ROTATE_DIR::ROT_DOWN:
+					selectData.dir = ROTATE_DIR::ROT_LEFT;
+					indicator->SetCubeRotate(selectData.dir);
+					break;
+				case ROTATE_DIR::ROT_LEFT:
+				case ROTATE_DIR::ROT_RIGHT:
+					selectData.dir = ROTATE_DIR::ROT_CW;
+					indicator->SetCubeRotate(selectData.dir);
+					break;
+				case ROTATE_DIR::ROT_CW:
+				case ROTATE_DIR::ROT_CCW:
+					selectData.dir = ROTATE_DIR::ROT_UP;
+					indicator->SetCubeRotate(selectData.dir);
+					break;
+				}
 			}
 			//回転
 			else if (Input::IsKeyDown(GetKey(KEY::KEY_ACT))) {
@@ -161,7 +180,8 @@ void ModelTestScreen::Update()
 			}
 			else if (Input::IsKeyDown(GetKey(KEY::KEY_CHANGE))) {	//モード切替
 				mode = MODE_SET;
-				indicator->SetDrawMode(indicator->DRAWMODE_SINGLE);
+				indicator->SetDrawMode(indicator->DRAWMODE_SINGLE);		//インジケータの描画モードを単一描画に
+				SetModeInit();
 			}
 			break;
 		case ModelTestScreen::MODE_VIEW:
@@ -240,36 +260,11 @@ void ModelTestScreen::RotateModeInit()
 {
 	//設置モードから回転モードに移行時、現在のカメラ角度から選択行と回転軸を指定する
 	//視点から上方向になるよう初期化 それにより最初からLEFT/RIGHTは必ず指定されない
-
-	/*
-if(-165 < cX < -135)c=2 DOWN c=x
-
-if(-135 < cX < -105)c=2 CCW c=z
-if(-105 < cX < -75)c=1 CCW
-if(-75 < cX < -45)c=0 CCW
-
-if(-45 < cX < -15)c=2 UP c=x
-if(-15 < cX < 15)c=1 UP
-if(15<cX<45) c=0 UP
-
-if(45<cX<75) c=0 CW c=z
-if(75<cX<105) c=1 CW
-if(105<cX<135) c=2 CW
-
-if(135<cX<165) c=0 DOWN c=x
-if(165<cX or cX <-165) c=1 DOWN
-	*/
 	const int SET_MODE_UNIT = 90 / PIECES;
 	XMFLOAT3& camRot = camTra.rotate_;
 	float absCamY = abs(camRot.y);
-	SelectData testData;	//あとでselectDataに置換する
-	//-45~45 UP 前
-	//45~135 RIGHT 左
-	//135~,~135 DOWN 後
-	//-135~-45 LEFT 右
+	//SelectData selectData;	//あとでselectDataに置換する
 
-	//カメラが上下にあるなら(不要)
-	//if (abs(camRot.x) >= 45)
 
 	for (int c = 0; c < PIECES; c++) {
 		if (absCamY >= 135 || absCamY <= 45) {
@@ -277,45 +272,46 @@ if(165<cX or cX <-165) c=1 DOWN
 			if (absCamY >= 135) {	//-180~-135 135~180 後
 				if (camRot.y > 0) {	//+
 					if (180 - camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //135~180→45~0変換
-						testData.rotCol = c;
-						testData.dir = DOWN;
+						selectData.rotCol = c;
+						selectData.dir = ROTATE_DIR::ROT_DOWN;
 						break;
 					}
 				}
 				else {	//-
 					if (-180 - camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //-180~-135→0~-45変換
-						testData.rotCol = c;
-						testData.dir = DOWN;
+						selectData.rotCol = c;
+						selectData.dir = ROTATE_DIR::ROT_DOWN;
 						break;
 					}
 				}
 			}
 			else if (camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //前 -45~45
-				testData.rotCol = c;
-				testData.dir = UP;
+				selectData.rotCol = c;
+				selectData.dir = ROTATE_DIR::ROT_UP;
 				break;
 			}
 		}
 		else {
 			//SetModeInitのzと同等の処理
 			if (absCamY < 45 + (c + 1) * SET_MODE_UNIT) {
-				testData.rotCol = c;
+				selectData.rotCol = c;
 
 				//回転方向指定
 				if (camRot.y > 0) {
-					testData.dir = CW;
+					selectData.dir = ROTATE_DIR::ROT_CW;
 				}
 				else {
-					testData.dir = CCW;
+					selectData.dir = ROTATE_DIR::ROT_CCW;
 				}
 
 				break;
 			}
 		}
 	}
-
-	debugStr[7] = "rotmodeinit:" + std::to_string(testData.rotCol) + ","
-		+ (std::string)NAMEOF_ENUM(testData.dir);
+	indicator->SetCubeRotate(selectData.dir);
+	indicator->SetRotateColumn(selectData.rotCol);
+	debugStr[7] = "rotmodeinit:" + std::to_string(selectData.rotCol) + ","
+		+ (std::string)NAMEOF_ENUM(selectData.dir);
 
 }
 
@@ -325,70 +321,71 @@ void ModelTestScreen::SetModeInit()
 	const int SET_MODE_UNIT = 90 / PIECES;
 	XMFLOAT3& camRot = camTra.rotate_;
 	float absCamY = abs(camRot.y);
-	SelectData testData;	//あとでselectDataに置換する
+	//SelectData selectData;	//あとでselectDataに置換する
 
 	//y指定
-	if (camRot.x >= 45)testData.y = PIECES-1;
-	else if (camRot.x <= -45)testData.y = 0;
+	if (camRot.x >= 45)selectData.y = PIECES-1;
+	else if (camRot.x <= -45)selectData.y = 0;
 	else {
 		for (int y = 0; y < PIECES; y++) {
 			if (camRot.x < -45 + (y + 1) * SET_MODE_UNIT) {
-				testData.y = y;
+				selectData.y = y;
 				break;
 			}
 		}
 	}
 
 	//z指定
-	if (absCamY >= 135)testData.z = PIECES-1;
-	else if (absCamY <= 45 )testData.z = 0;
+	if (absCamY >= 135)selectData.z = PIECES-1;
+	else if (absCamY <= 45 )selectData.z = 0;
 	else {
 		for (int z = 0; z < PIECES; z++) {
 			if (absCamY < 45 + (z + 1) * SET_MODE_UNIT) {
-				testData.z = z;
+				selectData.z = z;
 				break;
 			}
 		}
 	}
 
 	//x指定
-	if (Between(camRot.y, 45.0f, 135.0f))testData.x = 0; //左
-	else if (Between(camRot.y, -135.0f, -45.0f))testData.x = PIECES-1; //右
+	if (Between(camRot.y, 45.0f, 135.0f))selectData.x = 0; //左
+	else if (Between(camRot.y, -135.0f, -45.0f))selectData.x = PIECES-1; //右
 	else {
 		for (int x = 0; x < PIECES; x++) {
 			if (absCamY > 135) {	//-180~-135 135~180 後
 				if (camRot.y > 0) {	//+
 					if (180 - camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //135~180→45~0変換
-						testData.x = x;
+						selectData.x = x;
 						break;
 					}
 				}
 				else {	//-
 					if (-180 - camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //-180~-135→0~-45変換
-						testData.x = x;
+						selectData.x = x;
 						break;
 					}
 				}
 			}
 			else if (camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //前 -45~45
-				testData.x = x;
+				selectData.x = x;
 				break;
 			}
 		}
 	}
 
 	//方向指定
-	if (camRot.x > 45)testData.surface = SURFACE::SURFACE_TOP;	//カメラが上側にある
-	else if (camRot.x < -45)testData.surface = SURFACE::SURFACE_BOTTOM;	//カメラが下側にある
-	else if (absCamY < 45)testData.surface = SURFACE::SURFACE_FRONT;	//カメラが正面にある
-	else if (absCamY > 135)testData.surface = SURFACE::SURFACE_BACK;	//カメラが裏側にある
-	else if (camRot.y > 0)testData.surface = SURFACE::SURFACE_LEFT;	//カメラが左側にある
-	else testData.surface = SURFACE::SURFACE_RIGHT;					//残るは右のみ
+	if (camRot.x > 45)selectData.surface = SURFACE::SURFACE_TOP;	//カメラが上側にある
+	else if (camRot.x < -45)selectData.surface = SURFACE::SURFACE_BOTTOM;	//カメラが下側にある
+	else if (absCamY < 45)selectData.surface = SURFACE::SURFACE_FRONT;	//カメラが正面にある
+	else if (absCamY > 135)selectData.surface = SURFACE::SURFACE_BACK;	//カメラが裏側にある
+	else if (camRot.y > 0)selectData.surface = SURFACE::SURFACE_LEFT;	//カメラが左側にある
+	else selectData.surface = SURFACE::SURFACE_RIGHT;					//残るは右のみ
 
-	debugStr[6] = "setmodeinit:" + std::to_string(testData.x) + ","
-		+ std::to_string(testData.y) + ","
-		+ std::to_string(testData.z) + ","
-		+ (std::string)NAMEOF_ENUM(testData.surface);
+	indicator->SetDrawPoint(selectData.GetPos(), selectData.surface);
+	debugStr[6] = "setmodeinit:" + std::to_string(selectData.x) + ","
+		+ std::to_string(selectData.y) + ","
+		+ std::to_string(selectData.z) + ","
+		+ (std::string)NAMEOF_ENUM(selectData.surface);
 }
 
 void ModelTestScreen::UpdateStr()
@@ -397,7 +394,15 @@ void ModelTestScreen::UpdateStr()
 	debugStr[0] = "control:" + (std::string)NAMEOF_ENUM(control) + "(Press '9' to change)";
 	debugStr[1] = "scrH:" + to_string(SystemConfig::windowHeight) + "scrW:" + to_string(SystemConfig::windowWidth);
 	debugStr[2] = "mode:" + (std::string)NAMEOF_ENUM(mode) + "(Press '0' to change)";
-	debugStr[3] = "select:" + std::to_string(selectData.x) + "," + std::to_string(selectData.y) + "," + std::to_string(selectData.z) + "," + (std::string)NAMEOF_ENUM(selectData.surface);
+	debugStr[3] = "select:(" +
+		std::to_string(selectData.x) + "," +
+		std::to_string(selectData.y) + "," +
+		std::to_string(selectData.z) + ") SUR:" +
+		(std::string)NAMEOF_ENUM(selectData.surface) + " col:" +
+		std::to_string(selectData.rotCol) + " dir:" +
+		(std::string)NAMEOF_ENUM(selectData.dir);
+		
+
 	debugStr[4] = "camTra:" + std::to_string(camTra.rotate_.x) + ", " + std::to_string(camTra.rotate_.y);
 }
 
@@ -408,9 +413,9 @@ void ModelTestScreen::CalcCubeTrans()
 		rotTime = 90;
 		isMoving = false;
 	}
-	switch (dir)
+	switch (selectData.dir)
 	{
-	case ModelTestScreen::UP:
+	case ROTATE_DIR::ROT_UP:
 		for (int y = 0; y < 3; y++) {
 			for (int z = 0; z < 3; z++) {
 				//座標はそのまま変える
@@ -426,15 +431,15 @@ void ModelTestScreen::CalcCubeTrans()
 				);
 			}
 		}
-	case ModelTestScreen::DOWN:
+	case ROTATE_DIR::ROT_DOWN:
 		break;
-	case ModelTestScreen::LEFT:
+	case ROTATE_DIR::ROT_LEFT:
 		break;
-	case ModelTestScreen::RIGHT:
+	case ROTATE_DIR::ROT_RIGHT:
 		break;
-	case ModelTestScreen::CW:
+	case ROTATE_DIR::ROT_CW:
 		break;
-	case ModelTestScreen::CCW:
+	case ROTATE_DIR::ROT_CCW:
 		break;
 	default:
 		break;
@@ -442,24 +447,24 @@ void ModelTestScreen::CalcCubeTrans()
 	if (isMoving == false) {
 		rotTime = 0;
 
-		switch (dir)
+		switch (selectData.dir)
 		{
-		case ModelTestScreen::UP:
+		case ROTATE_DIR::ROT_UP:
 			//配列の入れ替えを行い、タイルの方向も変える
 			//rotateは0に戻す
 			//positionも入れ替え後の座標にする これは最後に座標がその位置へ向かうため配列番号の移動のみで済む
 			//→rotateを0にしてから、配列を入れ替える
 			//std::rotateM
 			break;
-		case ModelTestScreen::DOWN:
+		case ROTATE_DIR::ROT_DOWN:
 			break;
-		case ModelTestScreen::LEFT:
+		case ROTATE_DIR::ROT_LEFT:
 			break;
-		case ModelTestScreen::RIGHT:
+		case ROTATE_DIR::ROT_RIGHT:
 			break;
-		case ModelTestScreen::CW:
+		case ROTATE_DIR::ROT_CW:
 			break;
-		case ModelTestScreen::CCW:
+		case ROTATE_DIR::ROT_CCW:
 			break;
 		default:
 			break;
@@ -492,8 +497,7 @@ void ModelTestScreen::MoveSelectParts(DIR dir, bool plus, Cube::SURFACE outSurfa
 			}
 		}
 	}
-	indicator->SetPosition(selectData.x - 1, selectData.y - 1, selectData.z - 1);
-	indicator->SetSurface(selectData.surface);
+	indicator->SetDrawPoint(selectData.GetPos(), selectData.surface);
 }
 void ModelTestScreen::MoveSelect(MODE mode)
 {
@@ -588,67 +592,98 @@ void ModelTestScreen::MoveSelect(MODE mode)
 		break;
 	case ModelTestScreen::MODE_ROTATE:
 		//回転モード中のキー移動時の処理
-		switch (dir)
+		switch (selectData.dir)
 		{
-		case ModelTestScreen::UP:
-		case ModelTestScreen::DOWN:
-			if (GetKey(KEY::KEY_UP)) {
-				selectData.dir = UP;
+		case ROTATE_DIR::ROT_UP:
+		case ROTATE_DIR::ROT_DOWN:
+			if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+				selectData.dir = ROTATE_DIR::ROT_UP;
+				indicator->SetCubeRotate(selectData.dir);
 			}
-			else if (GetKey(KEY::KEY_LEFT)) {
-				if (selectData.rotCol > 0)selectData.rotCol--;
+			else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+				if (selectData.rotCol > 0) {
+					selectData.rotCol--;
+					indicator->SetRotateColumn(selectData.rotCol);
+				}
 			}
-			else if (GetKey(KEY::KEY_DOWN)) {
-				selectData.dir = DOWN;
+			else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+				selectData.dir = ROTATE_DIR::ROT_DOWN;
+				indicator->SetCubeRotate(selectData.dir);
 			}
-			else if (GetKey(KEY::KEY_RIGHT)) {
-				if (selectData.rotCol < PIECES-1)selectData.rotCol++;
-			}
-			break;
-		case ModelTestScreen::LEFT:
-		case ModelTestScreen::RIGHT:
-			if (GetKey(KEY::KEY_UP)) {
-				if (selectData.rotCol < PIECES - 1)selectData.rotCol++;
-			}
-			else if (GetKey(KEY::KEY_LEFT)) {
-				selectData.dir = LEFT;
-			}
-			else if (GetKey(KEY::KEY_DOWN)) {
-				if (selectData.rotCol > 0)selectData.rotCol--;
-			}
-			else if (GetKey(KEY::KEY_RIGHT)) {
-				selectData.dir = RIGHT;
+			else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+				if (selectData.rotCol < PIECES - 1) {
+					selectData.rotCol++;
+					indicator->SetRotateColumn(selectData.rotCol);
+				}
 			}
 			break;
-		case ModelTestScreen::CW:
-		case ModelTestScreen::CCW:
+		case ROTATE_DIR::ROT_LEFT:
+		case ROTATE_DIR::ROT_RIGHT:
+			if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+				if (selectData.rotCol < PIECES - 1) {
+					selectData.rotCol++;
+					indicator->SetRotateColumn(selectData.rotCol);
+				}
+			}
+			else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+				selectData.dir = ROTATE_DIR::ROT_LEFT;
+				indicator->SetCubeRotate(selectData.dir);
+			}
+			else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+				if (selectData.rotCol > 0) {
+					selectData.rotCol--;
+					indicator->SetRotateColumn(selectData.rotCol);
+				}
+			}
+			else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+				selectData.dir = ROTATE_DIR::ROT_RIGHT;
+				indicator->SetCubeRotate(selectData.dir);
+			}
+			break;
+		case ROTATE_DIR::ROT_CW:
+		case ROTATE_DIR::ROT_CCW:
 			if (camTra.rotate_.x > 0) {
-				if (GetKey(KEY::KEY_UP)) {
-					if (selectData.rotCol < PIECES - 1)selectData.rotCol++;
+				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+					if (selectData.rotCol < PIECES - 1) {
+						selectData.rotCol++;
+						indicator->SetRotateColumn(selectData.rotCol);
+					}
 				}
-				else if (GetKey(KEY::KEY_LEFT)) {
-					selectData.dir = CCW;
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+					selectData.dir = ROTATE_DIR::ROT_CCW;
+					indicator->SetCubeRotate(selectData.dir);
 				}
-				else if (GetKey(KEY::KEY_DOWN)) {
-					if (selectData.rotCol > 0)selectData.rotCol--;
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+					if (selectData.rotCol > 0) {
+						selectData.rotCol--;
+						indicator->SetRotateColumn(selectData.rotCol);
+					}
 				}
-				else if (GetKey(KEY::KEY_RIGHT)) {
-					selectData.dir = CW;
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+					selectData.dir = ROTATE_DIR::ROT_CW;
+					indicator->SetCubeRotate(selectData.dir);
 				}
 			}
 			else {
-
-				if (GetKey(KEY::KEY_UP)) {
-					if (selectData.rotCol > 0)selectData.rotCol--;
+				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+					if (selectData.rotCol > 0) {
+						selectData.rotCol--;
+						indicator->SetRotateColumn(selectData.rotCol);
+					}
 				}
-				else if (GetKey(KEY::KEY_LEFT)) {
-					selectData.dir = CW;
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+					selectData.dir = ROTATE_DIR::ROT_CW;
+					indicator->SetCubeRotate(selectData.dir);
 				}
-				else if (GetKey(KEY::KEY_DOWN)) {
-					if (selectData.rotCol < PIECES - 1)selectData.rotCol++;
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+					if (selectData.rotCol < PIECES - 1) {
+						selectData.rotCol++;
+						indicator->SetRotateColumn(selectData.rotCol);
+					}
 				}
-				else if (GetKey(KEY::KEY_RIGHT)) {
-					selectData.dir = CCW;
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+					selectData.dir = ROTATE_DIR::ROT_CCW;
+					indicator->SetCubeRotate(selectData.dir);
 				}
 			}
 			break;
@@ -732,15 +767,18 @@ void ModelTestScreen::CheckMarkRotate(XMINT3 pos, ROTATE_DIR dir, WinFlag& flag)
 {
 	switch (dir)
 	{
-	case ModelTestScreen::UP:
-	case ModelTestScreen::DOWN:
+	case ROTATE_DIR::ROT_UP:
+	case ROTATE_DIR::ROT_DOWN:
 		CheckMarkRotate(pos, DIR::X, flag);
-	case ModelTestScreen::LEFT:
-	case ModelTestScreen::RIGHT:
+		break;
+	case ROTATE_DIR::ROT_LEFT:
+	case ROTATE_DIR::ROT_RIGHT:
 		CheckMarkRotate(pos, DIR::Y, flag);
-	case ModelTestScreen::CW:
-	case ModelTestScreen::CCW:
+		break;
+	case ROTATE_DIR::ROT_CW:
+	case ROTATE_DIR::ROT_CCW:
 		CheckMarkRotate(pos, DIR::Z, flag);
+		break;
 	}
 }
 
@@ -830,14 +868,14 @@ void ModelTestScreen::JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag,
 void ModelTestScreen::UpdateCubeNextTransform(ROTATE_DIR rot, int col, float value)
 {
 	rotateNo = col;
-	dir = rot;
+	selectData.dir = rot;
 	//フラグ管理
 	isMoving = true;    //移動中フラグ
 
 	//次の座標指定 回転は一時的なのでしない、移動後にキューブ情報を更新する=変形後のタイル情報 これもここで指定していいかも(とりあえず未実装)
 	switch (rot)
 	{
-	case ModelTestScreen::UP:
+	case ROTATE_DIR::ROT_UP:
 		for (int y = 0; y < 3; y++) {
 			for (int z = 0; z < 3; z++) {
 				cubePrevTra[col][y][z].position_ = cube[col][y][z]->GetPosition();
@@ -850,11 +888,11 @@ void ModelTestScreen::UpdateCubeNextTransform(ROTATE_DIR rot, int col, float val
 		}
 		//cube[col][1][1]->SetRotate(value, 0, 0);
 		break;
-	case ModelTestScreen::DOWN:
+	case ROTATE_DIR::ROT_DOWN:
 		break;
-	case ModelTestScreen::LEFT:
+	case ROTATE_DIR::ROT_LEFT:
 		break;
-	case ModelTestScreen::RIGHT:
+	case ROTATE_DIR::ROT_RIGHT:
 		for (int x = 0; x < 3; x++) {
 			for (int y = 0; y < 3; y++) {
 				if (x == 1 && y == 1)break;
@@ -865,9 +903,9 @@ void ModelTestScreen::UpdateCubeNextTransform(ROTATE_DIR rot, int col, float val
 		cube[1][1][col]->SetRotate(0, 0, value);
 
 		break;
-	case ModelTestScreen::CW:
+	case ROTATE_DIR::ROT_CW:
 		break;
-	case ModelTestScreen::CCW:
+	case ROTATE_DIR::ROT_CCW:
 		break;
 	default:
 		break;
@@ -938,15 +976,20 @@ void ModelTestScreen::RotateCamera() {
 
 	bool moveFlag = false;
 	//ビューモードの場合、移動を許可
-	if (mode == MODE_VIEW) {
+	//if (mode == MODE_VIEW) {
 		//左クリック中にドラッグで移動する(仮)
-		if (Input::IsMouseButton(0)) {
-			rotSpdY = Input::GetMouseMove().x * AT_RATIO;   //マウスx移動量でy軸回転
-			rotSpdX = Input::GetMouseMove().y * AT_RATIO;   //マウスy移動量でx軸回転
-			moveFlag = true;
+	if (Input::IsMouseButton(0)) {
+		rotSpdY = Input::GetMouseMove().x * AT_RATIO;   //マウスx移動量でy軸回転
+		rotSpdX = Input::GetMouseMove().y * AT_RATIO;   //マウスy移動量でx軸回転
+		moveFlag = true;
+	}
+	//}
+	if (mode != MODE_VIEW) {
+		if (rotSpdX != 0 || rotSpdY != 0) {
+			prevMode = mode;
+			mode = MODE_VIEW;
 		}
 	}
-
 	//カメラ移動しなかったら速度減少
 	if (!moveFlag) {
 		//各速度が0でない場合割合減少 一定以下で0にする

@@ -10,7 +10,11 @@ class Screen;
 class DebugText;
 
 using std::vector;
+
 using SURFACE = Cube::SURFACE;
+using ROTATE_DIR = Cube::ROTATE_DIR;
+using MARK = Cube::MARK;
+
 //管理するクラス
 class ModelTestScreen : public Screen
 {
@@ -29,15 +33,6 @@ private:
 	vector<vector<vector<Cube*>>> cube;
 	vector<vector<vector<Transform>>> cubePrevTra;
 	vector<vector<vector<Transform>>> cubeNextTra;
-	
-	enum ROTATE_DIR {
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT,
-		CW,
-		CCW
-	};
 	
 	//操作モード
 	enum MODE {
@@ -58,13 +53,14 @@ private:
 		int x, y, z;
 		ROTATE_DIR dir;
 		int rotCol;
-		Cube::SURFACE surface;
+		SURFACE surface;
 		SelectData() {
 			x = 1;
 			y = 1;
 			z = 0;
-			surface = Cube::SURFACE::SURFACE_FRONT;
-			dir = ROTATE_DIR::UP;
+			surface = SURFACE::SURFACE_FRONT;
+			rotCol = 1,
+			dir = ROTATE_DIR::ROT_UP;
 		}
 		XMINT3 GetPos() { return XMINT3(x, y, z); }
 	}selectData;
@@ -75,7 +71,6 @@ private:
 	int rotProgress;
 	const int maxRotProgress = 100;	//回転描写にかけるフレーム数
 	const int angleOfRotate = 90;
-	ROTATE_DIR dir;
 	int rotateNo;
 	int rotTime = 0; 
 
@@ -86,7 +81,7 @@ private:
 		Y,
 		Z
 	};
-	void MoveSelectParts(DIR dir, bool plus, Cube::SURFACE outSurface);
+	void MoveSelectParts(DIR dir, bool plus, SURFACE outSurface);
 	void MoveSelect(MODE mode);
 	void MoveIndicator();
 
@@ -141,11 +136,11 @@ private:
 		WinFlag() {
 
 		}
-		void Set(Cube::MARK mark) {
+		void Set(MARK mark) {
 			switch (mark)
 			{
-			case Cube::MARK_O:  p1 = true;  return;
-			case Cube::MARK_X:  p2 = true;  return;
+			case MARK::MARK_O:  p1 = true;  return;
+			case MARK::MARK_X:  p2 = true;  return;
 			}
 		}
 	}winFlag;
@@ -175,17 +170,17 @@ private:
 	//縦横奥の判定
 	//揃ってればそのマークを、揃ってなければBLANKを返す
 	//引数:xyz,surface,XYZ方向(見るマスの軸に沿った向き)
-	Cube::MARK CheckMarkVH(int x, int y, int z, SURFACE surface, DIR dir);
-	Cube::MARK CheckMarkVH(XMINT3 xyz, SURFACE surface, DIR dir);
+	MARK CheckMarkVH(int x, int y, int z, SURFACE surface, DIR dir);
+	MARK CheckMarkVH(XMINT3 xyz, SURFACE surface, DIR dir);
 
 	//斜め判定
 	//XYZは0以上は固定値 DIAG_VAR::UPは徐々に上昇、DOWNは徐々に下降する
 	//surfaceは判定面
-	Cube::MARK CheckMarkD(int x, int y, int z, SURFACE surface);
+	MARK CheckMarkD(int x, int y, int z, SURFACE surface);
 
 	//渡されたキューブxyz座標配列と面で、その座標のその面が一致しているか判定する
 	//一致したらそのマークを、一致しなかったらBLANKを返す
-	Cube::MARK CheckMark(vector<XMINT3> points, SURFACE surface);
+	MARK CheckMark(vector<XMINT3> points, SURFACE surface);
 
 	//一キューブの判定を行う関数
 	//引数：キューブ位置、判定面、格納フラグ、特定方向の探索を無効化するフィルタ
@@ -197,10 +192,10 @@ private:
 
 	//斜め判定
 	//引数：探索座標,面,格納フラグ
-	void JudgeDiag(XMINT3 pos, Cube::SURFACE surface, WinFlag& winFlag);
+	void JudgeDiag(XMINT3 pos, SURFACE surface, WinFlag& winFlag);
 	//縦横奥判定
 	//引数：探索座標,面,格納フラグ,フィルタ
-	void JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& winFlag, FILTER filter);
+	void JudgeVHD(XMINT3 pos, SURFACE surface, WinFlag& winFlag, FILTER filter);
 
 	//============================ 〇〇関連 ============================
 	enum WIN_STATE {	//勝利時の処理をステート管理 数値はそのステートが続くフレーム数

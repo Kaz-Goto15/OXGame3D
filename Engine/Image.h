@@ -41,6 +41,8 @@ namespace Image
 			fileName = "";
 			alpha = 1.0f;
 			pSprite = nullptr;
+			rect = {0, 0, 0, 0};
+			isBlendAdd = false;
 			windowRatio = { 0,0 };
 			stdWindowSize = { 1280,720 };	//デフォルトの基準ウィンドウサイズ
 		}

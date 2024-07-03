@@ -17,16 +17,16 @@ public:
         MARK_X,
         MARK_MAX
     };
-private:
+
     enum ROTATE_DIR {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT,
-        CW,
-        CCW
+        ROT_UP,
+        ROT_DOWN,
+        ROT_LEFT,
+        ROT_RIGHT,
+        ROT_CW,
+        ROT_CCW
     };
-public:
+
     enum SURFACE {
         SURFACE_TOP,
         SURFACE_BOTTOM,
@@ -35,10 +35,10 @@ public:
         SURFACE_FRONT,
         SURFACE_BACK,
         SURFACE_MAX
-
     };
+
 private:
-    int hModelCube;
+    int hModelCube;                 //キューブ自体のモデルデータハンドル
     int hModelMark[MARK_MAX];       //マークのモデルデータハンドル
     MARK cubeData_[SURFACE_MAX];    //キューブ側面のマークデータ
     XMFLOAT3 Surface2Rotate(SURFACE surface);
@@ -51,7 +51,7 @@ public:
     void Release() override;    //解放
 
     void SwapData(ROTATE_DIR dir);    //前から見た回転方向を指定し、各面のデータを入れ替える
-
+    void SetPoint(XMINT3 point, float outerPoint);  //最も外側のキューブの
     void SetMark(SURFACE surface, MARK mark);
     MARK GetMark(SURFACE surface) { return cubeData_[surface]; }
 };

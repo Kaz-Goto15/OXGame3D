@@ -17,12 +17,16 @@ XMFLOAT3 CubeSelectIndicator::Surface2Rotate(Cube::SURFACE surface)
 }
 
 //ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-CubeSelectIndicator::CubeSelectIndicator(GameObject* parent)
-    :GameObject(parent, "CubeSelectIndicator")
+CubeSelectIndicator::CubeSelectIndicator(GameObject* parent):
+    GameObject(parent, "CubeSelectIndicator"),
+    hModel(-1),
+    cubeSize(0),
+    outerPoint(0.0f),
+    rotCol(0),
+    drawMode(DRAWMODE_CIRCLE),
+    direction(ROTATE_DIR::ROT_UP)
+
 {
-    hModel = -1;
-    cubeSize = 0;
-    drawMode = DRAWMODE_CIRCLE;
 }
 
 //ƒfƒXƒgƒ‰ƒNƒ^
@@ -63,41 +67,108 @@ void CubeSelectIndicator::Draw()
         Transform tra;
         switch (direction)
         {
-        case CubeSelectIndicator::ROT_UP:
-            break;
-        case CubeSelectIndicator::ROT_DOWN:
-            break;
-        case CubeSelectIndicator::ROT_LEFT:
-        case CubeSelectIndicator::ROT_RIGHT:
-            break;
-        case CubeSelectIndicator::ROT_CW:
-        case CubeSelectIndicator::ROT_CCW:
-            tra.position_.z = rotCol - Half((float)(cubeSize - 1));
-            for (int i = 0; i < cubeSize; i++) {
-                tra.position_.x = i - Half((float)(cubeSize - 1));
+        case ROTATE_DIR::ROT_UP:
+        case ROTATE_DIR::ROT_DOWN:
+            //XÀ•W=‘I‘ð—ñ
+            tra.position_.x = rotCol - outerPoint;
 
+            for (int i = 0; i < cubeSize; i++) {
+
+                tra.position_.y = i - outerPoint;
+
+                //‘O–Ê•`‰æ
+                tra.position_.z = -outerPoint;
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
+
+                //Œã–Ê•`‰æ
+                tra.position_.z = outerPoint;
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
+
+                tra.position_.z = i - outerPoint;
                 //ã–Ê•`‰æ
-                tra.position_.y = abs(Half((float)(cubeSize - 1)));
+                tra.position_.y = outerPoint;
                 tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP);
                 Model::SetTransform(hModel, tra);
                 Model::Draw(hModel);
 
                 //‰º–Ê•`‰æ
-                tra.position_.y = -abs(Half((float)(cubeSize - 1)));
+                tra.position_.y = -outerPoint;
                 tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM);
                 Model::SetTransform(hModel, tra);
                 Model::Draw(hModel);
 
-                tra.position_.y = i - Half((float)(cubeSize - 1));
+            }
+            break;
+        case ROTATE_DIR::ROT_LEFT:
+        case ROTATE_DIR::ROT_RIGHT:
+            //YÀ•W=‘I‘ð—ñ
+            tra.position_.y = rotCol - outerPoint;
+
+            for (int i = 0; i < cubeSize; i++) {
+
+                tra.position_.z = i - outerPoint;
 
                 //‰E–Ê•`‰æ
-                tra.position_.x = abs(Half((float)(cubeSize - 1)));
+                tra.position_.x = outerPoint;
                 tra.rotate_ = Surface2Rotate(Cube::SURFACE_RIGHT);
                 Model::SetTransform(hModel, tra);
                 Model::Draw(hModel);
 
                 //¶–Ê•`‰æ
-                tra.position_.x = -abs(Half((float)(cubeSize - 1)));
+                tra.position_.x = -outerPoint;
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_LEFT);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
+
+                tra.position_.x = i - outerPoint;
+
+                //‘O–Ê•`‰æ
+                tra.position_.z = -outerPoint;
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
+
+                //Œã–Ê•`‰æ
+                tra.position_.z = outerPoint;
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
+            }
+            break;
+        case ROTATE_DIR::ROT_CW:
+        case ROTATE_DIR::ROT_CCW:
+            //ZÀ•W=‘I‘ð—ñ
+            tra.position_.z = rotCol - outerPoint;
+
+            for (int i = 0; i < cubeSize; i++) {
+                tra.position_.x = i - outerPoint;
+
+                //ã–Ê•`‰æ
+                tra.position_.y = outerPoint;
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
+
+                //‰º–Ê•`‰æ
+                tra.position_.y = -outerPoint;
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
+
+                tra.position_.y = i - outerPoint;
+
+                //‰E–Ê•`‰æ
+                tra.position_.x = outerPoint;
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_RIGHT);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
+
+                //¶–Ê•`‰æ
+                tra.position_.x = -outerPoint;
                 tra.rotate_ = Surface2Rotate(Cube::SURFACE_LEFT);
                 Model::SetTransform(hModel, tra);
                 Model::Draw(hModel);
@@ -113,7 +184,20 @@ void CubeSelectIndicator::Release()
 {
 }
 
-void CubeSelectIndicator::SetSurface(Cube::SURFACE surface)
+void CubeSelectIndicator::SetDrawPoint(XMINT3 point, Cube::SURFACE surface)
+{
+    SetDrawPoint(point);
+    SetDrawPoint(surface);
+}
+
+void CubeSelectIndicator::SetDrawPoint(XMINT3 point)
+{
+    transform_.position_.x = (float)point.x - outerPoint;
+    transform_.position_.y = (float)point.y - outerPoint;
+    transform_.position_.z = (float)point.z - outerPoint;
+}
+
+void CubeSelectIndicator::SetDrawPoint(Cube::SURFACE surface)
 {
     transform_.rotate_ = Surface2Rotate(surface);
 }
