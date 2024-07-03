@@ -24,6 +24,9 @@ public:
     void Initialize() override; //初期化
     void Update() override;     //更新
     void Draw() override;       //描画
+private:
+    void DrawSurface(Transform& tra, Cube::SURFACE surface);
+public:
     void Release() override;    //解放
 
     //描画モード
