@@ -594,22 +594,29 @@ elif(cX < 0)LEFT;
 el RIGHT;
 
 /*
-if(-165 < cX < -135)x=0 z=2 BACK
-if(-135 < cX < -105)x=0 z=2 LEFT
-if(-105 < cX < -75)x=0 z=1 LEFT
-if(-75 < cX < -45)x=0 z=0 LEFT
-if(-45 < cX < -15)x=0 z=0 FRONT
+if(-165 < cX < -135)x=2 z=2 BACK
+if(-135 < cX < -105)x=2 z=2 RIGHT
+if(-105 < cX < -75)x=2 z=1 RIGHT
+if(-75 < cX < -45)x=2 z=0 RIGHT
+if(-45 < cX < -15)x=2 z=0 FRONT
 if(-15 < cX < 15)x=1 z=0 FRONT
-if(15<cX<45) x=2 z=0 FRONT
-if(45<cX<75) x=2 z=0 RIGHT
-if(75<cX<105) x=2 z=1 RIGHT
-if(105<cX<135) x=2 z=2 RIGHT
-if(135<cX<165) x=2 z=2 BACK
+if(15<cX<45) x=0 z=0 FRONT
+if(45<cX<75) x=0 z=0 LEFT
+if(75<cX<105) x=0 z=1 LEFT
+if(105<cX<135) x=0 z=2 LEFT
+if(135<cX<165) x=0 z=2 BACK
 if(165<cX or cX <-165) x=1 z=2 BACK
 */
 
-        %270
-180+135 315 45
-180+165 345 15
-180-165 -15
-180-135 -45
+if(-165 < cX < -135)c=2 DOWN c=x
+if(-135 < cX < -105)c=2 CCW c=z
+if(-105 < cX < -75)c=1 CCW
+if(-75 < cX < -45)c=0 CCW
+if(-45 < cX < -15)c=2 UP c=x
+if(-15 < cX < 15)c=1 UP
+if(15<cX<45) c=0 UP
+if(45<cX<75) c=0 CW c=z
+if(75<cX<105) c=1 CW
+if(105<cX<135) c=2 CW
+if(135<cX<165) c=0 DOWN c=x
+if(165<cX or cX <-165) c=1 DOWN
