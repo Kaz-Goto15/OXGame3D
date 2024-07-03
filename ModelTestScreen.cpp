@@ -82,6 +82,7 @@ void ModelTestScreen::Update()
 
 	//デバッグで書いてる
 	SetModeInit();
+	RotateModeInit();
 	//デバッグボタン
 	if (Input::IsKeyDown(DIK_P)) {
 		Prev();
@@ -237,30 +238,95 @@ void ModelTestScreen::Release()
 
 void ModelTestScreen::RotateModeInit()
 {
-	switch (selectData.dir)
-	{
-	case ModelTestScreen::UP:
-	case ModelTestScreen::DOWN:
-		break;
-	case ModelTestScreen::LEFT:
-		break;
-	case ModelTestScreen::RIGHT:
-		break;
-	case ModelTestScreen::CW:
-		break;
-	case ModelTestScreen::CCW:
-		break;
-	default:
-		break;
+	//設置モードから回転モードに移行時、現在のカメラ角度から選択行と回転軸を指定する
+	//視点から上方向になるよう初期化 それにより最初からLEFT/RIGHTは必ず指定されない
+
+	/*
+if(-165 < cX < -135)c=2 DOWN c=x
+
+if(-135 < cX < -105)c=2 CCW c=z
+if(-105 < cX < -75)c=1 CCW
+if(-75 < cX < -45)c=0 CCW
+
+if(-45 < cX < -15)c=2 UP c=x
+if(-15 < cX < 15)c=1 UP
+if(15<cX<45) c=0 UP
+
+if(45<cX<75) c=0 CW c=z
+if(75<cX<105) c=1 CW
+if(105<cX<135) c=2 CW
+
+if(135<cX<165) c=0 DOWN c=x
+if(165<cX or cX <-165) c=1 DOWN
+	*/
+	const int SET_MODE_UNIT = 90 / PIECES;
+	XMFLOAT3& camRot = camTra.rotate_;
+	float absCamY = abs(camRot.y);
+	SelectData testData;	//あとでselectDataに置換する
+	//-45~45 UP 前
+	//45~135 RIGHT 左
+	//135~,~135 DOWN 後
+	//-135~-45 LEFT 右
+
+	//カメラが上下にあるなら(不要)
+	//if (abs(camRot.x) >= 45)
+
+	for (int c = 0; c < PIECES; c++) {
+		if (absCamY >= 135 || absCamY <= 45) {
+			//SetModeInitのxと同等の処理
+			if (absCamY >= 135) {	//-180~-135 135~180 後
+				if (camRot.y > 0) {	//+
+					if (180 - camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //135~180→45~0変換
+						testData.rotCol = c;
+						testData.dir = DOWN;
+						break;
+					}
+				}
+				else {	//-
+					if (-180 - camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //-180~-135→0~-45変換
+						testData.rotCol = c;
+						testData.dir = DOWN;
+						break;
+					}
+				}
+			}
+			else if (camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //前 -45~45
+				testData.rotCol = c;
+				testData.dir = UP;
+				break;
+			}
+		}
+		else {
+			//SetModeInitのzと同等の処理
+			if (absCamY < 45 + (c + 1) * SET_MODE_UNIT) {
+				testData.rotCol = c;
+
+				//回転方向指定
+				if (camRot.y > 0) {
+					testData.dir = CW;
+				}
+				else {
+					testData.dir = CCW;
+				}
+
+				break;
+			}
+		}
 	}
+
+	debugStr[7] = "rotmodeinit:" + std::to_string(testData.rotCol) + ","
+		+ (std::string)NAMEOF_ENUM(testData.dir);
+
 }
 
 void ModelTestScreen::SetModeInit()
 {
+	//回転モードから設置モードに移行時、現在のカメラ角度から選択マスを指定する
 	const int SET_MODE_UNIT = 90 / PIECES;
 	XMFLOAT3& camRot = camTra.rotate_;
 	float absCamY = abs(camRot.y);
-	SelectData testData;
+	SelectData testData;	//あとでselectDataに置換する
+
 	//y指定
 	if (camRot.x >= 45)testData.y = PIECES-1;
 	else if (camRot.x <= -45)testData.y = 0;
@@ -272,6 +338,7 @@ void ModelTestScreen::SetModeInit()
 			}
 		}
 	}
+
 	//z指定
 	if (absCamY >= 135)testData.z = PIECES-1;
 	else if (absCamY <= 45 )testData.z = 0;
@@ -285,24 +352,28 @@ void ModelTestScreen::SetModeInit()
 	}
 
 	//x指定
-	if (Between(camRot.y, 45.0f, 135.0f))testData.x = 0;
-	else if (Between(camRot.y, -135.0f, -45.0f))testData.x = PIECES-1;
+	if (Between(camRot.y, 45.0f, 135.0f))testData.x = 0; //左
+	else if (Between(camRot.y, -135.0f, -45.0f))testData.x = PIECES-1; //右
 	else {
 		for (int x = 0; x < PIECES; x++) {
-			if(( fmod(camRot.y + 180,360.0f) -270) > 45 - (x + 1) * SET_MODE_UNIT) {
+			if (absCamY > 135) {	//-180~-135 135~180 後
+				if (camRot.y > 0) {	//+
+					if (180 - camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //135~180→45~0変換
+						testData.x = x;
+						break;
+					}
+				}
+				else {	//-
+					if (-180 - camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //-180~-135→0~-45変換
+						testData.x = x;
+						break;
+					}
+				}
+			}
+			else if (camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //前 -45~45
 				testData.x = x;
 				break;
 			}
-			//if (absCamY > 135) {
-			//	if (180 - camRot.y > 45 - (x + 1) * SET_MODE_UNIT) {
-			//		testData.x = x;
-			//		break;
-			//	}
-			//}
-			//else if (camRot.y > 45 - (x + 1) * SET_MODE_UNIT) {
-			//	testData.x = x;
-			//	break;
-			//}
 		}
 	}
 
