@@ -61,29 +61,50 @@ void CubeSelectIndicator::Draw()
     }
     else if (drawMode == DRAWMODE_CIRCLE) {
         Transform tra;
-        for (int i = 0; i < 3; i++) {
-            tra.position_.x = i - 1;
+        switch (direction)
+        {
+        case CubeSelectIndicator::ROT_UP:
+            break;
+        case CubeSelectIndicator::ROT_DOWN:
+            break;
+        case CubeSelectIndicator::ROT_LEFT:
+        case CubeSelectIndicator::ROT_RIGHT:
+            break;
+        case CubeSelectIndicator::ROT_CW:
+        case CubeSelectIndicator::ROT_CCW:
+            tra.position_.z = rotCol - Half((float)(cubeSize - 1));
+            for (int i = 0; i < cubeSize; i++) {
+                tra.position_.x = i - Half((float)(cubeSize - 1));
 
-            tra.position_.y = abs((cubeSize - 1)/2.0f);
-            tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP);
-            Model::SetTransform(hModel, tra);
-            Model::Draw(hModel);
-            tra.position_.y = -abs((cubeSize - 1) / 2.0f);
-            tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM);
-            Model::SetTransform(hModel, tra);
-            Model::Draw(hModel);
+                //ã–Ê•`‰æ
+                tra.position_.y = abs(Half((float)(cubeSize - 1)));
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
 
-            tra.position_.y = i - 1;
+                //‰º–Ê•`‰æ
+                tra.position_.y = -abs(Half((float)(cubeSize - 1)));
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
 
-            tra.position_.x = abs((cubeSize - 1) / 2.0f);
-            tra.rotate_ = Surface2Rotate(Cube::SURFACE_RIGHT);
-            Model::SetTransform(hModel, tra);
-            Model::Draw(hModel);
-            tra.position_.x = -abs((cubeSize - 1) / 2.0f);
-            tra.rotate_ = Surface2Rotate(Cube::SURFACE_LEFT);
-            Model::SetTransform(hModel, tra);
-            Model::Draw(hModel);
+                tra.position_.y = i - Half((float)(cubeSize - 1));
+
+                //‰E–Ê•`‰æ
+                tra.position_.x = abs(Half((float)(cubeSize - 1)));
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_RIGHT);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
+
+                //¶–Ê•`‰æ
+                tra.position_.x = -abs(Half((float)(cubeSize - 1)));
+                tra.rotate_ = Surface2Rotate(Cube::SURFACE_LEFT);
+                Model::SetTransform(hModel, tra);
+                Model::Draw(hModel);
+            }
+            break;
         }
+
     }
 }
 
@@ -95,6 +116,12 @@ void CubeSelectIndicator::Release()
 void CubeSelectIndicator::SetSurface(Cube::SURFACE surface)
 {
     transform_.rotate_ = Surface2Rotate(surface);
+}
+
+void CubeSelectIndicator::SetCubeScale(int scale)
+{
+    cubeSize = scale;
+    outerPoint = Half((float)(scale - 1));
 }
 
 void CubeSelectIndicator::SetCubeRotate(ROTATE_DIR dir)

@@ -8,7 +8,14 @@ class CubeSelectIndicator : public GameObject
 private:
     int hModel;
     int cubeSize;
+    float outerPoint;   //最も外側のキューブの中心座標
+    int rotCol;
+
     XMFLOAT3 Surface2Rotate(Cube::SURFACE surface);
+
+    template<class T>
+    T Half(T value) { return value / 2.0f; }
+
 public:
     CubeSelectIndicator(GameObject* parent);    //コンストラクタ
     ~CubeSelectIndicator();                     //デストラクタ
@@ -41,7 +48,7 @@ public:
     void SetSurface(Cube::SURFACE surface);
 
     //キューブの大きさ指定 例えば3x3なら3を入れる
-    void SetCubeScale(int scale) { cubeSize = scale; }
+    void SetCubeScale(int scale);
 
     void SetDrawMode(DRAW_MODE mode) { drawMode = mode; }
     //前面から見た時の回転方向を指定

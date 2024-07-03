@@ -620,3 +620,16 @@ if(75<cX<105) c=1 CW
 if(105<cX<135) c=2 CW
 if(135<cX<165) c=0 DOWN c=x
 if(165<cX or cX <-165) c=1 DOWN
+
+
+
+
+
+
+
+
+
+FRONT
+dir=UP/DOWN W=UP A=-1,<0=0 S=DOWN D=+1,>2=2
+dir=LEFT/RIGHT W=+1 A=LEFT S=-1 D=RIGHT
+dir=CW/CCW if(cX>0)W=+1 A=CCW S=-1 D=CW else W=-1 A=CW S=+1 D=CCW

@@ -498,7 +498,7 @@ void ModelTestScreen::MoveSelectParts(DIR dir, bool plus, Cube::SURFACE outSurfa
 void ModelTestScreen::MoveSelect(MODE mode)
 {
 	using SURFACE = Cube::SURFACE;
-	vector<int> keys = { DIK_W,DIK_A,DIK_S,DIK_D };
+	vector<int> keys = { GetKey(KEY::KEY_UP),GetKey(KEY::KEY_LEFT),GetKey(KEY::KEY_DOWN),GetKey(KEY::KEY_RIGHT) };
 
 	switch (mode)
 	{
@@ -587,6 +587,72 @@ void ModelTestScreen::MoveSelect(MODE mode)
 		}
 		break;
 	case ModelTestScreen::MODE_ROTATE:
+		//回転モード中のキー移動時の処理
+		switch (dir)
+		{
+		case ModelTestScreen::UP:
+		case ModelTestScreen::DOWN:
+			if (GetKey(KEY::KEY_UP)) {
+				selectData.dir = UP;
+			}
+			else if (GetKey(KEY::KEY_LEFT)) {
+				if (selectData.rotCol > 0)selectData.rotCol--;
+			}
+			else if (GetKey(KEY::KEY_DOWN)) {
+				selectData.dir = DOWN;
+			}
+			else if (GetKey(KEY::KEY_RIGHT)) {
+				if (selectData.rotCol < PIECES-1)selectData.rotCol++;
+			}
+			break;
+		case ModelTestScreen::LEFT:
+		case ModelTestScreen::RIGHT:
+			if (GetKey(KEY::KEY_UP)) {
+				if (selectData.rotCol < PIECES - 1)selectData.rotCol++;
+			}
+			else if (GetKey(KEY::KEY_LEFT)) {
+				selectData.dir = LEFT;
+			}
+			else if (GetKey(KEY::KEY_DOWN)) {
+				if (selectData.rotCol > 0)selectData.rotCol--;
+			}
+			else if (GetKey(KEY::KEY_RIGHT)) {
+				selectData.dir = RIGHT;
+			}
+			break;
+		case ModelTestScreen::CW:
+		case ModelTestScreen::CCW:
+			if (camTra.rotate_.x > 0) {
+				if (GetKey(KEY::KEY_UP)) {
+					if (selectData.rotCol < PIECES - 1)selectData.rotCol++;
+				}
+				else if (GetKey(KEY::KEY_LEFT)) {
+					selectData.dir = CCW;
+				}
+				else if (GetKey(KEY::KEY_DOWN)) {
+					if (selectData.rotCol > 0)selectData.rotCol--;
+				}
+				else if (GetKey(KEY::KEY_RIGHT)) {
+					selectData.dir = CW;
+				}
+			}
+			else {
+
+				if (GetKey(KEY::KEY_UP)) {
+					if (selectData.rotCol > 0)selectData.rotCol--;
+				}
+				else if (GetKey(KEY::KEY_LEFT)) {
+					selectData.dir = CW;
+				}
+				else if (GetKey(KEY::KEY_DOWN)) {
+					if (selectData.rotCol < PIECES - 1)selectData.rotCol++;
+				}
+				else if (GetKey(KEY::KEY_RIGHT)) {
+					selectData.dir = CCW;
+				}
+			}
+			break;
+		}
 		//回転モード中のキー移動時の処理
 		break;
 	}
