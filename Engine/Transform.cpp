@@ -62,6 +62,24 @@ XMMATRIX Transform::GetWorldMatrix()
 	return  matScale_ * matRotate_ * matTranslate_;
 }
 
+XMMATRIX Transform::GetMatrixConvertEffect()
+{
+	//à⁄ìÆçsóÒ
+	matTranslate_ = XMMatrixTranslation(position_.x - 16.0f/9.0f, position_.y - 16.0f / 9.0f, position_.z - 16.0f / 9.0f);
+
+	//âÒì]çsóÒ
+	XMMATRIX rotateX, rotateY, rotateZ;
+	rotateX = XMMatrixRotationX(XMConvertToRadians(rotate_.x));
+	rotateY = XMMatrixRotationY(XMConvertToRadians(rotate_.y));
+	rotateZ = XMMatrixRotationZ(XMConvertToRadians(rotate_.z));
+	matRotate_ = rotateZ * rotateX * rotateY;
+
+	//ägëÂèkè¨
+	matScale_ = XMMatrixScaling(scale_.x, scale_.y, scale_.z);
+
+	return matScale_ * matRotate_ * matTranslate_;
+}
+
 //void Transform::ConvDrawPos(float x, float y)
 //{
 //	position_.x = x / 40 * 0.062f;

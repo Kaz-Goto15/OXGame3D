@@ -73,6 +73,17 @@ void CubeSelectIndicator::Draw()
 			tra.position_.x = rotCol - outerPoint;
 
 			for (int i = 0; i < cubeSize; i++) {
+				for (int j = 0; j < cubeSize; j++) {
+					tra.position_.y = i - outerPoint;
+					tra.position_.z = j - outerPoint;
+
+					//左右面描画
+					DrawSurface(tra, Cube::SURFACE_LEFT, false);
+					DrawSurface(tra, Cube::SURFACE_RIGHT, false);
+				}
+			}
+
+			for (int i = 0; i < cubeSize; i++) {
 
 				tra.position_.y = i - outerPoint;
 
@@ -87,13 +98,25 @@ void CubeSelectIndicator::Draw()
 				DrawSurface(tra, Cube::SURFACE_TOP);
 				//下面描画
 				DrawSurface(tra, Cube::SURFACE_BOTTOM);
-
 			}
+
 			break;
+
 		case ROTATE_DIR::ROT_LEFT:
 		case ROTATE_DIR::ROT_RIGHT:
 			//Y座標=選択列
 			tra.position_.y = rotCol - outerPoint;
+
+			for (int i = 0; i < cubeSize; i++) {
+				for (int j = 0; j < cubeSize; j++) {
+					tra.position_.x = i - outerPoint;
+					tra.position_.z = j - outerPoint;
+
+					//上下面描画
+					DrawSurface(tra, Cube::SURFACE_TOP, false);
+					DrawSurface(tra, Cube::SURFACE_BOTTOM, false);
+				}
+			}
 
 			for (int i = 0; i < cubeSize; i++) {
 
@@ -111,11 +134,24 @@ void CubeSelectIndicator::Draw()
 				//後面描画
 				DrawSurface(tra, Cube::SURFACE_BACK);
 			}
+
 			break;
+
 		case ROTATE_DIR::ROT_CW:
 		case ROTATE_DIR::ROT_CCW:
 			//Z座標=選択列
 			tra.position_.z = rotCol - outerPoint;
+
+			for (int i = 0; i < cubeSize; i++) {
+				for (int j = 0; j < cubeSize; j++) {
+					tra.position_.x = i - outerPoint;
+					tra.position_.y = j - outerPoint;
+
+					//前後面描画
+					DrawSurface(tra, Cube::SURFACE_FRONT, false);
+					DrawSurface(tra, Cube::SURFACE_BACK, false);
+				}
+			}
 
 			for (int i = 0; i < cubeSize; i++) {
 				tra.position_.x = i - outerPoint;
@@ -138,16 +174,18 @@ void CubeSelectIndicator::Draw()
 	}
 }
 
-void CubeSelectIndicator::DrawSurface(Transform& tra, Cube::SURFACE surface)
+void CubeSelectIndicator::DrawSurface(Transform& tra, Cube::SURFACE surface, bool isOuter)
 {
-	switch (surface)
-	{
-	case Cube::SURFACE_TOP:		tra.position_.y = outerPoint;	break;
-	case Cube::SURFACE_BOTTOM:	tra.position_.y = -outerPoint;	break;
-	case Cube::SURFACE_LEFT:	tra.position_.x = -outerPoint;	break;
-	case Cube::SURFACE_RIGHT:	tra.position_.x = outerPoint;	break;
-	case Cube::SURFACE_FRONT:	tra.position_.z = -outerPoint;	break;
-	case Cube::SURFACE_BACK:	tra.position_.z = outerPoint;	break;
+	if (isOuter) {
+		switch (surface)
+		{
+		case Cube::SURFACE_TOP:		tra.position_.y = outerPoint;	break;
+		case Cube::SURFACE_BOTTOM:	tra.position_.y = -outerPoint;	break;
+		case Cube::SURFACE_LEFT:	tra.position_.x = -outerPoint;	break;
+		case Cube::SURFACE_RIGHT:	tra.position_.x = outerPoint;	break;
+		case Cube::SURFACE_FRONT:	tra.position_.z = -outerPoint;	break;
+		case Cube::SURFACE_BACK:	tra.position_.z = outerPoint;	break;
+		}
 	}
 	tra.rotate_ = Surface2Rotate(surface);
 	Model::SetTransform(hModel, tra);
@@ -193,14 +231,24 @@ void CubeSelectIndicator::SetCubeRotate(ROTATE_DIR dir)
 	//tra.rotate_ = Surface2Rotate(Cube::SURFACE_RIGHT);
 	//DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
 	//mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
-	tra.position_.x = -abs((cubeSize - 1) / 2.0f);
-	//tra.position_ = { 0,0,0 };
-	tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP);
-	DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
-	t.isLoop = false;    //ループするか
-	t.maxFrame = 100;   //最大フレーム指定
-	t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
-	mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+	for (int i = 0; i < cubeSize; i++) {
+		for (int j = 0; j < cubeSize; j++) {
+			tra.position_.x = outerPoint + i;
+			tra.position_.y = outerPoint + j;
+			tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP);
+			DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetMatrixConvertEffect());
+			t.isLoop = true;    //ループするか
+			t.maxFrame = 100;   //最大フレーム指定
+			t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
+			mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+		}
+	}
+	//tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP);
+	//DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
+	//t.isLoop = false;    //ループするか
+	//t.maxFrame = 100;   //最大フレーム指定
+	//t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
+	//mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
 
 	//transform_ = tra;
 	

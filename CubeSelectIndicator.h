@@ -25,7 +25,7 @@ public:
     void Update() override;     //XV
     void Draw() override;       //•`‰æ
 private:
-    void DrawSurface(Transform& tra, Cube::SURFACE surface);
+    void DrawSurface(Transform& tra, Cube::SURFACE surface, bool isOuter = true);
 public:
     void Release() override;    //‰ğ•ú
 

@@ -111,6 +111,7 @@ void ModelTestScreen::Update()
 			pScreen->Run();
 		}
 	}
+
 	//操作状態がアイドルでなければ
 	if (control != CONTROL_IDLE) {
 		MoveSelect(mode);
@@ -472,33 +473,6 @@ void ModelTestScreen::CalcCubeTrans()
 	}
 }
 
-void ModelTestScreen::MoveSelectParts(DIR dir, bool plus, Cube::SURFACE outSurface) {
-
-	int* target = nullptr;
-	switch (dir)
-	{
-	case ModelTestScreen::X:target = &selectData.x; break;
-	case ModelTestScreen::Y:target = &selectData.y; break;
-	case ModelTestScreen::Z:target = &selectData.z; break;
-	}
-	if (target != nullptr) {
-		if (plus) {
-			*target += 1;
-			if (*target >= PIECES) {
-				*target = PIECES - 1;
-				selectData.surface = outSurface;
-			}
-		}
-		else {
-			*target -= 1;
-			if (*target < 0) {
-				*target = 0;
-				selectData.surface = outSurface;
-			}
-		}
-	}
-	indicator->SetDrawPoint(selectData.GetPos(), selectData.surface);
-}
 void ModelTestScreen::MoveSelect(MODE mode)
 {
 	using SURFACE = Cube::SURFACE;
@@ -596,102 +570,233 @@ void ModelTestScreen::MoveSelect(MODE mode)
 		{
 		case ROTATE_DIR::ROT_UP:
 		case ROTATE_DIR::ROT_DOWN:
-			if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
-				selectData.dir = ROTATE_DIR::ROT_UP;
-				indicator->SetCubeRotate(selectData.dir);
-			}
-			else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
-				if (selectData.rotCol > 0) {
-					selectData.rotCol--;
-					indicator->SetRotateColumn(selectData.rotCol);
+			switch (camDir)
+			{
+			case ModelTestScreen::CAM_FRONT:
+				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+					MoveSelectChangeDir(ROTATE_DIR::ROT_UP);
 				}
-			}
-			else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
-				selectData.dir = ROTATE_DIR::ROT_DOWN;
-				indicator->SetCubeRotate(selectData.dir);
-			}
-			else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
-				if (selectData.rotCol < PIECES - 1) {
-					selectData.rotCol++;
-					indicator->SetRotateColumn(selectData.rotCol);
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+					MoveSelectSlideCol(false);
 				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+					MoveSelectChangeDir(ROTATE_DIR::ROT_DOWN);
+				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+					MoveSelectSlideCol(true);
+				}
+				break;
+			case ModelTestScreen::CAM_LEFT:
+				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+					MoveSelectSlideCol(true);
+				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+					MoveSelectChangeDir(ROTATE_DIR::ROT_UP);
+				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+					MoveSelectSlideCol(false);
+				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+					MoveSelectChangeDir(ROTATE_DIR::ROT_DOWN);
+				}
+				break;
+			case ModelTestScreen::CAM_BACK:
+				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+					MoveSelectChangeDir(ROTATE_DIR::ROT_DOWN);
+				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+					MoveSelectSlideCol(true);
+				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+					MoveSelectChangeDir(ROTATE_DIR::ROT_UP);
+				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+					MoveSelectSlideCol(false);
+				}
+				break;
+			case ModelTestScreen::CAM_RIGHT:
+				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+					MoveSelectSlideCol(false);
+				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+					MoveSelectChangeDir(ROTATE_DIR::ROT_DOWN);
+				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+					MoveSelectSlideCol(true);
+				}
+				else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+					MoveSelectChangeDir(ROTATE_DIR::ROT_UP);
+				}
+				break;
 			}
 			break;
 		case ROTATE_DIR::ROT_LEFT:
 		case ROTATE_DIR::ROT_RIGHT:
 			if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
-				if (selectData.rotCol < PIECES - 1) {
-					selectData.rotCol++;
-					indicator->SetRotateColumn(selectData.rotCol);
-				}
+				MoveSelectSlideCol(true);
 			}
 			else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
-				selectData.dir = ROTATE_DIR::ROT_LEFT;
-				indicator->SetCubeRotate(selectData.dir);
+				MoveSelectChangeDir(ROTATE_DIR::ROT_LEFT);
 			}
 			else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
-				if (selectData.rotCol > 0) {
-					selectData.rotCol--;
-					indicator->SetRotateColumn(selectData.rotCol);
-				}
+				MoveSelectSlideCol(false);
 			}
 			else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
-				selectData.dir = ROTATE_DIR::ROT_RIGHT;
-				indicator->SetCubeRotate(selectData.dir);
+				MoveSelectChangeDir(ROTATE_DIR::ROT_RIGHT);
 			}
 			break;
 		case ROTATE_DIR::ROT_CW:
 		case ROTATE_DIR::ROT_CCW:
-			if (camTra.rotate_.x > 0) {
-				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
-					if (selectData.rotCol < PIECES - 1) {
-						selectData.rotCol++;
-						indicator->SetRotateColumn(selectData.rotCol);
+			switch (camDir)
+			{
+			case ModelTestScreen::CAM_FRONT:
+				//前、上
+				if (camTra.rotate_.x > 0) {
+					if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+						MoveSelectSlideCol(true);
 					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+						MoveSelectChangeDir(ROTATE_DIR::ROT_CCW);
+					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+						MoveSelectSlideCol(false);
+					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+						MoveSelectChangeDir(ROTATE_DIR::ROT_CW);
+					}
+				}
+				else {	//前、下
+					if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+						MoveSelectSlideCol(false);
+					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+						MoveSelectChangeDir(ROTATE_DIR::ROT_CW);
+					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+						MoveSelectSlideCol(true);
+					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+						MoveSelectChangeDir(ROTATE_DIR::ROT_CCW);
+					}
+				}
+				break;
+			case ModelTestScreen::CAM_LEFT:
+				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+					MoveSelectChangeDir(ROTATE_DIR::ROT_CW);
 				}
 				else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
-					selectData.dir = ROTATE_DIR::ROT_CCW;
-					indicator->SetCubeRotate(selectData.dir);
+					MoveSelectSlideCol(true);
 				}
 				else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
-					if (selectData.rotCol > 0) {
-						selectData.rotCol--;
-						indicator->SetRotateColumn(selectData.rotCol);
-					}
+					MoveSelectChangeDir(ROTATE_DIR::ROT_CCW);
 				}
 				else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
-					selectData.dir = ROTATE_DIR::ROT_CW;
-					indicator->SetCubeRotate(selectData.dir);
+					MoveSelectSlideCol(false);
+
 				}
-			}
-			else {
-				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
-					if (selectData.rotCol > 0) {
-						selectData.rotCol--;
-						indicator->SetRotateColumn(selectData.rotCol);
+				break;
+			case ModelTestScreen::CAM_BACK:
+				//前、上
+				if (camTra.rotate_.x > 0) {
+					if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+						MoveSelectSlideCol(false);
 					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+						MoveSelectChangeDir(ROTATE_DIR::ROT_CW);
+					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+						MoveSelectSlideCol(true);
+					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+						MoveSelectChangeDir(ROTATE_DIR::ROT_CCW);
+					}
+				}
+				else {	//前、下
+					if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+						MoveSelectSlideCol(true);
+					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
+						MoveSelectChangeDir(ROTATE_DIR::ROT_CCW);
+					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
+						MoveSelectSlideCol(false);
+					}
+					else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
+						MoveSelectChangeDir(ROTATE_DIR::ROT_CW);
+					}
+				}
+				break;
+			case ModelTestScreen::CAM_RIGHT:
+				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
+					MoveSelectChangeDir(ROTATE_DIR::ROT_CCW);
 				}
 				else if (Input::IsKeyDown(GetKey(KEY::KEY_LEFT))) {
-					selectData.dir = ROTATE_DIR::ROT_CW;
-					indicator->SetCubeRotate(selectData.dir);
+					MoveSelectSlideCol(false);
 				}
 				else if (Input::IsKeyDown(GetKey(KEY::KEY_DOWN))) {
-					if (selectData.rotCol < PIECES - 1) {
-						selectData.rotCol++;
-						indicator->SetRotateColumn(selectData.rotCol);
-					}
+					MoveSelectChangeDir(ROTATE_DIR::ROT_CW);
 				}
 				else if (Input::IsKeyDown(GetKey(KEY::KEY_RIGHT))) {
-					selectData.dir = ROTATE_DIR::ROT_CCW;
-					indicator->SetCubeRotate(selectData.dir);
+					MoveSelectSlideCol(true);
+
 				}
+				break;
 			}
-			break;
 		}
 		//回転モード中のキー移動時の処理
 		break;
 	}
 
+}
+
+void ModelTestScreen::MoveSelectParts(DIR dir, bool plus, Cube::SURFACE outSurface) {
+
+	int* target = nullptr;
+	switch (dir)
+	{
+	case ModelTestScreen::X:target = &selectData.x; break;
+	case ModelTestScreen::Y:target = &selectData.y; break;
+	case ModelTestScreen::Z:target = &selectData.z; break;
+	}
+	if (target != nullptr) {
+		if (plus) {
+			*target += 1;
+			if (*target >= PIECES) {
+				*target = PIECES - 1;
+				selectData.surface = outSurface;
+			}
+		}
+		else {
+			*target -= 1;
+			if (*target < 0) {
+				*target = 0;
+				selectData.surface = outSurface;
+			}
+		}
+	}
+	indicator->SetDrawPoint(selectData.GetPos(), selectData.surface);
+}
+
+void ModelTestScreen::MoveSelectChangeDir(ROTATE_DIR changeDir)
+{
+	selectData.dir = changeDir;
+	indicator->SetCubeRotate(selectData.dir);
+}
+
+void ModelTestScreen::MoveSelectSlideCol(bool isPlus)
+{
+	if (isPlus) {
+		if (selectData.rotCol < PIECES - 1) {
+			selectData.rotCol++;
+			indicator->SetRotateColumn(selectData.rotCol);
+		}
+	}
+	else {
+		if (selectData.rotCol > 0) {
+			selectData.rotCol--;
+			indicator->SetRotateColumn(selectData.rotCol);
+		}
+	}
 }
 
 void ModelTestScreen::MoveIndicator()
@@ -1040,6 +1145,12 @@ void ModelTestScreen::RotateCamera() {
 	XMVECTOR vCam = { 0,0,-CAM_DISTANCE,0 };                  //距離指定
 	vCam = XMVector3TransformCoord(vCam, mRotX * mRotY);    //変形:回転
 	Camera::SetPosition(vCam);            //セット
+
+	//カメラの回転情報から移動などで判定に使う方位を登録する
+	if (Between(camTra.rotate_.y, -45.0f, 45.0f))camDir = CAM_FRONT;
+	else if (Between(camTra.rotate_.y, 45.0f, 135.0f))camDir = CAM_LEFT;
+	else if (Between(camTra.rotate_.y, -135.0f, -45.0f))camDir = CAM_RIGHT;
+	else camDir = CAM_BACK;
 
 	/*
 	・移動系は対象が0, 0, 0で固定なので書かなくていい

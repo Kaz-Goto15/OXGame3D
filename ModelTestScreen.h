@@ -4,7 +4,6 @@
 #include "Engine/GameObject.h"
 #include "Screen.h"
 #include "Cube.h"
-class Cube;
 class CubeSelectIndicator;
 class Screen;
 class DebugText;
@@ -73,7 +72,6 @@ private:
 	const int angleOfRotate = 90;
 	int rotateNo;
 	int rotTime = 0; 
-
 	//選択場所・インジケーター移動関連
 	CubeSelectIndicator* indicator;
 	enum DIR {
@@ -81,8 +79,11 @@ private:
 		Y,
 		Z
 	};
-	void MoveSelectParts(DIR dir, bool plus, SURFACE outSurface);
 	void MoveSelect(MODE mode);
+	void MoveSelectParts(DIR dir, bool plus, SURFACE outSurface);
+	void MoveSelectChangeDir(ROTATE_DIR changeDir);
+	void MoveSelectSlideCol(bool isPlus);
+
 	void MoveIndicator();
 
 	//値が範囲内か
@@ -121,7 +122,12 @@ private:
 	const float MIN_CAM_ROTATE_X = -89.9999f;   //カメラX回転の最低角度制限
 	const int LIMIT_CAM_ROTATE_Y = 180;         //カメラY回転の角度制限(オーバーフロー回避)
 	const int DEFAULT_SPEED = 0;                //カメラのデフォルト速度(0)
-
+	enum CAM_DIR_CARDINAL {
+		CAM_FRONT,
+		CAM_LEFT,
+		CAM_BACK,
+		CAM_RIGHT
+	}camDir;
 	//============================ DEBUG ============================
 	//デバッグテキスト
 	std::string debugStr[20];
