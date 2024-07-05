@@ -12,8 +12,8 @@ private:
     int cubeSize;
     float outerPoint;   //最も外側のキューブの中心座標
     int rotCol;
-
-    XMFLOAT3 Surface2Rotate(Cube::SURFACE surface);
+    //配置面と矢印の回転
+    XMFLOAT3 Surface2Rotate(Cube::SURFACE surface, bool reverse = false);
 
     template<class T>
     T Half(T value) { return value / 2.0f; }
@@ -40,10 +40,8 @@ private:
     void SetPosition(float x, float y, float z) {}  //SetPositionを無効化
     void SetPosition(int x, int y, int z) {}  //SetPositionを無効化
     DRAW_MODE drawMode;
-
 public:
     //=================== 単一描画 ===================
-
     /// 単一描画の情報を変更
     /// point:キューブの場所 左下前が0,0,0 右上奥が2,2,2
     /// surface:描画面
@@ -70,4 +68,11 @@ public:
     void SetRotateColumn(int col) { rotCol = col; }
     //エフェクト
     std::shared_ptr<EFFEKSEERLIB::EFKTransform> mt;
+    EFFEKSEERLIB::EFKTransform t;
+//private:
+    //エフェクトを止める
+    // FPSと最大フレームを変更して超高速でエフェクトを流すことで実現しているため、
+    // 再描画は次のフレーム以降でやらないと効果無し 注意
+    void StopEffect();
+    void StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol);
 };

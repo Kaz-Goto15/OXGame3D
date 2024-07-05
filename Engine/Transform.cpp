@@ -62,10 +62,11 @@ XMMATRIX Transform::GetWorldMatrix()
 	return  matScale_ * matRotate_ * matTranslate_;
 }
 
-XMMATRIX Transform::GetMatrixConvertEffect()
+XMMATRIX Transform::GetMatrixConvertEffect(float plus)
 {
+	float convertValue = (16.0f+plus) / 9.0f;
 	//à⁄ìÆçsóÒ
-	matTranslate_ = XMMatrixTranslation(position_.x - 16.0f/9.0f, position_.y - 16.0f / 9.0f, position_.z - 16.0f / 9.0f);
+	matTranslate_ = XMMatrixTranslation(position_.x - convertValue, position_.y - convertValue, position_.z - convertValue);
 
 	//âÒì]çsóÒ
 	XMMATRIX rotateX, rotateY, rotateZ;

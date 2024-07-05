@@ -102,7 +102,24 @@ void ModelTestScreen::Update()
 	if (Input::IsKeyDown(DIK_8)) {
 		indicator->SetCubeRotate(ROTATE_DIR::ROT_CCW);
 	}
-
+	if (Input::IsKeyDown(DIK_5)) {
+		indicator->SetCubeRotate(selectData.dir);
+	}
+	if (Input::IsKeyDown(DIK_1)) {
+		if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_DOWN,selectData.rotCol);
+		else indicator->StartDrawArrow(ROTATE_DIR::ROT_UP, selectData.rotCol);
+	}
+	if (Input::IsKeyDown(DIK_2)) {
+		if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_LEFT, selectData.rotCol);
+		else indicator->StartDrawArrow(ROTATE_DIR::ROT_RIGHT, selectData.rotCol);
+	}
+	if (Input::IsKeyDown(DIK_3)) {
+		if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_CW, selectData.rotCol);
+		else indicator->StartDrawArrow(ROTATE_DIR::ROT_CCW, selectData.rotCol);
+	}
+	if (Input::IsKeyDown(DIK_6)) {
+		indicator->StopEffect();
+	}
 	//finishなどステートが進まない限り操作を受け付けるやつ 現状finish時以外できるため直打ち
 	if (!finished) {
 		if (Input::IsKeyDown(GetKey(KEY::KEY_ESC))) {

@@ -1,18 +1,32 @@
 #include "CubeSelectIndicator.h"
 #include "./ModelLoader.h"
 #include "Engine/Model.h"
-
-XMFLOAT3 CubeSelectIndicator::Surface2Rotate(Cube::SURFACE surface)
+XMFLOAT3 CubeSelectIndicator::Surface2Rotate(Cube::SURFACE surface, bool reverse)
 {
-	//モデルで上方向(0,1,0)に配置する
-	switch (surface)
-	{
-	case Cube::SURFACE_TOP: return { 0,0,0 };
-	case Cube::SURFACE_BOTTOM:return { 180,0,0 };
-	case Cube::SURFACE_LEFT:    return { 0,0,90 };
-	case Cube::SURFACE_RIGHT:   return { 0,0,-90 };
-	case Cube::SURFACE_FRONT:   return { -90,0,0 };
-	case Cube::SURFACE_BACK:    return { 90,0,0 };
+	if (!reverse) {
+		//モデルで上方向(0,1,0)に配置する
+		switch (surface)
+		{
+		case Cube::SURFACE_TOP: return { 0,0,0 };
+		case Cube::SURFACE_BOTTOM:return { 180,0,0 };
+		case Cube::SURFACE_LEFT:    return { 0,0,90 };
+		case Cube::SURFACE_RIGHT:   return { 0,0,-90 };
+		case Cube::SURFACE_FRONT:   return { -90,0,0 };
+		case Cube::SURFACE_BACK:    return { 90,0,0 };
+		}
+	}
+	else {
+		//向きだけ反転する
+		switch (surface)
+		{
+		case Cube::SURFACE_TOP: return { 0,180,0 };
+		case Cube::SURFACE_BOTTOM:return { 180,180,0 };
+		case Cube::SURFACE_LEFT:    return { 180,0,90 };
+		case Cube::SURFACE_RIGHT:   return { 180,0,-90 };
+		case Cube::SURFACE_FRONT:   return { 90,0,180 };
+		case Cube::SURFACE_BACK:    return { -90,0,180 };
+		}
+
 	}
 }
 
@@ -39,21 +53,20 @@ void CubeSelectIndicator::Initialize()
 {
 	hModel = ModelLoader::Load(ModelLoader::CubeSelectIndicator);
 	//ModelLoader::ChangeAnim(hModel, "green");
-
 	EFFEKSEERLIB::gEfk->AddEffect("arrow", "Effect\\arrow.efk");
-	EFFEKSEERLIB::EFKTransform t;
-	DirectX::XMStoreFloat4x4(&(t.matrix), transform_.GetWorldMatrix());
-	t.isLoop = true;    //ループするか
-	t.maxFrame = 100;   //最大フレーム指定
-	t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
-	mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+	//EFFEKSEERLIB::EFKTransform t;
+	//DirectX::XMStoreFloat4x4(&(t.matrix), transform_.GetWorldMatrix());
+	//t.isLoop = true;    //ループするか
+	//t.maxFrame = 100;   //最大フレーム指定
+	//t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
+	//mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
 
 }
 
 //更新
 void CubeSelectIndicator::Update()
 {
-	DirectX::XMStoreFloat4x4(&(mt->matrix), this->GetWorldMatrix());
+	//DirectX::XMStoreFloat4x4(&(mt->matrix), this->GetWorldMatrix());
 }
 
 //描画
@@ -224,32 +237,164 @@ void CubeSelectIndicator::SetCubeScale(int scale)
 void CubeSelectIndicator::SetCubeRotate(ROTATE_DIR dir)
 {
 	direction = dir;
-	Transform tra;// = transform_;
-	EFFEKSEERLIB::EFKTransform t;
 
-	//tra.position_.x = abs((cubeSize - 1) / 2.0f);
-	//tra.rotate_ = Surface2Rotate(Cube::SURFACE_RIGHT);
-	//DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
-	//mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+	Transform tra;// = transform_;
+
+	//EFFEKSEERLIB::gEfk->SetFPS(1000000);
+	//t.maxFrame = 1;   //最大フレーム指定
+
+	EFFEKSEERLIB::gEfk->SetFPS(60);
+
+	tra.position_.z = -outerPoint;
+	t.isLoop = false;    //ループするか
+	t.maxFrame = 100;   //最大フレーム指定
+	t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
+
+	//yajirusi
 	for (int i = 0; i < cubeSize; i++) {
 		for (int j = 0; j < cubeSize; j++) {
-			tra.position_.x = outerPoint + i;
-			tra.position_.y = outerPoint + j;
-			tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP);
-			DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetMatrixConvertEffect());
-			t.isLoop = true;    //ループするか
-			t.maxFrame = 100;   //最大フレーム指定
-			t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
+			tra.position_.x = -outerPoint + i;
+			tra.position_.y = -outerPoint + j;
+			//tra.rotate_ = Surface2Rotate(dir);
+			DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
+			//if(i!=0 && j!=0)
 			mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+
+			//最大フレームを変更して描画をやめる方針だと最初に描画したエフェクトが反映されない状況になったため
+			// 一度FPSを0にして強引に描画を止めてから
+			//EFFEKSEERLIB::gEfk->SetFPS(1000000);
+			//t.maxFrame = 1;   //最大フレーム指定
+			//mt = EFFEKSEERLIB::gEfk->Play()
 		}
 	}
-	//tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP);
-	//DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
-	//t.isLoop = false;    //ループするか
-	//t.maxFrame = 100;   //最大フレーム指定
-	//t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
-	//mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+}
 
-	//transform_ = tra;
-	
+void CubeSelectIndicator::StopEffect()
+{
+	EFFEKSEERLIB::gEfk->SetFPS(FBXSDK_FLOAT_MAX);
+	t.maxFrame = 1;   //最大フレーム指定
+}
+
+void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
+{
+	Transform tra;
+	switch (dir)
+	{
+	case Cube::ROT_UP:
+		break;
+	case Cube::ROT_DOWN:
+		break;
+	case Cube::ROT_LEFT:
+		break;
+	case Cube::ROT_RIGHT:
+		break;
+	case Cube::ROT_CW:
+		break;
+	case Cube::ROT_CCW:
+		break;
+	default:
+		break;
+	}
+	auto DrawArrow = [=](Transform& transform) {
+		DirectX::XMStoreFloat4x4(&(t.matrix), transform.GetWorldMatrix());
+		mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+		};
+
+	switch (dir)
+	{
+	case Cube::ROT_UP:
+		tra.position_.x = rotCol - outerPoint;
+		
+		for (int y = 0; y < cubeSize; y += cubeSize-1) {
+			for (int z = 0; z < cubeSize; z += cubeSize-1) {
+				tra.position_.y = y - outerPoint;
+				tra.position_.z = z - outerPoint;
+
+				if (z == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, true);
+					DrawArrow(tra);
+				}
+				if (z == cubeSize-1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, true);
+					DrawArrow(tra);
+				}
+				if (y == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM, true);
+					DrawArrow(tra);
+				}
+				if (y == cubeSize -1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, true);
+					DrawArrow(tra);
+				}
+			}
+		}
+		break;
+	case Cube::ROT_DOWN:
+		tra.position_.x = rotCol - outerPoint;
+
+		for (int y = 0; y < cubeSize; y += cubeSize - 1) {
+			for (int z = 0; z < cubeSize; z += cubeSize - 1) {
+				tra.position_.y = y - outerPoint;
+				tra.position_.z = z - outerPoint;
+
+				if (z == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, false);
+					DrawArrow(tra);
+				}
+				if (z == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, false);
+					DrawArrow(tra);
+				}
+				if (y == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM, false);
+					DrawArrow(tra);
+				}
+				if (y == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, false);
+					DrawArrow(tra);
+				}
+			}
+		}
+
+		break;
+	case Cube::ROT_LEFT:
+		tra.position_.y = rotCol - outerPoint;
+
+		//ここ普通に逆転させても無理 ９０度回転しないといけないので
+		S2Rを度数対応させるかenumでも作るか
+		for (int x = 0; x < cubeSize; x += cubeSize - 1) {
+			for (int z = 0; z < cubeSize; z += cubeSize - 1) {
+				tra.position_.x = x - outerPoint;
+				tra.position_.z = z - outerPoint;
+
+				if (z == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, false);
+					DrawArrow(tra);
+				}
+				if (z == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, false);
+					DrawArrow(tra);
+				}
+				if (x == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, false);
+					DrawArrow(tra);
+				}
+				if (x == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, false);
+					DrawArrow(tra);
+				}
+			}
+		}
+
+		break;
+		break;
+	case Cube::ROT_RIGHT:
+		break;
+	case Cube::ROT_CW:
+		break;
+	case Cube::ROT_CCW:
+		break;
+	default:
+		break;
+	}
 }
