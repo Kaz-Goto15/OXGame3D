@@ -134,7 +134,7 @@ private:
 	DebugText* debugtext;
 	void UpdateStr();
 
-	SURFACE testSur, testSide;
+	//SURFACE testSur = SURFACE::SURFACE_TOP, testSide= SURFACE::SURFACE_TOP;
 	//============================ 判定関連 ============================
 	//勝利フラグ構造体
 	struct WinFlag {

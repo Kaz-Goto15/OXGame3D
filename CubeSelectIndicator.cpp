@@ -1,18 +1,11 @@
 #include "CubeSelectIndicator.h"
 #include "./ModelLoader.h"
 #include "Engine/Model.h"
+#include "SystemConfig.h"
+
 XMFLOAT3 CubeSelectIndicator::Surface2Rotate(SURFACE surface)
 {
-	//モデルで上方向(0,1,0)に配置する
-	switch (surface)
-	{
-	case Cube::SURFACE_TOP: return { 0,0,0 };
-	case Cube::SURFACE_BOTTOM:return { 180,0,0 };
-	case Cube::SURFACE_LEFT:    return { 0,0,90 };
-	case Cube::SURFACE_RIGHT:   return { 0,0,-90 };
-	case Cube::SURFACE_FRONT:   return { -90,0,0 };
-	case Cube::SURFACE_BACK:    return { 90,0,0 };
-	}
+	return Surface2Rotate(surface, surface);	//単純回転の値を返す
 }
 XMFLOAT3 CubeSelectIndicator::Surface2Rotate(SURFACE surface, SURFACE side)
 {
@@ -38,8 +31,8 @@ XMFLOAT3 CubeSelectIndicator::Surface2Rotate(SURFACE surface, SURFACE side)
 		{
 		case Cube::SURFACE_TOP:		break;
 		case Cube::SURFACE_BOTTOM:	break;
-		case Cube::SURFACE_LEFT:    return { 0,-90,0 };
-		case Cube::SURFACE_RIGHT:   return { 0,90,0 };
+		case Cube::SURFACE_LEFT:    return { 180,90,0 };
+		case Cube::SURFACE_RIGHT:   return { 180,-90,0 };
 		case Cube::SURFACE_FRONT:   break;
 		case Cube::SURFACE_BACK:	return { 180,180,0 };
 		}
@@ -47,8 +40,8 @@ XMFLOAT3 CubeSelectIndicator::Surface2Rotate(SURFACE surface, SURFACE side)
 	case Cube::SURFACE_LEFT:
 		switch (side)	//単純回転は奥側と同等
 		{
-		case Cube::SURFACE_TOP:		return { 0,180,0 };
-		case Cube::SURFACE_BOTTOM:	return { 0,180,0 };
+		case Cube::SURFACE_TOP:		return { -90,0,90 };
+		case Cube::SURFACE_BOTTOM:	return { 90,0,90 };
 		case Cube::SURFACE_LEFT:    break;
 		case Cube::SURFACE_RIGHT:	break;
 		case Cube::SURFACE_FRONT:   return { 180,0,90 };
@@ -58,8 +51,8 @@ XMFLOAT3 CubeSelectIndicator::Surface2Rotate(SURFACE surface, SURFACE side)
 	case Cube::SURFACE_RIGHT:
 		switch (side)	//単純回転は奥側と同等
 		{
-		case Cube::SURFACE_TOP:		return { 0,180,0 };
-		case Cube::SURFACE_BOTTOM:	return { 0,180,0 };
+		case Cube::SURFACE_TOP:		return { -90,0,-90 };
+		case Cube::SURFACE_BOTTOM:	return { 90,0,-90 };
 		case Cube::SURFACE_LEFT:    break;
 		case Cube::SURFACE_RIGHT:	break;
 		case Cube::SURFACE_FRONT:   return { 180,0,-90 };
@@ -71,8 +64,8 @@ XMFLOAT3 CubeSelectIndicator::Surface2Rotate(SURFACE surface, SURFACE side)
 		{
 		case Cube::SURFACE_TOP:		break;
 		case Cube::SURFACE_BOTTOM:	return { 90,0,180 };
-		case Cube::SURFACE_LEFT:    return { 90,0,90 };
-		case Cube::SURFACE_RIGHT:   return { 90,0,-90 };
+		case Cube::SURFACE_LEFT:    return { 0,-90,90 };
+		case Cube::SURFACE_RIGHT:   return { 0,90,-90 };
 		case Cube::SURFACE_FRONT:   break;
 		case Cube::SURFACE_BACK:	break;
 		}
@@ -82,8 +75,8 @@ XMFLOAT3 CubeSelectIndicator::Surface2Rotate(SURFACE surface, SURFACE side)
 		{
 		case Cube::SURFACE_TOP:		return { -90,0,180 };
 		case Cube::SURFACE_BOTTOM:	break;
-		case Cube::SURFACE_LEFT:    return { 90,0,-90 };
-		case Cube::SURFACE_RIGHT:   return { 90,0,90 };
+		case Cube::SURFACE_LEFT:    return { 0,-90,-90 };
+		case Cube::SURFACE_RIGHT:   return { 0,90,90 };
 		case Cube::SURFACE_FRONT:   break;
 		case Cube::SURFACE_BACK:	break;
 		}
@@ -94,6 +87,8 @@ XMFLOAT3 CubeSelectIndicator::Surface2Rotate(SURFACE surface, SURFACE side)
 //コンストラクタ
 CubeSelectIndicator::CubeSelectIndicator(GameObject* parent):
 	GameObject(parent, "CubeSelectIndicator"),
+	mt(nullptr), DEFAULT_EFFECT_SPEED(1.0f),
+	arrowState(EFFECT_STATE::STOP),nowArrowFrame(0),ARROW_FRAME(100),EFF_ID_ARROW("arrow"),
 	hModel(-1),
 	cubeSize(0),
 	outerPoint(0.0f),
@@ -114,13 +109,11 @@ void CubeSelectIndicator::Initialize()
 {
 	hModel = ModelLoader::Load(ModelLoader::CubeSelectIndicator);
 	//ModelLoader::ChangeAnim(hModel, "green");
-	EFFEKSEERLIB::gEfk->AddEffect("arrow", "Effect\\arrow.efk");
-	//EFFEKSEERLIB::EFKTransform t;
-	//DirectX::XMStoreFloat4x4(&(t.matrix), transform_.GetWorldMatrix());
-	//t.isLoop = true;    //ループするか
-	//t.maxFrame = 100;   //最大フレーム指定
-	//t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
-	//mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+	// 
+	//エフェクト
+	EFFEKSEERLIB::gEfk->AddEffect(EFF_ID_ARROW, "Effect\\arrow.efk");
+	t.speed = DEFAULT_EFFECT_SPEED;      //エフェクト速度 ※エクスポート時の速度が1.0
+	t.isLoop = false;
 
 }
 
@@ -245,107 +238,53 @@ void CubeSelectIndicator::Draw()
 			break;
 		}
 
-	}
-}
-
-void CubeSelectIndicator::DrawSurface(Transform& tra, Cube::SURFACE surface, bool isOuter)
-{
-	if (isOuter) {
-		switch (surface)
+		switch (arrowState)
 		{
-		case Cube::SURFACE_TOP:		tra.position_.y = outerPoint;	break;
-		case Cube::SURFACE_BOTTOM:	tra.position_.y = -outerPoint;	break;
-		case Cube::SURFACE_LEFT:	tra.position_.x = -outerPoint;	break;
-		case Cube::SURFACE_RIGHT:	tra.position_.x = outerPoint;	break;
-		case Cube::SURFACE_FRONT:	tra.position_.z = -outerPoint;	break;
-		case Cube::SURFACE_BACK:	tra.position_.z = outerPoint;	break;
-		}
-	}
-	tra.rotate_ = Surface2Rotate(surface);
-	Model::SetTransform(hModel, tra);
-	Model::Draw(hModel);
-}
-
-//開放
-void CubeSelectIndicator::Release()
-{
-}
-
-void CubeSelectIndicator::SetDrawPoint(XMINT3 point, Cube::SURFACE surface)
-{
-	SetDrawPoint(point);
-	SetDrawPoint(surface);
-}
-
-void CubeSelectIndicator::SetDrawPoint(XMINT3 point)
-{
-	transform_.position_.x = (float)point.x - outerPoint;
-	transform_.position_.y = (float)point.y - outerPoint;
-	transform_.position_.z = (float)point.z - outerPoint;
-}
-
-void CubeSelectIndicator::SetDrawPoint(Cube::SURFACE surface)
-{
-	transform_.rotate_ = Surface2Rotate(surface);
-}
-
-void CubeSelectIndicator::SetCubeScale(int scale)
-{
-	cubeSize = scale;
-	outerPoint = Half((float)(scale - 1));
-}
-
-void CubeSelectIndicator::SetCubeRotate(ROTATE_DIR dir)
-{
-	direction = dir;
-
-	Transform tra;// = transform_;
-
-	//EFFEKSEERLIB::gEfk->SetFPS(1000000);
-	//t.maxFrame = 1;   //最大フレーム指定
-
-	EFFEKSEERLIB::gEfk->SetFPS(60);
-
-	tra.position_.z = -outerPoint;
-	t.isLoop = false;    //ループするか
-	t.maxFrame = 100;   //最大フレーム指定
-	t.speed = 1.0;      //エフェクト速度 ※エクスポート時の速度が1.0
-
-	//yajirusi
-	for (int i = 0; i < cubeSize; i++) {
-		for (int j = 0; j < cubeSize; j++) {
-			tra.position_.x = -outerPoint + i;
-			tra.position_.y = -outerPoint + j;
-			//tra.rotate_ = Surface2Rotate(dir);
-			DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
-			//if(i!=0 && j!=0)
-			mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+		case CubeSelectIndicator::STOP:
+			arrowState = EFFECT_STATE::NEXT_START;
+			break;
+		case CubeSelectIndicator::NEXT_START:
+			StartDrawArrow(direction, rotCol);
+			arrowState = EFFECT_STATE::DRAWING;
+			break;
+		case CubeSelectIndicator::DRAWING:
+			nowArrowFrame++;
+			if (nowArrowFrame > ARROW_FRAME) {
+				nowArrowFrame = 0;
+				StartDrawArrow(direction, rotCol);
+			}
+			break;
 		}
 	}
 }
 
-void CubeSelectIndicator::StopEffect()
+//=================== エフェクト ===================
+
+void CubeSelectIndicator::StopDrawArrow()
 {
-	EFFEKSEERLIB::gEfk->SetFPS(FBXSDK_FLOAT_MAX);
-	t.maxFrame = 1;   //最大フレーム指定
+	EFFEKSEERLIB::gEfk->SetFPS(FBXSDK_FLOAT_MAX);	//FPSを超速にする
+	t.maxFrame = 1;   //最大フレームを1にして即終了
+	t.speed = FBXSDK_FLOAT_MAX;	//速度を最大にする
+
+	arrowState = EFFECT_STATE::STOP;
+	nowArrowFrame = 0;
 }
 
 void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
 {
 	Transform tra;
 
-	auto DrawArrow = [=](Transform& transform) {
-		DirectX::XMStoreFloat4x4(&(t.matrix), transform.GetWorldMatrix());
-		mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
-		};
+	EFFEKSEERLIB::gEfk->SetFPS(SystemConfig::GetFPS());
+	t.maxFrame = ARROW_FRAME;			//最大フレーム指定
+	t.speed = DEFAULT_EFFECT_SPEED;     //エフェクト速度をリセット
 
 	switch (dir)
 	{
 	case Cube::ROT_UP:
 		tra.position_.x = rotCol - outerPoint;
-		
-		for (int y = 0; y < cubeSize; y += cubeSize-1) {
-			for (int z = 0; z < cubeSize; z += cubeSize-1) {
+
+		for (int y = 0; y < cubeSize; y += cubeSize - 1) {
+			for (int z = 0; z < cubeSize; z += cubeSize - 1) {
 				tra.position_.y = y - outerPoint;
 				tra.position_.z = z - outerPoint;
 
@@ -353,7 +292,7 @@ void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
 					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, SURFACE::SURFACE_TOP);
 					DrawArrow(tra);
 				}
-				if (z == cubeSize-1) {
+				if (z == cubeSize - 1) {
 					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, SURFACE::SURFACE_BOTTOM);
 					DrawArrow(tra);
 				}
@@ -361,7 +300,7 @@ void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
 					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM, SURFACE::SURFACE_FRONT);
 					DrawArrow(tra);
 				}
-				if (y == cubeSize -1) {
+				if (y == cubeSize - 1) {
 					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, SURFACE::SURFACE_BACK);
 					DrawArrow(tra);
 				}
@@ -406,14 +345,14 @@ void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
 				tra.position_.x = x - outerPoint;
 				tra.position_.z = z - outerPoint;
 
-				//if (z == 0) {
-				//	tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, SURFACE::SURFACE_LEFT);
-				//	DrawArrow(tra);
-				//}
-				//if (z == cubeSize - 1) {
-				//	tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, SURFACE::SURFACE_RIGHT);
-				//	DrawArrow(tra);
-				//}
+				if (z == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, SURFACE::SURFACE_LEFT);
+					DrawArrow(tra);
+				}
+				if (z == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, SURFACE::SURFACE_RIGHT);
+					DrawArrow(tra);
+				}
 				if (x == 0) {
 					tra.rotate_ = Surface2Rotate(Cube::SURFACE_LEFT, SURFACE::SURFACE_BACK);
 					DrawArrow(tra);
@@ -435,14 +374,14 @@ void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
 				tra.position_.x = x - outerPoint;
 				tra.position_.z = z - outerPoint;
 
-				//if (z == 0) {
-				//	tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, SURFACE::SURFACE_RIGHT);
-				//	DrawArrow(tra);
-				//}
-				//if (z == cubeSize - 1) {
-				//	tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, SURFACE::SURFACE_LEFT);
-				//	DrawArrow(tra);
-				//}
+				if (z == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, SURFACE::SURFACE_RIGHT);
+					DrawArrow(tra);
+				}
+				if (z == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, SURFACE::SURFACE_LEFT);
+					DrawArrow(tra);
+				}
 				if (x == 0) {
 					tra.rotate_ = Surface2Rotate(Cube::SURFACE_LEFT, SURFACE::SURFACE_FRONT);
 					DrawArrow(tra);
@@ -516,11 +455,88 @@ void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
 	}
 }
 
+void CubeSelectIndicator::DrawArrow(Transform& tra)
+{
+	DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
+	mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+}
+
+void CubeSelectIndicator::DrawSurface(Transform& tra, Cube::SURFACE surface, bool isOuter)
+{
+	if (isOuter) {
+		switch (surface)
+		{
+		case Cube::SURFACE_TOP:		tra.position_.y = outerPoint;	break;
+		case Cube::SURFACE_BOTTOM:	tra.position_.y = -outerPoint;	break;
+		case Cube::SURFACE_LEFT:	tra.position_.x = -outerPoint;	break;
+		case Cube::SURFACE_RIGHT:	tra.position_.x = outerPoint;	break;
+		case Cube::SURFACE_FRONT:	tra.position_.z = -outerPoint;	break;
+		case Cube::SURFACE_BACK:	tra.position_.z = outerPoint;	break;
+		}
+	}
+	tra.rotate_ = Surface2Rotate(surface);
+	Model::SetTransform(hModel, tra);
+	Model::Draw(hModel);
+}
+
+//開放
+void CubeSelectIndicator::Release()
+{
+	StopDrawArrow();
+}
+
+void CubeSelectIndicator::SetDrawPoint(XMINT3 point, Cube::SURFACE surface)
+{
+	SetDrawPoint(point);
+	SetDrawPoint(surface);
+}
+
+void CubeSelectIndicator::SetDrawPoint(XMINT3 point)
+{
+	transform_.position_.x = (float)point.x - outerPoint;
+	transform_.position_.y = (float)point.y - outerPoint;
+	transform_.position_.z = (float)point.z - outerPoint;
+}
+
+void CubeSelectIndicator::SetDrawPoint(Cube::SURFACE surface)
+{
+	transform_.rotate_ = Surface2Rotate(surface);
+}
+
+void CubeSelectIndicator::SetCubeScale(int scale)
+{
+	cubeSize = scale;
+	outerPoint = Half((float)(scale - 1));
+}
+
+void CubeSelectIndicator::SetDrawMode(DRAW_MODE mode)
+{
+	drawMode = mode;
+	StopDrawArrow();
+}
+
+//=================== 円形描画 ===================
+void CubeSelectIndicator::SetCubeRotate(ROTATE_DIR dir)
+{
+	if (direction != dir) {
+		direction = dir;
+		StopDrawArrow();
+	}
+}
+
+void CubeSelectIndicator::SetRotateColumn(int col)
+{
+	if (rotCol != col) {
+		rotCol = col;
+		StopDrawArrow();
+	}
+}
+
 void CubeSelectIndicator::DebugDraw(SURFACE sur, SURFACE sid)
 {
 	Transform tra;
 	tra.rotate_ = Surface2Rotate(sur, sid);
 	
-		DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
-		mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+	DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
+	mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_ARROW, t);
 }

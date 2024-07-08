@@ -2,12 +2,53 @@
 #include "Engine/GameObject.h"
 #include "Cube.h"
 #include "./Include/EffekseeLib/EffekseerVFX.h"
+#include <string>
 
+using std::string;
 using ROTATE_DIR = Cube::ROTATE_DIR;
 using SURFACE = Cube::SURFACE;
 //キューブを管理するクラス
 class CubeSelectIndicator : public GameObject
 {
+public:
+    CubeSelectIndicator(GameObject* parent);    //コンストラクタ
+    ~CubeSelectIndicator();                     //デストラクタ
+    void Initialize() override; //初期化
+    void Update() override;     //更新
+    void Draw() override;       //描画
+    void Release() override;    //解放
+private:
+    void SetPosition(float x, float y, float z) {}  //SetPositionを無効化
+    void SetPosition(int x, int y, int z) {}        //SetPositionを無効化
+
+    //=================== エフェクト ===================
+    //
+    // どうやらループをtrueにした状態でエフェクト描画開始を走らせたとき、途中でfalseにして描画を終えても
+    // またtrueに戻すと描画される そのため一生発生するエフェクトを除いて現在フレームを見るようにして手動ループを行う
+    //
+    //==================================================
+private:
+    std::shared_ptr<EFFEKSEERLIB::EFKTransform> mt;
+    EFFEKSEERLIB::EFKTransform t;
+    const float DEFAULT_EFFECT_SPEED;
+    enum EFFECT_STATE {
+        STOP,
+        NEXT_START,
+        DRAWING
+    }arrowState;
+    int nowArrowFrame;
+    const int ARROW_FRAME;
+    const string EFF_ID_ARROW;
+
+    //エフェクトを止める
+    // FPSと最大フレームを変更して超高速でエフェクトを流すことで実現しているため、
+    // 再描画は次のフレーム以降でやらないと効果無し 注意
+    void StopDrawArrow();
+
+    //エフェクトを再生する
+    void StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol);
+    void DrawArrow(Transform& tra); //実質StartDrawArrow関数のParts
+
 private:
     int hModel;
     int cubeSize;
@@ -22,16 +63,9 @@ private:
     template<class T>
     T Half(T value) { return value / 2.0f; }
 
-public:
-    CubeSelectIndicator(GameObject* parent);    //コンストラクタ
-    ~CubeSelectIndicator();                     //デストラクタ
-    void Initialize() override; //初期化
-    void Update() override;     //更新
-    void Draw() override;       //描画
 private:
     void DrawSurface(Transform& tra, Cube::SURFACE surface, bool isOuter = true);
 public:
-    void Release() override;    //解放
 
     //描画モード
     enum DRAW_MODE {
@@ -41,8 +75,6 @@ public:
 
 private:
     Cube::ROTATE_DIR direction;
-    void SetPosition(float x, float y, float z) {}  //SetPositionを無効化
-    void SetPosition(int x, int y, int z) {}  //SetPositionを無効化
     DRAW_MODE drawMode;
 public:
     //=================== 単一描画 ===================
@@ -62,24 +94,18 @@ public:
     //キューブの大きさ指定 例えば3x3なら3を入れる
     void SetCubeScale(int scale);
 
-    void SetDrawMode(DRAW_MODE mode) { drawMode = mode; }
+    void SetDrawMode(DRAW_MODE mode);
 
     //=================== 円形描画 ===================
+    
     //前面から見た時の回転方向を指定
     void SetCubeRotate(Cube::ROTATE_DIR dir);
     
     //回転列 左下前がX0Y0Z0
-    void SetRotateColumn(int col) { rotCol = col; }
-    //エフェクト
-    std::shared_ptr<EFFEKSEERLIB::EFKTransform> mt;
-    EFFEKSEERLIB::EFKTransform t;
-//private:
-    //エフェクトを止める
-    // FPSと最大フレームを変更して超高速でエフェクトを流すことで実現しているため、
-    // 再描画は次のフレーム以降でやらないと効果無し 注意
-    void StopEffect();
-    void StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol);
+    void SetRotateColumn(int col);
 
 public:
     void DebugDraw(SURFACE sur, SURFACE sid);
 };
+
+//エフェクトの再生停止関数の汎用化はしていない 複数のエフェクト使用しているわけではないので現状しないほうがはやい

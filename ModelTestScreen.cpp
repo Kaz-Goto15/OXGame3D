@@ -102,45 +102,46 @@ void ModelTestScreen::Update()
 	if (Input::IsKeyDown(DIK_8)) {
 		indicator->SetCubeRotate(ROTATE_DIR::ROT_CCW);
 	}
-	if (Input::IsKeyDown(DIK_5)) {
+	if (Input::IsKeyDown(DIK_7)) {
 		indicator->SetCubeRotate(selectData.dir);
 	}
-	if (Input::IsKeyDown(DIK_1)) {
-		if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_DOWN,selectData.rotCol);
-		else indicator->StartDrawArrow(ROTATE_DIR::ROT_UP, selectData.rotCol);
-	}
-	if (Input::IsKeyDown(DIK_2)) {
-		if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_LEFT, selectData.rotCol);
-		else indicator->StartDrawArrow(ROTATE_DIR::ROT_RIGHT, selectData.rotCol);
-	}
-	if (Input::IsKeyDown(DIK_3)) {
-		if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_CW, selectData.rotCol);
-		else indicator->StartDrawArrow(ROTATE_DIR::ROT_CCW, selectData.rotCol);
-	}
-	if (Input::IsKeyDown(DIK_4)) {
-		if (Input::IsKey(DIK_LALT)) {
-			if (testSur == SURFACE::SURFACE_TOP)testSur = SURFACE::SURFACE_BOTTOM;
-			else if (testSur == SURFACE::SURFACE_BOTTOM)testSur = SURFACE::SURFACE_LEFT;
-			else if (testSur == SURFACE::SURFACE_LEFT)testSur = SURFACE::SURFACE_RIGHT;
-			else if (testSur == SURFACE::SURFACE_RIGHT)testSur = SURFACE::SURFACE_FRONT;
-			else if (testSur == SURFACE::SURFACE_FRONT)testSur = SURFACE::SURFACE_BACK;
-			else if (testSur == SURFACE::SURFACE_BACK)testSur = SURFACE::SURFACE_TOP;
-		}
-		else {
-			if (testSide == SURFACE::SURFACE_TOP)testSide = SURFACE::SURFACE_BOTTOM;
-			else if (testSide == SURFACE::SURFACE_BOTTOM)testSide = SURFACE::SURFACE_LEFT;
-			else if (testSide == SURFACE::SURFACE_LEFT)testSide = SURFACE::SURFACE_RIGHT;
-			else if (testSide == SURFACE::SURFACE_RIGHT)testSide = SURFACE::SURFACE_FRONT;
-			else if (testSide == SURFACE::SURFACE_FRONT)testSide = SURFACE::SURFACE_BACK;
-			else if (testSide == SURFACE::SURFACE_BACK)testSide = SURFACE::SURFACE_TOP;
-		}
-	}
-	if (Input::IsKeyDown(DIK_5)) {
-		indicator->DebugDraw(testSur, testSide);
-	}
-	if (Input::IsKeyDown(DIK_6)) {
-		indicator->StopEffect();
-	}
+	//if (Input::IsKeyDown(DIK_1)) {
+	//	if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_DOWN,selectData.rotCol);
+	//	else indicator->StartDrawArrow(ROTATE_DIR::ROT_UP, selectData.rotCol);
+	//}
+	//if (Input::IsKeyDown(DIK_2)) {
+	//	if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_LEFT, selectData.rotCol);
+	//	else indicator->StartDrawArrow(ROTATE_DIR::ROT_RIGHT, selectData.rotCol);
+	//}
+	//if (Input::IsKeyDown(DIK_3)) {
+	//	if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_CW, selectData.rotCol);
+	//	else indicator->StartDrawArrow(ROTATE_DIR::ROT_CCW, selectData.rotCol);
+	//}
+	//if (Input::IsKeyDown(DIK_4)) {
+	//	if (Input::IsKey(DIK_LALT)) {
+	//		if (testSur == SURFACE::SURFACE_TOP)testSur = SURFACE::SURFACE_BOTTOM;
+	//		else if (testSur == SURFACE::SURFACE_BOTTOM)testSur = SURFACE::SURFACE_LEFT;
+	//		else if (testSur == SURFACE::SURFACE_LEFT)testSur = SURFACE::SURFACE_RIGHT;
+	//		else if (testSur == SURFACE::SURFACE_RIGHT)testSur = SURFACE::SURFACE_FRONT;
+	//		else if (testSur == SURFACE::SURFACE_FRONT)testSur = SURFACE::SURFACE_BACK;
+	//		else if (testSur == SURFACE::SURFACE_BACK)testSur = SURFACE::SURFACE_TOP;
+	//	}
+	//	else {
+	//		if (testSide == SURFACE::SURFACE_TOP)testSide = SURFACE::SURFACE_BOTTOM;
+	//		else if (testSide == SURFACE::SURFACE_BOTTOM)testSide = SURFACE::SURFACE_LEFT;
+	//		else if (testSide == SURFACE::SURFACE_LEFT)testSide = SURFACE::SURFACE_RIGHT;
+	//		else if (testSide == SURFACE::SURFACE_RIGHT)testSide = SURFACE::SURFACE_FRONT;
+	//		else if (testSide == SURFACE::SURFACE_FRONT)testSide = SURFACE::SURFACE_BACK;
+	//		else if (testSide == SURFACE::SURFACE_BACK)testSide = SURFACE::SURFACE_TOP;
+	//	}
+	//	debugStr[7] = "SUR:" + (std::string)NAMEOF_ENUM(testSur) + " SID:" + (std::string)NAMEOF_ENUM(testSide);
+	//}
+	//if (Input::IsKeyDown(DIK_5)) {
+	//	indicator->DebugDraw(testSur, testSide);
+	//}
+	//if (Input::IsKeyDown(DIK_6)) {
+	//	indicator->StopEffect();
+	//}
 	//finishなどステートが進まない限り操作を受け付けるやつ 現状finish時以外できるため直打ち
 	if (!finished) {
 		if (Input::IsKeyDown(GetKey(KEY::KEY_ESC))) {
