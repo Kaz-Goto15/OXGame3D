@@ -133,6 +133,8 @@ private:
 	std::string debugStr[20];
 	DebugText* debugtext;
 	void UpdateStr();
+
+	SURFACE testSur, testSide;
 	//============================ 判定関連 ============================
 	//勝利フラグ構造体
 	struct WinFlag {

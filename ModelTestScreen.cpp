@@ -117,6 +117,27 @@ void ModelTestScreen::Update()
 		if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_CW, selectData.rotCol);
 		else indicator->StartDrawArrow(ROTATE_DIR::ROT_CCW, selectData.rotCol);
 	}
+	if (Input::IsKeyDown(DIK_4)) {
+		if (Input::IsKey(DIK_LALT)) {
+			if (testSur == SURFACE::SURFACE_TOP)testSur = SURFACE::SURFACE_BOTTOM;
+			else if (testSur == SURFACE::SURFACE_BOTTOM)testSur = SURFACE::SURFACE_LEFT;
+			else if (testSur == SURFACE::SURFACE_LEFT)testSur = SURFACE::SURFACE_RIGHT;
+			else if (testSur == SURFACE::SURFACE_RIGHT)testSur = SURFACE::SURFACE_FRONT;
+			else if (testSur == SURFACE::SURFACE_FRONT)testSur = SURFACE::SURFACE_BACK;
+			else if (testSur == SURFACE::SURFACE_BACK)testSur = SURFACE::SURFACE_TOP;
+		}
+		else {
+			if (testSide == SURFACE::SURFACE_TOP)testSide = SURFACE::SURFACE_BOTTOM;
+			else if (testSide == SURFACE::SURFACE_BOTTOM)testSide = SURFACE::SURFACE_LEFT;
+			else if (testSide == SURFACE::SURFACE_LEFT)testSide = SURFACE::SURFACE_RIGHT;
+			else if (testSide == SURFACE::SURFACE_RIGHT)testSide = SURFACE::SURFACE_FRONT;
+			else if (testSide == SURFACE::SURFACE_FRONT)testSide = SURFACE::SURFACE_BACK;
+			else if (testSide == SURFACE::SURFACE_BACK)testSide = SURFACE::SURFACE_TOP;
+		}
+	}
+	if (Input::IsKeyDown(DIK_5)) {
+		indicator->DebugDraw(testSur, testSide);
+	}
 	if (Input::IsKeyDown(DIK_6)) {
 		indicator->StopEffect();
 	}

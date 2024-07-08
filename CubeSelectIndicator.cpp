@@ -1,32 +1,93 @@
 #include "CubeSelectIndicator.h"
 #include "./ModelLoader.h"
 #include "Engine/Model.h"
-XMFLOAT3 CubeSelectIndicator::Surface2Rotate(Cube::SURFACE surface, bool reverse)
+XMFLOAT3 CubeSelectIndicator::Surface2Rotate(SURFACE surface)
 {
-	if (!reverse) {
-		//ÉÇÉfÉãÇ≈è„ï˚å¸(0,1,0)Ç…îzíuÇ∑ÇÈ
-		switch (surface)
-		{
-		case Cube::SURFACE_TOP: return { 0,0,0 };
-		case Cube::SURFACE_BOTTOM:return { 180,0,0 };
-		case Cube::SURFACE_LEFT:    return { 0,0,90 };
-		case Cube::SURFACE_RIGHT:   return { 0,0,-90 };
-		case Cube::SURFACE_FRONT:   return { -90,0,0 };
-		case Cube::SURFACE_BACK:    return { 90,0,0 };
-		}
+	//ÉÇÉfÉãÇ≈è„ï˚å¸(0,1,0)Ç…îzíuÇ∑ÇÈ
+	switch (surface)
+	{
+	case Cube::SURFACE_TOP: return { 0,0,0 };
+	case Cube::SURFACE_BOTTOM:return { 180,0,0 };
+	case Cube::SURFACE_LEFT:    return { 0,0,90 };
+	case Cube::SURFACE_RIGHT:   return { 0,0,-90 };
+	case Cube::SURFACE_FRONT:   return { -90,0,0 };
+	case Cube::SURFACE_BACK:    return { 90,0,0 };
 	}
-	else {
-		//å¸Ç´ÇæÇØîΩì]Ç∑ÇÈ
-		switch (surface)
-		{
-		case Cube::SURFACE_TOP: return { 0,180,0 };
-		case Cube::SURFACE_BOTTOM:return { 180,180,0 };
-		case Cube::SURFACE_LEFT:    return { 180,0,90 };
-		case Cube::SURFACE_RIGHT:   return { 180,0,-90 };
-		case Cube::SURFACE_FRONT:   return { 90,0,180 };
-		case Cube::SURFACE_BACK:    return { -90,0,180 };
-		}
+}
+XMFLOAT3 CubeSelectIndicator::Surface2Rotate(SURFACE surface, SURFACE side)
+{
+	//Vec(0,0,1)Ç÷å¸Ç≠pos0,0,0Ç…à íuÇ∑ÇÈñÓàÛÇâÒì]Ç≥ÇπÇƒ0.5Ç∏ÇÁÇ∑ÇÃÇ†ÇÁÇ‰ÇÈñ Ç≈à¿íËÇµÇªÇ§ÇæÇ™ÅA
+	//ç°âÒÇÕ0,0,1Ç÷å¸Ç≠pos0,0.5,0Ç…à íuÇ∑ÇÈñÓàÛÇíºê⁄âÒì]Ç≥ÇπÇÈ
 
+	//é©êgÇ∆ìØÇ∂ñ Ç‹ÇΩÇÕîΩëŒñ ÇÃèÍçáÅAíPèÉâÒì]Ç≥ÇπÇΩÇæÇØÇÃílÇï‘Ç∑
+	switch (surface)
+	{
+	case Cube::SURFACE_TOP:
+		switch (side)	//íPèÉâÒì]ÇÕâúë§Ç∆ìØìô
+		{
+		case Cube::SURFACE_TOP:		break;
+		case Cube::SURFACE_BOTTOM:	break;
+		case Cube::SURFACE_LEFT:    return { 0,-90,0 };
+		case Cube::SURFACE_RIGHT:   return { 0,90,0 };
+		case Cube::SURFACE_FRONT:   return { 0,180,0 };
+		case Cube::SURFACE_BACK:	break;
+		}
+		return { 0,0,0 };
+	case Cube::SURFACE_BOTTOM:
+		switch (side)	//íPèÉâÒì]ÇÕëOë§Ç∆ìØìô
+		{
+		case Cube::SURFACE_TOP:		break;
+		case Cube::SURFACE_BOTTOM:	break;
+		case Cube::SURFACE_LEFT:    return { 0,-90,0 };
+		case Cube::SURFACE_RIGHT:   return { 0,90,0 };
+		case Cube::SURFACE_FRONT:   break;
+		case Cube::SURFACE_BACK:	return { 180,180,0 };
+		}
+		return { 180,0,0 };
+	case Cube::SURFACE_LEFT:
+		switch (side)	//íPèÉâÒì]ÇÕâúë§Ç∆ìØìô
+		{
+		case Cube::SURFACE_TOP:		return { 0,180,0 };
+		case Cube::SURFACE_BOTTOM:	return { 0,180,0 };
+		case Cube::SURFACE_LEFT:    break;
+		case Cube::SURFACE_RIGHT:	break;
+		case Cube::SURFACE_FRONT:   return { 180,0,90 };
+		case Cube::SURFACE_BACK:	break;
+		}
+		return { 0,0,90 };
+	case Cube::SURFACE_RIGHT:
+		switch (side)	//íPèÉâÒì]ÇÕâúë§Ç∆ìØìô
+		{
+		case Cube::SURFACE_TOP:		return { 0,180,0 };
+		case Cube::SURFACE_BOTTOM:	return { 0,180,0 };
+		case Cube::SURFACE_LEFT:    break;
+		case Cube::SURFACE_RIGHT:	break;
+		case Cube::SURFACE_FRONT:   return { 180,0,-90 };
+		case Cube::SURFACE_BACK:	break;
+		}
+		return { 0,0,-90 };
+	case Cube::SURFACE_FRONT:
+		switch (side)	//íPèÉâÒì]ÇÕè„ë§Ç∆ìØìô
+		{
+		case Cube::SURFACE_TOP:		break;
+		case Cube::SURFACE_BOTTOM:	return { 90,0,180 };
+		case Cube::SURFACE_LEFT:    return { 90,0,90 };
+		case Cube::SURFACE_RIGHT:   return { 90,0,-90 };
+		case Cube::SURFACE_FRONT:   break;
+		case Cube::SURFACE_BACK:	break;
+		}
+		return { -90,0,0 };
+	case Cube::SURFACE_BACK:
+		switch (side)	//íPèÉâÒì]ÇÕâ∫ë§Ç∆ìØìô
+		{
+		case Cube::SURFACE_TOP:		return { -90,0,180 };
+		case Cube::SURFACE_BOTTOM:	break;
+		case Cube::SURFACE_LEFT:    return { 90,0,-90 };
+		case Cube::SURFACE_RIGHT:   return { 90,0,90 };
+		case Cube::SURFACE_FRONT:   break;
+		case Cube::SURFACE_BACK:	break;
+		}
+		return { 90,0,0 };
 	}
 }
 
@@ -259,12 +320,6 @@ void CubeSelectIndicator::SetCubeRotate(ROTATE_DIR dir)
 			DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
 			//if(i!=0 && j!=0)
 			mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
-
-			//ç≈ëÂÉtÉåÅ[ÉÄÇïœçXÇµÇƒï`âÊÇÇ‚ÇﬂÇÈï˚êjÇæÇ∆ç≈èâÇ…ï`âÊÇµÇΩÉGÉtÉFÉNÉgÇ™îΩâfÇ≥ÇÍÇ»Ç¢èÛãµÇ…Ç»Ç¡ÇΩÇΩÇﬂ
-			// àÍìxFPSÇ0Ç…ÇµÇƒã≠à¯Ç…ï`âÊÇé~ÇﬂÇƒÇ©ÇÁ
-			//EFFEKSEERLIB::gEfk->SetFPS(1000000);
-			//t.maxFrame = 1;   //ç≈ëÂÉtÉåÅ[ÉÄéwíË
-			//mt = EFFEKSEERLIB::gEfk->Play()
 		}
 	}
 }
@@ -278,23 +333,7 @@ void CubeSelectIndicator::StopEffect()
 void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
 {
 	Transform tra;
-	switch (dir)
-	{
-	case Cube::ROT_UP:
-		break;
-	case Cube::ROT_DOWN:
-		break;
-	case Cube::ROT_LEFT:
-		break;
-	case Cube::ROT_RIGHT:
-		break;
-	case Cube::ROT_CW:
-		break;
-	case Cube::ROT_CCW:
-		break;
-	default:
-		break;
-	}
+
 	auto DrawArrow = [=](Transform& transform) {
 		DirectX::XMStoreFloat4x4(&(t.matrix), transform.GetWorldMatrix());
 		mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
@@ -311,24 +350,25 @@ void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
 				tra.position_.z = z - outerPoint;
 
 				if (z == 0) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, true);
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, SURFACE::SURFACE_TOP);
 					DrawArrow(tra);
 				}
 				if (z == cubeSize-1) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, true);
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, SURFACE::SURFACE_BOTTOM);
 					DrawArrow(tra);
 				}
 				if (y == 0) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM, true);
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM, SURFACE::SURFACE_FRONT);
 					DrawArrow(tra);
 				}
 				if (y == cubeSize -1) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, true);
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, SURFACE::SURFACE_BACK);
 					DrawArrow(tra);
 				}
 			}
 		}
 		break;
+
 	case Cube::ROT_DOWN:
 		tra.position_.x = rotCol - outerPoint;
 
@@ -338,63 +378,149 @@ void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
 				tra.position_.z = z - outerPoint;
 
 				if (z == 0) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, false);
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, SURFACE::SURFACE_BOTTOM);
 					DrawArrow(tra);
 				}
 				if (z == cubeSize - 1) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, false);
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, SURFACE::SURFACE_TOP);
 					DrawArrow(tra);
 				}
 				if (y == 0) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM, false);
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM, SURFACE::SURFACE_BACK);
 					DrawArrow(tra);
 				}
 				if (y == cubeSize - 1) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, false);
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, SURFACE::SURFACE_FRONT);
 					DrawArrow(tra);
 				}
 			}
 		}
 
 		break;
+
 	case Cube::ROT_LEFT:
 		tra.position_.y = rotCol - outerPoint;
 
-		//Ç±Ç±ïÅí Ç…ãtì]Ç≥ÇπÇƒÇ‡ñ≥óù ÇXÇOìxâÒì]ÇµÇ»Ç¢Ç∆Ç¢ÇØÇ»Ç¢ÇÃÇ≈
-		S2RÇìxêîëŒâûÇ≥ÇπÇÈÇ©enumÇ≈Ç‡çÏÇÈÇ©
 		for (int x = 0; x < cubeSize; x += cubeSize - 1) {
 			for (int z = 0; z < cubeSize; z += cubeSize - 1) {
 				tra.position_.x = x - outerPoint;
 				tra.position_.z = z - outerPoint;
 
-				if (z == 0) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, false);
-					DrawArrow(tra);
-				}
-				if (z == cubeSize - 1) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, false);
-					DrawArrow(tra);
-				}
+				//if (z == 0) {
+				//	tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, SURFACE::SURFACE_LEFT);
+				//	DrawArrow(tra);
+				//}
+				//if (z == cubeSize - 1) {
+				//	tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, SURFACE::SURFACE_RIGHT);
+				//	DrawArrow(tra);
+				//}
 				if (x == 0) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, false);
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_LEFT, SURFACE::SURFACE_BACK);
 					DrawArrow(tra);
 				}
 				if (x == cubeSize - 1) {
-					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, false);
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_RIGHT, SURFACE::SURFACE_FRONT);
 					DrawArrow(tra);
 				}
 			}
 		}
 
 		break;
-		break;
+
 	case Cube::ROT_RIGHT:
+		tra.position_.y = rotCol - outerPoint;
+
+		for (int x = 0; x < cubeSize; x += cubeSize - 1) {
+			for (int z = 0; z < cubeSize; z += cubeSize - 1) {
+				tra.position_.x = x - outerPoint;
+				tra.position_.z = z - outerPoint;
+
+				//if (z == 0) {
+				//	tra.rotate_ = Surface2Rotate(Cube::SURFACE_FRONT, SURFACE::SURFACE_RIGHT);
+				//	DrawArrow(tra);
+				//}
+				//if (z == cubeSize - 1) {
+				//	tra.rotate_ = Surface2Rotate(Cube::SURFACE_BACK, SURFACE::SURFACE_LEFT);
+				//	DrawArrow(tra);
+				//}
+				if (x == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_LEFT, SURFACE::SURFACE_FRONT);
+					DrawArrow(tra);
+				}
+				if (x == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_RIGHT, SURFACE::SURFACE_BACK);
+					DrawArrow(tra);
+				}
+			}
+		}
+
 		break;
 	case Cube::ROT_CW:
+		tra.position_.z = rotCol - outerPoint;
+
+		for (int x = 0; x < cubeSize; x += cubeSize - 1) {
+			for (int y = 0; y < cubeSize; y += cubeSize - 1) {
+				tra.position_.x = x - outerPoint;
+				tra.position_.y = y - outerPoint;
+
+				if (y == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM, SURFACE::SURFACE_LEFT);
+					DrawArrow(tra);
+				}
+				if (y == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, SURFACE::SURFACE_RIGHT);
+					DrawArrow(tra);
+				}
+				if (x == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_LEFT, SURFACE::SURFACE_TOP);
+					DrawArrow(tra);
+				}
+				if (x == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_RIGHT, SURFACE::SURFACE_BOTTOM);
+					DrawArrow(tra);
+				}
+			}
+		}
+
 		break;
+
 	case Cube::ROT_CCW:
+		tra.position_.z = rotCol - outerPoint;
+
+		for (int x = 0; x < cubeSize; x += cubeSize - 1) {
+			for (int y = 0; y < cubeSize; y += cubeSize - 1) {
+				tra.position_.x = x - outerPoint;
+				tra.position_.y = y - outerPoint;
+
+				if (y == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_BOTTOM, SURFACE::SURFACE_RIGHT);
+					DrawArrow(tra);
+				}
+				if (y == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_TOP, SURFACE::SURFACE_LEFT);
+					DrawArrow(tra);
+				}
+				if (x == 0) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_LEFT, SURFACE::SURFACE_BOTTOM);
+					DrawArrow(tra);
+				}
+				if (x == cubeSize - 1) {
+					tra.rotate_ = Surface2Rotate(Cube::SURFACE_RIGHT, SURFACE::SURFACE_TOP);
+					DrawArrow(tra);
+				}
+			}
+		}
+
 		break;
-	default:
-		break;
+
 	}
+}
+
+void CubeSelectIndicator::DebugDraw(SURFACE sur, SURFACE sid)
+{
+	Transform tra;
+	tra.rotate_ = Surface2Rotate(sur, sid);
+	
+		DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
+		mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
 }

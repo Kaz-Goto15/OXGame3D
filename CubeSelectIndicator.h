@@ -4,6 +4,7 @@
 #include "./Include/EffekseeLib/EffekseerVFX.h"
 
 using ROTATE_DIR = Cube::ROTATE_DIR;
+using SURFACE = Cube::SURFACE;
 //キューブを管理するクラス
 class CubeSelectIndicator : public GameObject
 {
@@ -13,7 +14,10 @@ private:
     float outerPoint;   //最も外側のキューブの中心座標
     int rotCol;
     //配置面と矢印の回転
-    XMFLOAT3 Surface2Rotate(Cube::SURFACE surface, bool reverse = false);
+    //surface:描画面
+    //side:方向があるものを描画面からその面の方向を指すようにする
+    XMFLOAT3 Surface2Rotate(SURFACE surface, SURFACE side);
+    XMFLOAT3 Surface2Rotate(SURFACE surface);
 
     template<class T>
     T Half(T value) { return value / 2.0f; }
@@ -75,4 +79,7 @@ public:
     // 再描画は次のフレーム以降でやらないと効果無し 注意
     void StopEffect();
     void StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol);
+
+public:
+    void DebugDraw(SURFACE sur, SURFACE sid);
 };
