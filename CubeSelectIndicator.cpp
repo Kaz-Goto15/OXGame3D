@@ -89,12 +89,9 @@ CubeSelectIndicator::CubeSelectIndicator(GameObject* parent):
 	GameObject(parent, "CubeSelectIndicator"),
 	mt(nullptr), DEFAULT_EFFECT_SPEED(1.0f),
 	arrowState(EFFECT_STATE::STOP),nowArrowFrame(0),ARROW_FRAME(100),EFF_ID_ARROW("arrow"),
-	hModel(-1),
-	cubeSize(0),
-	outerPoint(0.0f),
-	rotCol(0),
-	drawMode(DRAWMODE_CIRCLE),
-	direction(ROTATE_DIR::ROT_UP)
+	hModel(-1), cubeSize(0), outerPoint(0.0f),
+	rotCol(0), direction(ROTATE_DIR::ROT_UP),
+	drawMode(DRAWMODE_CIRCLE)
 
 {
 }
@@ -107,9 +104,9 @@ CubeSelectIndicator::~CubeSelectIndicator()
 //初期化
 void CubeSelectIndicator::Initialize()
 {
+	//モデルロード
 	hModel = ModelLoader::Load(ModelLoader::CubeSelectIndicator);
-	//ModelLoader::ChangeAnim(hModel, "green");
-	// 
+
 	//エフェクト
 	EFFEKSEERLIB::gEfk->AddEffect(EFF_ID_ARROW, "Effect\\arrow.efk");
 	t.speed = DEFAULT_EFFECT_SPEED;      //エフェクト速度 ※エクスポート時の速度が1.0
@@ -120,7 +117,6 @@ void CubeSelectIndicator::Initialize()
 //更新
 void CubeSelectIndicator::Update()
 {
-	//DirectX::XMStoreFloat4x4(&(mt->matrix), this->GetWorldMatrix());
 }
 
 //描画
@@ -256,6 +252,12 @@ void CubeSelectIndicator::Draw()
 			break;
 		}
 	}
+}
+
+//開放
+void CubeSelectIndicator::Release()
+{
+	StopDrawArrow();
 }
 
 //=================== エフェクト ===================
@@ -461,6 +463,8 @@ void CubeSelectIndicator::DrawArrow(Transform& tra)
 	mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
 }
 
+//=================== 描画に使用するやつ ===================
+
 void CubeSelectIndicator::DrawSurface(Transform& tra, Cube::SURFACE surface, bool isOuter)
 {
 	if (isOuter) {
@@ -479,11 +483,7 @@ void CubeSelectIndicator::DrawSurface(Transform& tra, Cube::SURFACE surface, boo
 	Model::Draw(hModel);
 }
 
-//開放
-void CubeSelectIndicator::Release()
-{
-	StopDrawArrow();
-}
+//=================== 単一描画 ===================
 
 void CubeSelectIndicator::SetDrawPoint(XMINT3 point, Cube::SURFACE surface)
 {
@@ -531,6 +531,7 @@ void CubeSelectIndicator::SetRotateColumn(int col)
 		StopDrawArrow();
 	}
 }
+
 
 void CubeSelectIndicator::DebugDraw(SURFACE sur, SURFACE sid)
 {

@@ -49,24 +49,8 @@ private:
     void StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol);
     void DrawArrow(Transform& tra); //実質StartDrawArrow関数のParts
 
-private:
-    int hModel;
-    int cubeSize;
-    float outerPoint;   //最も外側のキューブの中心座標
-    int rotCol;
-    //配置面と矢印の回転
-    //surface:描画面
-    //side:方向があるものを描画面からその面の方向を指すようにする
-    XMFLOAT3 Surface2Rotate(SURFACE surface, SURFACE side);
-    XMFLOAT3 Surface2Rotate(SURFACE surface);
-
-    template<class T>
-    T Half(T value) { return value / 2.0f; }
-
-private:
-    void DrawSurface(Transform& tra, Cube::SURFACE surface, bool isOuter = true);
+    //=================== 描画に使用するやつ ===================
 public:
-
     //描画モード
     enum DRAW_MODE {
         DRAWMODE_SINGLE,
@@ -74,8 +58,24 @@ public:
     };
 
 private:
-    Cube::ROTATE_DIR direction;
-    DRAW_MODE drawMode;
+    //インジケータの保有情報
+    int hModel;         //インジケータのモデルハンドル
+    int cubeSize;       //キューブの1辺の長さ 3x3なら3
+    float outerPoint;   //最も外側のキューブの中心座標
+    int rotCol;         //選択中の列
+    Cube::ROTATE_DIR direction; //選択中の方向
+    DRAW_MODE drawMode;         //描画モード
+
+    //配置面と矢印の回転
+    //surface:描画面
+    //side:方向があるものを描画面からその面の方向を指すようにする
+    XMFLOAT3 Surface2Rotate(SURFACE surface, SURFACE side);
+    XMFLOAT3 Surface2Rotate(SURFACE surface);
+
+    //指定座標、面にインジケータを描画(1x1マス)
+    //isOuterは有効にすると勝手に外側の座標を代入し、外側のマスを描画するようになる デフォルトはtrue
+    void DrawSurface(Transform& tra, Cube::SURFACE surface, bool isOuter = true);
+
 public:
     //=================== 単一描画 ===================
     /// 単一描画の情報を変更
@@ -103,6 +103,12 @@ public:
     
     //回転列 左下前がX0Y0Z0
     void SetRotateColumn(int col);
+
+private:
+
+    //半分にするだけ
+    template<class T>
+    T Half(T value) { return value / 2.0f; }
 
 public:
     void DebugDraw(SURFACE sur, SURFACE sid);

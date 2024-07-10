@@ -79,12 +79,16 @@ private:
 		Y,
 		Z
 	};
+
+	//移動処理
+	//modeによってインジケータを変化させたり選択中のマスを変えたり回転を変えたりなど、
+	//上下左右キーを入力することで発生する処理をまとめている
 	void MoveSelect(MODE mode);
 	void MoveSelectParts(DIR dir, bool plus, SURFACE outSurface);
-	void MoveSelectChangeDir(ROTATE_DIR changeDir);
-	void MoveSelectSlideCol(bool isPlus);
+	void MoveSelectChangeDir(ROTATE_DIR changeDir);		//回転方向変更
+	void MoveSelectSlideCol(bool isPlus);				//回転列変更
 
-	void MoveIndicator();
+	void MoveIndicator();	//?
 
 	//値が範囲内か
 	template <class T>
@@ -106,28 +110,30 @@ private:
 	//	return (val1 == val2);
 	//}
 
-	void RotateModeInit();
-	void SetModeInit();
-	bool isMoving;
+	void RotateModeInit();	//回転モード移行時の初期化
+	void SetModeInit();		//設置モード移行時の初期化
+	bool isMoving;			//現在移動中か
+
 	//============================ カメラ関連 ============================
-	Transform camTra;                       //カメラ変形情報
-	float rotSpdX, rotSpdY;                 //カメラ回転速度
-	bool isEnded;                           //ゲーム終了フラグ
-	const int CAM_DISTANCE = 10;            //カメラ距離 固定
+	Transform camTra;				//カメラ変形情報
+	float rotSpdX, rotSpdY;			//カメラ回転速度
+	bool isEnded;                   //ゲーム終了フラグ
+	const int CAM_DISTANCE;			//カメラ距離 固定
 	//const float DC_VALUE = 0.05f;         //カメラ減速値
-	const float TH_ZEROSPEED = 0.3f;        //カメラ速度0にする閾値
-	const float DC_RATIO = 1.2f;            //カメラ減速割合
-	const float AT_RATIO = 0.5f;        //カメラ移動量に対する回転距離単位
-	const float MAX_CAM_ROTATE_X = 89.9999f;    //カメラX回転の最高角度制限
-	const float MIN_CAM_ROTATE_X = -89.9999f;   //カメラX回転の最低角度制限
-	const int LIMIT_CAM_ROTATE_Y = 180;         //カメラY回転の角度制限(オーバーフロー回避)
-	const int DEFAULT_SPEED = 0;                //カメラのデフォルト速度(0)
+	const float TH_ZEROSPEED;		//カメラ速度0にする閾値
+	const float DC_RATIO;            //カメラ減速割合
+	const float AT_RATIO;			//カメラ移動量に対する回転距離単位
+	const float MAX_CAM_ROTATE_X;	//カメラX回転の最高角度制限
+	const float MIN_CAM_ROTATE_X;	//カメラX回転の最低角度制限
+	const int LIMIT_CAM_ROTATE_Y;	//カメラY回転の角度制限(オーバーフロー回避)
+	const int DEFAULT_CAM_SPEED;	//カメラのデフォルト速度(0)
 	enum CAM_DIR_CARDINAL {
 		CAM_FRONT,
 		CAM_LEFT,
 		CAM_BACK,
 		CAM_RIGHT
 	}camDir;
+
 	//============================ DEBUG ============================
 	//デバッグテキスト
 	std::string debugStr[20];
@@ -225,6 +231,10 @@ private:
 	/// <param name="no">回転する行/列 [0][0][0]を基準とし、0,1,2で指定</param>
 	/// <param name="angle">何度回転させるか</param>
 	void UpdateCubeNextTransform(ROTATE_DIR dir, int no, float angle = 90.0f);
+
+	//回転後の座標を指定する
+	void UpdateCubeTransform();
+
 
 	/// カメラ関連の処理
 	void RotateCamera();

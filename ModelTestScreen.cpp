@@ -23,7 +23,19 @@ ModelTestScreen::ModelTestScreen(GameObject* parent) :
 	hImgBG(-1),
 	mode(MODE_SET),prevMode(MODE_SET),
 	control(CONTROL_1P),nextTurn(CONTROL_2P),
-	rotSpdX(0),rotSpdY(0),isEnded(false),	//カメラ
+	//カメラ
+	rotSpdX(0),rotSpdY(0),
+	isEnded(false),	//カメラ
+	CAM_DISTANCE(10),
+	TH_ZEROSPEED(0.3f),
+	DC_RATIO(1.2f),
+	AT_RATIO(0.5f),
+	MAX_CAM_ROTATE_X(89.9999f),
+	MIN_CAM_ROTATE_X(-89.9999f),
+	LIMIT_CAM_ROTATE_Y(180),
+	DEFAULT_CAM_SPEED(0),
+	camDir(CAM_FRONT),
+
 	debugtext(nullptr)
 {
 }
@@ -99,49 +111,7 @@ void ModelTestScreen::Update()
 		else if (control == CONTROL_1P)control = CONTROL_2P;
 		else if (control == CONTROL_2P)control = CONTROL_IDLE;
 	}
-	if (Input::IsKeyDown(DIK_8)) {
-		indicator->SetCubeRotate(ROTATE_DIR::ROT_CCW);
-	}
-	if (Input::IsKeyDown(DIK_7)) {
-		indicator->SetCubeRotate(selectData.dir);
-	}
-	//if (Input::IsKeyDown(DIK_1)) {
-	//	if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_DOWN,selectData.rotCol);
-	//	else indicator->StartDrawArrow(ROTATE_DIR::ROT_UP, selectData.rotCol);
-	//}
-	//if (Input::IsKeyDown(DIK_2)) {
-	//	if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_LEFT, selectData.rotCol);
-	//	else indicator->StartDrawArrow(ROTATE_DIR::ROT_RIGHT, selectData.rotCol);
-	//}
-	//if (Input::IsKeyDown(DIK_3)) {
-	//	if (Input::IsKey(DIK_LALT))indicator->StartDrawArrow(ROTATE_DIR::ROT_CW, selectData.rotCol);
-	//	else indicator->StartDrawArrow(ROTATE_DIR::ROT_CCW, selectData.rotCol);
-	//}
-	//if (Input::IsKeyDown(DIK_4)) {
-	//	if (Input::IsKey(DIK_LALT)) {
-	//		if (testSur == SURFACE::SURFACE_TOP)testSur = SURFACE::SURFACE_BOTTOM;
-	//		else if (testSur == SURFACE::SURFACE_BOTTOM)testSur = SURFACE::SURFACE_LEFT;
-	//		else if (testSur == SURFACE::SURFACE_LEFT)testSur = SURFACE::SURFACE_RIGHT;
-	//		else if (testSur == SURFACE::SURFACE_RIGHT)testSur = SURFACE::SURFACE_FRONT;
-	//		else if (testSur == SURFACE::SURFACE_FRONT)testSur = SURFACE::SURFACE_BACK;
-	//		else if (testSur == SURFACE::SURFACE_BACK)testSur = SURFACE::SURFACE_TOP;
-	//	}
-	//	else {
-	//		if (testSide == SURFACE::SURFACE_TOP)testSide = SURFACE::SURFACE_BOTTOM;
-	//		else if (testSide == SURFACE::SURFACE_BOTTOM)testSide = SURFACE::SURFACE_LEFT;
-	//		else if (testSide == SURFACE::SURFACE_LEFT)testSide = SURFACE::SURFACE_RIGHT;
-	//		else if (testSide == SURFACE::SURFACE_RIGHT)testSide = SURFACE::SURFACE_FRONT;
-	//		else if (testSide == SURFACE::SURFACE_FRONT)testSide = SURFACE::SURFACE_BACK;
-	//		else if (testSide == SURFACE::SURFACE_BACK)testSide = SURFACE::SURFACE_TOP;
-	//	}
-	//	debugStr[7] = "SUR:" + (std::string)NAMEOF_ENUM(testSur) + " SID:" + (std::string)NAMEOF_ENUM(testSide);
-	//}
-	//if (Input::IsKeyDown(DIK_5)) {
-	//	indicator->DebugDraw(testSur, testSide);
-	//}
-	//if (Input::IsKeyDown(DIK_6)) {
-	//	indicator->StopEffect();
-	//}
+
 	//finishなどステートが進まない限り操作を受け付けるやつ 現状finish時以外できるため直打ち
 	if (!finished) {
 		if (Input::IsKeyDown(GetKey(KEY::KEY_ESC))) {
@@ -212,7 +182,7 @@ void ModelTestScreen::Update()
 				//操作の無効化
 				control = CONTROL_IDLE;
 				//キューブの移動後の座標を更新
-				//UpdateCubeNextTransform();
+				UpdateCubeNextTransform();
 				//回転中フラグの有効化
 				isRotating = true;
 
@@ -523,53 +493,65 @@ void ModelTestScreen::MoveSelect(MODE mode)
 		switch (selectData.surface)
 		{
 		case SURFACE::SURFACE_TOP:
-			if (Between(camTra.rotate_.y, -45.0f, 45.0f)) {}
-			else if (Between(camTra.rotate_.y, 45.0f, 135.0f)) {
+			int tmp;
+			switch (camDir)
+			{
+			case ModelTestScreen::CAM_FRONT:
+				break;
+			case ModelTestScreen::CAM_LEFT:
 				//WASDをASDWに
-				int tmp = keys.front();
+				tmp = keys.front();
 				keys.erase(keys.begin());
 				keys.push_back(tmp);
-			}
-			else if (Between(camTra.rotate_.y, -135.0f, -45.0f)) {
+				break;
+			case ModelTestScreen::CAM_RIGHT:
 				//WASDをDWASに
-				int tmp = keys.back();
+				tmp = keys.back();
 				keys.pop_back();
 				keys.insert(keys.begin(), tmp);
-			}
-			else {
+				break;
+			case ModelTestScreen::CAM_BACK:
 				//WASDをSDWAに
 				for (int i = 0; i < 2; i++) {
-					int tmp = keys.back();
+					tmp = keys.back();
 					keys.pop_back();
 					keys.insert(keys.begin(), tmp);
 				}
+				break;
 			}
+
 			if (Input::IsKeyDown(keys[0]))  MoveSelectParts(Z, true, SURFACE::SURFACE_BACK);
 			if (Input::IsKeyDown(keys[1]))  MoveSelectParts(X, false, SURFACE::SURFACE_LEFT);
 			if (Input::IsKeyDown(keys[2]))  MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
 			if (Input::IsKeyDown(keys[3]))  MoveSelectParts(X, true, SURFACE::SURFACE_RIGHT);
 			break;
+
 		case SURFACE::SURFACE_BOTTOM:
-			if (Between(camTra.rotate_.y, -45.0f, 45.0f)) {}
-			else if (Between(camTra.rotate_.y, 45.0f, 135.0f)) {
+			int tmp;
+			switch (camDir)
+			{
+			case ModelTestScreen::CAM_FRONT:
+				break;
+			case ModelTestScreen::CAM_LEFT:
 				//WASDをDWASに
-				int tmp = keys.back();
+				tmp = keys.back();
 				keys.pop_back();
 				keys.insert(keys.begin(), tmp);
-			}
-			else if (Between(camTra.rotate_.y, -135.0f, -45.0f)) {
+				break;
+			case ModelTestScreen::CAM_RIGHT:
 				//WASDをASDWに
-				int tmp = keys.front();
+				tmp = keys.front();
 				keys.erase(keys.begin());
 				keys.push_back(tmp);
-			}
-			else {
+				break;
+			case ModelTestScreen::CAM_BACK:
 				//WASDをSDWAに
 				for (int i = 0; i < 2; i++) {
-					int tmp = keys.back();
+					tmp = keys.back();
 					keys.pop_back();
 					keys.insert(keys.begin(), tmp);
 				}
+				break;
 			}
 
 			if (Input::IsKeyDown(keys[0]))  MoveSelectParts(Z, false, SURFACE::SURFACE_FRONT);
@@ -1025,9 +1007,50 @@ void ModelTestScreen::UpdateCubeNextTransform(ROTATE_DIR rot, int col, float val
 				cubePrevTra[col][y][z].position_ = cube[col][y][z]->GetPosition();
 				//cubePrevTra[col][y][z].position_ = cubeNextTra[col][y][z].position_;    //こっちのほうが都合がいいかも？
 				cubeNextTra[col][y][z].position_ = { (float)col - 1,(float)-(z - 1),(float)y - 1 };
-				cube[col][y][z]->SetPosition({ (float)col-1,(float)-(z - 1),(float)y - 1 });
+				cube[col][y][z]->SetPosition({ (float)col - 1,(float)-(z - 1),(float)y - 1 });
 				cube[col][y][z]->SetRotate({ value,0,0 });
-				
+
+			}
+		}
+		//cube[col][1][1]->SetRotate(value, 0, 0);
+		break;
+	case ROTATE_DIR::ROT_DOWN:
+		break;
+	case ROTATE_DIR::ROT_LEFT:
+		break;
+	case ROTATE_DIR::ROT_RIGHT:
+		for (int x = 0; x < 3; x++) {
+			for (int y = 0; y < 3; y++) {
+				if (x == 1 && y == 1)break;
+				cube[x][y][0]->SetParent(cube[1][1][col]);
+				//cube[col][y][z]->SetParent(cube[col][1][1]);
+			}
+		}
+		cube[1][1][col]->SetRotate(0, 0, value);
+
+		break;
+	case ROTATE_DIR::ROT_CW:
+		break;
+	case ROTATE_DIR::ROT_CCW:
+		break;
+	default:
+		break;
+	}
+}
+void ModelTestScreen::UpdateCubeTransform()
+{
+	//前回座標、次回座標、回転軸の親を指定する
+	switch (selectData)
+	{
+	case ROTATE_DIR::ROT_UP:
+		for (int y = 0; y < PIECES; y++) {
+			for (int z = 0; z < PIECES; z++) {
+				cubePrevTra[col][y][z].position_ = cube[col][y][z]->GetPosition();
+				//cubePrevTra[col][y][z].position_ = cubeNextTra[col][y][z].position_;    //こっちのほうが都合がいいかも？
+				cubeNextTra[col][y][z].position_ = { (float)col - 1,(float)-(z - 1),(float)y - 1 };
+				cube[col][y][z]->SetPosition({ (float)col - 1,(float)-(z - 1),(float)y - 1 });
+				cube[col][y][z]->SetRotate({ value,0,0 });
+
 			}
 		}
 		//cube[col][1][1]->SetRotate(value, 0, 0);
@@ -1137,13 +1160,13 @@ void ModelTestScreen::RotateCamera() {
 	//カメラ移動しなかったら速度減少
 	if (!moveFlag) {
 		//各速度が0でない場合割合減少 一定以下で0にする
-		if (rotSpdX != DEFAULT_SPEED) {
+		if (rotSpdX != DEFAULT_CAM_SPEED) {
 			rotSpdX /= DC_RATIO;
-			if (std::abs(rotSpdX) < TH_ZEROSPEED)rotSpdX = DEFAULT_SPEED;
+			if (std::abs(rotSpdX) < TH_ZEROSPEED)rotSpdX = DEFAULT_CAM_SPEED;
 		}
-		if (rotSpdY != DEFAULT_SPEED) {
+		if (rotSpdY != DEFAULT_CAM_SPEED) {
 			rotSpdY /= DC_RATIO;
-			if (std::abs(rotSpdY) < TH_ZEROSPEED)rotSpdY = DEFAULT_SPEED;
+			if (std::abs(rotSpdY) < TH_ZEROSPEED)rotSpdY = DEFAULT_CAM_SPEED;
 		}
 	}
 	//固定値減少 過去のカメラの対象の滑らかな移動をするコードから流用したがカメラ回転だと思った挙動にならないため没
