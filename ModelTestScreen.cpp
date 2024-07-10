@@ -14,6 +14,7 @@
 
 #include "./Engine/Debug.h"
 #include "DebugText.h"
+#include "GroupingObject.h"
 
 using KEY = SystemConfig::KEY;
 using SystemConfig::GetKey;
@@ -23,6 +24,7 @@ ModelTestScreen::ModelTestScreen(GameObject* parent) :
 	hImgBG(-1),
 	mode(MODE_SET),prevMode(MODE_SET),
 	control(CONTROL_1P),nextTurn(CONTROL_2P),
+	OUTER_POINT((PIECES-1)/2.0f),
 	//カメラ
 	rotSpdX(0),rotSpdY(0),
 	isEnded(false),	//カメラ
@@ -59,6 +61,7 @@ void ModelTestScreen::Initialize()
 		for (auto& cy : cx) {
 			for (auto& cz : cy) {
 				cz = Instantiate<Cube>(this);
+				//cz->Invisible();
 			}
 		}
 	}
@@ -73,6 +76,8 @@ void ModelTestScreen::Initialize()
 		}
 	}
 
+	//グループ制御追加
+	rotateGroup = Instantiate<GroupingObject>(this);
 	//インジケーター生成・座標指定
 	indicator = Instantiate<CubeSelectIndicator>(this);
 	indicator->SetCubeScale(PIECES);
@@ -86,6 +91,10 @@ void ModelTestScreen::Initialize()
 	for (int i = 0; i < 20; i++) {
 		debugtext->AddStrPtr(&debugStr[i]);
 	}
+	//testCubeParent = Instantiate<Cube>(this);
+	//testCubeChild = Instantiate<Cube>(this);
+	//testCubeChild->SetPosition(-1, -1, 0);
+	//testCubeParent->enMove();
 }
 
 //更新
@@ -94,10 +103,15 @@ void ModelTestScreen::Update()
 
 	RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
 
-	//デバッグで書いてる
-	//SetModeInit();
-	//RotateModeInit();
 	//デバッグボタン
+	//if (Input::IsKeyDown(DIK_O)) {
+	//	if (Input::IsKey(DIK_LALT)) {
+	//		testCubeChild->SetParent(this);
+	//	}
+	//	else {
+	//		testCubeChild->SetParent(testCubeParent);
+	//	}
+	//}
 	if (Input::IsKeyDown(DIK_P)) {
 		Prev();
 	}
@@ -181,8 +195,8 @@ void ModelTestScreen::Update()
 			else if (Input::IsKeyDown(GetKey(KEY::KEY_ACT))) {
 				//操作の無効化
 				control = CONTROL_IDLE;
-				//キューブの移動後の座標を更新
-				UpdateCubeNextTransform();
+				//キューブの移動後の座標を更新・回転するオブジェクトを指定
+				UpdateCubeTransform();
 				//回転中フラグの有効化
 				isRotating = true;
 
@@ -205,53 +219,42 @@ void ModelTestScreen::Update()
 	else {
 		if (isRotating) {
 			rotProgress++;
-			//描画終了時の処理 以上が条件のシステム処理後に条件なしの回転処理をしているため、
+			//描画終了時の処理 "以上"が条件のシステム処理後に条件なしの回転処理をしているため、
 			//最終フレームで回転処理とシステム処理が同時に行える
-			if (rotProgress >= maxRotProgress) {
-				rotProgress = maxRotProgress;
+			if (rotProgress > maxRotProgress) {
+				rotProgress = 0;
+				for (int x = 0; x < PIECES; x++) {
+					for (int y = 0; y < PIECES; y++) {
+						for (int z = 0; z < PIECES; z++) {
+							//cube[x][y][z]->SetPosition(cubeNextTra[x][y][z].position_);
+							//cube[x][y][z]->SetParent(this);
+						}
+					}
+				}
+
+				//デバッグ
+				//多分SetParentで優先順位変わって、キューブ→インジケータ　からインジケータ→キューブになって見えなくなっている？
+				for (int y = 0; y < PIECES; y++) {
+					for (int z = 0; z < PIECES; z++) {
+						cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
+						cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
+							selectData.rotCol,
+							z,
+							PIECES - 1 - y
+						);
+						cube[selectData.rotCol][y][z]->SetParent(this);
+					}
+				}
 				isRotating = false;
 				Judge();
 				TurnEnd();
 			}
 
 			//回転処理 現在進捗と最大進捗、値を入れる座標と移動前座標と移動後座標
-			CalcCubeTrans();
-			//RotateCube(selectData.dir,selectData.)
+			RotateCube(rotProgress, maxRotProgress, selectData.dir);
 		}
 	}
 
-	//if (!isMoving) {
-	//    if (Input::IsKeyDown(DIK_R)) {
-	//        transform_.rotate_.z++;
-	//    }
-	//    //kaiten
-	//    int column = 0;
-	//    if (Input::IsKeyDown(DIK_LSHIFT)) {
-	//        if (Input::IsKey(DIK_LALT))column = 2;
-	//        else column = 1;
-	//    }
-	//    if (Input::IsKeyDown(DIK_Q)) {
-	//        RotateCube(CCW, column, 45);
-	//    }
-	//    if (Input::IsKeyDown(DIK_E)) {
-	//        RotateCube(CW, column, 45);
-	//    }
-	//    if (Input::IsKeyDown(DIK_W)) {
-	//        RotateCube(BACK, column, 45);
-	//    }
-	//    if (Input::IsKeyDown(DIK_S)) {
-	//        RotateCube(FRONT, column, 45);
-	//    }
-	//    if (Input::IsKeyDown(DIK_A)) {
-	//        RotateCube(LEFT, column, 45);
-	//    }
-	//    if (Input::IsKeyDown(DIK_D)) {
-	//        RotateCube(RIGHT, column, 45);
-	//    }
-	//}
-	//else {
-	//    ModelTestScreen::CalcCubeTrans();
-	//}
 	UpdateStr();
 }
 
@@ -416,71 +419,6 @@ void ModelTestScreen::UpdateStr()
 	debugStr[4] = "camTra:" + std::to_string(camTra.rotate_.x) + ", " + std::to_string(camTra.rotate_.y);
 }
 
-void ModelTestScreen::CalcCubeTrans()
-{
-	rotTime++;
-	if (rotTime >= angleOfRotate) {
-		rotTime = 90;
-		isMoving = false;
-	}
-	switch (selectData.dir)
-	{
-	case ROTATE_DIR::ROT_UP:
-		for (int y = 0; y < 3; y++) {
-			for (int z = 0; z < 3; z++) {
-				//座標はそのまま変える
-				cube[rotateNo][y][z]->SetPosition(
-					Easing::Calc(7, rotTime, angleOfRotate, cubePrevTra[rotateNo][y][z].position_.x, cubeNextTra[rotateNo][y][z].position_.x),
-					Easing::Calc(7, rotTime, angleOfRotate, cubePrevTra[rotateNo][y][z].position_.y, cubeNextTra[rotateNo][y][z].position_.y),
-					Easing::Calc(7, rotTime, angleOfRotate, cubePrevTra[rotateNo][y][z].position_.z, cubeNextTra[rotateNo][y][z].position_.z)
-				);
-				cube[rotateNo][y][z]->SetRotate(
-					Easing::Calc(1, rotTime, angleOfRotate, cubePrevTra[rotateNo][y][z].rotate_.x, cubeNextTra[rotateNo][y][z].rotate_.x),
-					Easing::Calc(1, rotTime, angleOfRotate, cubePrevTra[rotateNo][y][z].rotate_.y, cubeNextTra[rotateNo][y][z].rotate_.y),
-					Easing::Calc(1, rotTime, angleOfRotate, cubePrevTra[rotateNo][y][z].rotate_.z, cubeNextTra[rotateNo][y][z].rotate_.z)
-				);
-			}
-		}
-	case ROTATE_DIR::ROT_DOWN:
-		break;
-	case ROTATE_DIR::ROT_LEFT:
-		break;
-	case ROTATE_DIR::ROT_RIGHT:
-		break;
-	case ROTATE_DIR::ROT_CW:
-		break;
-	case ROTATE_DIR::ROT_CCW:
-		break;
-	default:
-		break;
-	}
-	if (isMoving == false) {
-		rotTime = 0;
-
-		switch (selectData.dir)
-		{
-		case ROTATE_DIR::ROT_UP:
-			//配列の入れ替えを行い、タイルの方向も変える
-			//rotateは0に戻す
-			//positionも入れ替え後の座標にする これは最後に座標がその位置へ向かうため配列番号の移動のみで済む
-			//→rotateを0にしてから、配列を入れ替える
-			//std::rotateM
-			break;
-		case ROTATE_DIR::ROT_DOWN:
-			break;
-		case ROTATE_DIR::ROT_LEFT:
-			break;
-		case ROTATE_DIR::ROT_RIGHT:
-			break;
-		case ROTATE_DIR::ROT_CW:
-			break;
-		case ROTATE_DIR::ROT_CCW:
-			break;
-		default:
-			break;
-		}
-	}
-}
 
 void ModelTestScreen::MoveSelect(MODE mode)
 {
@@ -490,10 +428,10 @@ void ModelTestScreen::MoveSelect(MODE mode)
 	switch (mode)
 	{
 	case ModelTestScreen::MODE_SET:
+		int tmp;
 		switch (selectData.surface)
 		{
 		case SURFACE::SURFACE_TOP:
-			int tmp;
 			switch (camDir)
 			{
 			case ModelTestScreen::CAM_FRONT:
@@ -527,7 +465,6 @@ void ModelTestScreen::MoveSelect(MODE mode)
 			break;
 
 		case SURFACE::SURFACE_BOTTOM:
-			int tmp;
 			switch (camDir)
 			{
 			case ModelTestScreen::CAM_FRONT:
@@ -990,95 +927,95 @@ void ModelTestScreen::JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag,
 	}
 }
 
-
-void ModelTestScreen::UpdateCubeNextTransform(ROTATE_DIR rot, int col, float value)
-{
-	rotateNo = col;
-	selectData.dir = rot;
-	//フラグ管理
-	isMoving = true;    //移動中フラグ
-
-	//次の座標指定 回転は一時的なのでしない、移動後にキューブ情報を更新する=変形後のタイル情報 これもここで指定していいかも(とりあえず未実装)
-	switch (rot)
-	{
-	case ROTATE_DIR::ROT_UP:
-		for (int y = 0; y < 3; y++) {
-			for (int z = 0; z < 3; z++) {
-				cubePrevTra[col][y][z].position_ = cube[col][y][z]->GetPosition();
-				//cubePrevTra[col][y][z].position_ = cubeNextTra[col][y][z].position_;    //こっちのほうが都合がいいかも？
-				cubeNextTra[col][y][z].position_ = { (float)col - 1,(float)-(z - 1),(float)y - 1 };
-				cube[col][y][z]->SetPosition({ (float)col - 1,(float)-(z - 1),(float)y - 1 });
-				cube[col][y][z]->SetRotate({ value,0,0 });
-
-			}
-		}
-		//cube[col][1][1]->SetRotate(value, 0, 0);
-		break;
-	case ROTATE_DIR::ROT_DOWN:
-		break;
-	case ROTATE_DIR::ROT_LEFT:
-		break;
-	case ROTATE_DIR::ROT_RIGHT:
-		for (int x = 0; x < 3; x++) {
-			for (int y = 0; y < 3; y++) {
-				if (x == 1 && y == 1)break;
-				cube[x][y][0]->SetParent(cube[1][1][col]);
-				//cube[col][y][z]->SetParent(cube[col][1][1]);
-			}
-		}
-		cube[1][1][col]->SetRotate(0, 0, value);
-
-		break;
-	case ROTATE_DIR::ROT_CW:
-		break;
-	case ROTATE_DIR::ROT_CCW:
-		break;
-	default:
-		break;
-	}
-}
 void ModelTestScreen::UpdateCubeTransform()
 {
-	//前回座標、次回座標、回転軸の親を指定する
-	switch (selectData)
+	//前回座標、次回座標、回転するキューブの親を中心に指定する
+	switch (selectData.dir)
 	{
 	case ROTATE_DIR::ROT_UP:
 		for (int y = 0; y < PIECES; y++) {
 			for (int z = 0; z < PIECES; z++) {
-				cubePrevTra[col][y][z].position_ = cube[col][y][z]->GetPosition();
-				//cubePrevTra[col][y][z].position_ = cubeNextTra[col][y][z].position_;    //こっちのほうが都合がいいかも？
-				cubeNextTra[col][y][z].position_ = { (float)col - 1,(float)-(z - 1),(float)y - 1 };
-				cube[col][y][z]->SetPosition({ (float)col - 1,(float)-(z - 1),(float)y - 1 });
-				cube[col][y][z]->SetRotate({ value,0,0 });
-
+				cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
+					selectData.rotCol,
+					z,
+					PIECES - 1 - y
+				);
+				cube[selectData.rotCol][y][z]->SetParent(rotateGroup);
 			}
 		}
-		//cube[col][1][1]->SetRotate(value, 0, 0);
 		break;
 	case ROTATE_DIR::ROT_DOWN:
-		break;
-	case ROTATE_DIR::ROT_LEFT:
-		break;
-	case ROTATE_DIR::ROT_RIGHT:
-		for (int x = 0; x < 3; x++) {
-			for (int y = 0; y < 3; y++) {
-				if (x == 1 && y == 1)break;
-				cube[x][y][0]->SetParent(cube[1][1][col]);
-				//cube[col][y][z]->SetParent(cube[col][1][1]);
+		for (int y = 0; y < PIECES; y++) {
+			for (int z = 0; z < PIECES; z++) {
+				cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
+					selectData.rotCol,
+					PIECES - 1 - z,
+					y
+				);
+				cube[selectData.rotCol][y][z]->SetParent(rotateGroup);
 			}
 		}
-		cube[1][1][col]->SetRotate(0, 0, value);
-
+		break;
+	case ROTATE_DIR::ROT_LEFT:
+		for (int x = 0; x < PIECES; x++) {
+			for (int z = 0; z < PIECES; z++) {
+				cubePrevTra[x][selectData.rotCol][z].position_ = cubeNextTra[x][selectData.rotCol][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				cubeNextTra[x][selectData.rotCol][z].position_ = ConvertPts2Pos(
+					PIECES - 1 - z,
+					selectData.rotCol,
+					x
+				);
+				cube[x][selectData.rotCol][z]->SetParent(rotateGroup);
+			}
+		}
+		break;
+	case ROTATE_DIR::ROT_RIGHT:
+		for (int x = 0; x < PIECES; x++) {
+			for (int z = 0; z < PIECES; z++) {
+				cubePrevTra[x][selectData.rotCol][z].position_ = cubeNextTra[x][selectData.rotCol][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				cubeNextTra[x][selectData.rotCol][z].position_ = ConvertPts2Pos(
+					z,
+					selectData.rotCol,
+					PIECES - 1 - x
+				);
+				cube[x][selectData.rotCol][z]->SetParent(rotateGroup);
+			}
+		}
 		break;
 	case ROTATE_DIR::ROT_CW:
+		for (int x = 0; x < PIECES; x++) {
+			for (int y = 0; y < PIECES; y++) {
+				cubePrevTra[x][y][selectData.rotCol].position_ = cubeNextTra[x][y][selectData.rotCol].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				cubeNextTra[x][y][selectData.rotCol].position_ = ConvertPts2Pos(
+					PIECES - 1 - y,
+					selectData.rotCol,
+					x
+				);
+				cube[x][y][selectData.rotCol]->SetParent(rotateGroup);
+			}
+		}
 		break;
 	case ROTATE_DIR::ROT_CCW:
-		break;
-	default:
+		for (int x = 0; x < PIECES; x++) {
+			for (int y = 0; y < PIECES; y++) {
+				cubePrevTra[x][y][selectData.rotCol].position_ = cubeNextTra[x][y][selectData.rotCol].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				cubeNextTra[x][y][selectData.rotCol].position_ = ConvertPts2Pos(
+					y,
+					selectData.rotCol,
+					PIECES - 1 - x
+				);
+				cube[x][y][selectData.rotCol]->SetParent(rotateGroup);
+			}
+		}
 		break;
 	}
 }
 
+XMFLOAT3 ModelTestScreen::ConvertPts2Pos(int x, int y, int z) {
+	return { (float)x - OUTER_POINT, (float)y - OUTER_POINT, (float)z - OUTER_POINT };
+}
 void ModelTestScreen::TurnEnd()
 {
 	if (control == CONTROL_1P) {
@@ -1090,6 +1027,18 @@ void ModelTestScreen::TurnEnd()
 	control = CONTROL_IDLE;
 	
 	control = nextTurn; //今はアニメーションやディレイが無いのでここで次のターンにする
+}
+
+void ModelTestScreen::RotateCube(int prog, int maxProg, ROTATE_DIR dir) {
+	switch (dir)
+	{
+	case ROTATE_DIR::ROT_UP:	rotateGroup->SetRotateX(Easing::Calc(11, prog, maxProg, 0, 90));	break;
+	case ROTATE_DIR::ROT_DOWN:	rotateGroup->SetRotateX(Easing::Calc(11, prog, maxProg, 0, -90));	break;
+	case ROTATE_DIR::ROT_LEFT:	rotateGroup->SetRotateY(Easing::Calc(11, prog, maxProg, 0, 90));	break;
+	case ROTATE_DIR::ROT_RIGHT:	rotateGroup->SetRotateY(Easing::Calc(11, prog, maxProg, 0, -90));	break;
+	case ROTATE_DIR::ROT_CW:	rotateGroup->SetRotateZ(Easing::Calc(11, prog, maxProg, 0, 90));	break;
+	case ROTATE_DIR::ROT_CCW:	rotateGroup->SetRotateZ(Easing::Calc(11, prog, maxProg, 0, -90));	break;
+	}
 }
 
 void ModelTestScreen::Judge()

@@ -41,6 +41,25 @@ void Cube::Initialize()
 //更新
 void Cube::Update()
 {
+    if (isMove) {
+        if (Input::IsKey(DIK_LALT)) {
+            if (Input::IsKey(DIK_U))transform_.rotate_.z++;
+            if (Input::IsKey(DIK_J))transform_.rotate_.z--;
+            if (Input::IsKey(DIK_K))transform_.rotate_.x++;
+            if (Input::IsKey(DIK_H))transform_.rotate_.x--;
+            if (Input::IsKey(DIK_Y))transform_.rotate_.y++;
+            if (Input::IsKey(DIK_I))transform_.rotate_.y--;
+        }
+        else {
+
+            if (Input::IsKey(DIK_U))transform_.position_.z += 0.01f;
+            if (Input::IsKey(DIK_J))transform_.position_.z-= 0.01f;
+            if (Input::IsKey(DIK_K))transform_.position_.x+= 0.01f;
+            if (Input::IsKey(DIK_H))transform_.position_.x-= 0.01f;
+            if (Input::IsKey(DIK_Y))transform_.position_.y+= 0.01f;
+            if (Input::IsKey(DIK_I))transform_.position_.y-= 0.01f;
+        }
+    }
 }
 
 //描画
@@ -48,9 +67,8 @@ void Cube::Draw()
 {
     //オブジェクトの持つ変形情報から描画
     //キューブは立方体なので回転しても影響を受けないが親オブジェクトの回転でワンチャンバグるから一番最初に代入
-    transform_.rotate_ = { 0,0,0 };
+    //transform_.rotate_ = { 0,0,0 };
     Model::SetTransform(hModelCube, transform_);
-    //if (!Input::IsKey(DIK_3) && transform_.position_.x == 0 && transform_.position_.y == 0 && transform_.position_.z == 0)
     if (!Input::IsKey(DIK_3))
     Model::Draw(hModelCube);
 

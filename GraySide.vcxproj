@@ -178,6 +178,7 @@
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="GroupingObject.cpp" />
     <ClCompile Include="HelpBar.cpp" />
     <ClCompile Include="GameSceneObject.cpp" />
     <ClCompile Include="Include\EffekseeLib\EffekseerVFX.cpp" />
@@ -257,6 +258,7 @@
     <ClInclude Include="Field.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="GroupingObject.h" />
     <ClInclude Include="HelpBar.h" />
     <ClInclude Include="GameSceneObject.h" />
     <ClInclude Include="Include\EffekseeLib\EffekseerVFX.h" />

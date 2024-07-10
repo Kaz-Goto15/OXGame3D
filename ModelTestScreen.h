@@ -7,6 +7,7 @@
 class CubeSelectIndicator;
 class Screen;
 class DebugText;
+class GroupingObject;
 
 using std::vector;
 
@@ -29,6 +30,7 @@ private:
 	Screen* pScreen;	//スクリーン呼出のためのポインタ
 
 	const int PIECES = 3;
+	const float OUTER_POINT;
 	vector<vector<vector<Cube*>>> cube;
 	vector<vector<vector<Transform>>> cubePrevTra;
 	vector<vector<vector<Transform>>> cubeNextTra;
@@ -64,9 +66,9 @@ private:
 		XMINT3 GetPos() { return XMINT3(x, y, z); }
 	}selectData;
 
-	void CalcCubeTrans();
 
 	bool isRotating = false;
+	GroupingObject* rotateGroup;
 	int rotProgress;
 	const int maxRotProgress = 100;	//回転描写にかけるフレーム数
 	const int angleOfRotate = 90;
@@ -139,7 +141,8 @@ private:
 	std::string debugStr[20];
 	DebugText* debugtext;
 	void UpdateStr();
-
+	Cube* testCubeParent;
+	Cube* testCubeChild;
 	//SURFACE testSur = SURFACE::SURFACE_TOP, testSide= SURFACE::SURFACE_TOP;
 	//============================ 判定関連 ============================
 	//勝利フラグ構造体
@@ -227,14 +230,18 @@ private:
 	/// キューブ回転のトリガー 初期化処理とフラグ管理
 	/// 
 	/// </summary>
-	/// <param name="dir">回転方向 前上から見て前(下)後(上))左右時計反時計</param>
+	/// <param name="dir">前から見た時の回転方向</param>
 	/// <param name="no">回転する行/列 [0][0][0]を基準とし、0,1,2で指定</param>
 	/// <param name="angle">何度回転させるか</param>
 	void UpdateCubeNextTransform(ROTATE_DIR dir, int no, float angle = 90.0f);
 
-	//回転後の座標を指定する
+	//回転後の座標・回転キューブの親オブジェクト変更
 	void UpdateCubeTransform();
 
+	//キューブ位置を座標に変換する
+	XMFLOAT3 ConvertPts2Pos(int x, int y, int z);
+
+	void RotateCube(int prog, int maxProg, ROTATE_DIR dir);
 
 	/// カメラ関連の処理
 	void RotateCamera();

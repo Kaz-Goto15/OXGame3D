@@ -273,6 +273,7 @@
     </ClCompile>
     <ClCompile Include="CubeSelectIndicator.cpp" />
     <ClCompile Include="Include\EffekseeLib\EffekseerVFX.cpp" />
+    <ClCompile Include="GroupingObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -480,6 +481,7 @@
     </ClInclude>
     <ClInclude Include="CubeSelectIndicator.h" />
     <ClInclude Include="Include\EffekseeLib\EffekseerVFX.h" />
+    <ClInclude Include="GroupingObject.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

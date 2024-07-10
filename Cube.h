@@ -54,4 +54,7 @@ public:
     void SetPoint(XMINT3 point, float outerPoint);  //最も外側のキューブの
     void SetMark(SURFACE surface, MARK mark);
     MARK GetMark(SURFACE surface) { return cubeData_[surface]; }
+
+    bool isMove;
+    void enMove() { isMove = true; }
 };
