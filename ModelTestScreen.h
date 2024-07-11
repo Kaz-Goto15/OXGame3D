@@ -68,7 +68,16 @@ private:
 
 
 	bool isRotating = false;
-	GroupingObject* rotateGroup;
+
+	//グループ制御列挙型
+	//上グループほど描画が先にされる　AviUtlと似たようなもの
+	enum GROUP_CONTROL {
+		GROUP_BACK,
+		GROUP_ROTATECUBE,
+		GROUP_TOP,
+		GROUP_MAX
+	};
+	GroupingObject* groupObject[GROUP_MAX];
 	int rotProgress;
 	const int maxRotProgress = 100;	//回転描写にかけるフレーム数
 	const int angleOfRotate = 90;
@@ -242,7 +251,8 @@ private:
 	XMFLOAT3 ConvertPts2Pos(int x, int y, int z);
 
 	void RotateCube(int prog, int maxProg, ROTATE_DIR dir);
-
+	void CompletedRotate();
+	void SwapCube();
 	/// カメラ関連の処理
 	void RotateCamera();
 	void FinishCamera();
