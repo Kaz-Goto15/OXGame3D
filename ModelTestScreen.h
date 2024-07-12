@@ -107,6 +107,13 @@ private:
 		return (min <= value && value <= max);
 	}
 
+	template <class T>
+	bool In(T val, vector<T> search) {
+		for (auto& word : search) {
+			if (val == word)return true;
+		}
+		return false;
+	}
 	//•¡”‚Ìˆê’v
 	//template<class T, typename... Args>
 	//bool MultiEquals(T val1, T val2, Args... values) {
@@ -253,6 +260,7 @@ private:
 	void RotateCube(int prog, int maxProg, ROTATE_DIR dir);
 	void CompletedRotate();
 	void SwapCube();
+	void SwapCubeModifySwapCount(int* swapCount, int row, bool isCC);
 	/// ƒJƒƒ‰ŠÖ˜A‚Ìˆ—
 	void RotateCamera();
 	void FinishCamera();

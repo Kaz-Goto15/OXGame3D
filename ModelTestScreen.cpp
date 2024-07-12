@@ -98,8 +98,8 @@ void ModelTestScreen::Initialize()
 	for (int x = 0; x < cube.size(); x++) {
 		for (int y = 0; y < cube[0].size(); y++) {
 			for (int z = 0; z < cube[0][0].size(); z++) {
-				if (x > 0 || y > 0 || z > 0)
-					cube[x][y][z]->Invisible();
+				if (!(x == y && y == z && x == z)) {}
+					//cube[x][y][z]->Invisible();
 			}
 		}
 	}
@@ -1081,7 +1081,7 @@ void ModelTestScreen::CompletedRotate()
 	}
 
 	//キューブ配列入替
-	SwapCube();
+	//SwapCube();
 
 }
 
@@ -1090,27 +1090,52 @@ void ModelTestScreen::SwapCube() {
 	int swapCount = PIECES;
 
 	//配列入替
+	bool isCC = In(selectData.dir, { ROTATE_DIR::ROT_DOWN, ROTATE_DIR::ROT_LEFT, ROTATE_DIR::ROT_CW });	//回転軸に対して時計回りかどうか
+	if (isCC)SwapCubeModifySwapCount(&swapCount, PIECES - 1, isCC);
 	for (int row = 0; row < PIECES; row++) {
 		for (int col = PIECES - swapCount; col < PIECES; col++) {
 
 			switch (selectData.dir)
 			{
-			case ROTATE_DIR::ROT_UP:	std::swap(cube[selectData.rotCol][col][row], cube[selectData.rotCol][PIECES - 1 - row][col]);	break;
-			case ROTATE_DIR::ROT_DOWN:	std::swap(cube[selectData.rotCol][row][col], cube[selectData.rotCol][col][PIECES - 1 - row]);	break;
-			case ROTATE_DIR::ROT_LEFT:	std::swap(cube[col][selectData.rotCol][row], cube[PIECES - 1 - row][selectData.rotCol][col]);	break;
-			case ROTATE_DIR::ROT_RIGHT:	std::swap(cube[row][selectData.rotCol][col], cube[col][selectData.rotCol][PIECES - 1 - row]);	break;
-			case ROTATE_DIR::ROT_CW:	std::swap(cube[row][col][selectData.rotCol], cube[col][PIECES - 1 - row][selectData.rotCol]);	break;
-			case ROTATE_DIR::ROT_CCW:	std::swap(cube[col][row][selectData.rotCol], cube[PIECES - 1 - row][col][selectData.rotCol]);	break;
-
+			case ROTATE_DIR::ROT_UP:
+			case ROTATE_DIR::ROT_DOWN:
+				std::swap(cube[selectData.rotCol][row][col], cube[selectData.rotCol][col][PIECES - 1 - row]);
+				break;
+			case ROTATE_DIR::ROT_LEFT:
+			case ROTATE_DIR::ROT_RIGHT:
+				std::swap(cube[row][selectData.rotCol][col], cube[col][selectData.rotCol][PIECES - 1 - row]);
+				break;
+			case ROTATE_DIR::ROT_CW:
+			case ROTATE_DIR::ROT_CCW:
+				std::swap(cube[row][col][selectData.rotCol], cube[col][PIECES - 1 - row][selectData.rotCol]);
+				break;
+				
 			}
 
 			//入れ替え回数の更新
-			if (row != PIECES / 2) {
-				if (row > PIECES / 2)    swapCount++;
-				else    swapCount--;
-			}
-			else if (PIECES % 2 == 0)   swapCount++;
+			SwapCubeModifySwapCount(&swapCount, row, isCC);
 		}
+	}
+}
+void ModelTestScreen::SwapCubeModifySwapCount(int* swapCount, int row, bool isCC)
+{
+	if (!isCC) {
+		if (row != PIECES / 2) {
+			if (row > PIECES / 2)    swapCount++;
+			else    swapCount--;
+		}
+		else if (PIECES % 2 == 0)   swapCount++;
+	}
+	else {
+		if (row != PIECES / 2) {
+			if (row > PIECES / 2) {
+				if (!(row != PIECES / 2 + 1 && PIECES % 2 == 1)) {
+					swapCount--;
+				}
+			}
+			else swapCount++;
+		}
+		else swapCount++;
 	}
 }
 void ModelTestScreen::Judge()
@@ -1125,6 +1150,7 @@ void ModelTestScreen::Judge()
 		break;
 	}
 
+	//超雑勝利宣言
 	auto win = [=](CONTROL control) {
 		switch (control)
 		{
@@ -1190,23 +1216,6 @@ void ModelTestScreen::RotateCamera() {
 			if (std::abs(rotSpdY) < TH_ZEROSPEED)rotSpdY = DEFAULT_CAM_SPEED;
 		}
 	}
-	//固定値減少 過去のカメラの対象の滑らかな移動をするコードから流用したがカメラ回転だと思った挙動にならないため没
-	//if (rotSpdX > 0) {
-	//    rotSpdX -= decSpd;
-	//    if (rotSpdX < 0)rotSpdX = 0;
-	//}
-	//else if (rotSpdX < 0) {
-	//    rotSpdX += decSpd;
-	//    if (rotSpdX > 0)rotSpdX = 0;
-	//}
-	//if (rotSpdY > 0) {
-	//    rotSpdY -= decSpd;
-	//    if (rotSpdY < 0)rotSpdY = 0;
-	//}
-	//else if (rotSpdY < 0) {
-	//    rotSpdY += decSpd;
-	//    if (rotSpdY > 0)rotSpdY = 0;
-	//}
 
 	//回転情報に加算
 	camTra.rotate_.y += rotSpdY;
