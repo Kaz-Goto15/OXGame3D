@@ -15,6 +15,15 @@ public:
         MARK_BLANK = -1,
         MARK_O,
         MARK_X,
+        MARK_1,
+        MARK_2,
+        MARK_3,
+        MARK_4,
+        MARK_5,
+        MARK_6,
+        MARK_7,
+        MARK_8,
+        MARK_9,
         MARK_MAX
     };
 

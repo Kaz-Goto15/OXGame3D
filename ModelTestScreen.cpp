@@ -98,7 +98,22 @@ void ModelTestScreen::Initialize()
 	for (int x = 0; x < cube.size(); x++) {
 		for (int y = 0; y < cube[0].size(); y++) {
 			for (int z = 0; z < cube[0][0].size(); z++) {
+				if (x == 0) {
+					switch (z+3*y)
+					{
+					case 0:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_1);	break;
+					case 1:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_2);	break;
+					case 2:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_3);	break;
+					case 3:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_4);	break;
+					case 4:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_5);	break;
+					case 5:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_6);	break;
+					case 6:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_7);	break;
+					case 7:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_8);	break;
+					case 8:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_9);	break;
+					}
+				}
 				if (!(x == y && y == z && x == z)) {}
+				if (!(x == 0)) { cube[x][y][z]->Invisible(); }
 					//cube[x][y][z]->Invisible();
 			}
 		}
@@ -917,8 +932,8 @@ void ModelTestScreen::UpdateCubeTransform()
 				cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
 				cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
 					selectData.rotCol,
-					PIECES - 1 - y,
-					z
+					PIECES - 1 - z,
+					y
 				);
 				cube[selectData.rotCol][y][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
@@ -930,8 +945,8 @@ void ModelTestScreen::UpdateCubeTransform()
 				cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
 				cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
 					selectData.rotCol,
-					PIECES - 1 - z,
-					y
+					z,
+					PIECES - 1 - y
 				);
 				cube[selectData.rotCol][y][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
@@ -942,9 +957,9 @@ void ModelTestScreen::UpdateCubeTransform()
 			for (int z = 0; z < PIECES; z++) {
 				cubePrevTra[x][selectData.rotCol][z].position_ = cubeNextTra[x][selectData.rotCol][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
 				cubeNextTra[x][selectData.rotCol][z].position_ = ConvertPts2Pos(
-					PIECES - 1 - z,
+					z,
 					selectData.rotCol,
-					x
+					PIECES - 1 - x
 				);
 				cube[x][selectData.rotCol][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
@@ -955,9 +970,9 @@ void ModelTestScreen::UpdateCubeTransform()
 			for (int z = 0; z < PIECES; z++) {
 				cubePrevTra[x][selectData.rotCol][z].position_ = cubeNextTra[x][selectData.rotCol][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
 				cubeNextTra[x][selectData.rotCol][z].position_ = ConvertPts2Pos(
-					z,
+					PIECES - 1 - z,
 					selectData.rotCol,
-					PIECES - 1 - x
+					x
 				);
 				cube[x][selectData.rotCol][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
@@ -1023,12 +1038,19 @@ void ModelTestScreen::RotateCube(int prog, int maxProg, ROTATE_DIR dir) {
 
 void ModelTestScreen::CompletedRotate()
 {
+	//キューブの親連結を解除
+	//キューブ情報の入れ替え
+	//キューブインスタンス自体を入れ替え
+	//キューブ座標を指定
+	//でいいんじゃないの
+	// 
 	//回転キューブの座標を次回座標に置き換える
 	//[0][0][0],000→[0][0][0]020　→ここまででは同じ位置にあるように見えるが判定は0,0,0で行えるはず
 	//回転キューブの〇×データを回転方向に沿って入れ替える
 	//親を元に戻す
 	//回転キューブ自体を入れ替える
 	//[0][0][0]020→[0][2][0],020 →ここで0,2,0で判定ができるようになる
+
 	switch (selectData.dir)
 	{
 	case ROTATE_DIR::ROT_UP:
@@ -1080,8 +1102,18 @@ void ModelTestScreen::CompletedRotate()
 		break;
 	}
 
+
 	//キューブ配列入替
-	//SwapCube();
+	SwapCube();
+
+	//キューブ座標指定
+	for (int x = 0; x < PIECES; x++) {
+		for (int y = 0; y < PIECES; y++) {
+			for (int z = 0; z < PIECES; z++) {
+				cube[x][y][z]->SetPosition(x - OUTER_POINT, y - OUTER_POINT, z - OUTER_POINT);
+			}
+		}
+	}
 
 }
 
