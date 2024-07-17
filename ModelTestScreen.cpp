@@ -26,17 +26,18 @@ ModelTestScreen::ModelTestScreen(GameObject* parent) :
 	control(CONTROL_1P),nextTurn(CONTROL_2P),
 	OUTER_POINT((PIECES-1)/2.0f),
 	//カメラ
-	rotSpdX(0),rotSpdY(0),
-	isEnded(false),	//カメラ
-	CAM_DISTANCE(10),
-	TH_ZEROSPEED(0.3f),
-	DC_RATIO(1.2f),
-	AT_RATIO(0.5f),
-	MAX_CAM_ROTATE_X(89.9999f),
-	MIN_CAM_ROTATE_X(-89.9999f),
-	LIMIT_CAM_ROTATE_Y(180),
-	DEFAULT_CAM_SPEED(0),
-	camDir(CAM_FRONT),
+	rotSpdX(0),rotSpdY(0),		//カメラ回転速度
+	isEnded(false),				//ゲーム終了フラグ
+	CAM_DISTANCE(10),			//対象からカメラまでの距離
+	TH_ZEROSPEED(0.3f),			//カメラ速度を0にする閾値 この値を下回ると速度を０にする
+	DC_RATIO(1.2f),				//カメラ減速割合
+	AT_RATIO(0.5f),				//カメラ移動量に対する回転距離単位
+	MAX_CAM_ROTATE_X(89.9999f),	//カメラX回転の最高角度制限
+	MIN_CAM_ROTATE_X(-89.9999f),//カメラX回転の最低角度制限
+	LIMIT_CAM_ROTATE_Y(180),	//カメラY回転の角度制限(オーバーフロー回避)
+	DEFAULT_CAM_SPEED(0.0f),		//カメラのデフォルト速度(0)
+	camDirHN(CAM_FRONT),		//カメラの水平方向
+	camDirVT(CAM_MIDDLE),		//カメラの垂直方向
 
 	debugtext(nullptr)
 {
@@ -58,10 +59,8 @@ void ModelTestScreen::Initialize()
 	//背景
 	hImgBG = Image::Load("Background\\bg_game.png");
 
-	//キューブ本体、キューブ変形情報などを保存するvectorをリサイズ
+	//キューブ本体を保存するvectorをリサイズ
 	cube.resize(PIECES, vector<vector<Cube*>>(PIECES, vector<Cube*>(PIECES, nullptr)));
-	//cubeNextTra.resize(PIECES, vector<vector<Transform>>(PIECES, vector<Transform>(PIECES)));
-	//cubePrevTra.resize(PIECES, vector<vector<Transform>>(PIECES, vector<Transform>(PIECES)));
 
 	//キューブ生成
 	for (auto& cx : cube) {
@@ -72,12 +71,11 @@ void ModelTestScreen::Initialize()
 		}
 	}
 
-	//キューブ座標指定
+	//キューブ座標指定 PIECESでもいいかも
 	for (int x = 0; x < cube.size();x++) {
 		for (int y = 0; y < cube[0].size();y++) {
 			for (int z = 0; z < cube[0][0].size();z++) {
-				cube[x][y][z]->SetPosition(x - 1, y - 1, z - 1);
-				//cubeNextTra[x][y][z] = cube[x][y][z]->GetTransform(); //次の場所の初期化
+				cube[x][y][z]->SetPosition(ConvertPts2Pos(x, y, z));
 			}
 		}
 	}
@@ -270,35 +268,35 @@ void ModelTestScreen::RotateModeInit()
 	const int SET_MODE_UNIT = 90 / PIECES;
 	XMFLOAT3& camRot = camTra.rotate_;
 	float absCamY = abs(camRot.y);
-	//SelectData selectData;	//あとでselectDataに置換する
 
-
+	//前後はSetModeInitのx、左右はzと同等の処理
 	for (int c = 0; c < PIECES; c++) {
-		if (absCamY >= 135 || absCamY <= 45) {
-			//SetModeInitのxと同等の処理
-			if (absCamY >= 135) {	//-180~-135 135~180 後
-				if (camRot.y > 0) {	//+
-					if (180 - camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //135~180→45~0変換
-						selectData.rotCol = c;
-						selectData.dir = ROTATE_DIR::ROT_DOWN;
-						break;
-					}
-				}
-				else {	//-
-					if (-180 - camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //-180~-135→0~-45変換
-						selectData.rotCol = c;
-						selectData.dir = ROTATE_DIR::ROT_DOWN;
-						break;
-					}
-				}
-			}
-			else if (camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //前 -45~45
+		switch (camDirHN)
+		{
+		case ModelTestScreen::CAM_FRONT:
+			if (camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //前 -45~45
 				selectData.rotCol = c;
 				selectData.dir = ROTATE_DIR::ROT_UP;
 				break;
 			}
-		}
-		else {
+		case ModelTestScreen::CAM_BACK:
+			if (camRot.y > 0) {	//+
+				if (180 - camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //135~180→45~0変換
+					selectData.rotCol = c;
+					selectData.dir = ROTATE_DIR::ROT_DOWN;
+					break;
+				}
+			}
+			else {	//-
+				if (-180 - camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //-180~-135→0~-45変換
+					selectData.rotCol = c;
+					selectData.dir = ROTATE_DIR::ROT_DOWN;
+					break;
+				}
+			}
+			break;
+		case ModelTestScreen::CAM_LEFT:
+		case ModelTestScreen::CAM_RIGHT:
 			//SetModeInitのzと同等の処理
 			if (absCamY < 45 + (c + 1) * SET_MODE_UNIT) {
 				selectData.rotCol = c;
@@ -313,10 +311,15 @@ void ModelTestScreen::RotateModeInit()
 
 				break;
 			}
+			break;
 		}
 	}
+
+	//インジケータに設定
 	indicator->SetCubeRotate(selectData.dir);
 	indicator->SetRotateColumn(selectData.rotCol);
+
+
 	debugStr[7] = "rotmodeinit:" + std::to_string(selectData.rotCol) + ","
 		+ (std::string)NAMEOF_ENUM(selectData.dir);
 
@@ -328,67 +331,115 @@ void ModelTestScreen::SetModeInit()
 	const int SET_MODE_UNIT = 90 / PIECES;
 	XMFLOAT3& camRot = camTra.rotate_;
 	float absCamY = abs(camRot.y);
-	//SelectData selectData;	//あとでselectDataに置換する
 
 	//y指定
-	if (camRot.x >= 45)selectData.y = PIECES-1;
-	else if (camRot.x <= -45)selectData.y = 0;
-	else {
+	switch (camDirVT)
+	{
+	case ModelTestScreen::CAM_TOP:
+		selectData.y = PIECES - 1;
+		break;
+	case ModelTestScreen::CAM_MIDDLE:
 		for (int y = 0; y < PIECES; y++) {
 			if (camRot.x < -45 + (y + 1) * SET_MODE_UNIT) {
 				selectData.y = y;
 				break;
 			}
 		}
+		break;
+	case ModelTestScreen::CAM_BOTTOM:
+		selectData.y = 0;
+		break;
 	}
 
 	//z指定
-	if (absCamY >= 135)selectData.z = PIECES-1;
-	else if (absCamY <= 45 )selectData.z = 0;
-	else {
+	switch (camDirHN)
+	{
+	case ModelTestScreen::CAM_FRONT:
+		selectData.z = 0;
+		break;
+	case ModelTestScreen::CAM_BACK:
+		selectData.z = PIECES - 1;
+		break;
+	case ModelTestScreen::CAM_LEFT:
+	case ModelTestScreen::CAM_RIGHT:
+		//現在の回転角度によりZ方向の選択位置を決める ケーキを等分に切るような感じ
 		for (int z = 0; z < PIECES; z++) {
 			if (absCamY < 45 + (z + 1) * SET_MODE_UNIT) {
 				selectData.z = z;
 				break;
 			}
 		}
+		break;
 	}
 
 	//x指定
-	if (Between(camRot.y, 45.0f, 135.0f))selectData.x = 0; //左
-	else if (Between(camRot.y, -135.0f, -45.0f))selectData.x = PIECES-1; //右
-	else {
+	switch (camDirHN)
+	{
+	case ModelTestScreen::CAM_LEFT:
+		selectData.x = 0;
+		break;
+	case ModelTestScreen::CAM_RIGHT:
+		selectData.x = PIECES - 1;
+		break;
+	case ModelTestScreen::CAM_FRONT:
 		for (int x = 0; x < PIECES; x++) {
-			if (absCamY > 135) {	//-180~-135 135~180 後
-				if (camRot.y > 0) {	//+
-					if (180 - camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //135~180→45~0変換
-						selectData.x = x;
-						break;
-					}
-				}
-				else {	//-
-					if (-180 - camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //-180~-135→0~-45変換
-						selectData.x = x;
-						break;
-					}
-				}
-			}
-			else if (camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //前 -45~45
+			//現在の回転角度によりX方向の選択位置を決める
+			if (camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //前 -45~45
 				selectData.x = x;
 				break;
 			}
 		}
+		break;
+	case ModelTestScreen::CAM_BACK:
+		for (int x = 0; x < PIECES; x++) {
+			//現在の回転角度によりX方向の選択位置を決める
+			if (camRot.y > 0) {	//+
+				if (180 - camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //135~180→45~0変換
+					selectData.x = x;
+					break;
+				}
+			}
+			else {	//-
+				if (-180 - camRot.y > 45 - (x + 1) * SET_MODE_UNIT) { //-180~-135→0~-45変換
+					selectData.x = x;
+					break;
+				}
+			}
+		}
+		break;
 	}
 
-	//方向指定
-	if (camRot.x > 45)selectData.surface = SURFACE::SURFACE_TOP;	//カメラが上側にある
-	else if (camRot.x < -45)selectData.surface = SURFACE::SURFACE_BOTTOM;	//カメラが下側にある
-	else if (absCamY < 45)selectData.surface = SURFACE::SURFACE_FRONT;	//カメラが正面にある
-	else if (absCamY > 135)selectData.surface = SURFACE::SURFACE_BACK;	//カメラが裏側にある
-	else if (camRot.y > 0)selectData.surface = SURFACE::SURFACE_LEFT;	//カメラが左側にある
-	else selectData.surface = SURFACE::SURFACE_RIGHT;					//残るは右のみ
+	//選択面指定
+	switch (camDirVT)
+	{
+	case ModelTestScreen::CAM_TOP:
+		selectData.surface = SURFACE::SURFACE_TOP;	//カメラが上側にある
+		break;
+	case ModelTestScreen::CAM_BOTTOM:
+		selectData.surface = SURFACE::SURFACE_BOTTOM;	//カメラが下側にある
+		break;
+	case ModelTestScreen::CAM_MIDDLE:
+		switch (camDirHN)
+		{
+		case ModelTestScreen::CAM_FRONT:
+			selectData.surface = SURFACE::SURFACE_FRONT;
+			break;
+		case ModelTestScreen::CAM_LEFT:
+			selectData.surface = SURFACE::SURFACE_LEFT;
+			break;
+		case ModelTestScreen::CAM_BACK:
+			selectData.surface = SURFACE::SURFACE_BACK;
+			break;
+		case ModelTestScreen::CAM_RIGHT:
+			SURFACE::SURFACE_RIGHT;
+			break;
+		}
+		break;
+	}
 
+	//インジケータに設定
 	indicator->SetDrawPoint(selectData.GetPos(), selectData.surface);
+
 	debugStr[6] = "setmodeinit:" + std::to_string(selectData.x) + ","
 		+ std::to_string(selectData.y) + ","
 		+ std::to_string(selectData.z) + ","
@@ -426,7 +477,7 @@ void ModelTestScreen::MoveSelect(MODE mode)
 		switch (selectData.surface)
 		{
 		case SURFACE::SURFACE_TOP:
-			switch (camDir)
+			switch (camDirHN)
 			{
 			case ModelTestScreen::CAM_FRONT:
 				break;
@@ -459,7 +510,7 @@ void ModelTestScreen::MoveSelect(MODE mode)
 			break;
 
 		case SURFACE::SURFACE_BOTTOM:
-			switch (camDir)
+			switch (camDirHN)
 			{
 			case ModelTestScreen::CAM_FRONT:
 				break;
@@ -522,7 +573,7 @@ void ModelTestScreen::MoveSelect(MODE mode)
 		{
 		case ROTATE_DIR::ROT_UP:
 		case ROTATE_DIR::ROT_DOWN:
-			switch (camDir)
+			switch (camDirHN)
 			{
 			case ModelTestScreen::CAM_FRONT:
 				if (Input::IsKeyDown(GetKey(KEY::KEY_UP))) {
@@ -599,7 +650,7 @@ void ModelTestScreen::MoveSelect(MODE mode)
 			break;
 		case ROTATE_DIR::ROT_CW:
 		case ROTATE_DIR::ROT_CCW:
-			switch (camDir)
+			switch (camDirHN)
 			{
 			case ModelTestScreen::CAM_FRONT:
 				//前、上
@@ -921,86 +972,31 @@ void ModelTestScreen::JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag,
 	}
 }
 
-
 void ModelTestScreen::UpdateCubeTransform()
 {
 	//前回座標、次回座標、回転するキューブの親を中心に指定する
 	switch (selectData.dir)
 	{
 	case ROTATE_DIR::ROT_UP:
-		for (int y = 0; y < PIECES; y++) {
-			for (int z = 0; z < PIECES; z++) {
-				//cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				//cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
-				//	selectData.rotCol,
-				//	PIECES - 1 - z,
-				//	y
-				//);
-				cube[selectData.rotCol][y][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
-			}
-		}
-		break;
 	case ROTATE_DIR::ROT_DOWN:
 		for (int y = 0; y < PIECES; y++) {
 			for (int z = 0; z < PIECES; z++) {
-				//cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				//cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
-				//	selectData.rotCol,
-				//	z,
-				//	PIECES - 1 - y
-				//);
 				cube[selectData.rotCol][y][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
 		}
 		break;
 	case ROTATE_DIR::ROT_LEFT:
-		for (int x = 0; x < PIECES; x++) {
-			for (int z = 0; z < PIECES; z++) {
-				//cubePrevTra[x][selectData.rotCol][z].position_ = cubeNextTra[x][selectData.rotCol][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				//cubeNextTra[x][selectData.rotCol][z].position_ = ConvertPts2Pos(
-				//	z,
-				//	selectData.rotCol,
-				//	PIECES - 1 - x
-				//);
-				cube[x][selectData.rotCol][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
-			}
-		}
-		break;
 	case ROTATE_DIR::ROT_RIGHT:
 		for (int x = 0; x < PIECES; x++) {
 			for (int z = 0; z < PIECES; z++) {
-				//cubePrevTra[x][selectData.rotCol][z].position_ = cubeNextTra[x][selectData.rotCol][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				//cubeNextTra[x][selectData.rotCol][z].position_ = ConvertPts2Pos(
-				//	PIECES - 1 - z,
-				//	selectData.rotCol,
-				//	x
-				//);
 				cube[x][selectData.rotCol][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
 		}
 		break;
 	case ROTATE_DIR::ROT_CW:
-		for (int x = 0; x < PIECES; x++) {
-			for (int y = 0; y < PIECES; y++) {
-				//cubePrevTra[x][y][selectData.rotCol].position_ = cubeNextTra[x][y][selectData.rotCol].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				//cubeNextTra[x][y][selectData.rotCol].position_ = ConvertPts2Pos(
-				//	PIECES - 1 - y,
-				//	selectData.rotCol,
-				//	x
-				//);
-				cube[x][y][selectData.rotCol]->SetParent(groupObject[GROUP_ROTATECUBE]);
-			}
-		}
-		break;
 	case ROTATE_DIR::ROT_CCW:
 		for (int x = 0; x < PIECES; x++) {
 			for (int y = 0; y < PIECES; y++) {
-				//cubePrevTra[x][y][selectData.rotCol].position_ = cubeNextTra[x][y][selectData.rotCol].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				//cubeNextTra[x][y][selectData.rotCol].position_ = ConvertPts2Pos(
-				//	y,
-				//	selectData.rotCol,
-				//	PIECES - 1 - x
-				//);
 				cube[x][y][selectData.rotCol]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
 		}
@@ -1028,12 +1024,12 @@ void ModelTestScreen::TurnEnd()
 void ModelTestScreen::RotateCube(int prog, int maxProg, ROTATE_DIR dir) {
 	switch (dir)
 	{
-	case ROTATE_DIR::ROT_UP:	groupObject[GROUP_ROTATECUBE]->SetRotateX(Easing::Calc(11, prog, maxProg, 0, 90));	break;
-	case ROTATE_DIR::ROT_DOWN:	groupObject[GROUP_ROTATECUBE]->SetRotateX(Easing::Calc(11, prog, maxProg, 0, -90));	break;
-	case ROTATE_DIR::ROT_LEFT:	groupObject[GROUP_ROTATECUBE]->SetRotateY(Easing::Calc(11, prog, maxProg, 0, 90));	break;
-	case ROTATE_DIR::ROT_RIGHT:	groupObject[GROUP_ROTATECUBE]->SetRotateY(Easing::Calc(11, prog, maxProg, 0, -90));	break;
-	case ROTATE_DIR::ROT_CW:	groupObject[GROUP_ROTATECUBE]->SetRotateZ(Easing::Calc(11, prog, maxProg, 0, -90));	break;
-	case ROTATE_DIR::ROT_CCW:	groupObject[GROUP_ROTATECUBE]->SetRotateZ(Easing::Calc(11, prog, maxProg, 0, 90));	break;
+	case ROTATE_DIR::ROT_UP:	groupObject[GROUP_ROTATECUBE]->SetRotateX(Easing::Calc(11, (float)prog, (float)maxProg, 0.0f, 90.0f));	break;
+	case ROTATE_DIR::ROT_DOWN:	groupObject[GROUP_ROTATECUBE]->SetRotateX(Easing::Calc(11, (float)prog, (float)maxProg, 0.0f, -90.0f));	break;
+	case ROTATE_DIR::ROT_LEFT:	groupObject[GROUP_ROTATECUBE]->SetRotateY(Easing::Calc(11, (float)prog, (float)maxProg, 0.0f, 90.0f));	break;
+	case ROTATE_DIR::ROT_RIGHT:	groupObject[GROUP_ROTATECUBE]->SetRotateY(Easing::Calc(11, (float)prog, (float)maxProg, 0.0f, -90.0f));	break;
+	case ROTATE_DIR::ROT_CW:	groupObject[GROUP_ROTATECUBE]->SetRotateZ(Easing::Calc(11, (float)prog, (float)maxProg, 0.0f, -90.0f));	break;
+	case ROTATE_DIR::ROT_CCW:	groupObject[GROUP_ROTATECUBE]->SetRotateZ(Easing::Calc(11, (float)prog, (float)maxProg, 0.0f, 90.0f));	break;
 	}
 }
 
@@ -1043,19 +1039,10 @@ void ModelTestScreen::CompletedRotate()
 	//キューブ情報の入れ替え
 	//キューブインスタンス自体を入れ替え
 	//キューブ座標を指定
-	//でいいんじゃないの
 	// 
 	// 改善前まではTransformをキューブの個数分用意して都度座標を指定するものだったが、
 	// インスタンスの入れ替え後に再度座標を初期化するほうが容量を食わないのでそちらを採用
 	// （多分回転方向によって範囲指定したほうが効率はいい これはキューブサイズが増えるほど効果がある）
-	// 
-	// 
-	//回転キューブの座標を次回座標に置き換える
-	//[0][0][0],000→[0][0][0]020　→ここまででは同じ位置にあるように見えるが判定は0,0,0で行えるはず
-	//回転キューブの〇×データを回転方向に沿って入れ替える
-	//親を元に戻す
-	//回転キューブ自体を入れ替える
-	//[0][0][0]020→[0][2][0],020 →ここで0,2,0で判定ができるようになる
 
 	switch (selectData.dir)
 	{
@@ -1063,15 +1050,11 @@ void ModelTestScreen::CompletedRotate()
 	case ROTATE_DIR::ROT_DOWN:
 		for (int y = 0; y < PIECES; y++) {
 			for (int z = 0; z < PIECES; z++) {
-				//位置変更
-				//cube[selectData.rotCol][y][z]->SetPosition(cubeNextTra[selectData.rotCol][y][z].position_);
-				
 				//親を元に戻す
 				cube[selectData.rotCol][y][z]->SetParent(groupObject[GROUP_BACK]);
 
 				//キューブデータ入替
 				cube[selectData.rotCol][y][z]->SwapData(selectData.dir);
-
 
 			}
 		}
@@ -1080,9 +1063,6 @@ void ModelTestScreen::CompletedRotate()
 	case ROTATE_DIR::ROT_RIGHT:
 		for (int x = 0; x < PIECES; x++) {
 			for (int z = 0; z < PIECES; z++) {
-				//位置変更
-				//cube[x][selectData.rotCol][z]->SetPosition(cubeNextTra[x][selectData.rotCol][z].position_);
-
 				//親を元に戻す
 				cube[x][selectData.rotCol][z]->SetParent(groupObject[GROUP_BACK]);
 
@@ -1095,9 +1075,6 @@ void ModelTestScreen::CompletedRotate()
 	case ROTATE_DIR::ROT_CCW:
 		for (int x = 0; x < PIECES; x++) {
 			for (int y = 0; y < PIECES; y++) {
-				//位置変更
-				//cube[x][y][selectData.rotCol]->SetPosition(cubeNextTra[x][y][selectData.rotCol].position_);
-
 				//親を元に戻す
 				cube[x][y][selectData.rotCol]->SetParent(groupObject[GROUP_BACK]);
 
@@ -1116,7 +1093,7 @@ void ModelTestScreen::CompletedRotate()
 	for (int x = 0; x < PIECES; x++) {
 		for (int y = 0; y < PIECES; y++) {
 			for (int z = 0; z < PIECES; z++) {
-				cube[x][y][z]->SetPosition(x - OUTER_POINT, y - OUTER_POINT, z - OUTER_POINT);
+				cube[x][y][z]->SetPosition(ConvertPts2Pos(x, y, z));
 			}
 		}
 	}
@@ -1127,8 +1104,10 @@ void ModelTestScreen::SwapCube() {
 
 	int swapCount = PIECES;
 
-	//配列入替
+
 	bool isCC = In(selectData.dir, { ROTATE_DIR::ROT_DOWN, ROTATE_DIR::ROT_LEFT, ROTATE_DIR::ROT_CW });	//回転軸に対して時計回りかどうか
+
+	//配列入替
 	if (isCC) {
 		for (int row = PIECES - 1; row >= 0; row--) {
 			//入れ替え回数の更新
@@ -1157,7 +1136,6 @@ void ModelTestScreen::SwapCube() {
 	else {
 		for (int row = 0; row < PIECES; row++) {
 			for (int col = PIECES - swapCount; col < PIECES; col++) {
-				Debug::Log("row" + std::to_string(row) + "col" + std::to_string(col) + "swap" + std::to_string(swapCount), true);
 				switch (selectData.dir)
 				{
 				case ROTATE_DIR::ROT_UP:
@@ -1183,29 +1161,15 @@ void ModelTestScreen::SwapCubeModifySwapCount(int* swapCount, int row, bool isCC
 {
 	if (!isCC) {									//回転軸に対し反時計の場合
 		if (row != PIECES / 2) {					//一辺の半分(端数切捨)と同等でなければ
-			if (row > PIECES / 2) {
-				(*swapCount)++;	//半分より大きければ増加
-				Debug::Log("一辺の半分より大きいため増加",true);
-			}
-			else {
-				(*swapCount)--;					//半分より小さければ減少
-				Debug::Log("一辺の半分未満のため減少", true);
-			}
-		}
-		else if (PIECES % 2 == 0) {
-			(*swapCount)++;	//半分と同等で偶数であれば
-			Debug::Log("現在幅が一辺の半分かつ一辺が偶数のため増加", true);
-		}
-		else {
-			Debug::Log("現在幅が一辺の半分かつ一辺が奇数のためなにもしない", true);
-		}
+			if (row > PIECES / 2)	(*swapCount)++;	//半分より大きければ増加
+			else					(*swapCount)--;	//半分より小さければ減少
+		}else if (PIECES % 2 == 0)	(*swapCount)++;	//半分と同等で偶数であれば増加
 	}
 	else {											//回転軸に対し時計の場合
 		if (row != PIECES / 2) {					//一辺の半分(端数切捨)と同等でなければ
 			if (row > PIECES / 2)	(*swapCount)--;	//半分より大きければ減少
-			else	(*swapCount)++;					//半分より小さければ増加
-		}
-		else if (PIECES % 2 == 0)   (*swapCount)--;	//半分と同等で偶数であれば減少
+			else					(*swapCount)++;	//半分より小さければ増加
+		}else if (PIECES % 2 == 0)  (*swapCount)--;	//半分と同等で偶数であれば減少
 	}
 }
 
@@ -1256,19 +1220,16 @@ void ModelTestScreen::Judge()
 	}
 }
 
+//カメラ
 void ModelTestScreen::RotateCamera() {
-	//カメラ(後々実装：デバッグ)
-
 	bool moveFlag = false;
-	//ビューモードの場合、移動を許可
-	//if (mode == MODE_VIEW) {
-		//左クリック中にドラッグで移動する(仮)
+
+	//左クリック中にドラッグで移動する
 	if (Input::IsMouseButton(0)) {
 		rotSpdY = Input::GetMouseMove().x * AT_RATIO;   //マウスx移動量でy軸回転
 		rotSpdX = Input::GetMouseMove().y * AT_RATIO;   //マウスy移動量でx軸回転
 		moveFlag = true;
 	}
-	//}
 	if (mode != MODE_VIEW) {
 		if (rotSpdX != 0 || rotSpdY != 0) {
 			prevMode = mode;
@@ -1292,7 +1253,7 @@ void ModelTestScreen::RotateCamera() {
 	camTra.rotate_.y += rotSpdY;
 	camTra.rotate_.x += rotSpdX;
 
-	//範囲内処理(直接代入にすると一瞬固まるため加減する)
+	//範囲内処理(直接代入にすると一瞬固まるため加減することで回避)
 	camTra.rotate_.x = std::clamp(camTra.rotate_.x, MIN_CAM_ROTATE_X, MAX_CAM_ROTATE_X);
 	if (camTra.rotate_.y > LIMIT_CAM_ROTATE_Y) {
 		camTra.rotate_.y -= 2 * LIMIT_CAM_ROTATE_Y;
@@ -1310,14 +1271,18 @@ void ModelTestScreen::RotateCamera() {
 	Camera::SetPosition(vCam);            //セット
 
 	//カメラの回転情報から移動などで判定に使う方位を登録する
-	if (Between(camTra.rotate_.y, -45.0f, 45.0f))camDir = CAM_FRONT;
-	else if (Between(camTra.rotate_.y, 45.0f, 135.0f))camDir = CAM_LEFT;
-	else if (Between(camTra.rotate_.y, -135.0f, -45.0f))camDir = CAM_RIGHT;
-	else camDir = CAM_BACK;
+	if (Between(camTra.rotate_.y, -45.0f, 45.0f))camDirHN = CAM_FRONT;
+	else if (Between(camTra.rotate_.y, 45.0f, 135.0f))camDirHN = CAM_LEFT;
+	else if (Between(camTra.rotate_.y, -135.0f, -45.0f))camDirHN = CAM_RIGHT;
+	else camDirHN = CAM_BACK;
+
+	if (Between(camTra.rotate_.x, 45.0f, MAX_CAM_ROTATE_X))camDirVT = CAM_TOP;
+	else if (Between(camTra.rotate_.x, -45.0f, MAX_CAM_ROTATE_X))camDirVT = CAM_BOTTOM;
+	else camDirVT = CAM_MIDDLE;
 
 	/*
-	・移動系は対象が0, 0, 0で固定なので書かなくていい
-	・対象との距離も今回は変える必要がまったくないので実装しない
+	・移動系の処理は対象が0, 0, 0で固定なので書かなくていい
+	・対象との距離も今回は変える必要がまったくないので定数化
 	*/
 }
 
@@ -1389,44 +1354,35 @@ Cube::MARK ModelTestScreen::CheckMark(vector<XMINT3> points, SURFACE surface)
 	/*
 	揃ったとき、そのマークを返す
 	揃わなければ空白を返す
-	空白で揃っても空白を返す
+	※空白で揃っても空白を返す
 	*/
 
 	Cube::MARK mark = cube[points[0].x][points[0].y][points[0].z]->GetMark(surface);   //揃ったときに返すマーク
 	assert(points.size() > 0);  //手違いで空の配列が来た時にassert
-	Debug::Log("判定：["+ std::to_string(points[0].x) + std::to_string(points[0].y) + std::to_string(points[0].z) +"]:" + (std::string)NAMEOF_ENUM(mark) +", ", false);
+
+	Debug::Log("判定：["+ std::to_string(points[0].x) + std::to_string(points[0].y) + std::to_string(points[0].z) +"]:" + 
+		((std::string)NAMEOF_ENUM(mark)).substr(5) + ", ", false);
+
 	for (int i = 1; i < points.size(); i++) { 
-		Debug::Log("[" + std::to_string(points[i].x) + std::to_string(points[i].y) + std::to_string(points[i].z) + "]:" + (std::string)NAMEOF_ENUM(cube[points[i].x][points[i].y][points[i].z]->GetMark(surface)) + ", ", false);
+
+		Debug::Log("[" + std::to_string(points[i].x) + std::to_string(points[i].y) + std::to_string(points[i].z) + "]:" + 
+			((std::string)NAMEOF_ENUM(cube[points[i].x][points[i].y][points[i].z]->GetMark(surface))).substr(5) + ", ", false);
+
 		if (cube[points[i].x][points[i].y][points[i].z]->GetMark(surface) != mark) {
-			Debug::Log((std::string)NAMEOF_ENUM(mark) + "はそろわなかった", true);
+
+			Debug::Log(((std::string)NAMEOF_ENUM(mark)).substr(5) + "はそろわなかった", true);
+
 			return Cube::MARK_BLANK;    //揃わなかったら空白
 		}
 	}
-	Debug::Log((std::string)NAMEOF_ENUM(mark) + "がそろった", true);
+	Debug::Log(((std::string)NAMEOF_ENUM(mark)).substr(5) + "がそろった", true);
 	return mark;
 }
 
 /*
 回転トリガー時、回転方向と回転列を指定し、回転フラグを有効化
-回転フラグが有効化されたら、回転方向と回転列に従い、回転　　      ※回転には回転前変形情報と回転後変形情報を用いる
+回転フラグが有効化されたら、回転方向と回転列に従い、回転
 回転終了後、回転フラグを無効化し、Cubeオブジェクトを入れ替える
-*/
-
-/*
-3x3の2→0方向への回転(前(下)、右、反時計)
-	vector<vector<int>> arr;
-	arr.resize(3, vector<int>(3));
-
-	for (int i = 0; i < 3; i++) {
-		swap(arr[2-i][0], arr[0][i]);
-	}
-
-	for (int i = 1; i < 3; i++) {
-		swap(arr[0][i], arr[3-1][i]);
-	}
-
-	swap(arr[0][1], arr[1][2]);
-
 */
 
 /*

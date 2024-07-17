@@ -32,8 +32,6 @@ private:
 	const int PIECES = 3;
 	const float OUTER_POINT;
 	vector<vector<vector<Cube*>>> cube;
-	//vector<vector<vector<Transform>>> cubePrevTra;
-	//vector<vector<vector<Transform>>> cubeNextTra;
 	
 	//操作モード
 	enum MODE {
@@ -137,20 +135,24 @@ private:
 	float rotSpdX, rotSpdY;			//カメラ回転速度
 	bool isEnded;                   //ゲーム終了フラグ
 	const int CAM_DISTANCE;			//カメラ距離 固定
-	//const float DC_VALUE = 0.05f;         //カメラ減速値
 	const float TH_ZEROSPEED;		//カメラ速度0にする閾値
 	const float DC_RATIO;            //カメラ減速割合
 	const float AT_RATIO;			//カメラ移動量に対する回転距離単位
 	const float MAX_CAM_ROTATE_X;	//カメラX回転の最高角度制限
 	const float MIN_CAM_ROTATE_X;	//カメラX回転の最低角度制限
 	const int LIMIT_CAM_ROTATE_Y;	//カメラY回転の角度制限(オーバーフロー回避)
-	const int DEFAULT_CAM_SPEED;	//カメラのデフォルト速度(0)
-	enum CAM_DIR_CARDINAL {
+	const float DEFAULT_CAM_SPEED;	//カメラのデフォルト速度(0
+	enum CAM_DIR_HN_CARDINAL {
 		CAM_FRONT,
 		CAM_LEFT,
 		CAM_BACK,
 		CAM_RIGHT
-	}camDir;
+	}camDirHN;						//カメラの水平方向
+	enum CAM_DIR_VT_CARDINAL {
+		CAM_TOP,
+		CAM_MIDDLE,
+		CAM_BOTTOM
+	}camDirVT;						//カメラの垂直方向
 
 	//============================ DEBUG ============================
 	//デバッグテキスト
