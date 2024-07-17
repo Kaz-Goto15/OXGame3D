@@ -32,8 +32,8 @@ private:
 	const int PIECES = 3;
 	const float OUTER_POINT;
 	vector<vector<vector<Cube*>>> cube;
-	vector<vector<vector<Transform>>> cubePrevTra;
-	vector<vector<vector<Transform>>> cubeNextTra;
+	//vector<vector<vector<Transform>>> cubePrevTra;
+	//vector<vector<vector<Transform>>> cubeNextTra;
 	
 	//ëÄçÏÉÇÅ[Éh
 	enum MODE {

@@ -60,8 +60,8 @@ void ModelTestScreen::Initialize()
 
 	//キューブ本体、キューブ変形情報などを保存するvectorをリサイズ
 	cube.resize(PIECES, vector<vector<Cube*>>(PIECES, vector<Cube*>(PIECES, nullptr)));
-	cubeNextTra.resize(PIECES, vector<vector<Transform>>(PIECES, vector<Transform>(PIECES)));
-	cubePrevTra.resize(PIECES, vector<vector<Transform>>(PIECES, vector<Transform>(PIECES)));
+	//cubeNextTra.resize(PIECES, vector<vector<Transform>>(PIECES, vector<Transform>(PIECES)));
+	//cubePrevTra.resize(PIECES, vector<vector<Transform>>(PIECES, vector<Transform>(PIECES)));
 
 	//キューブ生成
 	for (auto& cx : cube) {
@@ -77,7 +77,7 @@ void ModelTestScreen::Initialize()
 		for (int y = 0; y < cube[0].size();y++) {
 			for (int z = 0; z < cube[0][0].size();z++) {
 				cube[x][y][z]->SetPosition(x - 1, y - 1, z - 1);
-				cubeNextTra[x][y][z] = cube[x][y][z]->GetTransform(); //次の場所の初期化
+				//cubeNextTra[x][y][z] = cube[x][y][z]->GetTransform(); //次の場所の初期化
 			}
 		}
 	}
@@ -921,6 +921,7 @@ void ModelTestScreen::JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag,
 	}
 }
 
+
 void ModelTestScreen::UpdateCubeTransform()
 {
 	//前回座標、次回座標、回転するキューブの親を中心に指定する
@@ -929,12 +930,12 @@ void ModelTestScreen::UpdateCubeTransform()
 	case ROTATE_DIR::ROT_UP:
 		for (int y = 0; y < PIECES; y++) {
 			for (int z = 0; z < PIECES; z++) {
-				cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
-					selectData.rotCol,
-					PIECES - 1 - z,
-					y
-				);
+				//cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				//cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
+				//	selectData.rotCol,
+				//	PIECES - 1 - z,
+				//	y
+				//);
 				cube[selectData.rotCol][y][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
 		}
@@ -942,12 +943,12 @@ void ModelTestScreen::UpdateCubeTransform()
 	case ROTATE_DIR::ROT_DOWN:
 		for (int y = 0; y < PIECES; y++) {
 			for (int z = 0; z < PIECES; z++) {
-				cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
-					selectData.rotCol,
-					z,
-					PIECES - 1 - y
-				);
+				//cubePrevTra[selectData.rotCol][y][z].position_ = cubeNextTra[selectData.rotCol][y][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				//cubeNextTra[selectData.rotCol][y][z].position_ = ConvertPts2Pos(
+				//	selectData.rotCol,
+				//	z,
+				//	PIECES - 1 - y
+				//);
 				cube[selectData.rotCol][y][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
 		}
@@ -955,12 +956,12 @@ void ModelTestScreen::UpdateCubeTransform()
 	case ROTATE_DIR::ROT_LEFT:
 		for (int x = 0; x < PIECES; x++) {
 			for (int z = 0; z < PIECES; z++) {
-				cubePrevTra[x][selectData.rotCol][z].position_ = cubeNextTra[x][selectData.rotCol][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				cubeNextTra[x][selectData.rotCol][z].position_ = ConvertPts2Pos(
-					z,
-					selectData.rotCol,
-					PIECES - 1 - x
-				);
+				//cubePrevTra[x][selectData.rotCol][z].position_ = cubeNextTra[x][selectData.rotCol][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				//cubeNextTra[x][selectData.rotCol][z].position_ = ConvertPts2Pos(
+				//	z,
+				//	selectData.rotCol,
+				//	PIECES - 1 - x
+				//);
 				cube[x][selectData.rotCol][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
 		}
@@ -968,12 +969,12 @@ void ModelTestScreen::UpdateCubeTransform()
 	case ROTATE_DIR::ROT_RIGHT:
 		for (int x = 0; x < PIECES; x++) {
 			for (int z = 0; z < PIECES; z++) {
-				cubePrevTra[x][selectData.rotCol][z].position_ = cubeNextTra[x][selectData.rotCol][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				cubeNextTra[x][selectData.rotCol][z].position_ = ConvertPts2Pos(
-					PIECES - 1 - z,
-					selectData.rotCol,
-					x
-				);
+				//cubePrevTra[x][selectData.rotCol][z].position_ = cubeNextTra[x][selectData.rotCol][z].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				//cubeNextTra[x][selectData.rotCol][z].position_ = ConvertPts2Pos(
+				//	PIECES - 1 - z,
+				//	selectData.rotCol,
+				//	x
+				//);
 				cube[x][selectData.rotCol][z]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
 		}
@@ -981,12 +982,12 @@ void ModelTestScreen::UpdateCubeTransform()
 	case ROTATE_DIR::ROT_CW:
 		for (int x = 0; x < PIECES; x++) {
 			for (int y = 0; y < PIECES; y++) {
-				cubePrevTra[x][y][selectData.rotCol].position_ = cubeNextTra[x][y][selectData.rotCol].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				cubeNextTra[x][y][selectData.rotCol].position_ = ConvertPts2Pos(
-					PIECES - 1 - y,
-					selectData.rotCol,
-					x
-				);
+				//cubePrevTra[x][y][selectData.rotCol].position_ = cubeNextTra[x][y][selectData.rotCol].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				//cubeNextTra[x][y][selectData.rotCol].position_ = ConvertPts2Pos(
+				//	PIECES - 1 - y,
+				//	selectData.rotCol,
+				//	x
+				//);
 				cube[x][y][selectData.rotCol]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
 		}
@@ -994,12 +995,12 @@ void ModelTestScreen::UpdateCubeTransform()
 	case ROTATE_DIR::ROT_CCW:
 		for (int x = 0; x < PIECES; x++) {
 			for (int y = 0; y < PIECES; y++) {
-				cubePrevTra[x][y][selectData.rotCol].position_ = cubeNextTra[x][y][selectData.rotCol].position_;    //前回使用した次回座標を今回の前回座標へ指定
-				cubeNextTra[x][y][selectData.rotCol].position_ = ConvertPts2Pos(
-					y,
-					selectData.rotCol,
-					PIECES - 1 - x
-				);
+				//cubePrevTra[x][y][selectData.rotCol].position_ = cubeNextTra[x][y][selectData.rotCol].position_;    //前回使用した次回座標を今回の前回座標へ指定
+				//cubeNextTra[x][y][selectData.rotCol].position_ = ConvertPts2Pos(
+				//	y,
+				//	selectData.rotCol,
+				//	PIECES - 1 - x
+				//);
 				cube[x][y][selectData.rotCol]->SetParent(groupObject[GROUP_ROTATECUBE]);
 			}
 		}
@@ -1031,8 +1032,8 @@ void ModelTestScreen::RotateCube(int prog, int maxProg, ROTATE_DIR dir) {
 	case ROTATE_DIR::ROT_DOWN:	groupObject[GROUP_ROTATECUBE]->SetRotateX(Easing::Calc(11, prog, maxProg, 0, -90));	break;
 	case ROTATE_DIR::ROT_LEFT:	groupObject[GROUP_ROTATECUBE]->SetRotateY(Easing::Calc(11, prog, maxProg, 0, 90));	break;
 	case ROTATE_DIR::ROT_RIGHT:	groupObject[GROUP_ROTATECUBE]->SetRotateY(Easing::Calc(11, prog, maxProg, 0, -90));	break;
-	case ROTATE_DIR::ROT_CW:	groupObject[GROUP_ROTATECUBE]->SetRotateZ(Easing::Calc(11, prog, maxProg, 0, 90));	break;
-	case ROTATE_DIR::ROT_CCW:	groupObject[GROUP_ROTATECUBE]->SetRotateZ(Easing::Calc(11, prog, maxProg, 0, -90));	break;
+	case ROTATE_DIR::ROT_CW:	groupObject[GROUP_ROTATECUBE]->SetRotateZ(Easing::Calc(11, prog, maxProg, 0, -90));	break;
+	case ROTATE_DIR::ROT_CCW:	groupObject[GROUP_ROTATECUBE]->SetRotateZ(Easing::Calc(11, prog, maxProg, 0, 90));	break;
 	}
 }
 
@@ -1043,6 +1044,11 @@ void ModelTestScreen::CompletedRotate()
 	//キューブインスタンス自体を入れ替え
 	//キューブ座標を指定
 	//でいいんじゃないの
+	// 
+	// 改善前まではTransformをキューブの個数分用意して都度座標を指定するものだったが、
+	// インスタンスの入れ替え後に再度座標を初期化するほうが容量を食わないのでそちらを採用
+	// （多分回転方向によって範囲指定したほうが効率はいい これはキューブサイズが増えるほど効果がある）
+	// 
 	// 
 	//回転キューブの座標を次回座標に置き換える
 	//[0][0][0],000→[0][0][0]020　→ここまででは同じ位置にあるように見えるが判定は0,0,0で行えるはず
@@ -1123,27 +1129,51 @@ void ModelTestScreen::SwapCube() {
 
 	//配列入替
 	bool isCC = In(selectData.dir, { ROTATE_DIR::ROT_DOWN, ROTATE_DIR::ROT_LEFT, ROTATE_DIR::ROT_CW });	//回転軸に対して時計回りかどうか
-	if (isCC)SwapCubeModifySwapCount(&swapCount, PIECES - 1, isCC);
-	for (int row = 0; row < PIECES; row++) {
-		for (int col = PIECES - swapCount; col < PIECES; col++) {
+	if (isCC) {
+		for (int row = PIECES - 1; row >= 0; row--) {
+			//入れ替え回数の更新
+			SwapCubeModifySwapCount(&swapCount, row, isCC);
+			for (int col = PIECES - 1; col >= PIECES - swapCount; col--) {
 
-			switch (selectData.dir)
-			{
-			case ROTATE_DIR::ROT_UP:
-			case ROTATE_DIR::ROT_DOWN:
-				std::swap(cube[selectData.rotCol][row][col], cube[selectData.rotCol][col][PIECES - 1 - row]);
-				break;
-			case ROTATE_DIR::ROT_LEFT:
-			case ROTATE_DIR::ROT_RIGHT:
-				std::swap(cube[row][selectData.rotCol][col], cube[col][selectData.rotCol][PIECES - 1 - row]);
-				break;
-			case ROTATE_DIR::ROT_CW:
-			case ROTATE_DIR::ROT_CCW:
-				std::swap(cube[row][col][selectData.rotCol], cube[col][PIECES - 1 - row][selectData.rotCol]);
-				break;
-				
+				switch (selectData.dir)
+				{
+				case ROTATE_DIR::ROT_UP:
+				case ROTATE_DIR::ROT_DOWN:
+					std::swap(cube[selectData.rotCol][row][col], cube[selectData.rotCol][col][PIECES - 1 - row]);
+					break;
+				case ROTATE_DIR::ROT_LEFT:
+				case ROTATE_DIR::ROT_RIGHT:
+					std::swap(cube[row][selectData.rotCol][col], cube[col][selectData.rotCol][PIECES - 1 - row]);
+					break;
+				case ROTATE_DIR::ROT_CW:
+				case ROTATE_DIR::ROT_CCW:
+					std::swap(cube[row][col][selectData.rotCol], cube[col][PIECES - 1 - row][selectData.rotCol]);
+					break;
+				}
+
 			}
-
+		}
+	}
+	else {
+		for (int row = 0; row < PIECES; row++) {
+			for (int col = PIECES - swapCount; col < PIECES; col++) {
+				Debug::Log("row" + std::to_string(row) + "col" + std::to_string(col) + "swap" + std::to_string(swapCount), true);
+				switch (selectData.dir)
+				{
+				case ROTATE_DIR::ROT_UP:
+				case ROTATE_DIR::ROT_DOWN:
+					std::swap(cube[selectData.rotCol][row][col], cube[selectData.rotCol][col][PIECES - 1 - row]);
+					break;
+				case ROTATE_DIR::ROT_LEFT:
+				case ROTATE_DIR::ROT_RIGHT:
+					std::swap(cube[row][selectData.rotCol][col], cube[col][selectData.rotCol][PIECES - 1 - row]);
+					break;
+				case ROTATE_DIR::ROT_CW:
+				case ROTATE_DIR::ROT_CCW:
+					std::swap(cube[row][col][selectData.rotCol], cube[col][PIECES - 1 - row][selectData.rotCol]);
+					break;
+				}
+			}
 			//入れ替え回数の更新
 			SwapCubeModifySwapCount(&swapCount, row, isCC);
 		}
@@ -1151,25 +1181,34 @@ void ModelTestScreen::SwapCube() {
 }
 void ModelTestScreen::SwapCubeModifySwapCount(int* swapCount, int row, bool isCC)
 {
-	if (!isCC) {
-		if (row != PIECES / 2) {
-			if (row > PIECES / 2)    swapCount++;
-			else    swapCount--;
-		}
-		else if (PIECES % 2 == 0)   swapCount++;
-	}
-	else {
-		if (row != PIECES / 2) {
+	if (!isCC) {									//回転軸に対し反時計の場合
+		if (row != PIECES / 2) {					//一辺の半分(端数切捨)と同等でなければ
 			if (row > PIECES / 2) {
-				if (!(row != PIECES / 2 + 1 && PIECES % 2 == 1)) {
-					swapCount--;
-				}
+				(*swapCount)++;	//半分より大きければ増加
+				Debug::Log("一辺の半分より大きいため増加",true);
 			}
-			else swapCount++;
+			else {
+				(*swapCount)--;					//半分より小さければ減少
+				Debug::Log("一辺の半分未満のため減少", true);
+			}
 		}
-		else swapCount++;
+		else if (PIECES % 2 == 0) {
+			(*swapCount)++;	//半分と同等で偶数であれば
+			Debug::Log("現在幅が一辺の半分かつ一辺が偶数のため増加", true);
+		}
+		else {
+			Debug::Log("現在幅が一辺の半分かつ一辺が奇数のためなにもしない", true);
+		}
+	}
+	else {											//回転軸に対し時計の場合
+		if (row != PIECES / 2) {					//一辺の半分(端数切捨)と同等でなければ
+			if (row > PIECES / 2)	(*swapCount)--;	//半分より大きければ減少
+			else	(*swapCount)++;					//半分より小さければ増加
+		}
+		else if (PIECES % 2 == 0)   (*swapCount)--;	//半分と同等で偶数であれば減少
 	}
 }
+
 void ModelTestScreen::Judge()
 {
 	switch (mode)
