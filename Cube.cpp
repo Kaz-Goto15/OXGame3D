@@ -38,6 +38,14 @@ void Cube::Initialize()
     hModelMark[MARK_X] = ModelLoader::Load(ModelLoader::MODEL::MARK_X);
 
     hModelMark[MARK_1] = ModelLoader::Load(ModelLoader::MODEL::MARK_1);
+    hModelMark[MARK_2] = ModelLoader::Load(ModelLoader::MODEL::MARK_2);
+    hModelMark[MARK_3] = ModelLoader::Load(ModelLoader::MODEL::MARK_3);
+    hModelMark[MARK_4] = ModelLoader::Load(ModelLoader::MODEL::MARK_4);
+    hModelMark[MARK_5] = ModelLoader::Load(ModelLoader::MODEL::MARK_5);
+    hModelMark[MARK_6] = ModelLoader::Load(ModelLoader::MODEL::MARK_6);
+    hModelMark[MARK_7] = ModelLoader::Load(ModelLoader::MODEL::MARK_7);
+    hModelMark[MARK_8] = ModelLoader::Load(ModelLoader::MODEL::MARK_8);
+    hModelMark[MARK_9] = ModelLoader::Load(ModelLoader::MODEL::MARK_9);
 }
 
 //çXêV

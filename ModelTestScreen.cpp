@@ -1058,7 +1058,7 @@ void ModelTestScreen::CompletedRotate()
 		for (int y = 0; y < PIECES; y++) {
 			for (int z = 0; z < PIECES; z++) {
 				//位置変更
-				cube[selectData.rotCol][y][z]->SetPosition(cubeNextTra[selectData.rotCol][y][z].position_);
+				//cube[selectData.rotCol][y][z]->SetPosition(cubeNextTra[selectData.rotCol][y][z].position_);
 				
 				//親を元に戻す
 				cube[selectData.rotCol][y][z]->SetParent(groupObject[GROUP_BACK]);
@@ -1075,7 +1075,7 @@ void ModelTestScreen::CompletedRotate()
 		for (int x = 0; x < PIECES; x++) {
 			for (int z = 0; z < PIECES; z++) {
 				//位置変更
-				cube[x][selectData.rotCol][z]->SetPosition(cubeNextTra[x][selectData.rotCol][z].position_);
+				//cube[x][selectData.rotCol][z]->SetPosition(cubeNextTra[x][selectData.rotCol][z].position_);
 
 				//親を元に戻す
 				cube[x][selectData.rotCol][z]->SetParent(groupObject[GROUP_BACK]);
@@ -1090,7 +1090,7 @@ void ModelTestScreen::CompletedRotate()
 		for (int x = 0; x < PIECES; x++) {
 			for (int y = 0; y < PIECES; y++) {
 				//位置変更
-				cube[x][y][selectData.rotCol]->SetPosition(cubeNextTra[x][y][selectData.rotCol].position_);
+				//cube[x][y][selectData.rotCol]->SetPosition(cubeNextTra[x][y][selectData.rotCol].position_);
 
 				//親を元に戻す
 				cube[x][y][selectData.rotCol]->SetParent(groupObject[GROUP_BACK]);
