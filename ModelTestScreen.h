@@ -4,10 +4,14 @@
 #include "Engine/GameObject.h"
 #include "Screen.h"
 #include "Cube.h"
+#include "Easing.h"
+
 class CubeSelectIndicator;
 class Screen;
 class DebugText;
 class GroupingObject;
+class Text;
+class ButtonGP;
 
 using std::vector;
 
@@ -42,11 +46,10 @@ private:
 
 	//操作対象
 	enum CONTROL {
-		CONTROL_IDLE,
 		CONTROL_1P,
 		CONTROL_2P
 	}control, nextTurn;
-
+	bool isIdle;
 	//選択情報
 	struct SelectData {
 		int x, y, z;
@@ -64,6 +67,11 @@ private:
 		XMINT3 GetPos() { return XMINT3(x, y, z); }
 	}selectData;
 
+	enum BUTTON_ACTION {
+		BACK_TO_TITLE,
+		RESTART_GAME
+	};
+	void ButtonAct(int hAct) override;
 
 	bool isRotating = false;
 
@@ -99,38 +107,12 @@ private:
 
 	void MoveIndicator();	//?
 
-	//値が範囲内か
-	template <class T>
-	bool Between(T value, T min, T max) {
-		return (min <= value && value <= max);
-	}
-
-	template <class T>
-	bool In(T val, vector<T> search) {
-		for (auto& word : search) {
-			if (val == word)return true;
-		}
-		return false;
-	}
-	//複数の一致
-	//template<class T, typename... Args>
-	//bool MultiEquals(T val1, T val2, Args... values) {
-	//	if (MultiEquals(val2, values)) {
-	//		return true;
-	//	}
-	//	return false;
-	//}
-
-	//template <class T>
-	//bool MultiEquals(T val1, T val2) {
-	//	return (val1 == val2);
-	//}
-
 	void RotateModeInit();	//回転モード移行時の初期化
 	void SetModeInit();		//設置モード移行時の初期化
 	bool isMoving;			//現在移動中か
 
 	//============================ カメラ関連 ============================
+
 	Transform camTra;				//カメラ変形情報
 	float rotSpdX, rotSpdY;			//カメラ回転速度
 	bool isEnded;                   //ゲーム終了フラグ
@@ -154,6 +136,25 @@ private:
 		CAM_BOTTOM
 	}camDirVT;						//カメラの垂直方向
 
+	//カメラ関連の処理
+	void RotateCamera();
+
+	//============================ 回転モード関連 ============================
+	const Easing::Ease ROTATE_EASE;
+	//回転後の座標・回転キューブの親オブジェクト変更
+	void UpdateCubeTransform();
+
+	//キューブを回転
+	void RotateCube(int prog, int maxProg, ROTATE_DIR dir);
+
+	//回転終了後の処理
+	void CompletedRotate();
+
+	//キューブインスタンスの入れ替え
+	void SwapCube();
+	void SwapCubeModifySwapCount(int* swapCount, int row, bool isCC);	//入れ替え回数を変化させる関数
+
+
 	//============================ DEBUG ============================
 	//デバッグテキスト
 	std::string debugStr[20];
@@ -167,19 +168,27 @@ private:
 	struct WinFlag {
 		bool p1 = false;
 		bool p2 = false;
+		SURFACE p1WinSurface = SURFACE::SURFACE_MAX;
+		SURFACE p2WinSurface = SURFACE::SURFACE_MAX;
 		WinFlag() {
 
 		}
-		void Set(MARK mark) {
+		void Set(MARK mark, SURFACE surface) {
 			switch (mark)
 			{
-			case MARK::MARK_O:  p1 = true;  return;
-			case MARK::MARK_X:  p2 = true;  return;
+			case MARK::MARK_O:
+				p1 = true;
+				p1WinSurface = surface;
+				return;
+			case MARK::MARK_X:
+				p2 = true;
+				p2WinSurface = surface;
+				return;
 			}
 		}
 	}winFlag;
 
-	bool finished;
+
 	//斜め判定時の座標指定時に使う列挙型
 	//これを用いて判定する関数では0以上を指定したときに固定値とみなすため、ここの値は0未満にする
 	enum DIAG_VAR {
@@ -231,41 +240,81 @@ private:
 	//引数：探索座標,面,格納フラグ,フィルタ
 	void JudgeVHD(XMINT3 pos, SURFACE surface, WinFlag& winFlag, FILTER filter);
 
+	//============================ ゲーム終了処理関連 ============================
+	bool finished;					//ゲーム終了フラグ
+	XMFLOAT3 winPrevRot, winNextRot;//勝利時のカメラ回転率と移動後のカメラ回転率を格納する変数
+	const int maxWinRotProgress;	//終了時に揃った列にカメラを移動させるときのフレーム数
+	int winRotProgress;				//現在カメラ移動フレーム数
+	bool enFreeLook;				//ゲーム終了後にカメラを動かした場合に有効化 trueにすると揃った面に移動するカメラが途中でも停止する
+	Text* winPlayerMsg;
+	ButtonGP* titleButton;			//タイトルへ戻るボタン
+	ButtonGP* restartButton;		//再戦ボタン
+	Easing::Ease WIN_CAM_EASE;
+	void WinProcess(CONTROL winner);//勝利確定時の処理
+	void FinishCamera();			//ゲーム終了時のカメラ処理
+
+	//これらはButtonActから呼び出されるやつ
+	void Restart();					//再戦
+	void BackToTitle();				//タイトルへ戻る
+
+	//XMFLOAT3 Surface2CamRot(SURFACE surface, XMFLOAT3* camRot);	//その面に垂直に向くようなカメラ回転率を返す
+
 	//============================ 〇〇関連 ============================
-	enum WIN_STATE {	//勝利時の処理をステート管理 数値はそのステートが続くフレーム数
-		WIN_DRAWSTART = 100,	//黒半透明フェード
-		WIN_SHOW_WINNER = 150,	//勝利者の表示
-		WIN_DRAW_BUTTON = 100,
-		WIN_MAX
-	};
-	const int SHOW_WINNER_FADEIN_FRAMES = 30;	//勝利の画像出すときのフェードインフレーム数
-	bool winProcessFlag[WIN_MAX];
-	void WinProcess();
-	//↑これら全部temp
 
 
-	/// <summary>
-	/// キューブ回転のトリガー 初期化処理とフラグ管理
-	/// 
-	/// </summary>
-	/// <param name="dir">前から見た時の回転方向</param>
-	/// <param name="no">回転する行/列 [0][0][0]を基準とし、0,1,2で指定</param>
-	/// <param name="angle">何度回転させるか</param>
-	void UpdateCubeNextTransform(ROTATE_DIR dir, int no, float angle = 90.0f);
 
-	//回転後の座標・回転キューブの親オブジェクト変更
-	void UpdateCubeTransform();
+	//============================ 汎用関数・変換関数 ============================
+	//値が範囲内か
+	template <class T>
+	bool Between(T value, T min, T max) {
+		return (min <= value && value <= max);
+	}
 
+	//SQLのIn句と同じ
+	template <class T>
+	bool In(T val, vector<T> search) {
+		for (auto& word : search) {
+			if (val == word)return true;
+		}
+		return false;
+	}
+
+	//半分にする 型をそのまんま返すためintなどは自動切り捨て
+	template <class T>
+	T Half(T value) {
+		return (value / 2.0f);
+	}
+
+	//2倍にする
+	template <class T>
+	T Twice(T value) {
+		return (value * 2.0f);
+	}
+
+	//偶数かを見る
+	bool IsEven(int value) {
+		return (value % 2 == 0);
+	}
+
+	//複数の一致
+	//template<class T, typename... Args>
+	//bool MultiEquals(T val1, T val2, Args... values) {
+	//	if (MultiEquals(val2, values)) {
+	//		return true;
+	//	}
+	//	return false;
+	//}
+
+	//template <class T>
+	//bool MultiEquals(T val1, T val2) {
+	//	return (val1 == val2);
+	//}
+	// 
 	//キューブ位置を座標に変換する
 	XMFLOAT3 ConvertPts2Pos(int x, int y, int z);
 
-	void RotateCube(int prog, int maxProg, ROTATE_DIR dir);
-	void CompletedRotate();
-	void SwapCube();
-	void SwapCubeModifySwapCount(int* swapCount, int row, bool isCC);
-	/// カメラ関連の処理
-	void RotateCamera();
-	void FinishCamera();
+	//その面に垂直に向くようなカメラ回転率を返す 上下はrotXさえ垂直であればいいので現在のrotYをそのまま使う
+	XMFLOAT3 Surface2CamRot(SURFACE surface, XMFLOAT3* camRot);
 };
 
 /*
@@ -279,5 +328,10 @@ VIEW
 SET,ROTATEで使うキー:前回モードへ移行 Spaceでいいんじゃね
 右クリック押下中にドラッグ:視点回転
 
+
+*/
+
+/*
+回転モードの変数まとめきれてないのとそれ以降の関数整列してないよ
 
 */

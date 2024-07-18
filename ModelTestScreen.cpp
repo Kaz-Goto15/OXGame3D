@@ -16,17 +16,20 @@
 #include "DebugText.h"
 #include "GroupingObject.h"
 
+#include "Engine/Text.h"
+#include "ButtonGP.h"
+
 using KEY = SystemConfig::KEY;
 using SystemConfig::GetKey;
 //コンストラクタ
 ModelTestScreen::ModelTestScreen(GameObject* parent) :
 	Screen(parent, "ModelTestScreen"),
 	hImgBG(-1),
-	mode(MODE_SET),prevMode(MODE_SET),
-	control(CONTROL_1P),nextTurn(CONTROL_2P),
-	OUTER_POINT((PIECES-1)/2.0f),
+	mode(MODE_SET), prevMode(MODE_SET),
+	control(CONTROL_1P), nextTurn(CONTROL_2P),
+	OUTER_POINT((PIECES - 1) / 2.0f),
 	//カメラ
-	rotSpdX(0),rotSpdY(0),		//カメラ回転速度
+	rotSpdX(0), rotSpdY(0),		//カメラ回転速度
 	isEnded(false),				//ゲーム終了フラグ
 	CAM_DISTANCE(10),			//対象からカメラまでの距離
 	TH_ZEROSPEED(0.3f),			//カメラ速度を0にする閾値 この値を下回ると速度を０にする
@@ -38,8 +41,20 @@ ModelTestScreen::ModelTestScreen(GameObject* parent) :
 	DEFAULT_CAM_SPEED(0.0f),		//カメラのデフォルト速度(0)
 	camDirHN(CAM_FRONT),		//カメラの水平方向
 	camDirVT(CAM_MIDDLE),		//カメラの垂直方向
-
-	debugtext(nullptr)
+	//回転モード
+	ROTATE_EASE(Easing::Ease::OUT_QUART),
+	//デバッグ
+	debugtext(nullptr),
+	testCubeParent(nullptr),
+	testCubeChild(nullptr),
+	//ゲーム終了処理
+	maxWinRotProgress(100),
+	winRotProgress(0),
+	enFreeLook(false),
+	winPlayerMsg(nullptr),
+	titleButton(nullptr),
+	restartButton(nullptr),
+	WIN_CAM_EASE(Easing::Ease::OUT_QUART)
 {
 }
 
@@ -75,6 +90,7 @@ void ModelTestScreen::Initialize()
 	for (int x = 0; x < cube.size();x++) {
 		for (int y = 0; y < cube[0].size();y++) {
 			for (int z = 0; z < cube[0][0].size();z++) {
+				//cube[x][y][z] = Instantiate<Cube>(groupObject[GROUP_BACK]);
 				cube[x][y][z]->SetPosition(ConvertPts2Pos(x, y, z));
 			}
 		}
@@ -93,6 +109,7 @@ void ModelTestScreen::Initialize()
 	for (int i = 0; i < 20; i++) {
 		debugtext->AddStrPtr(&debugStr[i]);
 	}
+	/*
 	for (int x = 0; x < cube.size(); x++) {
 		for (int y = 0; y < cube[0].size(); y++) {
 			for (int z = 0; z < cube[0][0].size(); z++) {
@@ -116,13 +133,14 @@ void ModelTestScreen::Initialize()
 			}
 		}
 	}
+	*/
 }
 
 //更新
 void ModelTestScreen::Update()
 {
 
-	RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
+	//RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
 
 	//デバッグボタン
 	if (Input::IsKeyDown(DIK_P)) {
@@ -134,9 +152,8 @@ void ModelTestScreen::Update()
 		else if (mode == MODE_VIEW)mode = MODE_SET;
 	}
 	if (Input::IsKeyDown(DIK_9)) {
-		if (control == CONTROL_IDLE)control = CONTROL_1P;
-		else if (control == CONTROL_1P)control = CONTROL_2P;
-		else if (control == CONTROL_2P)control = CONTROL_IDLE;
+		if (control == CONTROL_1P)control = CONTROL_2P;
+		else if (control == CONTROL_2P)control = CONTROL_1P;
 	}
 
 	//finishなどステートが進まない限り操作を受け付けるやつ 現状finish時以外できるため直打ち
@@ -146,10 +163,15 @@ void ModelTestScreen::Update()
 			pScreen->SetPrevScene(this);
 			pScreen->Run();
 		}
+
+		RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
+	}
+	else {
+		FinishCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
 	}
 
 	//操作状態がアイドルでなければ
-	if (control != CONTROL_IDLE) {
+	if (!isIdle) {
 		MoveSelect(mode);
 		//現在のモードで処理
 		switch (mode)
@@ -205,7 +227,7 @@ void ModelTestScreen::Update()
 			//回転
 			else if (Input::IsKeyDown(GetKey(KEY::KEY_ACT))) {
 				//操作の無効化
-				control = CONTROL_IDLE;
+				isIdle = true;
 				//キューブの移動後の座標を更新・回転するオブジェクトを指定
 				UpdateCubeTransform();
 				//回転中フラグの有効化
@@ -268,7 +290,8 @@ void ModelTestScreen::RotateModeInit()
 	const int SET_MODE_UNIT = 90 / PIECES;
 	XMFLOAT3& camRot = camTra.rotate_;
 	float absCamY = abs(camRot.y);
-
+	
+	bool isDecided = false;
 	//前後はSetModeInitのx、左右はzと同等の処理
 	for (int c = 0; c < PIECES; c++) {
 		switch (camDirHN)
@@ -277,21 +300,22 @@ void ModelTestScreen::RotateModeInit()
 			if (camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //前 -45~45
 				selectData.rotCol = c;
 				selectData.dir = ROTATE_DIR::ROT_UP;
-				break;
+				isDecided = true;
 			}
+			break;
 		case ModelTestScreen::CAM_BACK:
 			if (camRot.y > 0) {	//+
 				if (180 - camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //135~180→45~0変換
 					selectData.rotCol = c;
 					selectData.dir = ROTATE_DIR::ROT_DOWN;
-					break;
+					isDecided = true;
 				}
 			}
 			else {	//-
 				if (-180 - camRot.y >= 45 - (c + 1) * SET_MODE_UNIT) { //-180~-135→0~-45変換
 					selectData.rotCol = c;
 					selectData.dir = ROTATE_DIR::ROT_DOWN;
-					break;
+					isDecided = true;
 				}
 			}
 			break;
@@ -309,7 +333,7 @@ void ModelTestScreen::RotateModeInit()
 					selectData.dir = ROTATE_DIR::ROT_CCW;
 				}
 
-				break;
+				isDecided = true;
 			}
 			break;
 		}
@@ -464,6 +488,19 @@ void ModelTestScreen::UpdateStr()
 	debugStr[4] = "camTra:" + std::to_string(camTra.rotate_.x) + ", " + std::to_string(camTra.rotate_.y);
 }
 
+
+void ModelTestScreen::ButtonAct(int hAct)
+{
+	switch (hAct)
+	{
+	case BUTTON_ACTION::BACK_TO_TITLE:
+		BackToTitle();
+		break;
+	case BUTTON_ACTION::RESTART_GAME:
+		Restart();
+		break;
+	}
+}
 
 void ModelTestScreen::MoveSelect(MODE mode)
 {
@@ -806,171 +843,75 @@ void ModelTestScreen::MoveIndicator()
 {
 }
 
-//単一キューブ判定
-void ModelTestScreen::CheckMarkSingle(XMINT3 pos, SURFACE surface, WinFlag& flag, FILTER filter = NONE)
-{
-	//斜め判定
-	JudgeDiag(pos, surface, flag);
-	//縦横奥判定
-	JudgeVHD(pos, surface, flag, filter);
-}
-void ModelTestScreen::CheckMarkSingle(int x, int y, int z, SURFACE surface, WinFlag& flag, FILTER filter = NONE)
-{
-	CheckMarkSingle(XMINT3(x, y, z), surface, flag, filter);
-}
+//============================ カメラ関連 ============================
 
-//回転時の判定
-void ModelTestScreen::CheckMarkRotate(XMINT3 pos, DIR dir, WinFlag& flag)
-{
+//カメラ関連の処理
+void ModelTestScreen::RotateCamera() {
+	bool moveFlag = false;
+
+	//左クリック中にドラッグで移動する
+	if (Input::IsMouseButton(0)) {
+		rotSpdY = Input::GetMouseMove().x * AT_RATIO;   //マウスx移動量でy軸回転
+		rotSpdX = Input::GetMouseMove().y * AT_RATIO;   //マウスy移動量でx軸回転
+		moveFlag = true;
+	}
+	if (mode != MODE_VIEW) {
+		if (rotSpdX != 0 || rotSpdY != 0) {
+			prevMode = mode;
+			mode = MODE_VIEW;
+		}
+	}
+	//カメラ移動しなかったら速度減少
+	if (!moveFlag) {
+		//各速度が0でない場合割合減少 一定以下で0にする
+		if (rotSpdX != DEFAULT_CAM_SPEED) {
+			rotSpdX /= DC_RATIO;
+			if (std::abs(rotSpdX) < TH_ZEROSPEED)rotSpdX = DEFAULT_CAM_SPEED;
+		}
+		if (rotSpdY != DEFAULT_CAM_SPEED) {
+			rotSpdY /= DC_RATIO;
+			if (std::abs(rotSpdY) < TH_ZEROSPEED)rotSpdY = DEFAULT_CAM_SPEED;
+		}
+	}
+
+	//回転情報に加算
+	camTra.rotate_.y += rotSpdY;
+	camTra.rotate_.x += rotSpdX;
+
+	//範囲内処理(直接代入にすると一瞬固まるため加減することで回避)
+	camTra.rotate_.x = std::clamp(camTra.rotate_.x, MIN_CAM_ROTATE_X, MAX_CAM_ROTATE_X);
+	if (camTra.rotate_.y > LIMIT_CAM_ROTATE_Y) {
+		camTra.rotate_.y -= Twice(LIMIT_CAM_ROTATE_Y);
+	}
+	if (camTra.rotate_.y < -LIMIT_CAM_ROTATE_Y) {
+		camTra.rotate_.y += Twice(LIMIT_CAM_ROTATE_Y);
+	}
+
+	XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(camTra.rotate_.y));   //Y軸でY回転量分回転させる行列
+	XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(camTra.rotate_.x));   //X軸でX回転量分回転させる行列
+
+	//カメラ設定 位置->対象の後方
+	XMVECTOR vCam = { 0,0,-CAM_DISTANCE,0 };                  //距離指定
+	vCam = XMVector3TransformCoord(vCam, mRotX * mRotY);    //変形:回転
+	Camera::SetPosition(vCam);            //セット
+
+	//カメラの回転情報から移動などで判定に使う方位を登録する
+	if (Between(camTra.rotate_.y, -45.0f, 45.0f))camDirHN = CAM_FRONT;
+	else if (Between(camTra.rotate_.y, 45.0f, 135.0f))camDirHN = CAM_LEFT;
+	else if (Between(camTra.rotate_.y, -135.0f, -45.0f))camDirHN = CAM_RIGHT;
+	else camDirHN = CAM_BACK;
+
+	if (Between(camTra.rotate_.x, 45.0f, MAX_CAM_ROTATE_X))camDirVT = CAM_TOP;
+	else if (Between(camTra.rotate_.x, MIN_CAM_ROTATE_X, -45.0f))camDirVT = CAM_BOTTOM;
+	else camDirVT = CAM_MIDDLE;
+
 	/*
-	0,0,0をX軸で上下方向に移動した場合
-	X位置が固定
-	000front 010front 020front
-	020top 021top 022top
-	002back 012back 022back
-	000bottom 001bottom 002bottom
-	0,0,0をY軸で左右方向に移動した場合
-	Y位置が固定
-	000front 100front 200front
-	000left 001left 002left
-	002back 102back 202back
-	200right 201right 202right
-	0,0,0をZ軸で時計反時計方向に移動した場合
-	Z位置が固定
-	000left 010left 020left
-	020top 120top 220top
-	200right 210right 220right
-	000bottom 100bottom 200bottom
+	・移動系の処理は対象が0, 0, 0で固定なので書かなくていい
+	・対象との距離も今回は変える必要がまったくないので定数化
 	*/
-	//それぞれのマスの判定 回転時に移動する12面 同軸は関係性が変わらないため見ない
-	switch (dir)
-	{
-	case ModelTestScreen::X:
-		for (int i = 0; i < PIECES; i++) {
-			CheckMarkSingle(pos.x, i, 0, SURFACE::SURFACE_FRONT, winFlag, DISABLE_HORIZONTAL_SEARCH);
-			CheckMarkSingle(pos.x, PIECES - 1, i, SURFACE::SURFACE_TOP, winFlag, DISABLE_DEPTH_SEARCH);
-			CheckMarkSingle(pos.x, i, PIECES - 1, SURFACE::SURFACE_BACK, winFlag, DISABLE_HORIZONTAL_SEARCH);
-			CheckMarkSingle(pos.x, 0, i, SURFACE::SURFACE_BOTTOM, winFlag, DISABLE_DEPTH_SEARCH);
-		}
-		break;
-	case ModelTestScreen::Y:
-		for (int i = 0; i < PIECES; i++) {
-			CheckMarkSingle(i, pos.y, 0, SURFACE::SURFACE_FRONT, winFlag, DISABLE_VERTICAL_SEARCH);
-			CheckMarkSingle(0, pos.y, i, SURFACE::SURFACE_LEFT, winFlag, DISABLE_DEPTH_SEARCH);
-			CheckMarkSingle(i, pos.y, PIECES - 1, SURFACE::SURFACE_BACK, winFlag, DISABLE_VERTICAL_SEARCH);
-			CheckMarkSingle(PIECES - 1, pos.y, i, SURFACE::SURFACE_RIGHT, winFlag, DISABLE_DEPTH_SEARCH);
-		}
-		break;
-	case ModelTestScreen::Z:
-		for (int i = 0; i < PIECES; i++) {
-			CheckMarkSingle(0, i, pos.z, SURFACE::SURFACE_LEFT, winFlag, DISABLE_HORIZONTAL_SEARCH);
-			CheckMarkSingle(i, PIECES - 1, pos.z, SURFACE::SURFACE_TOP, winFlag, DISABLE_DEPTH_SEARCH);
-			CheckMarkSingle(PIECES - 1, i, pos.z, SURFACE::SURFACE_RIGHT, winFlag, DISABLE_HORIZONTAL_SEARCH);
-			CheckMarkSingle(i, 0, pos.z, SURFACE::SURFACE_BOTTOM, winFlag, DISABLE_DEPTH_SEARCH);
-		}
-		break;
-	}
-}
-void ModelTestScreen::CheckMarkRotate(XMINT3 pos, ROTATE_DIR dir, WinFlag& flag)
-{
-	switch (dir)
-	{
-	case ROTATE_DIR::ROT_UP:
-	case ROTATE_DIR::ROT_DOWN:
-		CheckMarkRotate(pos, DIR::X, flag);
-		break;
-	case ROTATE_DIR::ROT_LEFT:
-	case ROTATE_DIR::ROT_RIGHT:
-		CheckMarkRotate(pos, DIR::Y, flag);
-		break;
-	case ROTATE_DIR::ROT_CW:
-	case ROTATE_DIR::ROT_CCW:
-		CheckMarkRotate(pos, DIR::Z, flag);
-		break;
-	}
 }
 
-//斜め判定
-void ModelTestScreen::JudgeDiag(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag){
-//□　　　　上
-//□□□□　前右後左
-//□　　　　下　　　
-	switch (surface)
-	{
-	case Cube::SURFACE_TOP:     //左下が0,-,0
-		//探索座標2軸一致 右上
-		if (pos.x == pos.z) {
-			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, PIECES - 1, DIAG_VAR::DIAG_UP, surface));
-		}
-		//探索座標2軸交差 右下
-		if (PIECES - 1 - pos.x == pos.z) {
-			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, PIECES - 1, DIAG_VAR::DIAG_DOWN, surface));
-		}
-		break;
-	case Cube::SURFACE_BOTTOM:  //左上が0,-,0
-		//探索座標2軸一致 右下
-		if (pos.x == pos.z) {
-			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, 0, DIAG_VAR::DIAG_UP, surface));
-		}
-		if (PIECES - 1 - pos.x == pos.z) {  //交差条件 右上
-			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, 0, DIAG_VAR::DIAG_DOWN, surface));
-		}
-		break;
-	case Cube::SURFACE_LEFT:    //右下が-,0,0
-		if (pos.y == pos.z) {   //同座標一致条件 右下
-			flag.Set(CheckMarkD(0, DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_DOWN, surface));
-		}
-		if (PIECES - 1 - pos.y == pos.z) {  //交差条件 右上
-			flag.Set(CheckMarkD(0, DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_DOWN, surface));
-		}
-		break;
-	case Cube::SURFACE_RIGHT:   //左下が-,0,0
-		if (pos.y == pos.z) {   //同座標一致条件 右上
-			flag.Set(CheckMarkD(PIECES - 1, DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_UP, surface));
-		}
-		if (PIECES - 1 - pos.y == pos.z) {  //交差条件 右下
-			flag.Set(CheckMarkD(PIECES - 1, DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_UP, surface));
-		}
-		break;
-	case Cube::SURFACE_FRONT:   //左下が0,0,-
-		if (pos.x == pos.y) {   //同座標一致条件 右上
-			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_UP, 0, surface));
-		}
-		if (PIECES - 1 - pos.x == pos.y) {  //交差条件 右下
-			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_DOWN, 0, surface));
-		}
-		break;
-	case Cube::SURFACE_BACK:    //右下が0,0,-
-		if (pos.x == pos.y) {   //同座標一致条件 右下
-			flag.Set(CheckMarkD(DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_DOWN, PIECES - 1, surface));
-		}
-		if (PIECES - 1 - pos.x == pos.y) {  //交差条件 右上
-			flag.Set(CheckMarkD(DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_UP, PIECES - 1, surface));
-		}
-		break;
-	}
-}
-//縦横奥判定
-void ModelTestScreen::JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag, FILTER filter)
-{
-	switch (surface) {
-	case Cube::SURFACE::SURFACE_FRONT:
-	case Cube::SURFACE::SURFACE_BACK:
-		if (filter != DISABLE_VERTICAL_SEARCH)  flag.Set(CheckMarkVH(pos, surface, X));
-		if (filter != DISABLE_HORIZONTAL_SEARCH)flag.Set(CheckMarkVH(pos, surface, Y));
-		break;
-	case Cube::SURFACE::SURFACE_LEFT:
-	case Cube::SURFACE::SURFACE_RIGHT:
-		if (filter != DISABLE_HORIZONTAL_SEARCH)flag.Set(CheckMarkVH(pos, surface, Y));
-		if (filter != DISABLE_DEPTH_SEARCH)     flag.Set(CheckMarkVH(pos, surface, Z));
-		break;
-	case Cube::SURFACE::SURFACE_TOP:
-	case Cube::SURFACE::SURFACE_BOTTOM:
-		if (filter != DISABLE_VERTICAL_SEARCH)  flag.Set(CheckMarkVH(pos, surface, X));
-		if (filter != DISABLE_DEPTH_SEARCH)     flag.Set(CheckMarkVH(pos, surface, Z));
-		break;
-	}
-}
+//============================ 回転モード関連 ============================
 
 void ModelTestScreen::UpdateCubeTransform()
 {
@@ -1004,22 +945,6 @@ void ModelTestScreen::UpdateCubeTransform()
 	}
 }
 
-XMFLOAT3 ModelTestScreen::ConvertPts2Pos(int x, int y, int z) {
-	return { (float)x - OUTER_POINT, (float)y - OUTER_POINT, (float)z - OUTER_POINT };
-}
-
-void ModelTestScreen::TurnEnd()
-{
-	if (control == CONTROL_1P) {
-		nextTurn = CONTROL_2P;
-	}
-	if (control == CONTROL_2P) {
-		nextTurn = CONTROL_1P;
-	}
-	control = CONTROL_IDLE;
-	
-	control = nextTurn; //今はアニメーションやディレイが無いのでここで次のターンにする
-}
 
 void ModelTestScreen::RotateCube(int prog, int maxProg, ROTATE_DIR dir) {
 	switch (dir)
@@ -1160,17 +1085,202 @@ void ModelTestScreen::SwapCube() {
 void ModelTestScreen::SwapCubeModifySwapCount(int* swapCount, int row, bool isCC)
 {
 	if (!isCC) {									//回転軸に対し反時計の場合
-		if (row != PIECES / 2) {					//一辺の半分(端数切捨)と同等でなければ
-			if (row > PIECES / 2)	(*swapCount)++;	//半分より大きければ増加
+		if (row != Half(PIECES)) {					//一辺の半分(端数切捨)と同等でなければ
+			if (row > Half(PIECES))	(*swapCount)++;	//半分より大きければ増加
 			else					(*swapCount)--;	//半分より小さければ減少
-		}else if (PIECES % 2 == 0)	(*swapCount)++;	//半分と同等で偶数であれば増加
+		}
+		else if (IsEven(PIECES))	(*swapCount)++;	//半分と同等で偶数であれば増加
 	}
 	else {											//回転軸に対し時計の場合
-		if (row != PIECES / 2) {					//一辺の半分(端数切捨)と同等でなければ
-			if (row > PIECES / 2)	(*swapCount)--;	//半分より大きければ減少
+		if (row != Half(PIECES)) {					//一辺の半分(端数切捨)と同等でなければ
+			if (row > Half(PIECES))	(*swapCount)--;	//半分より大きければ減少
 			else					(*swapCount)++;	//半分より小さければ増加
-		}else if (PIECES % 2 == 0)  (*swapCount)--;	//半分と同等で偶数であれば減少
+		}
+		else if (IsEven(PIECES))  (*swapCount)--;	//半分と同等で偶数であれば減少
 	}
+}
+
+
+//単一キューブ判定
+void ModelTestScreen::CheckMarkSingle(XMINT3 pos, SURFACE surface, WinFlag& flag, FILTER filter = NONE)
+{
+	//斜め判定
+	JudgeDiag(pos, surface, flag);
+	//縦横奥判定
+	JudgeVHD(pos, surface, flag, filter);
+}
+void ModelTestScreen::CheckMarkSingle(int x, int y, int z, SURFACE surface, WinFlag& flag, FILTER filter = NONE)
+{
+	CheckMarkSingle(XMINT3(x, y, z), surface, flag, filter);
+}
+
+//回転時の判定
+void ModelTestScreen::CheckMarkRotate(XMINT3 pos, DIR dir, WinFlag& flag)
+{
+	/*
+	0,0,0をX軸で上下方向に移動した場合
+	X位置が固定
+	000front 010front 020front
+	020top 021top 022top
+	002back 012back 022back
+	000bottom 001bottom 002bottom
+	0,0,0をY軸で左右方向に移動した場合
+	Y位置が固定
+	000front 100front 200front
+	000left 001left 002left
+	002back 102back 202back
+	200right 201right 202right
+	0,0,0をZ軸で時計反時計方向に移動した場合
+	Z位置が固定
+	000left 010left 020left
+	020top 120top 220top
+	200right 210right 220right
+	000bottom 100bottom 200bottom
+	*/
+	//それぞれのマスの判定 回転時に移動する12面 同軸は関係性が変わらないため見ない
+	switch (dir)
+	{
+	case ModelTestScreen::X:
+		for (int i = 0; i < PIECES; i++) {
+			CheckMarkSingle(pos.x, i, 0, SURFACE::SURFACE_FRONT, winFlag, DISABLE_HORIZONTAL_SEARCH);
+			CheckMarkSingle(pos.x, PIECES - 1, i, SURFACE::SURFACE_TOP, winFlag, DISABLE_DEPTH_SEARCH);
+			CheckMarkSingle(pos.x, i, PIECES - 1, SURFACE::SURFACE_BACK, winFlag, DISABLE_HORIZONTAL_SEARCH);
+			CheckMarkSingle(pos.x, 0, i, SURFACE::SURFACE_BOTTOM, winFlag, DISABLE_DEPTH_SEARCH);
+		}
+		break;
+	case ModelTestScreen::Y:
+		for (int i = 0; i < PIECES; i++) {
+			CheckMarkSingle(i, pos.y, 0, SURFACE::SURFACE_FRONT, winFlag, DISABLE_VERTICAL_SEARCH);
+			CheckMarkSingle(0, pos.y, i, SURFACE::SURFACE_LEFT, winFlag, DISABLE_DEPTH_SEARCH);
+			CheckMarkSingle(i, pos.y, PIECES - 1, SURFACE::SURFACE_BACK, winFlag, DISABLE_VERTICAL_SEARCH);
+			CheckMarkSingle(PIECES - 1, pos.y, i, SURFACE::SURFACE_RIGHT, winFlag, DISABLE_DEPTH_SEARCH);
+		}
+		break;
+	case ModelTestScreen::Z:
+		for (int i = 0; i < PIECES; i++) {
+			CheckMarkSingle(0, i, pos.z, SURFACE::SURFACE_LEFT, winFlag, DISABLE_HORIZONTAL_SEARCH);
+			CheckMarkSingle(i, PIECES - 1, pos.z, SURFACE::SURFACE_TOP, winFlag, DISABLE_DEPTH_SEARCH);
+			CheckMarkSingle(PIECES - 1, i, pos.z, SURFACE::SURFACE_RIGHT, winFlag, DISABLE_HORIZONTAL_SEARCH);
+			CheckMarkSingle(i, 0, pos.z, SURFACE::SURFACE_BOTTOM, winFlag, DISABLE_DEPTH_SEARCH);
+		}
+		break;
+	}
+}
+void ModelTestScreen::CheckMarkRotate(XMINT3 pos, ROTATE_DIR dir, WinFlag& flag)
+{
+	switch (dir)
+	{
+	case ROTATE_DIR::ROT_UP:
+	case ROTATE_DIR::ROT_DOWN:
+		CheckMarkRotate(pos, DIR::X, flag);
+		break;
+	case ROTATE_DIR::ROT_LEFT:
+	case ROTATE_DIR::ROT_RIGHT:
+		CheckMarkRotate(pos, DIR::Y, flag);
+		break;
+	case ROTATE_DIR::ROT_CW:
+	case ROTATE_DIR::ROT_CCW:
+		CheckMarkRotate(pos, DIR::Z, flag);
+		break;
+	}
+}
+
+//斜め判定
+void ModelTestScreen::JudgeDiag(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag){
+//□　　　　上
+//□□□□　前右後左
+//□　　　　下　　　
+	switch (surface)
+	{
+	case Cube::SURFACE_TOP:     //左下が0,-,0
+		//探索座標2軸一致 右上
+		if (pos.x == pos.z) {
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, PIECES - 1, DIAG_VAR::DIAG_UP, surface), surface);
+		}
+		//探索座標2軸交差 右下
+		if (PIECES - 1 - pos.x == pos.z) {
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, PIECES - 1, DIAG_VAR::DIAG_DOWN, surface), surface);
+		}
+		break;
+	case Cube::SURFACE_BOTTOM:  //左上が0,-,0
+		//探索座標2軸一致 右下
+		if (pos.x == pos.z) {
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, 0, DIAG_VAR::DIAG_UP, surface), surface);
+		}
+		if (PIECES - 1 - pos.x == pos.z) {  //交差条件 右上
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, 0, DIAG_VAR::DIAG_DOWN, surface), surface);
+		}
+		break;
+	case Cube::SURFACE_LEFT:    //右下が-,0,0
+		if (pos.y == pos.z) {   //同座標一致条件 右下
+			flag.Set(CheckMarkD(0, DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_DOWN, surface), surface);
+		}
+		if (PIECES - 1 - pos.y == pos.z) {  //交差条件 右上
+			flag.Set(CheckMarkD(0, DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_DOWN, surface), surface);
+		}
+		break;
+	case Cube::SURFACE_RIGHT:   //左下が-,0,0
+		if (pos.y == pos.z) {   //同座標一致条件 右上
+			flag.Set(CheckMarkD(PIECES - 1, DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_UP, surface), surface);
+		}
+		if (PIECES - 1 - pos.y == pos.z) {  //交差条件 右下
+			flag.Set(CheckMarkD(PIECES - 1, DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_UP, surface), surface);
+		}
+		break;
+	case Cube::SURFACE_FRONT:   //左下が0,0,-
+		if (pos.x == pos.y) {   //同座標一致条件 右上
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_UP, 0, surface), surface);
+		}
+		if (PIECES - 1 - pos.x == pos.y) {  //交差条件 右下
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_UP, DIAG_VAR::DIAG_DOWN, 0, surface), surface);
+		}
+		break;
+	case Cube::SURFACE_BACK:    //右下が0,0,-
+		if (pos.x == pos.y) {   //同座標一致条件 右下
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_DOWN, PIECES - 1, surface), surface);
+		}
+		if (PIECES - 1 - pos.x == pos.y) {  //交差条件 右上
+			flag.Set(CheckMarkD(DIAG_VAR::DIAG_DOWN, DIAG_VAR::DIAG_UP, PIECES - 1, surface), surface);
+		}
+		break;
+	}
+}
+//縦横奥判定
+void ModelTestScreen::JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag, FILTER filter)
+{
+	switch (surface) {
+	case Cube::SURFACE::SURFACE_FRONT:
+	case Cube::SURFACE::SURFACE_BACK:
+		if (filter != DISABLE_VERTICAL_SEARCH)  flag.Set(CheckMarkVH(pos, surface, X), surface);
+		if (filter != DISABLE_HORIZONTAL_SEARCH)flag.Set(CheckMarkVH(pos, surface, Y), surface);
+		break;
+	case Cube::SURFACE::SURFACE_LEFT:
+	case Cube::SURFACE::SURFACE_RIGHT:
+		if (filter != DISABLE_HORIZONTAL_SEARCH)flag.Set(CheckMarkVH(pos, surface, Y), surface);
+		if (filter != DISABLE_DEPTH_SEARCH)     flag.Set(CheckMarkVH(pos, surface, Z), surface);
+		break;
+	case Cube::SURFACE::SURFACE_TOP:
+	case Cube::SURFACE::SURFACE_BOTTOM:
+		if (filter != DISABLE_VERTICAL_SEARCH)  flag.Set(CheckMarkVH(pos, surface, X), surface);
+		if (filter != DISABLE_DEPTH_SEARCH)     flag.Set(CheckMarkVH(pos, surface, Z), surface);
+		break;
+	}
+}
+
+void ModelTestScreen::TurnEnd()
+{
+	if (control == CONTROL_1P) {
+		nextTurn = CONTROL_2P;
+		Debug::Log("2Pのターン", true);
+	}
+	if (control == CONTROL_2P) {
+		nextTurn = CONTROL_1P;
+
+		Debug::Log("1Pのターン", true);
+	}
+	isIdle = false;
+	
+	control = nextTurn; //ここで次のターンにする
 }
 
 void ModelTestScreen::Judge()
@@ -1185,112 +1295,24 @@ void ModelTestScreen::Judge()
 		break;
 	}
 
-	//超雑勝利宣言
-	auto win = [=](CONTROL control) {
-		switch (control)
-		{
-		case ModelTestScreen::CONTROL_1P:
-			debugStr[5] = "1p syouri";
-			break;
-		case ModelTestScreen::CONTROL_2P:
-			debugStr[5] = "2p syouri";
-			break;
-		default:
-			break;
-		}
-	};
-
 	//勝利判定
 	//両方揃ってたら相手の勝利
 	if (control == CONTROL_1P) {
 		if (winFlag.p2) {
-			win(CONTROL_2P);
+			WinProcess(CONTROL_2P);
 		}
 		else if (winFlag.p1) {
-			win(CONTROL_1P);
+			WinProcess(CONTROL_1P);
 		}
 	}
 	if (control == CONTROL_2P) {
 		if (winFlag.p1) {
-			win(CONTROL_1P);
+			WinProcess(CONTROL_1P);
 		}
 		else if (winFlag.p2) {
-			win(CONTROL_2P);
+			WinProcess(CONTROL_2P);
 		}
 	}
-}
-
-//カメラ
-void ModelTestScreen::RotateCamera() {
-	bool moveFlag = false;
-
-	//左クリック中にドラッグで移動する
-	if (Input::IsMouseButton(0)) {
-		rotSpdY = Input::GetMouseMove().x * AT_RATIO;   //マウスx移動量でy軸回転
-		rotSpdX = Input::GetMouseMove().y * AT_RATIO;   //マウスy移動量でx軸回転
-		moveFlag = true;
-	}
-	if (mode != MODE_VIEW) {
-		if (rotSpdX != 0 || rotSpdY != 0) {
-			prevMode = mode;
-			mode = MODE_VIEW;
-		}
-	}
-	//カメラ移動しなかったら速度減少
-	if (!moveFlag) {
-		//各速度が0でない場合割合減少 一定以下で0にする
-		if (rotSpdX != DEFAULT_CAM_SPEED) {
-			rotSpdX /= DC_RATIO;
-			if (std::abs(rotSpdX) < TH_ZEROSPEED)rotSpdX = DEFAULT_CAM_SPEED;
-		}
-		if (rotSpdY != DEFAULT_CAM_SPEED) {
-			rotSpdY /= DC_RATIO;
-			if (std::abs(rotSpdY) < TH_ZEROSPEED)rotSpdY = DEFAULT_CAM_SPEED;
-		}
-	}
-
-	//回転情報に加算
-	camTra.rotate_.y += rotSpdY;
-	camTra.rotate_.x += rotSpdX;
-
-	//範囲内処理(直接代入にすると一瞬固まるため加減することで回避)
-	camTra.rotate_.x = std::clamp(camTra.rotate_.x, MIN_CAM_ROTATE_X, MAX_CAM_ROTATE_X);
-	if (camTra.rotate_.y > LIMIT_CAM_ROTATE_Y) {
-		camTra.rotate_.y -= 2 * LIMIT_CAM_ROTATE_Y;
-	}
-	if (camTra.rotate_.y < -LIMIT_CAM_ROTATE_Y) {
-		camTra.rotate_.y += 2 * LIMIT_CAM_ROTATE_Y;
-	}
-
-	XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(camTra.rotate_.y));   //Y軸でY回転量分回転させる行列
-	XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(camTra.rotate_.x));   //X軸でX回転量分回転させる行列
-
-	//カメラ設定 位置->対象の後方
-	XMVECTOR vCam = { 0,0,-CAM_DISTANCE,0 };                  //距離指定
-	vCam = XMVector3TransformCoord(vCam, mRotX * mRotY);    //変形:回転
-	Camera::SetPosition(vCam);            //セット
-
-	//カメラの回転情報から移動などで判定に使う方位を登録する
-	if (Between(camTra.rotate_.y, -45.0f, 45.0f))camDirHN = CAM_FRONT;
-	else if (Between(camTra.rotate_.y, 45.0f, 135.0f))camDirHN = CAM_LEFT;
-	else if (Between(camTra.rotate_.y, -135.0f, -45.0f))camDirHN = CAM_RIGHT;
-	else camDirHN = CAM_BACK;
-
-	if (Between(camTra.rotate_.x, 45.0f, MAX_CAM_ROTATE_X))camDirVT = CAM_TOP;
-	else if (Between(camTra.rotate_.x, -45.0f, MAX_CAM_ROTATE_X))camDirVT = CAM_BOTTOM;
-	else camDirVT = CAM_MIDDLE;
-
-	/*
-	・移動系の処理は対象が0, 0, 0で固定なので書かなくていい
-	・対象との距離も今回は変える必要がまったくないので定数化
-	*/
-}
-
-void ModelTestScreen::FinishCamera()
-{
-	//doonce作ってカメラ回転さしたいね
-	Transform toTra;
-	//toTra.rotate_.x 
 }
 
 Cube::MARK ModelTestScreen::CheckMarkVH(int x, int y, int z, SURFACE surface, DIR dir)
@@ -1310,6 +1332,8 @@ Cube::MARK ModelTestScreen::CheckMarkVH(int x, int y, int z, SURFACE surface, DI
 			break;
 		}
 	}
+
+	Debug::Log("縦横判定", true);
 	return CheckMark(checkMarks, surface);
 }
 
@@ -1344,6 +1368,7 @@ Cube::MARK ModelTestScreen::CheckMarkD(int x, int y, int z, SURFACE surface) {
 		else {
 			check.z = z;
 		}
+		Debug::Log("斜め判定", true);
 		checkMarks.push_back(check);
 	}
 	return CheckMark(checkMarks, surface);
@@ -1377,6 +1402,135 @@ Cube::MARK ModelTestScreen::CheckMark(vector<XMINT3> points, SURFACE surface)
 	}
 	Debug::Log(((std::string)NAMEOF_ENUM(mark)).substr(5) + "がそろった", true);
 	return mark;
+}
+
+//============================ ゲーム終了処理関連 ============================
+
+void ModelTestScreen::WinProcess(CONTROL winner) {
+
+	finished = true;
+	//カメラ系初期化
+	winRotProgress = 0;
+	enFreeLook = false;
+	winPrevRot = camTra.rotate_;
+	switch (winner)
+	{
+	case ModelTestScreen::CONTROL_1P:
+		winNextRot = Surface2CamRot(winFlag.p1WinSurface, &winPrevRot);
+		debugStr[5] = "1p syouri";
+		break;
+	case ModelTestScreen::CONTROL_2P:
+		winNextRot = Surface2CamRot(winFlag.p2WinSurface, &winPrevRot);
+		debugStr[5] = "2p syouri";
+		break;
+	}
+
+	//ボタン初期化
+	titleButton = Instantiate<ButtonGP>(this);
+	titleButton->SetText("Back to Title");
+	titleButton->SetPosition({ -200,200,0 });
+	titleButton->SetScale(0.5f);
+	//titleButton->
+	titleButton->SetAction(BUTTON_ACTION::BACK_TO_TITLE);
+
+}
+
+void ModelTestScreen::FinishCamera()
+{
+	bool movingCamera = false;
+
+	//左クリックで回転させられた場合、フリールックを有効化
+	if (Input::IsMouseButton(0)) {
+		rotSpdY = Input::GetMouseMove().x * AT_RATIO;   //マウスx移動量でy軸回転
+		rotSpdX = Input::GetMouseMove().y * AT_RATIO;   //マウスy移動量でx軸回転
+		enFreeLook = true;
+		movingCamera = true;
+	}
+
+	if (enFreeLook) {
+		//カメラ移動しなかったら速度減少
+		if (!movingCamera) {
+			//各速度が0でない場合割合減少 一定以下で0にする
+			if (rotSpdX != DEFAULT_CAM_SPEED) {
+				rotSpdX /= DC_RATIO;
+				if (std::abs(rotSpdX) < TH_ZEROSPEED)rotSpdX = DEFAULT_CAM_SPEED;
+			}
+			if (rotSpdY != DEFAULT_CAM_SPEED) {
+				rotSpdY /= DC_RATIO;
+				if (std::abs(rotSpdY) < TH_ZEROSPEED)rotSpdY = DEFAULT_CAM_SPEED;
+			}
+		}
+
+		//回転情報に加算
+		camTra.rotate_.y += rotSpdY;
+		camTra.rotate_.x += rotSpdX;
+
+		//範囲内処理(直接代入にすると一瞬固まるため加減することで回避)
+		camTra.rotate_.x = std::clamp(camTra.rotate_.x, MIN_CAM_ROTATE_X, MAX_CAM_ROTATE_X);
+		if (camTra.rotate_.y > LIMIT_CAM_ROTATE_Y) {
+			camTra.rotate_.y -= Twice(LIMIT_CAM_ROTATE_Y);
+		}
+		if (camTra.rotate_.y < -LIMIT_CAM_ROTATE_Y) {
+			camTra.rotate_.y += Twice(LIMIT_CAM_ROTATE_Y);
+		}
+	}
+	else {
+		//0~100 後置
+		if (winRotProgress > maxWinRotProgress) {
+			enFreeLook = true;
+			return;
+		}
+		camTra.rotate_.x = Easing::Calc(WIN_CAM_EASE, winRotProgress, maxWinRotProgress, winPrevRot.x, winNextRot.x);
+		camTra.rotate_.y = Easing::Calc(WIN_CAM_EASE, winRotProgress, maxWinRotProgress, winPrevRot.y, winNextRot.y);
+		camTra.rotate_.z = Easing::Calc(WIN_CAM_EASE, winRotProgress, maxWinRotProgress, winPrevRot.z, winNextRot.z);
+		winRotProgress++;
+	}
+
+	//カメラにセットする
+	XMMATRIX mRotY = XMMatrixRotationY(XMConvertToRadians(camTra.rotate_.y));   //Y軸でY回転量分回転させる行列
+	XMMATRIX mRotX = XMMatrixRotationX(XMConvertToRadians(camTra.rotate_.x));   //X軸でX回転量分回転させる行列
+
+	//カメラ設定 位置->対象の後方
+	XMVECTOR vCam = { 0,0,-CAM_DISTANCE,0 };                  //距離指定
+	vCam = XMVector3TransformCoord(vCam, mRotX * mRotY);    //変形:回転
+	Camera::SetPosition(vCam);            //セット
+
+}
+
+void ModelTestScreen::Restart()
+{
+	//各種再初期化
+}
+
+void ModelTestScreen::BackToTitle()
+{
+	
+}
+
+
+XMFLOAT3 ModelTestScreen::ConvertPts2Pos(int x, int y, int z) {
+	return { (float)x - OUTER_POINT, (float)y - OUTER_POINT, (float)z - OUTER_POINT };
+}
+
+XMFLOAT3 ModelTestScreen::Surface2CamRot(SURFACE surface, XMFLOAT3* camRot)
+{
+	switch (surface)
+	{
+	case Cube::SURFACE::SURFACE_FRONT:	return { 0, 0, 0 };
+	case Cube::SURFACE::SURFACE_BACK:
+		if (camRot->y > 0)	return { 0, 180, 0 };
+		return { 0, -180, 0 };
+	case Cube::SURFACE::SURFACE_LEFT:
+		return { 0, 90, 0 };
+	case Cube::SURFACE::SURFACE_RIGHT:
+		return { 0, -90, 0 };
+	case Cube::SURFACE::SURFACE_TOP:
+		return { MAX_CAM_ROTATE_X, camRot->y, 0 };
+	case Cube::SURFACE::SURFACE_BOTTOM:
+		return { MIN_CAM_ROTATE_X, camRot->y, 0 };
+	}
+
+	return { 0,0,0 };
 }
 
 /*
