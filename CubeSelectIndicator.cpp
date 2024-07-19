@@ -460,7 +460,7 @@ void CubeSelectIndicator::StartDrawArrow(Cube::ROTATE_DIR dir, int rotCol)
 void CubeSelectIndicator::DrawArrow(Transform& tra)
 {
 	DirectX::XMStoreFloat4x4(&(t.matrix), tra.GetWorldMatrix());
-	mt = EFFEKSEERLIB::gEfk->Play("arrow", t);
+	mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_ARROW, t);
 }
 
 //=================== •`‰æ‚ÉŽg—p‚·‚é‚â‚Â ===================

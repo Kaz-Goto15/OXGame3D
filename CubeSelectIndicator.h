@@ -65,13 +65,13 @@ private:
     int rotCol;         //選択中の列
     Cube::ROTATE_DIR direction; //選択中の方向
     DRAW_MODE drawMode;         //描画モード
-
+public:
     //配置面と矢印の回転
     //surface:描画面
     //side:方向があるものを描画面からその面の方向を指すようにする
     XMFLOAT3 Surface2Rotate(SURFACE surface, SURFACE side);
     XMFLOAT3 Surface2Rotate(SURFACE surface);
-
+private:
     //指定座標、面にインジケータを描画(1x1マス)
     //isOuterは有効にすると勝手に外側の座標を代入し、外側のマスを描画するようになる デフォルトはtrue
     void DrawSurface(Transform& tra, Cube::SURFACE surface, bool isOuter = true);

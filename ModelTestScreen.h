@@ -5,6 +5,7 @@
 #include "Screen.h"
 #include "Cube.h"
 #include "Easing.h"
+#include "./Include/EffekseeLib/EffekseerVFX.h"
 
 class CubeSelectIndicator;
 class Screen;
@@ -14,6 +15,7 @@ class Text;
 class ButtonGP;
 
 using std::vector;
+using std::string;
 
 using SURFACE = Cube::SURFACE;
 using ROTATE_DIR = Cube::ROTATE_DIR;
@@ -29,14 +31,15 @@ public:
 	void Update() override;
 	void Draw() override;
 	void Release() override;
-private:
-	int hImgBG;
-	Screen* pScreen;	//スクリーン呼出のためのポインタ
+	void ButtonAct(int hAct) override;
 
-	const int PIECES = 3;
-	const float OUTER_POINT;
-	vector<vector<vector<Cube*>>> cube;
-	
+private:
+	//ボタン押下時の処理を紐づける列挙
+	enum BUTTON_ACTION {
+		BACK_TO_TITLE,
+		RESTART_GAME
+	};
+
 	//操作モード
 	enum MODE {
 		MODE_SET,       //○×を設置
@@ -47,9 +50,49 @@ private:
 	//操作対象
 	enum CONTROL {
 		CONTROL_1P,
-		CONTROL_2P
+		CONTROL_2P,
+		CONTROL_MAX
 	}control, nextTurn;
+
+	//フラグ
 	bool isIdle;
+	bool isRotating;
+
+	//グループ制御列挙型
+	//上グループほど描画が先にされる　AviUtlと似たようなもの
+	enum GROUP_CONTROL {
+		GROUP_BACK,
+		GROUP_ROTATECUBE,
+		GROUP_TOP,
+		GROUP_MAX
+	};
+	GroupingObject* groupObject[GROUP_MAX];
+
+	//基本情報
+	int hImgBG;
+	Screen* pScreen;	//スクリーン呼出のためのポインタ
+
+	//portrait
+	int hImgWin[CONTROL_MAX];
+	//フィールドの情報(キューブ情報)
+	const int PIECES;
+	const float OUTER_POINT;
+	vector<vector<vector<Cube*>>> cube;
+
+	//エフェクト
+	std::shared_ptr<EFFEKSEERLIB::EFKTransform> mt;
+	EFFEKSEERLIB::EFKTransform t;
+	const float DEFAULT_EFFECT_SPEED;
+	enum EFFECT_STATE {
+		STOP,
+		NEXT_START,
+		DRAWING
+	}arrowState;
+	int nowArrowFrame;
+	const int EFF_FRAME_COMPLETE;
+	const string EFF_ID_COMPLETE;
+	//============================ 選択関連 ============================
+
 	//選択情報
 	struct SelectData {
 		int x, y, z;
@@ -62,35 +105,15 @@ private:
 			z = 0;
 			surface = SURFACE::SURFACE_FRONT;
 			rotCol = 1,
-			dir = ROTATE_DIR::ROT_UP;
+				dir = ROTATE_DIR::ROT_UP;
 		}
 		XMINT3 GetPos() { return XMINT3(x, y, z); }
 	}selectData;
 
-	enum BUTTON_ACTION {
-		BACK_TO_TITLE,
-		RESTART_GAME
-	};
-	void ButtonAct(int hAct) override;
-
-	bool isRotating = false;
-
-	//グループ制御列挙型
-	//上グループほど描画が先にされる　AviUtlと似たようなもの
-	enum GROUP_CONTROL {
-		GROUP_BACK,
-		GROUP_ROTATECUBE,
-		GROUP_TOP,
-		GROUP_MAX
-	};
-	GroupingObject* groupObject[GROUP_MAX];
-	int rotProgress;
-	const int maxRotProgress = 100;	//回転描写にかけるフレーム数
-	const int angleOfRotate = 90;
-	int rotateNo;
-	int rotTime = 0; 
-	//選択場所・インジケーター移動関連
+	//インジケータ
 	CubeSelectIndicator* indicator;
+
+	//方向指定時に使う列挙
 	enum DIR {
 		X,
 		Y,
@@ -105,18 +128,16 @@ private:
 	void MoveSelectChangeDir(ROTATE_DIR changeDir);		//回転方向変更
 	void MoveSelectSlideCol(bool isPlus);				//回転列変更
 
-	void MoveIndicator();	//?
-
+	//各モード遷移時の初期化
 	void RotateModeInit();	//回転モード移行時の初期化
 	void SetModeInit();		//設置モード移行時の初期化
-	bool isMoving;			//現在移動中か
 
 	//============================ カメラ関連 ============================
 
 	Transform camTra;				//カメラ変形情報
 	float rotSpdX, rotSpdY;			//カメラ回転速度
 	bool isEnded;                   //ゲーム終了フラグ
-	const int CAM_DISTANCE;			//カメラ距離 固定
+	const float CAM_DISTANCE;			//カメラ距離 固定
 	const float TH_ZEROSPEED;		//カメラ速度0にする閾値
 	const float DC_RATIO;            //カメラ減速割合
 	const float AT_RATIO;			//カメラ移動量に対する回転距離単位
@@ -140,6 +161,8 @@ private:
 	void RotateCamera();
 
 	//============================ 回転モード関連 ============================
+	int rotProgress;
+	const int MAX_ROT_PROGRESS;	//回転描写にかけるフレーム数
 	const Easing::Ease ROTATE_EASE;
 	//回転後の座標・回転キューブの親オブジェクト変更
 	void UpdateCubeTransform();
@@ -154,15 +177,6 @@ private:
 	void SwapCube();
 	void SwapCubeModifySwapCount(int* swapCount, int row, bool isCC);	//入れ替え回数を変化させる関数
 
-
-	//============================ DEBUG ============================
-	//デバッグテキスト
-	std::string debugStr[20];
-	DebugText* debugtext;
-	void UpdateStr();
-	Cube* testCubeParent;
-	Cube* testCubeChild;
-	//SURFACE testSur = SURFACE::SURFACE_TOP, testSide= SURFACE::SURFACE_TOP;
 	//============================ 判定関連 ============================
 	//勝利フラグ構造体
 	struct WinFlag {
@@ -188,7 +202,6 @@ private:
 		}
 	}winFlag;
 
-
 	//斜め判定時の座標指定時に使う列挙型
 	//これを用いて判定する関数では0以上を指定したときに固定値とみなすため、ここの値は0未満にする
 	enum DIAG_VAR {
@@ -207,10 +220,10 @@ private:
 	//判定の本体 呼び出すと一連の処理を行う selectDataと紐づく(引数で渡しても良い)
 	void Judge();
 
-	//次のターンへ移行する ここで終了処理も内包する
+	//次のターンへ移行する 強制移行もできる
 	void TurnEnd();
 
-	//縦横奥の判定
+	//縦横の判定
 	//揃ってればそのマークを、揃ってなければBLANKを返す
 	//引数:xyz,surface,XYZ方向(見るマスの軸に沿った向き)
 	MARK CheckMarkVH(int x, int y, int z, SURFACE surface, DIR dir);
@@ -241,14 +254,17 @@ private:
 	void JudgeVHD(XMINT3 pos, SURFACE surface, WinFlag& winFlag, FILTER filter);
 
 	//============================ ゲーム終了処理関連 ============================
+
 	bool finished;					//ゲーム終了フラグ
 	XMFLOAT3 winPrevRot, winNextRot;//勝利時のカメラ回転率と移動後のカメラ回転率を格納する変数
-	const int maxWinRotProgress;	//終了時に揃った列にカメラを移動させるときのフレーム数
+	const int MAX_WIN_ROT_PROGRESS;	//終了時に揃った列にカメラを移動させるときのフレーム数
 	int winRotProgress;				//現在カメラ移動フレーム数
 	bool enFreeLook;				//ゲーム終了後にカメラを動かした場合に有効化 trueにすると揃った面に移動するカメラが途中でも停止する
 	Text* winPlayerMsg;
 	ButtonGP* titleButton;			//タイトルへ戻るボタン
+	XMINT2 titleBtnPos;				//タイトルボタン座標 1280x720基準
 	ButtonGP* restartButton;		//再戦ボタン
+	XMINT2 restartBtnPos;				//タイトルボタン座標 1280x720基準
 	Easing::Ease WIN_CAM_EASE;
 	void WinProcess(CONTROL winner);//勝利確定時の処理
 	void FinishCamera();			//ゲーム終了時のカメラ処理
@@ -256,12 +272,6 @@ private:
 	//これらはButtonActから呼び出されるやつ
 	void Restart();					//再戦
 	void BackToTitle();				//タイトルへ戻る
-
-	//XMFLOAT3 Surface2CamRot(SURFACE surface, XMFLOAT3* camRot);	//その面に垂直に向くようなカメラ回転率を返す
-
-	//============================ 〇〇関連 ============================
-
-
 
 	//============================ 汎用関数・変換関数 ============================
 	//値が範囲内か
@@ -282,13 +292,13 @@ private:
 	//半分にする 型をそのまんま返すためintなどは自動切り捨て
 	template <class T>
 	T Half(T value) {
-		return (value / 2.0f);
+		return (value / 2);
 	}
 
 	//2倍にする
 	template <class T>
 	T Twice(T value) {
-		return (value * 2.0f);
+		return (value * 2);
 	}
 
 	//偶数かを見る
@@ -315,6 +325,19 @@ private:
 
 	//その面に垂直に向くようなカメラ回転率を返す 上下はrotXさえ垂直であればいいので現在のrotYをそのまま使う
 	XMFLOAT3 Surface2CamRot(SURFACE surface, XMFLOAT3* camRot);
+
+	//カメラ回転率から方位を設定する
+	void StoreCamDir(XMFLOAT3 camRotate, CAM_DIR_VT_CARDINAL* camDir_Vertical, CAM_DIR_HN_CARDINAL* camDir_Horizontal);
+
+	//============================ DEBUG ============================
+//デバッグテキスト
+	std::string debugStr[20];
+	DebugText* debugtext;
+	void UpdateStr();
+	Cube* testCubeParent;
+	Cube* testCubeChild;
+	//SURFACE testSur = SURFACE::SURFACE_TOP, testSide= SURFACE::SURFACE_TOP;
+
 };
 
 /*
@@ -332,6 +355,9 @@ SET,ROTATEで使うキー:前回モードへ移行 Spaceでいいんじゃね
 */
 
 /*
-回転モードの変数まとめきれてないのとそれ以降の関数整列してないよ
+エフェクトは１面全部で１個でいいね
+あと音足してくれ
+ボタンと遷移も
+あといらんクラスけせ
 
 */
