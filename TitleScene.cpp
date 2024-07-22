@@ -20,7 +20,7 @@ std::string TitleScene::TitleImgFileName(Img E_IMG)
 	switch (E_IMG)
 	{
 	case Img::PIC_BACKGROUND:		return dir + "bg2.png";
-	case Img::PIC_TITLE:			return dir + "title3.png";
+	case Img::PIC_TITLE:			return dir + "titleox.png";
 	case Img::PIC_WHITE:			return dir + "white.png";
 	}
 	return "null.png";
@@ -35,7 +35,7 @@ TitleScene::TitleScene(GameObject* parent):
 {}
 
 void TitleScene::Initialize() {
-	//AudioManager::Play(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
+	AudioManager::Load(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
 	for (int i = 0; i < Img::PIC_MAX; i++) {
 		hPict_[i] = Image::Load(TitleImgFileName(static_cast<Img>(i)));
 	}
@@ -104,7 +104,7 @@ void TitleScene::Draw() {
 			//state_ = S_MAIN;
 			//progress = 0;
 		}
-
+		break;
 	case TitleScene::S_MAIN:
 		maxProgress = 60;
 		if (progress < maxProgress) {
@@ -131,7 +131,7 @@ void TitleScene::Draw() {
 
 			break;
 		}
-
+		break;
 	case TitleScene::S_SELECT:
 	default:
 		Image::Draw(hPict_[PIC_BACKGROUND]);

@@ -19,12 +19,19 @@
 #include "Engine/Text.h"
 #include "ButtonGP.h"
 
+#include "./Engine/SceneManager.h"
+
 using KEY = SystemConfig::KEY;
 using SystemConfig::GetKey;
 //コンストラクタ
 ModelTestScreen::ModelTestScreen(GameObject* parent) :
 	Screen(parent, "ModelTestScreen"),
 	hImgBG(-1),
+	BGM_ID(AudioManager::AUDIO_SOURCE::BGM_GAME),
+	SE_ID_SET(AudioManager::AUDIO_SOURCE::SE_SET),
+	SE_ID_ROTATE(AudioManager::AUDIO_SOURCE::SE_ROTATE),
+	SE_ID_END(AudioManager::AUDIO_SOURCE::SE_CLAP),
+	SE_ID_CHANGE(AudioManager::AUDIO_SOURCE::SE_CHANGE),
 	//キューブ
 	PIECES(3),
 	OUTER_POINT(Half(((float)(PIECES - 1)))),
@@ -43,7 +50,6 @@ ModelTestScreen::ModelTestScreen(GameObject* parent) :
 	indicator(nullptr),
 	//カメラ
 	rotSpdX(0), rotSpdY(0),		//カメラ回転速度
-	isEnded(false),				//ゲーム終了フラグ
 	CAM_DISTANCE(10.0f),			//対象からカメラまでの距離
 	TH_ZEROSPEED(0.3f),			//カメラ速度を0にする閾値 この値を下回ると速度を０にする
 	DC_RATIO(1.2f),				//カメラ減速割合
@@ -67,10 +73,14 @@ ModelTestScreen::ModelTestScreen(GameObject* parent) :
 	enFreeLook(false),
 	winPlayerMsg(nullptr),
 	titleButton(nullptr),
-	titleBtnPos({-200,200}),
+	titleBtnPos({ -200,200 }),
 	restartButton(nullptr),
 	restartBtnPos({ 200,200 }),
 	WIN_CAM_EASE(Easing::Ease::OUT_QUART),
+	MAX_IMG_ALPHA(255),
+	WIN_IMG_ALPHA_PLUS(10),
+	winImageAlpha(0),
+	winner(CONTROL::CONTROL_1P),
 	//デバッグ
 	debugtext(nullptr),
 	testCubeParent(nullptr),
@@ -98,6 +108,9 @@ void ModelTestScreen::Initialize()
 	hImgWin[CONTROL_1P] = Image::Load("Game\\p1win.png");
 	hImgWin[CONTROL_2P] = Image::Load("Game\\p2win.png");
 
+	//音声読込
+	AudioManager::Load(BGM_ID, SE_ID_SET, SE_ID_ROTATE, SE_ID_END, SE_ID_CHANGE);
+	AudioManager::Play(BGM_ID);
 	//キューブ本体を保存するvectorをリサイズ
 	cube.resize(PIECES, vector<vector<Cube*>>(PIECES, vector<Cube*>(PIECES, nullptr)));
 
@@ -133,49 +146,24 @@ void ModelTestScreen::Initialize()
 	for (int i = 0; i < 20; i++) {
 		debugtext->AddStrPtr(&debugStr[i]);
 	}
-	/*
-	for (int x = 0; x < cube.size(); x++) {
-		for (int y = 0; y < cube[0].size(); y++) {
-			for (int z = 0; z < cube[0][0].size(); z++) {
-				if (x == 0) {
-					switch (z+3*y)
-					{
-					case 0:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_1);	break;
-					case 1:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_2);	break;
-					case 2:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_3);	break;
-					case 3:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_4);	break;
-					case 4:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_5);	break;
-					case 5:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_6);	break;
-					case 6:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_7);	break;
-					case 7:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_8);	break;
-					case 8:	cube[x][y][z]->SetMark(SURFACE::SURFACE_LEFT, MARK::MARK_9);	break;
-					}
-				}
-				if (!(x == y && y == z && x == z)) {}
-				if (!(x == 0)) { cube[x][y][z]->Invisible(); }
-					//cube[x][y][z]->Invisible();
-			}
-		}
-	}
-	*/
 
 	//エフェクト
 	EFFEKSEERLIB::gEfk->AddEffect(EFF_ID_COMPLETE, "Effect\\completeSurface.efk");
 	t.speed = DEFAULT_EFFECT_SPEED;      //エフェクト速度 ※エクスポート時の速度が1.0
 	t.isLoop = true;
 	t.maxFrame = EFF_FRAME_COMPLETE;
-
-	EFFEKSEERLIB::gEfk->SetFPS(SystemConfig::GetFPS());
-	Transform traaaa;
-	DirectX::XMStoreFloat4x4(&(t.matrix), traaaa.GetWorldMatrix());
-	mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_COMPLETE, t);
-	traaaa.position_.x = 1;
-	DirectX::XMStoreFloat4x4(&(t.matrix), traaaa.GetWorldMatrix());
-	mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_COMPLETE, t);
-
-	traaaa.position_.x = -1;
-	DirectX::XMStoreFloat4x4(&(t.matrix), traaaa.GetWorldMatrix());
-	mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_COMPLETE, t);
+	
+	//EFFEKSEERLIB::gEfk->SetFPS(SystemConfig::GetFPS());
+	//Transform traaaa;
+	//DirectX::XMStoreFloat4x4(&(t.matrix), traaaa.GetWorldMatrix());
+	//mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_COMPLETE, t);
+	//traaaa.position_.x = 1;
+	//DirectX::XMStoreFloat4x4(&(t.matrix), traaaa.GetWorldMatrix());
+	//mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_COMPLETE, t);
+	//
+	//traaaa.position_.x = -1;
+	//DirectX::XMStoreFloat4x4(&(t.matrix), traaaa.GetWorldMatrix());
+	//mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_COMPLETE, t);
 
 }
 
@@ -210,7 +198,7 @@ void ModelTestScreen::Update()
 		RotateCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
 	}
 	else {
-		FinishCamera();     //カメラの処理 MODE_VIEWでの分岐も内包
+		FinishCamera();     //ゲーム終了後のカメラの処理
 	}
 
 	//操作状態がアイドルでなければ
@@ -230,6 +218,7 @@ void ModelTestScreen::Update()
 					case ModelTestScreen::CONTROL_1P:   cube[selectData.x][selectData.y][selectData.z]->SetMark(selectData.surface, Cube::MARK::MARK_O);  break;
 					case ModelTestScreen::CONTROL_2P:   cube[selectData.x][selectData.y][selectData.z]->SetMark(selectData.surface, Cube::MARK::MARK_X);  break;
 					}
+					AudioManager::Play(SE_ID_SET);
 					//判定
 					Judge();
 					//ターンエンド処理 終了処理もここ
@@ -266,6 +255,8 @@ void ModelTestScreen::Update()
 					break;
 				}
 				indicator->SetCubeRotate(selectData.dir);
+				//音
+				AudioManager::Play(SE_ID_CHANGE);
 			}
 			//回転
 			else if (Input::IsKeyDown(GetKey(KEY::KEY_ACT))) {
@@ -276,6 +267,8 @@ void ModelTestScreen::Update()
 				//回転中フラグの有効化
 				isRotating = true;
 
+				//音
+				AudioManager::Play(SE_ID_ROTATE);
 				//移動処理・移動完了後のフラグ・勝利判定・ターン移行は別で
 			}
 			else if (Input::IsKeyDown(GetKey(KEY::KEY_CHANGE))) {	//モード切替
@@ -319,6 +312,15 @@ void ModelTestScreen::Update()
 void ModelTestScreen::Draw()
 {
 	Image::Draw(hImgBG);
+
+	if (finished) {
+		if (winImageAlpha < MAX_IMG_ALPHA) {
+			winImageAlpha += WIN_IMG_ALPHA_PLUS;
+			if (winImageAlpha > MAX_IMG_ALPHA)winImageAlpha = MAX_IMG_ALPHA;
+		}
+		Image::SetAlpha(hImgWin[winner], winImageAlpha);
+		Image::Draw(hImgWin[winner]);
+	}
 }
 
 //開放
@@ -739,6 +741,8 @@ void ModelTestScreen::RotateModeInit()
 	indicator->SetCubeRotate(selectData.dir);
 	indicator->SetRotateColumn(selectData.rotCol);
 
+	//音
+	AudioManager::Play(SE_ID_CHANGE);
 
 	debugStr[7] = "rotmodeinit:" + std::to_string(selectData.rotCol) + ","
 		+ (std::string)NAMEOF_ENUM(selectData.dir);
@@ -859,6 +863,9 @@ void ModelTestScreen::SetModeInit()
 
 	//インジケータに設定
 	indicator->SetDrawPoint(selectData.GetPos(), selectData.surface);
+
+	//音
+	AudioManager::Play(SE_ID_CHANGE);
 
 	debugStr[6] = "setmodeinit:" + std::to_string(selectData.x) + ","
 		+ std::to_string(selectData.y) + ","
@@ -1422,7 +1429,7 @@ void ModelTestScreen::JudgeVHD(XMINT3 pos, Cube::SURFACE surface, WinFlag& flag,
 //============================ ゲーム終了処理関連 ============================
 
 void ModelTestScreen::WinProcess(CONTROL winner) {
-
+	this->winner = winner;
 	finished = true;
 	//カメラ系初期化
 	winRotProgress = 0;
@@ -1444,6 +1451,7 @@ void ModelTestScreen::WinProcess(CONTROL winner) {
 	EFFEKSEERLIB::gEfk->SetFPS(SystemConfig::GetFPS());
 	DirectX::XMStoreFloat4x4(&(t.matrix), transform_.GetWorldMatrix());
 	mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_COMPLETE, t);
+
 	//ボタン初期化
 	titleButton = Instantiate<ButtonGP>(this);
 	titleButton->SetText("Back to Title");
@@ -1451,6 +1459,9 @@ void ModelTestScreen::WinProcess(CONTROL winner) {
 	titleButton->SetScale(0.5f);
 	//titleButton->
 	titleButton->SetAction(BUTTON_ACTION::BACK_TO_TITLE);
+
+	//おと
+	AudioManager::Play(SE_ID_END);
 
 }
 

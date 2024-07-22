@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
 #include "Include/nameof.hpp"
 #include "Include/json.hpp"
 
@@ -11,7 +12,7 @@ using json = nlohmann::json;
 using namespace nameof;
 
 namespace AudioManager {
-	int handle[AUDIO_SOURCE::MAX];
+	std::vector<int> handle;
 	json data;
 	bool loadAllFile = false;	//初期化時に全音声ファイルを読み込むか
 	const char dataFile[] = "Data\\audioSource.json";	//ファイル
@@ -19,6 +20,8 @@ namespace AudioManager {
 
 void AudioManager::Init()
 {
+	handle.resize(AUDIO_SOURCE::MAX, -1);
+	//std::fill_n(handle, handle + AUDIO_SOURCE::MAX, -1);
 	std::ifstream f(dataFile);
 	data = json::parse(f);
 	if (loadAllFile) {
@@ -46,7 +49,10 @@ void AudioManager::Load(AUDIO_SOURCE source)
 
 void AudioManager::Play(int sourceID)
 {
-	if (!loadAllFile) {
+	//if (!loadAllFile) {
+	//	Load(sourceID);
+	//}
+	if (handle[sourceID] == -1) {
 		Load(sourceID);
 	}
 	Audio::Play(handle[sourceID]);

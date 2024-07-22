@@ -12,6 +12,11 @@ namespace AudioManager
 		SE_CLEAR,
 		BGM_LOBBY,
 		BGM_PLAY_0,
+		SE_CLAP,
+		SE_SET,
+		SE_ROTATE,
+		BGM_GAME,
+		SE_CHANGE,
 		MAX
 	};
 

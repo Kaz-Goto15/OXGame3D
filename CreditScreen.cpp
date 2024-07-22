@@ -28,7 +28,7 @@ void CreditScreen::Initialize()
 {
     hPict_[PIC_BACKGROUND] = Image::Load("Screen/black.png");
     hPict_[PIC_BASIC_FRAME_TEX] = Image::Load("Screen/frame256_2.png");
-    hPict_[PIC_DESCRIPTION] = Image::Load("Screen/descr.png");
+    hPict_[PIC_DESCRIPTION] = Image::Load("Screen/descr2.png");
     Image::SetAlpha(hPict_[PIC_BACKGROUND], 128);
     
     debugtext = Instantiate<DebugText>(this);

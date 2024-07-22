@@ -58,5 +58,35 @@
     "loop": true,
     "maxPlay": 1,
     "attribute": 0
+  },
+  "SE_CLAP": {
+    "file": "clap04_fade.wav",
+    "loop": false,
+    "maxPlay": 1,
+    "attribute": 0
+  },
+  "SE_SET": {
+    "file": "cursor31.wav",
+    "loop": false,
+    "maxPlay": 3,
+    "attribute": 0
+  },
+  "SE_ROTATE": {
+    "file": "cursor26.wav",
+    "loop": false,
+    "maxPlay": 1,
+    "attribute": 0
+  },
+  "BGM_GAME": {
+    "file": "bgm_k04.wav",
+    "loop": true,
+    "maxPlay": 1,
+    "attribute": 0
+  },
+  "SE_CHANGE": {
+    "file": "foot_fall.wav",
+    "loop": false,
+    "maxPlay": 1,
+    "attribute": 0
   }
 }

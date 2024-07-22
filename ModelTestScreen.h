@@ -5,6 +5,8 @@
 #include "Screen.h"
 #include "Cube.h"
 #include "Easing.h"
+
+#include "AudioManager.h"
 #include "./Include/EffekseeLib/EffekseerVFX.h"
 
 class CubeSelectIndicator;
@@ -71,7 +73,11 @@ private:
 	//基本情報
 	int hImgBG;
 	Screen* pScreen;	//スクリーン呼出のためのポインタ
-
+	const AudioManager::AUDIO_SOURCE BGM_ID;
+	const AudioManager::AUDIO_SOURCE SE_ID_SET;
+	const AudioManager::AUDIO_SOURCE SE_ID_ROTATE;
+	const AudioManager::AUDIO_SOURCE SE_ID_CHANGE;
+	const AudioManager::AUDIO_SOURCE SE_ID_END;
 	//portrait
 	int hImgWin[CONTROL_MAX];
 	//フィールドの情報(キューブ情報)
@@ -136,7 +142,6 @@ private:
 
 	Transform camTra;				//カメラ変形情報
 	float rotSpdX, rotSpdY;			//カメラ回転速度
-	bool isEnded;                   //ゲーム終了フラグ
 	const float CAM_DISTANCE;			//カメラ距離 固定
 	const float TH_ZEROSPEED;		//カメラ速度0にする閾値
 	const float DC_RATIO;            //カメラ減速割合
@@ -266,6 +271,10 @@ private:
 	ButtonGP* restartButton;		//再戦ボタン
 	XMINT2 restartBtnPos;				//タイトルボタン座標 1280x720基準
 	Easing::Ease WIN_CAM_EASE;
+	int MAX_IMG_ALPHA;				//画像アルファ値最大
+	int WIN_IMG_ALPHA_PLUS;				//画像アルファ値加算値
+	int winImageAlpha;				//画像アルファ値格納
+	CONTROL winner;					//勝者
 	void WinProcess(CONTROL winner);//勝利確定時の処理
 	void FinishCamera();			//ゲーム終了時のカメラ処理
 

@@ -75,8 +75,8 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum, ATTRIBUTE at)
 	DWORD dwBytes = 0;
 
 	Chunk riffChunk = { 0 };
-	Confirm(&isSucc, ReadFile(hFile, &riffChunk.id, 4, &dwBytes, NULL), "open");
-	Confirm(&isSucc, ReadFile(hFile, &riffChunk.size, 4, &dwBytes, NULL), "open");
+	Confirm(&isSucc, ReadFile(hFile, &riffChunk.id, 4, &dwBytes, NULL), "open" + fileName);
+	Confirm(&isSucc, ReadFile(hFile, &riffChunk.size, 4, &dwBytes, NULL), "open" + fileName);
 
 	char wave[4] = "";
 	Confirm(&isSucc, ReadFile(hFile, &wave, 4, &dwBytes, NULL), "wave");
