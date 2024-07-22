@@ -131,9 +131,7 @@ void TitleScene::Draw() {
 
 			break;
 		}
-		break;
 	case TitleScene::S_SELECT:
-	default:
 		Image::Draw(hPict_[PIC_BACKGROUND]);
 		Image::Draw(hPict_[PIC_TITLE]);
 		break;
