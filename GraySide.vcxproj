@@ -138,8 +138,6 @@
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonGP.cpp" />
-    <ClCompile Include="ButtonGroup.cpp" />
-    <ClCompile Include="ceiling.cpp" />
     <ClCompile Include="ConfigKey.cpp" />
     <ClCompile Include="ControlSlider.cpp" />
     <ClCompile Include="CreditScreen.cpp" />
@@ -148,7 +146,6 @@
     <ClCompile Include="DebugText.cpp" />
     <ClCompile Include="EaseScene.cpp" />
     <ClCompile Include="Easing.cpp" />
-    <ClCompile Include="EditScene.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Engine\Audio.cpp" />
     <ClCompile Include="Engine\BillBoard.cpp" />
@@ -174,40 +171,22 @@
     <ClCompile Include="Engine\Text.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />
     <ClCompile Include="Engine\Transform.cpp" />
-    <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="Field.cpp" />
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="GroupingObject.cpp" />
-    <ClCompile Include="HelpBar.cpp" />
-    <ClCompile Include="GameSceneObject.cpp" />
     <ClCompile Include="Include\EffekseeLib\EffekseerVFX.cpp" />
-    <ClCompile Include="MapLoader.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
-    <ClCompile Include="ModelTestScreen.cpp" />
     <ClCompile Include="OptionScreen.cpp" />
     <ClCompile Include="PlayScene.cpp" />
-    <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="StageData.cpp" />
-    <ClCompile Include="StageView.cpp" />
-    <ClCompile Include="Status.cpp" />
-    <ClCompile Include="Switch.cpp" />
-    <ClCompile Include="TestEntity.cpp" />
     <ClCompile Include="TextLoader.cpp" />
     <ClCompile Include="TitleButton.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="GameData.cpp" />
-    <ClCompile Include="Ground.cpp" />
-    <ClCompile Include="Health.cpp" />
-    <ClCompile Include="Item.cpp" />
     <ClCompile Include="KeyConfig.cpp" />
-    <ClCompile Include="Needle.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="RivalObject.cpp" />
     <ClCompile Include="SceneChange.cpp" />
     <ClCompile Include="SceneChangeAnim.cpp" />
     <ClCompile Include="SplashScene.cpp" />
@@ -218,8 +197,6 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="ButtonGP.h" />
-    <ClInclude Include="ButtonGroup.h" />
-    <ClInclude Include="ceiling.h" />
     <ClInclude Include="ConfigKey.h" />
     <ClInclude Include="ControlSlider.h" />
     <ClInclude Include="CreditScreen.h" />
@@ -228,7 +205,6 @@
     <ClInclude Include="DebugText.h" />
     <ClInclude Include="EaseScene.h" />
     <ClInclude Include="Easing.h" />
-    <ClInclude Include="EditScene.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Engine\Audio.h" />
     <ClInclude Include="Engine\BillBoard.h" />
@@ -254,40 +230,22 @@
     <ClInclude Include="Engine\Text.h" />
     <ClInclude Include="Engine\Texture.h" />
     <ClInclude Include="Engine\Transform.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="Field.h" />
     <ClInclude Include="Frame.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="GroupingObject.h" />
-    <ClInclude Include="HelpBar.h" />
-    <ClInclude Include="GameSceneObject.h" />
     <ClInclude Include="Include\EffekseeLib\EffekseerVFX.h" />
-    <ClInclude Include="MapLoader.h" />
     <ClInclude Include="ModelLoader.h" />
-    <ClInclude Include="ModelTestScreen.h" />
     <ClInclude Include="OptionScreen.h" />
     <ClInclude Include="PlayScene.h" />
-    <ClInclude Include="ResultScene.h" />
     <ClInclude Include="Sample.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="AudioManager.h" />
-    <ClInclude Include="StageData.h" />
-    <ClInclude Include="StageView.h" />
-    <ClInclude Include="Status.h" />
-    <ClInclude Include="Switch.h" />
-    <ClInclude Include="TestEntity.h" />
     <ClInclude Include="TextLoader.h" />
     <ClInclude Include="TitleButton.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="GameData.h" />
-    <ClInclude Include="Ground.h" />
-    <ClInclude Include="Health.h" />
-    <ClInclude Include="Item.h" />
     <ClInclude Include="KeyConfig.h" />
-    <ClInclude Include="Needle.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="RivalObject.h" />
     <ClInclude Include="SceneChange.h" />
     <ClInclude Include="SceneChangeAnim.h" />
     <ClInclude Include="SplashScene.h" />
@@ -317,8 +275,6 @@
   <ItemGroup>
     <None Include="Assets\Data\audioSource.json" />
     <None Include="Assets\Data\charTextSource.json" />
-    <None Include="Assets\Data\map1.json" />
-    <None Include="Assets\Data\map2.json" />
     <None Include="Assets\Data\modelSource.json" />
   </ItemGroup>
   <ItemGroup>

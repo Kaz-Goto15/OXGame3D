@@ -9,6 +9,7 @@ class TestScene : public GameObject
 	int hPict_ = -1;
 	Transform ringTra;
 	Text* newText;
+	Text* descrText;
 	Screen* pScreen;
 public:
 	TestScene(GameObject* parent);

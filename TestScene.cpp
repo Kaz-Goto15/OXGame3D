@@ -5,8 +5,8 @@
 #include "Easing.h"
 #include "Engine/Text.h"
 #include "OptionScreen.h"
-#include "ModelTestScreen.h"
 
+#include <vector>
 TestScene::TestScene(GameObject* parent)
 	: GameObject(parent, "TestScene"),
 	newText(nullptr)
@@ -18,6 +18,8 @@ void TestScene::Initialize(){
 
 	newText = new Text();
 	newText->Initialize(KUROKANE_AQUA_50px);
+	descrText = new Text();
+	descrText->Initialize(TEXT_SOURCE::GAKUMARU_16px);
 }
 void TestScene::Update(){
 
@@ -48,25 +50,40 @@ void TestScene::Update(){
 		pScreen->SetPrevScene(this);
 		pScreen->Run();
 	}
-	//M : ModelTest Screen
-	if (Input::IsKeyDown(DIK_M)) {
-		pScreen = Instantiate<ModelTestScreen>(GetParent());
-		pScreen->SetPrevScene(this);
-		pScreen->Run();
+	//P : Change Scene - Play
+	if (Input::IsKeyDown(DIK_P)) {
+		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 	}
-	//Instantiate<OptionScreen>(this);
 
 }
 void TestScene::Draw(){
+	std::vector<std::string> helpStr = {
+		"ESC : Exit",
+		"S : Splash Scene",
+		"T : Title Scene",
+		"A/D : Change EaseNo",
+		"O : Open Option Screen",
+		"P : Play Scene(old:ModelTestScreen)"
+	};
+	for (int i = 0; i < helpStr.size(); i++) {
+		descrText->Draw(-640, -360+i*24, helpStr[i].c_str(), Text::HORIZONAL_ALIGNMENT::LEFT, Text::VERTICAL_ALIGNMENT::TOP);
+	}
+
 	std::string str = "ease: " + std::to_string(easeNum);
 	newText->Draw(40, 40, str.c_str());
 
+	//イージングのテスト
 	int drawCircleNum = 1600;
-	float circleUnit = 0.225f;
+	//float circleUnit = 0.225f;
 	for (int i = 0; i < drawCircleNum; i++) {
-		float cy = -circleUnit * Easing::Calc(easeNum, i, (float)drawCircleNum, 0, (float)drawCircleNum) + (float)drawCircleNum/2.0f * circleUnit;
-		float cx = circleUnit * i - drawCircleNum/2.0f * circleUnit;
-		//ringTra.ConvDrawPos(cx, cy);
+		//float cy = -circleUnit * Easing::Calc(easeNum, i, (float)drawCircleNum, 0, (float)drawCircleNum) + (float)drawCircleNum/2.0f * circleUnit;
+		//float cx = circleUnit * i - drawCircleNum/2.0f * circleUnit;
+		ringTra.SetPosition(
+			i-drawCircleNum/2.0f,
+			Easing::Calc(easeNum, i, (float)drawCircleNum, 0, (float)drawCircleNum) + (float)drawCircleNum / 2.0f * circleUnit
+		)
+		ringTra.ConvDrawPos(cx, cy);
 		Image::SetTransform(hPict_, ringTra);
 		Image::Draw(hPict_);
 	}

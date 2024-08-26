@@ -27,9 +27,6 @@
     <Filter Include="Splash,Title Obj">
       <UniqueIdentifier>{790f7847-50a8-44ec-92e0-c63c939730ea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Edit">
-      <UniqueIdentifier>{28914db0-d9b0-4aa6-9fe1-52fc29202d6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Option Obj">
       <UniqueIdentifier>{7a0eac1d-0f74-486a-9efe-5545c04a494a}</UniqueIdentifier>
     </Filter>
@@ -48,9 +45,6 @@
     <Filter Include="01Engine\ResourceManager\CSV">
       <UniqueIdentifier>{70832517-5a65-429b-81b2-cc6f0f77de7f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Obj">
-      <UniqueIdentifier>{81254ac1-a20f-4b4c-81aa-898135db4c6f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01Engine\ResourceManager\Model">
       <UniqueIdentifier>{e5f69688-5602-499d-ab78-6c9c0a6051e1}</UniqueIdentifier>
     </Filter>
@@ -60,11 +54,11 @@
     <Filter Include="old\A_Utility">
       <UniqueIdentifier>{e6d5dfa6-5512-49cd-a920-cd16908afac4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="old\B_GameScene">
-      <UniqueIdentifier>{5a1252d3-be04-4a39-9177-473d69588329}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01Engine\ResourceManager\Image">
       <UniqueIdentifier>{a0669233-fea1-4999-852f-f4faa35d930c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Obj">
+      <UniqueIdentifier>{01104458-38c0-4b40-a5e6-503fe11a7e59}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -117,23 +111,11 @@
       <Filter>01Engine\ResourceManager</Filter>
     </ClCompile>
     <ClCompile Include="ConfigKey.cpp" />
-    <ClCompile Include="Item.cpp">
-      <Filter>old\B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Needle.cpp">
-      <Filter>old\B_GameScene</Filter>
-    </ClCompile>
-    <ClCompile Include="RivalObject.cpp">
-      <Filter>old\B_GameScene</Filter>
-    </ClCompile>
     <ClCompile Include="GameData.cpp">
       <Filter>old\A_Utility</Filter>
     </ClCompile>
     <ClCompile Include="KeyConfig.cpp">
       <Filter>old\A_Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Ground.cpp">
-      <Filter>old\B_GameScene</Filter>
     </ClCompile>
     <ClCompile Include="SceneChange.cpp">
       <Filter>old\A_Utility</Filter>
@@ -141,14 +123,8 @@
     <ClCompile Include="SceneChangeAnim.cpp">
       <Filter>old\A_Utility</Filter>
     </ClCompile>
-    <ClCompile Include="ceiling.cpp">
-      <Filter>old\B_GameScene</Filter>
-    </ClCompile>
     <ClCompile Include="Effect.cpp">
       <Filter>old\A_Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Health.cpp">
-      <Filter>old\B_GameScene</Filter>
     </ClCompile>
     <ClCompile Include="SystemConfig.cpp" />
     <ClCompile Include="Engine\SceneManager.cpp">
@@ -164,13 +140,6 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>C_Scene/Screen</Filter>
     </ClCompile>
-    <ClCompile Include="EditScene.cpp">
-      <Filter>C_Scene/Screen</Filter>
-    </ClCompile>
-    <ClCompile Include="StageView.cpp">
-      <Filter>Edit</Filter>
-    </ClCompile>
-    <ClCompile Include="StageData.cpp" />
     <ClCompile Include="EaseScene.cpp">
       <Filter>C_Scene/Screen</Filter>
     </ClCompile>
@@ -180,7 +149,6 @@
     <ClCompile Include="TitleButton.cpp">
       <Filter>Splash,Title Obj</Filter>
     </ClCompile>
-    <ClCompile Include="ButtonGroup.cpp" />
     <ClCompile Include="Sample.cpp">
       <Filter>BaseObject</Filter>
     </ClCompile>
@@ -217,33 +185,14 @@
     <ClCompile Include="TextLoader.cpp">
       <Filter>01Engine\ResourceManager\Text</Filter>
     </ClCompile>
-    <ClCompile Include="GameSceneObject.cpp">
-      <Filter>Game Obj</Filter>
-    </ClCompile>
-    <ClCompile Include="MapLoader.cpp">
-      <Filter>Game Obj</Filter>
-    </ClCompile>
-    <ClCompile Include="Field.cpp">
-      <Filter>Game Obj</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Model.cpp">
       <Filter>01Engine\ResourceManager\Model</Filter>
     </ClCompile>
     <ClCompile Include="ModelLoader.cpp">
       <Filter>01Engine\ResourceManager\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Game Obj</Filter>
-    </ClCompile>
-    <ClCompile Include="Status.cpp" />
-    <ClCompile Include="TestEntity.cpp">
-      <Filter>Game Obj</Filter>
-    </ClCompile>
     <ClCompile Include="ButtonGP.cpp">
       <Filter>BaseObject</Filter>
-    </ClCompile>
-    <ClCompile Include="HelpBar.cpp">
-      <Filter>old</Filter>
     </ClCompile>
     <ClCompile Include="Transition.cpp">
       <Filter>old</Filter>
@@ -254,26 +203,20 @@
     <ClCompile Include="AudioManager.cpp">
       <Filter>01Engine\ResourceManager\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Switch.cpp" />
-    <ClCompile Include="ResultScene.cpp">
-      <Filter>C_Scene/Screen</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Game Obj</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Image.cpp">
       <Filter>01Engine\ResourceManager\Image</Filter>
     </ClCompile>
     <ClCompile Include="Frame.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="ControlSlider.cpp" />
-    <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="ModelTestScreen.cpp">
-      <Filter>C_Scene/Screen</Filter>
-    </ClCompile>
-    <ClCompile Include="CubeSelectIndicator.cpp" />
     <ClCompile Include="Include\EffekseeLib\EffekseerVFX.cpp" />
     <ClCompile Include="GroupingObject.cpp" />
+    <ClCompile Include="Cube.cpp">
+      <Filter>Game Obj</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeSelectIndicator.cpp">
+      <Filter>Game Obj</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -325,23 +268,11 @@
       <Filter>01Engine\ResourceManager</Filter>
     </ClInclude>
     <ClInclude Include="ConfigKey.h" />
-    <ClInclude Include="Item.h">
-      <Filter>old\B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Needle.h">
-      <Filter>old\B_GameScene</Filter>
-    </ClInclude>
-    <ClInclude Include="RivalObject.h">
-      <Filter>old\B_GameScene</Filter>
-    </ClInclude>
     <ClInclude Include="GameData.h">
       <Filter>old\A_Utility</Filter>
     </ClInclude>
     <ClInclude Include="KeyConfig.h">
       <Filter>old\A_Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Ground.h">
-      <Filter>old\B_GameScene</Filter>
     </ClInclude>
     <ClInclude Include="SceneChange.h">
       <Filter>old\A_Utility</Filter>
@@ -349,14 +280,8 @@
     <ClInclude Include="SceneChangeAnim.h">
       <Filter>old\A_Utility</Filter>
     </ClInclude>
-    <ClInclude Include="ceiling.h">
-      <Filter>old\B_GameScene</Filter>
-    </ClInclude>
     <ClInclude Include="Effect.h">
       <Filter>old\A_Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Health.h">
-      <Filter>old\B_GameScene</Filter>
     </ClInclude>
     <ClInclude Include="SystemConfig.h" />
     <ClInclude Include="Engine\SceneManager.h">
@@ -372,13 +297,6 @@
     <ClInclude Include="TitleScene.h">
       <Filter>C_Scene/Screen</Filter>
     </ClInclude>
-    <ClInclude Include="EditScene.h">
-      <Filter>C_Scene/Screen</Filter>
-    </ClInclude>
-    <ClInclude Include="StageView.h">
-      <Filter>Edit</Filter>
-    </ClInclude>
-    <ClInclude Include="StageData.h" />
     <ClInclude Include="EaseScene.h">
       <Filter>C_Scene/Screen</Filter>
     </ClInclude>
@@ -388,7 +306,6 @@
     <ClInclude Include="TitleButton.h">
       <Filter>Splash,Title Obj</Filter>
     </ClInclude>
-    <ClInclude Include="ButtonGroup.h" />
     <ClInclude Include="Sample.h">
       <Filter>BaseObject</Filter>
     </ClInclude>
@@ -425,30 +342,11 @@
     <ClInclude Include="TextLoader.h">
       <Filter>01Engine\ResourceManager\Text</Filter>
     </ClInclude>
-    <ClInclude Include="GameSceneObject.h">
-      <Filter>Game Obj</Filter>
-    </ClInclude>
-    <ClInclude Include="MapLoader.h">
-      <Filter>Game Obj</Filter>
-    </ClInclude>
-    <ClInclude Include="Field.h">
-      <Filter>Game Obj</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Model.h">
       <Filter>01Engine\ResourceManager\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Game Obj</Filter>
-    </ClInclude>
-    <ClInclude Include="Status.h" />
-    <ClInclude Include="TestEntity.h">
-      <Filter>Game Obj</Filter>
-    </ClInclude>
     <ClInclude Include="ButtonGP.h">
       <Filter>BaseObject</Filter>
-    </ClInclude>
-    <ClInclude Include="HelpBar.h">
-      <Filter>old</Filter>
     </ClInclude>
     <ClInclude Include="Transition.h">
       <Filter>old</Filter>
@@ -459,29 +357,23 @@
     <ClInclude Include="AudioManager.h">
       <Filter>01Engine\ResourceManager\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Switch.h" />
-    <ClInclude Include="ResultScene.h">
-      <Filter>C_Scene/Screen</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Game Obj</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Image.h">
       <Filter>01Engine\ResourceManager\Image</Filter>
     </ClInclude>
     <ClInclude Include="Frame.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="ControlSlider.h" />
-    <ClInclude Include="Cube.h" />
-    <ClInclude Include="ModelTestScreen.h">
-      <Filter>C_Scene/Screen</Filter>
-    </ClInclude>
     <ClInclude Include="ModelLoader.h">
       <Filter>01Engine\ResourceManager\Model</Filter>
     </ClInclude>
-    <ClInclude Include="CubeSelectIndicator.h" />
     <ClInclude Include="Include\EffekseeLib\EffekseerVFX.h" />
     <ClInclude Include="GroupingObject.h" />
+    <ClInclude Include="Cube.h">
+      <Filter>Game Obj</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeSelectIndicator.h">
+      <Filter>Game Obj</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">
@@ -508,14 +400,8 @@
     <None Include="Assets\Data\charTextSource.json">
       <Filter>01Engine\ResourceManager\Text</Filter>
     </None>
-    <None Include="Assets\Data\map1.json">
-      <Filter>Game Obj</Filter>
-    </None>
     <None Include="Assets\Data\modelSource.json">
       <Filter>01Engine\ResourceManager\Model</Filter>
-    </None>
-    <None Include="Assets\Data\map2.json">
-      <Filter>Game Obj</Filter>
     </None>
   </ItemGroup>
 </Project>

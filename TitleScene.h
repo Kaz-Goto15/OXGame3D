@@ -28,12 +28,12 @@ class TitleScene : public GameObject
 		S_SEL_EXIT,
 		S_SEL_MAX
 	}selectState_;
+
+	const int DEFAULT_PROGRESS;
 	int progress;
-	static const int PROGRESS_ZERO = 0;
 	int maxProgress;
-	int easeNum = 41;
-	static const int ALPHA_MAX = 255;
-	static const int ALPHA_ZERO = 0;
+	int btnFadeEaseNo;
+	const int ALPHA_ZERO, ALPHA_MAX;
 	const int TitleProgPt[2] = { 60, 120 };
 	const int titlePosYMove[2] = { 0, -60 };
 	const int buttonXSpace = 270;

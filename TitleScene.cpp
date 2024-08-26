@@ -6,14 +6,16 @@
 #include "Engine/Text.h"
 
 #include "ButtonGP.h"
-#include "DebugText.h"
+//#include "DebugText.h"
 #include "CreditScreen.h"
 #include "OptionScreen.h"
 
 #include "AudioManager.h"
 
 using std::to_string;
+using std::string;
 
+//ファイル名と紐づけ
 std::string TitleScene::TitleImgFileName(Img E_IMG)
 {
 	string dir = "Title\\";
@@ -30,6 +32,11 @@ TitleScene::TitleScene(GameObject* parent):
 	GameObject(parent, "TitleScene"),
 	state_(S_STANDBY),
 	selectState_(S_SEL_START),
+	DEFAULT_PROGRESS(0),
+	progress(DEFAULT_PROGRESS),maxProgress(60),
+	btnFadeEaseNo(23),
+	ALPHA_ZERO(0),ALPHA_MAX(255),
+
 	pSceneManager(nullptr),
 	txtPressStart(nullptr)
 {}
@@ -42,8 +49,8 @@ void TitleScene::Initialize() {
 	txtPressStart = new Text();
 	txtPressStart->Initialize(GAKUMARU_16px);
 
-	debugText = Instantiate<DebugText>(this);
-	for (int i = 0; i < 20; i++) debugText->AddStrPtr(&debugStr[i]);
+	//debugText = Instantiate<DebugText>(this);
+	//for (int i = 0; i < 20; i++) debugText->AddStrPtr(&debugStr[i]);
 
 	InitButton(S_SEL_START,	"START",	{ (int)(-buttonXSpace * 1.5),buttonPosYMove[0] });
 	InitButton(S_SEL_CREDIT,"CREDIT",	{ (int)(-buttonXSpace*0.5)	,buttonPosYMove[0] });
@@ -52,7 +59,8 @@ void TitleScene::Initialize() {
 }
 void TitleScene::Update() {
 	if (state_ == S_STANDBY) {
-		if(Input::IsKeyDown(DIK_SPACE)) {
+		//決定キーまたは左クリック
+		if(Input::IsKeyDown(DIK_SPACE) || Input::IsMouseButtonDown(0)) {
 			AudioManager::Play(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
 			//ボタン描画(多重)
 			for (int i = 0; i < S_SEL_MAX; i++) {
@@ -66,19 +74,13 @@ void TitleScene::Update() {
 			Image::SetAlpha(hPict_[PIC_BACKGROUND], ALPHA_MAX);
 		}
 	}
-	//debug 0 : splash
-	if (Input::IsKeyDown(DIK_0)) {
-		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
-		pSceneManager->ChangeScene(SCENE_ID_SPLASH);
-	}
 }
 void TitleScene::Draw() {
 	switch (state_)
 	{
 	case TitleScene::S_STANDBY:
-		maxProgress = 60;
 		if(progress < TitleProgPt[1])progress++;
-		if (Between(progress, PROGRESS_ZERO, TitleProgPt[0])) {
+		if (Between(progress, DEFAULT_PROGRESS, TitleProgPt[0])) {
 			//いずれ別クラスで上に黒を被せる方式にしたい
 			Image::SetAlpha(hPict_[PIC_TITLE],
 				Easing::Calc(1, progress, TitleProgPt[0], ALPHA_ZERO, ALPHA_MAX)
@@ -106,21 +108,20 @@ void TitleScene::Draw() {
 		}
 		break;
 	case TitleScene::S_MAIN:
-		maxProgress = 60;
 		if (progress < maxProgress) {
 			progress++;
 			//背景
 			Image::Draw(hPict_[PIC_BACKGROUND]);
 			//タイトル
 			Transform tra;
-			tra.position_.y = Easing::Calc(23, progress, maxProgress, titlePosYMove[0], titlePosYMove[1]);
+			tra.position_.y = Easing::Calc(btnFadeEaseNo, progress, maxProgress, titlePosYMove[0], titlePosYMove[1]);
 			Image::SetTransform(hPict_[PIC_TITLE], tra);
 			Image::Draw(hPict_[PIC_TITLE]);
 			//ボタン描画(多重)
 			for (int i = 0; i < S_SEL_MAX; i++) {
 				//もっといい計算方法でできるかも
 				XMFLOAT3 pos = btn[i]->GetPosition();
-				pos.y = Easing::Calc(23, progress, maxProgress, buttonPosYMove[0], buttonPosYMove[1]);
+				pos.y = Easing::Calc(btnFadeEaseNo, progress, maxProgress, buttonPosYMove[0], buttonPosYMove[1]);
 				btn[i]->SetPosition(pos);
 			}
 			//白 いずれ別クラスで実装(描画順の関係でボタンが上にいくため)
@@ -140,8 +141,8 @@ void TitleScene::Draw() {
 	XMFLOAT3 mousePos = Input::GetMousePosition();
 	//debugStr[0] = "imgSize: " + std::to_string(Image::GetWidth(hImg_)) + ", " + std::to_string(Image::GetHeight(hImg_));
 	//debugStr[1] = "imgScale: " + std::to_string(nullScale_.x) + ", " + std::to_string(nullScale_.y);
-	debugStr[2] = "mousePos: " + std::to_string(mousePos.x) + ", " + std::to_string(mousePos.y);
-	debugStr[3] = btn[0]->GetDebugStr(6);
+	//debugStr[2] = "mousePos: " + std::to_string(mousePos.x) + ", " + std::to_string(mousePos.y);
+	//debugStr[3] = btn[0]->GetDebugStr(6);
 
 }
 void TitleScene::Release() {}
@@ -154,7 +155,6 @@ void TitleScene::ButtonAct(int hAct)
 	case TitleScene::S_SEL_START:
 		pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
-		//ファイル選択を実装できるならFileScreenを噛む
 		break;
 	case TitleScene::S_SEL_CREDIT:
 		pScreen = Instantiate<CreditScreen>(GetParent());
@@ -166,9 +166,6 @@ void TitleScene::ButtonAct(int hAct)
 		pScreen = Instantiate<OptionScreen>(GetParent());
 		pScreen->SetPrevScene(this);
 		pScreen->Run();
-		
-		//option実装してないのでgithubリンクを渡している
-		//ShellExecute(NULL, "open", "https://github.com/Kaz-Goto15/GraySide", NULL, NULL, SW_SHOWNORMAL);
 
 		break;
 	case TitleScene::S_SEL_EXIT:

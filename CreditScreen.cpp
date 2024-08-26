@@ -3,7 +3,6 @@
 #include "Engine/Image.h"
 
 #include "SystemConfig.h"
-#include "DebugText.h"
 #include "ButtonGP.h"
 
 //コンストラクタ
@@ -12,10 +11,9 @@ CreditScreen::CreditScreen(GameObject* parent):
     frameMargin(0,0,0,0),
     frameScale(1.0f),
     framePos(0,50,0),
-    debugtext(nullptr)
+    frameLength(64)
 {
     std::fill_n(hPict_, PIC_MAX, -1);
-    std::fill_n(debugStr, 20, "");
 }
 
 //デストラクタ
@@ -31,10 +29,6 @@ void CreditScreen::Initialize()
     hPict_[PIC_DESCRIPTION] = Image::Load("Screen/descr2.png");
     Image::SetAlpha(hPict_[PIC_BACKGROUND], 128);
     
-    debugtext = Instantiate<DebugText>(this);
-    for (int i = 0; i < 20; i++) {
-        debugtext->AddStrPtr(&debugStr[i]);
-    }
     frameMargin = { 50,50,150,50 };   //コンストラクタでやるとxが-1になる 原因不明のためこっちで
     backBtn = Instantiate<ButtonGP>(this);
     backBtn->SetText("BACK");
@@ -55,18 +49,18 @@ void CreditScreen::Update()
         }
 
         //枠が拡縮する
-        if (Input::IsKey(DIK_6)) {
-            frameScale -= 0.01f;
-        }
-        if (Input::IsKey(DIK_7)) {
-            frameScale += 0.01f;
-        }
-        if (Input::IsKey(DIK_8)) {
-            framePos.y -= 1.0f;
-        }
-        if (Input::IsKey(DIK_9)) {
-            framePos.y += 1.0f;
-        }
+        //if (Input::IsKey(DIK_6)) {
+        //    frameScale -= 0.01f;
+        //}
+        //if (Input::IsKey(DIK_7)) {
+        //    frameScale += 0.01f;
+        //}
+        //if (Input::IsKey(DIK_8)) {
+        //    framePos.y -= 1.0f;
+        //}
+        //if (Input::IsKey(DIK_9)) {
+        //    framePos.y += 1.0f;
+        //}
     }
 }
 
@@ -77,7 +71,6 @@ void CreditScreen::Draw()
     creditTra.SetCenter(framePos);
     creditTra.IsCalcCenterPoint(true);
     Transform frameTra;
-    int edge = 64;
 
     for (PIC p = static_cast<PIC>(0); p < PIC_MAX; p = static_cast<PIC>(p + 1)) {
         switch (p)
@@ -88,42 +81,42 @@ void CreditScreen::Draw()
             break;
         case CreditScreen::PIC_BASIC_FRAME_TEX:
             frameTra = creditTra;
-            Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], 0, 0, edge, edge);
+            Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], 0, 0, frameLength, frameLength);
 
             using namespace SystemConfig;
             //frame構築
             for (int y = 0; y < 3; y++) {
                 switch (y) {
                 case 0:
-                    frameTra.position_.y = (float)(-windowHeight + (frameMargin.x + frameMargin.z + edge)) / 2.0f;
+                    frameTra.position_.y = Half((float)(- windowHeight + (frameMargin.x + frameMargin.z + frameLength)));
                     frameTra.scale_.y = 1;
                     break;
                 case 1:
                     frameTra.position_.y = 0;
-                    frameTra.scale_.y = (float)(windowHeight - (frameMargin.x + frameMargin.z + edge + edge)) / (float)edge;
+                    frameTra.scale_.y = (float)(windowHeight - (frameMargin.x + frameMargin.z + frameLength + frameLength)) / (float)frameLength;
                     break;
                 case 2:
-                    frameTra.position_.y = (float)(windowHeight - (frameMargin.x + frameMargin.z + edge)) / 2.0f;
+                    frameTra.position_.y = Half((float)(windowHeight - (frameMargin.x + frameMargin.z + frameLength)));
                     frameTra.scale_.y = 1;
                     break;
                 }
                 for (int x = 0; x < 3; x++) {
                     switch (x) {
                     case 0:
-                        frameTra.position_.x = (float)(-windowWidth + (frameMargin.y + frameMargin.w + edge)) / 2.0f;
+                        frameTra.position_.x = Half((float)(-windowWidth + (frameMargin.y + frameMargin.w + frameLength)));
                         frameTra.scale_.x = 1;
                         break;
                     case 1:
                         frameTra.position_.x = 0;
-                        frameTra.scale_.x = (float)(windowWidth - (frameMargin.y + frameMargin.w + edge + edge)) / (float)edge;
+                        frameTra.scale_.x = (float)(windowWidth - (frameMargin.y + frameMargin.w + frameLength + frameLength)) / (float)frameLength;
                         break;
                     case 2:
-                        frameTra.position_.x = (float)(windowWidth - (frameMargin.y + frameMargin.w + edge)) / 2.0f;
+                        frameTra.position_.x = Half((float)(windowWidth - (frameMargin.y + frameMargin.w + frameLength)));
                         frameTra.scale_.x = 1;
                         break;
                     }
 
-                    Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], x * edge, y * edge, edge, edge);
+                    Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], x * frameLength, y * frameLength, frameLength, frameLength);
                     Transform tmp = frameTra;
 
                     tmp.SetReSize(frameScale);
