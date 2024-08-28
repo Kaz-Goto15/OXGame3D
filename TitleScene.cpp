@@ -28,34 +28,52 @@ std::string TitleScene::TitleImgFileName(Img E_IMG)
 	return "null.png";
 }
 
-TitleScene::TitleScene(GameObject* parent):
+TitleScene::TitleScene(GameObject* parent) :
 	GameObject(parent, "TitleScene"),
 	state_(S_STANDBY),
 	selectState_(S_SEL_START),
+	//フェード
 	DEFAULT_PROGRESS(0),
-	progress(DEFAULT_PROGRESS),maxProgress(60),
+	progress(DEFAULT_PROGRESS), maxProgress(60),
 	btnFadeEaseNo(23),
-	ALPHA_ZERO(0),ALPHA_MAX(255),
+	//透明度
+	ALPHA_ZERO(0), ALPHA_MAX(255),
+	//タイトルロゴ
+	TITLE_PROGRESS_POINT({60,120}),
+	TITLE_Y_FADE({0,-60}),
+	//ボタン
+	BUTTON_X_SPACE(270),
+	BUTTON_Y_FADE({ 400,250 }),
+	//テキスト
+	txtPressStart(nullptr),
+	TEXT_POSITION({0,240}),
+	FIRST_TEXT_DESCR("Press 'Space' to continue"),
 
+	//遷移系オブジェクト
 	pSceneManager(nullptr),
-	txtPressStart(nullptr)
-{}
+	pScreen(nullptr)
+{
+	std::fill(hPict_, hPict_ + PIC_MAX, -1);
+	std::fill(btn, btn + S_SEL_MAX, nullptr);
+}
 
 void TitleScene::Initialize() {
 	AudioManager::Load(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
 	for (int i = 0; i < Img::PIC_MAX; i++) {
 		hPict_[i] = Image::Load(TitleImgFileName(static_cast<Img>(i)));
 	}
+
 	txtPressStart = new Text();
 	txtPressStart->Initialize(GAKUMARU_16px);
+
+	InitButton(S_SEL_START,	"START",	{ (int)(-BUTTON_X_SPACE * 1.5),BUTTON_Y_FADE.y });
+	InitButton(S_SEL_CREDIT,"CREDIT",	{ (int)(-BUTTON_X_SPACE *0.5)	,BUTTON_Y_FADE.x });
+	InitButton(S_SEL_OPTION,"OPTION",	{ (int)(BUTTON_X_SPACE *0.5)	,BUTTON_Y_FADE.x });
+	InitButton(S_SEL_EXIT,	"EXIT",		{ (int)(BUTTON_X_SPACE *1.5)	,BUTTON_Y_FADE.x });
 
 	//debugText = Instantiate<DebugText>(this);
 	//for (int i = 0; i < 20; i++) debugText->AddStrPtr(&debugStr[i]);
 
-	InitButton(S_SEL_START,	"START",	{ (int)(-buttonXSpace * 1.5),buttonPosYMove[0] });
-	InitButton(S_SEL_CREDIT,"CREDIT",	{ (int)(-buttonXSpace*0.5)	,buttonPosYMove[0] });
-	InitButton(S_SEL_OPTION,"OPTION",	{ (int)(buttonXSpace*0.5)	,buttonPosYMove[0] });
-	InitButton(S_SEL_EXIT,	"EXIT",		{ (int)(buttonXSpace*1.5)	,buttonPosYMove[0] });
 }
 void TitleScene::Update() {
 	if (state_ == S_STANDBY) {
@@ -79,27 +97,28 @@ void TitleScene::Draw() {
 	switch (state_)
 	{
 	case TitleScene::S_STANDBY:
-		if(progress < TitleProgPt[1])progress++;
-		if (Between(progress, DEFAULT_PROGRESS, TitleProgPt[0])) {
+		//進捗が
+		if(progress < TITLE_PROGRESS_POINT.y)progress++;
+		if (Between(progress, DEFAULT_PROGRESS, TITLE_PROGRESS_POINT.x)) {
 			//いずれ別クラスで上に黒を被せる方式にしたい
 			Image::SetAlpha(hPict_[PIC_TITLE],
-				Easing::Calc(1, progress, TitleProgPt[0], ALPHA_ZERO, ALPHA_MAX)
+				Easing::Calc(1, progress, TITLE_PROGRESS_POINT.x, ALPHA_ZERO, ALPHA_MAX)
 			);
 
 			Image::Draw(hPict_[PIC_TITLE]);
-			txtPressStart->SetAlpha(Easing::Calc(1, progress, TitleProgPt[0], ALPHA_ZERO, ALPHA_MAX));
-			txtPressStart->Draw(txtPos.x, txtPos.y, txt);
+			txtPressStart->SetAlpha(Easing::Calc(1, progress, TITLE_PROGRESS_POINT.x, ALPHA_ZERO, ALPHA_MAX));
+			txtPressStart->Draw(TEXT_POSITION.x, TEXT_POSITION.y, FIRST_TEXT_DESCR);
 			break;
 		}
-		else if (Between(progress, TitleProgPt[0], TitleProgPt[1])) {
+		else if (Between(progress, TITLE_PROGRESS_POINT.x, TITLE_PROGRESS_POINT.y)) {
 			//Image::SetAlpha(hPict_[PIC_BACKGROUND],
-			//	Easing::Calc(1, progress, TitleProgPt[1], ALPHA_ZERO, ALPHA_MAX)
+			//	Easing::Calc(1, progress, TITLE_PROGRESS_POINT[1], ALPHA_ZERO, ALPHA_MAX)
 			//);
 			Image::SetAlpha(hPict_[PIC_TITLE], ALPHA_MAX);
 			txtPressStart->SetAlpha(ALPHA_MAX);
 			//Image::Draw(hPict_[PIC_BACKGROUND]);
 			Image::Draw(hPict_[PIC_TITLE]);
-			txtPressStart->Draw(txtPos.x, txtPos.y, txt);
+			txtPressStart->Draw(TEXT_POSITION.x, TEXT_POSITION.y, FIRST_TEXT_DESCR);
 			break;
 		}
 		else {
@@ -114,17 +133,17 @@ void TitleScene::Draw() {
 			Image::Draw(hPict_[PIC_BACKGROUND]);
 			//タイトル
 			Transform tra;
-			tra.position_.y = Easing::Calc(btnFadeEaseNo, progress, maxProgress, titlePosYMove[0], titlePosYMove[1]);
+			tra.position_.y = Easing::Calc(btnFadeEaseNo, progress, maxProgress, TITLE_Y_FADE.x, TITLE_Y_FADE.y);
 			Image::SetTransform(hPict_[PIC_TITLE], tra);
 			Image::Draw(hPict_[PIC_TITLE]);
 			//ボタン描画(多重)
 			for (int i = 0; i < S_SEL_MAX; i++) {
 				//もっといい計算方法でできるかも
 				XMFLOAT3 pos = btn[i]->GetPosition();
-				pos.y = Easing::Calc(btnFadeEaseNo, progress, maxProgress, buttonPosYMove[0], buttonPosYMove[1]);
+				pos.y = Easing::Calc(btnFadeEaseNo, progress, maxProgress, BUTTON_Y_FADE.x, BUTTON_Y_FADE.y);
 				btn[i]->SetPosition(pos);
 			}
-			//白 いずれ別クラスで実装(描画順の関係でボタンが上にいくため)
+			//白 いずれ別クラスで実装したい(描画順の関係でボタンが上にいくため)
 			Image::SetAlpha(hPict_[PIC_WHITE],
 				Easing::Calc(1, progress, maxProgress, ALPHA_MAX, ALPHA_ZERO)
 			);
@@ -132,6 +151,9 @@ void TitleScene::Draw() {
 
 			break;
 		}
+		Image::Draw(hPict_[PIC_BACKGROUND]);
+		Image::Draw(hPict_[PIC_TITLE]);
+		break;
 	case TitleScene::S_SELECT:
 		Image::Draw(hPict_[PIC_BACKGROUND]);
 		Image::Draw(hPict_[PIC_TITLE]);

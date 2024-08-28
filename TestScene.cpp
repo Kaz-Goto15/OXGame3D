@@ -75,15 +75,15 @@ void TestScene::Draw(){
 
 	//イージングのテスト
 	int drawCircleNum = 1600;
-	//float circleUnit = 0.225f;
+	int circleSize = 200;
+
+	float convRatio = (float)drawCircleNum / (float)circleSize;
 	for (int i = 0; i < drawCircleNum; i++) {
-		//float cy = -circleUnit * Easing::Calc(easeNum, i, (float)drawCircleNum, 0, (float)drawCircleNum) + (float)drawCircleNum/2.0f * circleUnit;
-		//float cx = circleUnit * i - drawCircleNum/2.0f * circleUnit;
 		ringTra.SetPosition(
-			i-drawCircleNum/2.0f,
-			Easing::Calc(easeNum, i, (float)drawCircleNum, 0, (float)drawCircleNum) + (float)drawCircleNum / 2.0f * circleUnit
-		)
-		ringTra.ConvDrawPos(cx, cy);
+			(i - drawCircleNum / 2.0f) / convRatio ,
+			(- Easing::Calc(easeNum, i, (float)drawCircleNum, 0, (float)drawCircleNum) + (float)drawCircleNum / 2.0f)/convRatio,
+			0.0f
+		);
 		Image::SetTransform(hPict_, ringTra);
 		Image::Draw(hPict_);
 	}
