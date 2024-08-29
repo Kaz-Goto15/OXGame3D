@@ -15,6 +15,18 @@
 using std::to_string;
 using std::string;
 
+std::string TitleScene::State2Str(SELECT_STATE state)
+{
+	switch (state)
+	{
+	case TitleScene::S_SEL_START:	return "START";
+	case TitleScene::S_SEL_CREDIT:	return "CREDIT";
+	case TitleScene::S_SEL_OPTION:	return "OPTION";
+	case TitleScene::S_SEL_EXIT:	return "EXIT";
+	}
+	return "NULL";
+}
+
 //ファイル名と紐づけ
 std::string TitleScene::TitleImgFileName(Img E_IMG)
 {
@@ -58,36 +70,54 @@ TitleScene::TitleScene(GameObject* parent) :
 }
 
 void TitleScene::Initialize() {
+	//BGMロード
 	AudioManager::Load(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
+
+	//画像ロード
 	for (int i = 0; i < Img::PIC_MAX; i++) {
 		hPict_[i] = Image::Load(TitleImgFileName(static_cast<Img>(i)));
 	}
 
+	//スタンバイ時のテキスト
 	txtPressStart = new Text();
 	txtPressStart->Initialize(GAKUMARU_16px);
 
-	InitButton(S_SEL_START,	"START",	{ (int)(-BUTTON_X_SPACE * 1.5),BUTTON_Y_FADE.y });
-	InitButton(S_SEL_CREDIT,"CREDIT",	{ (int)(-BUTTON_X_SPACE *0.5)	,BUTTON_Y_FADE.x });
-	InitButton(S_SEL_OPTION,"OPTION",	{ (int)(BUTTON_X_SPACE *0.5)	,BUTTON_Y_FADE.x });
-	InitButton(S_SEL_EXIT,	"EXIT",		{ (int)(BUTTON_X_SPACE *1.5)	,BUTTON_Y_FADE.x });
+	//ボタン情報の初期化
+	//第3引数のYは変更されるためなんでもいい
+	int btnX = -BUTTON_X_SPACE * Half(S_SEL_MAX);
+	if (IsEven(S_SEL_MAX))btnX -= Half(BUTTON_X_SPACE);
+	for (SELECT_STATE state = static_cast<SELECT_STATE>(0); state < S_SEL_MAX; state = static_cast<SELECT_STATE>(state + 1)) {
+		InitButton(state, State2Str(state), { btnX, 0 });
+			btnX -= BUTTON_X_SPACE;
+	}
+	//InitButton(S_SEL_START,	"START",	{ (int)(-BUTTON_X_SPACE * 1.5)  ,BUTTON_Y_FADE.y });
+	//InitButton(S_SEL_CREDIT,"CREDIT",	{ (int)(-BUTTON_X_SPACE * 0.5)	,BUTTON_Y_FADE.x });
+	//InitButton(S_SEL_OPTION,"OPTION",	{ (int)(BUTTON_X_SPACE * 0.5)	,BUTTON_Y_FADE.x });
+	//InitButton(S_SEL_EXIT,	"EXIT",		{ (int)(BUTTON_X_SPACE * 1.5)	,BUTTON_Y_FADE.x });
 
 	//debugText = Instantiate<DebugText>(this);
 	//for (int i = 0; i < 20; i++) debugText->AddStrPtr(&debugStr[i]);
 
 }
+
 void TitleScene::Update() {
+
+	//スタンバイ時のみ更新 それ以外はボタン押下で処理
 	if (state_ == S_STANDBY) {
 		//決定キーまたは左クリック
 		if(Input::IsKeyDown(DIK_SPACE) || Input::IsMouseButtonDown(0)) {
+			//BGM再生
 			AudioManager::Play(AudioManager::AUDIO_SOURCE::BGM_LOBBY);
-			//ボタン描画(多重)
+			//ボタンの更新開始、描画開始
 			for (int i = 0; i < S_SEL_MAX; i++) {
 				btn[i]->Enter();
 				btn[i]->Visible();
 			}
 
-			state_ = S_MAIN;
-			progress = 0;
+			state_ = S_MAIN;				//ステートをMAINにする
+			progress = DEFAULT_PROGRESS;	//進捗を0にもどす
+
+			//タイトルと背景を完全表示
 			Image::SetAlpha(hPict_[PIC_TITLE], ALPHA_MAX);
 			Image::SetAlpha(hPict_[PIC_BACKGROUND], ALPHA_MAX);
 		}
@@ -97,7 +127,7 @@ void TitleScene::Draw() {
 	switch (state_)
 	{
 	case TitleScene::S_STANDBY:
-		//進捗が
+		//進捗がタイトルキー2個目より少なかったら1plus
 		if(progress < TITLE_PROGRESS_POINT.y)progress++;
 		if (Between(progress, DEFAULT_PROGRESS, TITLE_PROGRESS_POINT.x)) {
 			//いずれ別クラスで上に黒を被せる方式にしたい

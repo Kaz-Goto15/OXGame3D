@@ -45,6 +45,7 @@ class TitleScene : public GameObject
 	const XMINT2 TITLE_Y_FADE;	//タイトル縦フェード 初期座標(スプラッシュ後に表示されるY座標)/移動後座標 基準は1280x720
 
 	//ボタン
+	std::string State2Str(SELECT_STATE state);	//選択ステート(ボタン)を文字列に ボタンの名前表示に使用
 	ButtonGP* btn[S_SEL_MAX];	//各ボタンオブジェクト
 	const int BUTTON_X_SPACE;	//ボタン横間隔
 	const XMINT2 BUTTON_Y_FADE;	//ボタン縦フェード 初期座標/移動後座標 基準は1280x720
@@ -61,12 +62,26 @@ class TitleScene : public GameObject
 	//std::string debugStr[20];
 	void InitButton(SELECT_STATE ss, std::string text, XMINT2 pos);
 
-	int hSound_;	//音
+	//int hSound_;	//音
 
 	SceneManager* pSceneManager;
 	Screen* pScreen;
 
-	bool Between(float val, float min, float max) { return (min <= val && val <= max); }
+	//1/2
+	template <class T>
+	T Half(T pValue) {
+		return pValue /= 2.0f;
+	}
+	//範囲内か
+	template <class T>
+	bool Between(T value, T min, T max) {
+		return (min <= value && value <= max);
+	}
+	//偶数かを見る
+	bool IsEven(int value) {
+		return (value % 2 == 0);
+	}
+
 public:
 	TitleScene(GameObject* parent);
 	void Initialize() override;
