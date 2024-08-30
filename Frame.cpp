@@ -8,7 +8,7 @@ Frame::Frame(GameObject* parent):
     GameObject(parent, "Frame"),
     hFrameImg_(-1),
     fileName("Screen/frame256_2.png"),
-    edge(64)
+    grid(64)
 {
 }
 
@@ -25,7 +25,7 @@ void Frame::Initialize()
 
 //çXêV
 void Frame::Update()
-{
+{Instantiate
 }
 
 //ï`âÊ
@@ -43,6 +43,29 @@ void Frame::Draw()
 //äJï˙
 void Frame::Release()
 {
+}
+
+void Frame::ChangeTheme(std::string _filePath, int _grid)
+{
+    filePath = _filePath;
+    grid = _grid;
+    hImgFrame = Image::Load(filePath);
+}
+
+void Frame::ChangeMode(MODE _mode, int value1, int value2, int value3, int value4)
+{
+    switch (_mode)
+    {
+    case Frame::AUTO_ASPECT:
+        ChangeMode(_mode, value1, value2);
+        break;
+    case Frame::CONST_MARGIN:
+    case Frame::CONST_SIZE:
+        uptop
+        break;
+    default:
+        break;
+    }
 }
 
 void Frame::TransformFrame(int up, int right, int down, int left)

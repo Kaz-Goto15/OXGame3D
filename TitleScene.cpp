@@ -46,12 +46,12 @@ TitleScene::TitleScene(GameObject* parent) :
 	selectState_(S_SEL_START),
 	//フェード
 	DEFAULT_PROGRESS(0),
-	progress(DEFAULT_PROGRESS), maxProgress(60),
-	btnFadeEaseNo(23),
+	progress(DEFAULT_PROGRESS), MOVE_FRAMES(60),
+	OBJ_FADE_EASE_NUMBER(23),
 	//透明度
 	ALPHA_ZERO(0), ALPHA_MAX(255),
 	//タイトルロゴ
-	TITLE_PROGRESS_POINT({60,120}),
+	TITLE_PROGRESS_POINT(60),
 	TITLE_Y_FADE({0,-60}),
 	//ボタン
 	BUTTON_X_SPACE(270),
@@ -84,26 +84,18 @@ void TitleScene::Initialize() {
 
 	//ボタン情報の初期化
 	//第3引数のYは変更されるためなんでもいい
-	int btnX = -BUTTON_X_SPACE * Half(S_SEL_MAX);
-	if (IsEven(S_SEL_MAX))btnX -= Half(BUTTON_X_SPACE);
+	int btnX = -BUTTON_X_SPACE * Half((int)S_SEL_MAX);	//ボタン数/2で一番左のボタンの座標を設定
+	if (IsEven(S_SEL_MAX))btnX += Half(BUTTON_X_SPACE);	//偶数の場合、x=0にボタンが来ないため余白の半分をずらす
 	for (SELECT_STATE state = static_cast<SELECT_STATE>(0); state < S_SEL_MAX; state = static_cast<SELECT_STATE>(state + 1)) {
 		InitButton(state, State2Str(state), { btnX, 0 });
-			btnX -= BUTTON_X_SPACE;
+			btnX += BUTTON_X_SPACE;
 	}
-	//InitButton(S_SEL_START,	"START",	{ (int)(-BUTTON_X_SPACE * 1.5)  ,BUTTON_Y_FADE.y });
-	//InitButton(S_SEL_CREDIT,"CREDIT",	{ (int)(-BUTTON_X_SPACE * 0.5)	,BUTTON_Y_FADE.x });
-	//InitButton(S_SEL_OPTION,"OPTION",	{ (int)(BUTTON_X_SPACE * 0.5)	,BUTTON_Y_FADE.x });
-	//InitButton(S_SEL_EXIT,	"EXIT",		{ (int)(BUTTON_X_SPACE * 1.5)	,BUTTON_Y_FADE.x });
-
-	//debugText = Instantiate<DebugText>(this);
-	//for (int i = 0; i < 20; i++) debugText->AddStrPtr(&debugStr[i]);
-
 }
 
 void TitleScene::Update() {
 
 	//スタンバイ時のみ更新 それ以外はボタン押下で処理
-	if (state_ == S_STANDBY) {
+	if (In(state_, { S_STANDBY,S_STANDBY_WAIT })) {
 		//決定キーまたは左クリック
 		if(Input::IsKeyDown(DIK_SPACE) || Input::IsMouseButtonDown(0)) {
 			//BGM再生
@@ -128,54 +120,54 @@ void TitleScene::Draw() {
 	{
 	case TitleScene::S_STANDBY:
 		//進捗がタイトルキー2個目より少なかったら1plus
-		if(progress < TITLE_PROGRESS_POINT.y)progress++;
-		if (Between(progress, DEFAULT_PROGRESS, TITLE_PROGRESS_POINT.x)) {
-			//いずれ別クラスで上に黒を被せる方式にしたい
-			Image::SetAlpha(hPict_[PIC_TITLE],
-				Easing::Calc(1, progress, TITLE_PROGRESS_POINT.x, ALPHA_ZERO, ALPHA_MAX)
-			);
+		if(progress < TITLE_PROGRESS_POINT)progress++;
+		//タイトル表示まで
+		if (Between(progress, DEFAULT_PROGRESS, TITLE_PROGRESS_POINT)) {
+			//透明度を徐々にさげる(不透過率を上げる)
+			int alpha = Easing::Calc(1, progress, TITLE_PROGRESS_POINT, ALPHA_ZERO, ALPHA_MAX);
 
-			Image::Draw(hPict_[PIC_TITLE]);
-			txtPressStart->SetAlpha(Easing::Calc(1, progress, TITLE_PROGRESS_POINT.x, ALPHA_ZERO, ALPHA_MAX));
-			txtPressStart->Draw(TEXT_POSITION.x, TEXT_POSITION.y, FIRST_TEXT_DESCR);
-			break;
+			Image::SetAlpha(hPict_[PIC_TITLE],alpha);
+			txtPressStart->SetAlpha(alpha);
 		}
-		else if (Between(progress, TITLE_PROGRESS_POINT.x, TITLE_PROGRESS_POINT.y)) {
-			//Image::SetAlpha(hPict_[PIC_BACKGROUND],
-			//	Easing::Calc(1, progress, TITLE_PROGRESS_POINT[1], ALPHA_ZERO, ALPHA_MAX)
-			//);
+		//不透過になったらWAITステートに移行してアクションを待機する
+		else {
+			state_ = S_STANDBY_WAIT;
+			//タイトルと文字は255(透明度0%)を想定しているが万が一何かの拍子で254(透明度0.39%)になってたら悲しいので念のため不透過にする
 			Image::SetAlpha(hPict_[PIC_TITLE], ALPHA_MAX);
 			txtPressStart->SetAlpha(ALPHA_MAX);
-			//Image::Draw(hPict_[PIC_BACKGROUND]);
-			Image::Draw(hPict_[PIC_TITLE]);
-			txtPressStart->Draw(TEXT_POSITION.x, TEXT_POSITION.y, FIRST_TEXT_DESCR);
-			break;
 		}
-		else {
-			//state_ = S_MAIN;
-			//progress = 0;
-		}
+		//描画処理はSTANDBYとWAITは同じなのでbreakせずそのまま受け流す
+		[[fallthrough]];
+	case TitleScene::S_STANDBY_WAIT:
+
+		//描画
+		Image::Draw(hPict_[PIC_TITLE]);
+		txtPressStart->Draw(TEXT_POSITION.x, TEXT_POSITION.y, FIRST_TEXT_DESCR);
 		break;
+
 	case TitleScene::S_MAIN:
-		if (progress < maxProgress) {
+		if (progress < MOVE_FRAMES) {
 			progress++;
 			//背景
 			Image::Draw(hPict_[PIC_BACKGROUND]);
-			//タイトル
+
+			//タイトル移動
 			Transform tra;
-			tra.position_.y = Easing::Calc(btnFadeEaseNo, progress, maxProgress, TITLE_Y_FADE.x, TITLE_Y_FADE.y);
+			tra.position_.y = Easing::Calc(OBJ_FADE_EASE_NUMBER, progress, MOVE_FRAMES, TITLE_Y_FADE.x, TITLE_Y_FADE.y);
 			Image::SetTransform(hPict_[PIC_TITLE], tra);
 			Image::Draw(hPict_[PIC_TITLE]);
-			//ボタン描画(多重)
+
+			//ボタン移動
 			for (int i = 0; i < S_SEL_MAX; i++) {
 				//もっといい計算方法でできるかも
 				XMFLOAT3 pos = btn[i]->GetPosition();
-				pos.y = Easing::Calc(btnFadeEaseNo, progress, maxProgress, BUTTON_Y_FADE.x, BUTTON_Y_FADE.y);
+				pos.y = Easing::Calc(OBJ_FADE_EASE_NUMBER, progress, MOVE_FRAMES, BUTTON_Y_FADE.x, BUTTON_Y_FADE.y);
 				btn[i]->SetPosition(pos);
 			}
-			//白 いずれ別クラスで実装したい(描画順の関係でボタンが上にいくため)
+
+			//白
 			Image::SetAlpha(hPict_[PIC_WHITE],
-				Easing::Calc(1, progress, maxProgress, ALPHA_MAX, ALPHA_ZERO)
+				Easing::Calc(1, progress, MOVE_FRAMES, ALPHA_MAX, ALPHA_ZERO)
 			);
 			Image::Draw(hPict_[PIC_WHITE]);
 
@@ -184,18 +176,9 @@ void TitleScene::Draw() {
 		Image::Draw(hPict_[PIC_BACKGROUND]);
 		Image::Draw(hPict_[PIC_TITLE]);
 		break;
-	case TitleScene::S_SELECT:
-		Image::Draw(hPict_[PIC_BACKGROUND]);
-		Image::Draw(hPict_[PIC_TITLE]);
-		break;
 	}
 
 	XMFLOAT3 mousePos = Input::GetMousePosition();
-	//debugStr[0] = "imgSize: " + std::to_string(Image::GetWidth(hImg_)) + ", " + std::to_string(Image::GetHeight(hImg_));
-	//debugStr[1] = "imgScale: " + std::to_string(nullScale_.x) + ", " + std::to_string(nullScale_.y);
-	//debugStr[2] = "mousePos: " + std::to_string(mousePos.x) + ", " + std::to_string(mousePos.y);
-	//debugStr[3] = btn[0]->GetDebugStr(6);
-
 }
 void TitleScene::Release() {}
 
@@ -291,31 +274,6 @@ option→screen
 edit→ブラックアウトからeditscene
 exit→そのまんまexit(0)でおけ
 
-
-ボタンとして追加するか？
-12
-34　で追加したとき
-
-1のとき 上下左右 0+2 0+1
-2のとき 上下左右 0+2-1 0
-3のとき 上下左右-2 0 0+1
-4のとき 上下左右-2 0-1 0
-
-12
-(3)4　で追加したとき
-
-1のとき 上下左右 0+3 0+1
-2のとき 上下左右 0+2-1 0
-3にいく時の入力 --+3-3--
-4のとき 上下左右-2 0-3 0
-
-1のとき 上下左右 0+2 0+1
-2のとき 上下左右 0+2-1 0
-3にいく時の入力 --+1-2--
-4のとき 上下左右-2 0-1 0
-
-下入力+2 上入力-2 3以上のとき下入力入れない 2以下のとき上入れない
-右+1
 fadein イージング番号に沿って透明度変更　0→100でidle SPACE:end
 idle 指定時間待機　指定時間超過でfadeoutへ SPACE:end
 fadeout イージング番号に沿って透明度変更　100→0でendへ SPACE:end

@@ -1,6 +1,8 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include <vector>
 
+using std::vector;
 class Text;
 class ButtonGP;
 class DebugText;
@@ -20,8 +22,8 @@ class TitleScene : public GameObject
 
 	enum STATE {
 		S_STANDBY,
-		S_MAIN,
-		S_SELECT,
+		S_STANDBY_WAIT,
+		S_MAIN
 	}state_;
 
 	enum SELECT_STATE {
@@ -35,13 +37,13 @@ class TitleScene : public GameObject
 	//ボタンが画面外からやってくる描画に使う
 	const int DEFAULT_PROGRESS;	//再度動かす際にprogressに設定される値
 	int progress;				//進捗
-	int maxProgress;			//最大進捗数 フレーム指定
-	int btnFadeEaseNo;			//イージング番号をいれる
+	const int MOVE_FRAMES;			//各オブジェクトの移動、白背景エフェクトにかけるフレーム数
+	const int OBJ_FADE_EASE_NUMBER;			//イージング番号をいれる
 
 	const int ALPHA_ZERO, ALPHA_MAX;	//透明度処理に使う定数
 
 	//タイトル
-	const XMINT2 TITLE_PROGRESS_POINT;	//黒背景→タイトルのみ表示までのフレーム数/ボタン押下後のボタン表示までかかるフレーム数 加算式、アニメーションで指定フレームにキーを打ち込む感覚で
+	const int TITLE_PROGRESS_POINT;	//黒背景→タイトル表示までのフレーム数/ボタン押下後のボタン表示までかかるフレーム数
 	const XMINT2 TITLE_Y_FADE;	//タイトル縦フェード 初期座標(スプラッシュ後に表示されるY座標)/移動後座標 基準は1280x720
 
 	//ボタン
@@ -56,7 +58,6 @@ class TitleScene : public GameObject
 	const char* FIRST_TEXT_DESCR;	//最初に表示するテキストの内容
 
 	std::string TitleImgFileName(Img E_IMG);
-	//void Run(SELECT_STATE& ss);
 
 	//DebugText* debugText;
 	//std::string debugStr[20];
@@ -80,6 +81,15 @@ class TitleScene : public GameObject
 	//偶数かを見る
 	bool IsEven(int value) {
 		return (value % 2 == 0);
+	}
+
+	//SQLのIn句と同じ
+	template <class T>
+	bool In(T val, vector<T> search) {
+		for (auto& word : search) {
+			if (val == word)return true;
+		}
+		return false;
 	}
 
 public:

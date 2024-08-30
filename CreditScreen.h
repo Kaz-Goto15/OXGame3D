@@ -23,7 +23,7 @@ class CreditScreen : public Screen
     //”¼•ª‚É‚·‚é Œ^‚ğ‚»‚Ì‚Ü‚ñ‚Ü•Ô‚·‚½‚ßint‚È‚Ç‚Í©“®Ø‚èÌ‚Ä
     template <class T>
     T Half(T value) {
-        return (value / 2);
+        return (value / 2.0f);
     }
 
 public:
