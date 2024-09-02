@@ -3,6 +3,8 @@
 #include "Engine/GameObject.h"
 #include "Screen.h"
 class ButtonGP;
+class Frame;
+
 //クレジット画面を管理するクラス
 class CreditScreen : public Screen
 {
@@ -19,6 +21,8 @@ class CreditScreen : public Screen
     XMFLOAT3 framePos;  //フレーム中心点
     int frameLength;    //フレーム画像を分割したときの1辺の長さ
     ButtonGP* backBtn;  //もどるﾎﾞﾀﾝ
+
+    Frame* frame;       //枠
 
     //半分にする 型をそのまんま返すためintなどは自動切り捨て
     template <class T>

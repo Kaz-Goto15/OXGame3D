@@ -4,7 +4,7 @@
 
 #include "SystemConfig.h"
 #include "ButtonGP.h"
-
+#include "Frame.h"
 //コンストラクタ
 CreditScreen::CreditScreen(GameObject* parent):
     Screen(parent, "CreditScreen"),
@@ -37,6 +37,8 @@ void CreditScreen::Initialize()
     backBtn->SetScale(0.75f);
     backBtn->SetSound(AudioManager::SE_CANCEL);
     
+    frame = Instantiate<Frame>(this);
+    frame->ChangeMode(Frame::MODE::CONST_MARGIN, 50, 90, 100, 50);
 }
 
 //更新
@@ -122,7 +124,7 @@ void CreditScreen::Draw()
                     tmp.SetReSize(frameScale);
 
                     Image::SetTransform(hPict_[p], tmp);
-                    Image::Draw(hPict_[p]);
+                    //Image::Draw(hPict_[p]);
                 }
             }
             break;

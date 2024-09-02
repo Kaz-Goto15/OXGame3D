@@ -5,6 +5,7 @@
 #include "Easing.h"
 #include "Engine/Text.h"
 #include "OptionScreen.h"
+#include "CreditScreen.h"
 
 #include <vector>
 TestScene::TestScene(GameObject* parent)
@@ -50,6 +51,12 @@ void TestScene::Update(){
 		pScreen->SetPrevScene(this);
 		pScreen->Run();
 	}
+	//C : Credit Screen
+	if (Input::IsKeyDown(DIK_C)) {
+		pScreen = Instantiate<CreditScreen>(GetParent());
+		pScreen->SetPrevScene(this);
+		pScreen->Run();
+	}
 	//P : Change Scene - Play
 	if (Input::IsKeyDown(DIK_P)) {
 		SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
@@ -64,6 +71,7 @@ void TestScene::Draw(){
 		"T : Title Scene",
 		"A/D : Change EaseNo",
 		"O : Open Option Screen",
+		"C : Open Credit Screen",
 		"P : Play Scene(old:ModelTestScreen)"
 	};
 	for (int i = 0; i < helpStr.size(); i++) {
