@@ -4,7 +4,7 @@
 #include "SystemConfig.h"
 #include "DebugText.h"
 #include "Engine/Input.h"
-
+using std::to_string;
 //コンストラクタ
 Frame::Frame(GameObject* parent):
     GameObject(parent, "Frame"),
@@ -26,10 +26,9 @@ void Frame::Initialize()
 {
     Init();
     debugText = Instantiate<DebugText>(this);
-    debugText->AddStrPtr(&debStr);
-    debugText->AddStrPtr(&debStr2);
-    debugText->AddStrPtr(&debStr3);
-    debugText->AddStrPtr(&debStr4);
+    for (int i = 0; i < 5; i++) {
+        debugText->AddStrPtr(&debStr[i]);
+    }
     hPt = Image::Load("circle.png");
 }
 
@@ -42,7 +41,23 @@ void Frame::Update()
     if (Input::IsKey(DIK_D))transform_.position_.x++;
 
     if (SystemConfig::IsResized()) {
-        //UpdateDrawData();
+        UpdateDrawData();
+    }
+    if (Input::IsKey(DIK_R)) {
+        for (int h = FRAME_H::H_TOP; h < FRAME_H::H_MAX; h++) {
+            for (int w = FRAME_W::W_LEFT; w < FRAME_W::W_MAX; w++) {
+                tra[h][w].scale_.x += 0.1f;
+                tra[h][w].scale_.y += 0.1f;
+            }
+        }
+    }
+    if (Input::IsKey(DIK_F)) {
+        for (int h = FRAME_H::H_TOP; h < FRAME_H::H_MAX; h++) {
+            for (int w = FRAME_W::W_LEFT; w < FRAME_W::W_MAX; w++) {
+                tra[h][w].scale_.x -= 0.1f;
+                tra[h][w].scale_.y -= 0.1f;
+            }
+        }
     }
 
 }
@@ -50,13 +65,16 @@ void Frame::Update()
 //描画
 void Frame::Draw()
 {
-    debStr = "(" + std::to_string((int)transform_.position_.x) + "," + std::to_string((int)transform_.position_.y) + ")";
-    debStr2 = "(" + std::to_string(SystemConfig::windowWidth) +","+ std::to_string(SystemConfig::windowHeight) + ")";
-    debStr3 = "mLeft(" + std::to_string(mLeft) +
+    
+    debStr[0] = "(" + std::to_string((int)transform_.position_.x) + "," + std::to_string((int)transform_.position_.y) + ")";
+    debStr[1] = "(" + std::to_string(SystemConfig::windowWidth) + "," + std::to_string(SystemConfig::windowHeight) + ")";
+    debStr[2] = "mLeft(" + std::to_string(mLeft) +
         ") + Half(-windowWidth" + std::to_string(SystemConfig::windowWidth) +
         " + grid_(" + std::to_string(grid_) +
         ")(" + std::to_string(Half(-SystemConfig::windowWidth + grid_)) + ") = " + std::to_string(mLeft + Half(-SystemConfig::windowWidth + grid_));
-    debStr4 = "mousePos:(" + std::to_string((int)Input::GetMousePosition(true).x) + ", " + std::to_string((int)Input::GetMousePosition(true).y) + ")";
+    debStr[3] = "mousePos:(" + std::to_string((int)Input::GetMousePosition(true).x) + ", " + std::to_string((int)Input::GetMousePosition(true).y) + ")";
+    debStr[4] = "LU:(" + to_string(tra[0][0].position_.x) + "," + to_string(tra[0][0].position_.y) + "),x" +
+        to_string(tra[0][0].scale_.x);
     Image::SetTransform(hPt, transform_);
     Image::Draw(hPt);
     //描画
@@ -136,15 +154,12 @@ void Frame::Init()
 void Frame::UpdateDrawData()
 {
     const int DEFAULT_SCALE = 1;
-    const int DEFAULT_POSITION_X = 0;
-    const int DEFAULT_POSITION_Y = 0;
 
     switch (mode_)
     {
     case Frame::AUTO_ASPECT:
         break;
     case Frame::CONST_MARGIN:
-        //Image::SetRect(hFrameImg_, 0, 0, edge, edge);
         using namespace SystemConfig;
 
         //frame構築
@@ -153,15 +168,15 @@ void Frame::UpdateDrawData()
             for (int x = FRAME_W::W_LEFT; x < FRAME_W::W_MAX; x++) {
                 switch (y) {
                 case FRAME_H::H_TOP:
-                    tra[y][x].position_.y = Half(-windowHeight + (mUp + grid_));
+                    tra[y][x].position_.y = mUp + Half(-windowHeight + grid_);
                     tra[y][x].scale_.y = DEFAULT_SCALE;
                     break;
                 case FRAME_H::H_CENTER:
-                    tra[y][x].position_.y = DEFAULT_POSITION_Y;
+                    tra[y][x].position_.y = Half(mUp - mDown);
                     tra[y][x].scale_.y = (float)(windowHeight - (mUp + mDown + grid_ + grid_)) / (float)grid_;
                     break;
                 case FRAME_H::H_BOTTOM:
-                    tra[y][x].position_.y = Half(windowHeight - (mDown + grid_));
+                    tra[y][x].position_.y = -mDown + Half(windowHeight - grid_);
                     tra[y][x].scale_.y = DEFAULT_SCALE;
                     break;
                 }
@@ -172,7 +187,7 @@ void Frame::UpdateDrawData()
                     tra[y][x].scale_.x = DEFAULT_SCALE;
                     break;
                 case FRAME_W::W_CENTER:
-                    tra[y][x].position_.x = Half(mLeft + mRight);
+                    tra[y][x].position_.x = Half(mLeft - mRight);
                     tra[y][x].scale_.x = (float)(windowWidth - (mRight + mLeft + grid_ + grid_)) / (float)grid_;
                     break;
                 case FRAME_W::W_RIGHT:
@@ -180,9 +195,13 @@ void Frame::UpdateDrawData()
                     tra[y][x].scale_.x = DEFAULT_SCALE;
                     break;
                 }
-                //Image::SetRect(hFrameImg_, x * edge, y * edge, edge, edge);
 
-                tra[y][x].SetReSize(transform_.scale_);
+                //画面サイズ変更に対応するための変換処理
+                tra[y][x].position_.x /= (float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImgFrame_).x;
+                tra[y][x].position_.y /= (float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImgFrame_).y;
+                tra[y][x].scale_.x /= (float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImgFrame_).x;
+                tra[y][x].scale_.y /= (float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImgFrame_).y;
+
             }
         }
         break;
