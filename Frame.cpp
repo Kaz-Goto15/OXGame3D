@@ -2,6 +2,8 @@
 #include "Engine/Image.h"
 
 #include "SystemConfig.h"
+#include "DebugText.h"
+#include "Engine/Input.h"
 
 //コンストラクタ
 Frame::Frame(GameObject* parent):
@@ -23,19 +25,40 @@ Frame::~Frame()
 void Frame::Initialize()
 {
     Init();
+    debugText = Instantiate<DebugText>(this);
+    debugText->AddStrPtr(&debStr);
+    debugText->AddStrPtr(&debStr2);
+    debugText->AddStrPtr(&debStr3);
+    debugText->AddStrPtr(&debStr4);
+    hPt = Image::Load("circle.png");
 }
 
 //更新
 void Frame::Update()
 {
+    if (Input::IsKey(DIK_W))transform_.position_.y--;
+    if (Input::IsKey(DIK_S))transform_.position_.y++;
+    if (Input::IsKey(DIK_A))transform_.position_.x--;
+    if (Input::IsKey(DIK_D))transform_.position_.x++;
+
     if (SystemConfig::IsResized()) {
-        UpdateDrawData();
+        //UpdateDrawData();
     }
+
 }
 
 //描画
 void Frame::Draw()
 {
+    debStr = "(" + std::to_string((int)transform_.position_.x) + "," + std::to_string((int)transform_.position_.y) + ")";
+    debStr2 = "(" + std::to_string(SystemConfig::windowWidth) +","+ std::to_string(SystemConfig::windowHeight) + ")";
+    debStr3 = "mLeft(" + std::to_string(mLeft) +
+        ") + Half(-windowWidth" + std::to_string(SystemConfig::windowWidth) +
+        " + grid_(" + std::to_string(grid_) +
+        ")(" + std::to_string(Half(-SystemConfig::windowWidth + grid_)) + ") = " + std::to_string(mLeft + Half(-SystemConfig::windowWidth + grid_));
+    debStr4 = "mousePos:(" + std::to_string((int)Input::GetMousePosition(true).x) + ", " + std::to_string((int)Input::GetMousePosition(true).y) + ")";
+    Image::SetTransform(hPt, transform_);
+    Image::Draw(hPt);
     //描画
     for (int h = FRAME_H::H_TOP; h < FRAME_H::H_MAX; h++) {
         for (int w = FRAME_W::W_LEFT; w < FRAME_W::W_MAX; w++) {
@@ -157,7 +180,6 @@ void Frame::UpdateDrawData()
                     tra[y][x].scale_.x = DEFAULT_SCALE;
                     break;
                 }
-
                 //Image::SetRect(hFrameImg_, x * edge, y * edge, edge, edge);
 
                 tra[y][x].SetReSize(transform_.scale_);
@@ -168,7 +190,26 @@ void Frame::UpdateDrawData()
         左右X=1 上下Y=1
         左：-640+30+32画面横幅/2-左右余白
         
-        
+        positionの挙動がキモい サイズ変更しても1280(/2)x720(/2)の範囲内でしか画面に写らない
+
+        マウスポインタやただの変数、はどちらかといえば画面サイズに依存しない挙動をする
+        ボタンクラスの範囲判定はマウス座標をコンバートして実現している
+        Transformクラスほかメディアオブジェクトは画面サイズ変更により自動で変形する ただし元の変形情報は全く変化しない
+
+        的確に表すなら1280pで編集してたやつをフレームバッファでn倍しているような感じ 画質変わらないんだからキモ
+        大体のエンジンが設計上の仕様として割り切ってる部分だけども 映像出身者には引き延ばしする仕様は嫌われますよ...
+width/2=640
++mLeft + 64/2
+
+1280x720
+grid=64
+mL=50
+配置=640-64-25=551
+
+640x360
+AviUtl等での本来の配置座標=320-64-25=231
+このままでは1280x720上での231を参照するため、割合参照する必要がある
+単純に640x360では2倍かかるので つまり？知らん
         */
 
     case Frame::CONST_SIZE:

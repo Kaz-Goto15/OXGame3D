@@ -1,9 +1,14 @@
 #pragma once
 #include "Engine/GameObject.h"
 
+class DebugText;
+
 //˜g‚ğŠÇ—‚·‚éƒNƒ‰ƒX
 class Frame : public GameObject
 {
+    DebugText* debugText;
+    std::string debStr,debStr2,debStr3,debStr4;
+    int hPt;
     enum FRAME_W {
         W_LEFT= 0,
         W_CENTER,
