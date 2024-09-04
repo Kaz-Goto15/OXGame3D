@@ -6,9 +6,9 @@ class DebugText;
 //枠を管理するクラス
 class Frame : public GameObject
 {
-    DebugText* debugText;
-    std::string debStr[5];
-    int hPt;
+    //DebugText* debugText;
+    //std::string debStr[5];
+    //int hPt;
     enum FRAME_W {
         W_LEFT= 0,
         W_CENTER,
@@ -47,9 +47,10 @@ public:
     ~Frame();                     //デストラクタ
     void Initialize() override; //初期化
     void Update() override;     //更新
-    void Draw() override;       //描画
+    void Draw() override;       //描画(何も書かない)
     void Release() override;    //解放
 
+    void DrawFrame();           //描画(呼び出し元で呼び出す)
     void ChangeTheme(std::string _filePath, int _grid);
 
     /// <summary>

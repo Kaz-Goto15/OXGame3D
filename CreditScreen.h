@@ -10,7 +10,6 @@ class CreditScreen : public Screen
 {
     enum PIC {
         PIC_BACKGROUND,
-        PIC_BASIC_FRAME_TEX,
         PIC_DESCRIPTION,
         PIC_MAX
     };

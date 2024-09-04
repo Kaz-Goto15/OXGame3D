@@ -25,7 +25,6 @@ CreditScreen::~CreditScreen()
 void CreditScreen::Initialize()
 {
     hPict_[PIC_BACKGROUND] = Image::Load("Screen/black.png");
-    hPict_[PIC_BASIC_FRAME_TEX] = Image::Load("Screen/frame256_2.png");
     hPict_[PIC_DESCRIPTION] = Image::Load("Screen/descr2.png");
     Image::SetAlpha(hPict_[PIC_BACKGROUND], 128);
     
@@ -38,7 +37,8 @@ void CreditScreen::Initialize()
     backBtn->SetSound(AudioManager::SE_CANCEL);
     
     frame = Instantiate<Frame>(this);
-    frame->ChangeMode(Frame::MODE::CONST_MARGIN, 50, 90, 100, 50);
+    frame->ChangeMode(Frame::MODE::CONST_MARGIN, 50, 50, 100, 50);
+
 }
 
 //更新
@@ -80,53 +80,9 @@ void CreditScreen::Draw()
         case CreditScreen::PIC_BACKGROUND:
             Image::SetTransform(hPict_[p], transform_);
             Image::Draw(hPict_[p]);
-            break;
-        case CreditScreen::PIC_BASIC_FRAME_TEX:
-            frameTra = creditTra;
-            Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], 0, 0, frameLength, frameLength);
 
-            using namespace SystemConfig;
-            //frame構築
-            for (int y = 0; y < 3; y++) {
-                switch (y) {
-                case 0:
-                    frameTra.position_.y = Half((float)(- windowHeight + (frameMargin.x + frameMargin.z + frameLength)));
-                    frameTra.scale_.y = 1;
-                    break;
-                case 1:
-                    frameTra.position_.y = 0;
-                    frameTra.scale_.y = (float)(windowHeight - (frameMargin.x + frameMargin.z + frameLength + frameLength)) / (float)frameLength;
-                    break;
-                case 2:
-                    frameTra.position_.y = Half((float)(windowHeight - (frameMargin.x + frameMargin.z + frameLength)));
-                    frameTra.scale_.y = 1;
-                    break;
-                }
-                for (int x = 0; x < 3; x++) {
-                    switch (x) {
-                    case 0:
-                        frameTra.position_.x = Half((float)(-windowWidth + (frameMargin.y + frameMargin.w + frameLength)));
-                        frameTra.scale_.x = 1;
-                        break;
-                    case 1:
-                        frameTra.position_.x = 0;
-                        frameTra.scale_.x = (float)(windowWidth - (frameMargin.y + frameMargin.w + frameLength + frameLength)) / (float)frameLength;
-                        break;
-                    case 2:
-                        frameTra.position_.x = Half((float)(windowWidth - (frameMargin.y + frameMargin.w + frameLength)));
-                        frameTra.scale_.x = 1;
-                        break;
-                    }
-
-                    Image::SetRect(hPict_[PIC_BASIC_FRAME_TEX], x * frameLength, y * frameLength, frameLength, frameLength);
-                    Transform tmp = frameTra;
-
-                    tmp.SetReSize(frameScale);
-
-                    Image::SetTransform(hPict_[p], tmp);
-                    //Image::Draw(hPict_[p]);
-                }
-            }
+            //フレーム描画
+            frame->DrawFrame();
             break;
         case CreditScreen::PIC_DESCRIPTION:
             Image::SetTransform(hPict_[p], creditTra);

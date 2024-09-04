@@ -25,11 +25,11 @@ Frame::~Frame()
 void Frame::Initialize()
 {
     Init();
-    debugText = Instantiate<DebugText>(this);
-    for (int i = 0; i < 5; i++) {
-        debugText->AddStrPtr(&debStr[i]);
-    }
-    hPt = Image::Load("circle.png");
+    //debugText = Instantiate<DebugText>(this);
+    //for (int i = 0; i < 5; i++) {
+    //    debugText->AddStrPtr(&debStr[i]);
+    //}
+    //hPt = Image::Load("circle.png");
 }
 
 //更新
@@ -65,19 +65,15 @@ void Frame::Update()
 //描画
 void Frame::Draw()
 {
-    
-    debStr[0] = "(" + std::to_string((int)transform_.position_.x) + "," + std::to_string((int)transform_.position_.y) + ")";
-    debStr[1] = "(" + std::to_string(SystemConfig::windowWidth) + "," + std::to_string(SystemConfig::windowHeight) + ")";
-    debStr[2] = "mLeft(" + std::to_string(mLeft) +
-        ") + Half(-windowWidth" + std::to_string(SystemConfig::windowWidth) +
-        " + grid_(" + std::to_string(grid_) +
-        ")(" + std::to_string(Half(-SystemConfig::windowWidth + grid_)) + ") = " + std::to_string(mLeft + Half(-SystemConfig::windowWidth + grid_));
-    debStr[3] = "mousePos:(" + std::to_string((int)Input::GetMousePosition(true).x) + ", " + std::to_string((int)Input::GetMousePosition(true).y) + ")";
-    debStr[4] = "LU:(" + to_string(tra[0][0].position_.x) + "," + to_string(tra[0][0].position_.y) + "),x" +
-        to_string(tra[0][0].scale_.x);
-    Image::SetTransform(hPt, transform_);
-    Image::Draw(hPt);
-    //描画
+}
+
+//開放
+void Frame::Release()
+{
+}
+
+void Frame::DrawFrame()
+{
     for (int h = FRAME_H::H_TOP; h < FRAME_H::H_MAX; h++) {
         for (int w = FRAME_W::W_LEFT; w < FRAME_W::W_MAX; w++) {
             Image::SetRect(hImgFrame_, w * grid_, h * grid_, grid_, grid_);
@@ -85,11 +81,6 @@ void Frame::Draw()
             Image::Draw(hImgFrame_);
         }
     }
-}
-
-//開放
-void Frame::Release()
-{
 }
 
 void Frame::ChangeTheme(std::string _filePath, int _grid)
@@ -196,45 +187,23 @@ void Frame::UpdateDrawData()
                     break;
                 }
 
-                //画面サイズ変更に対応するための変換処理
-                tra[y][x].position_.x /= (float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImgFrame_).x;
-                tra[y][x].position_.y /= (float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImgFrame_).y;
-                tra[y][x].scale_.x /= (float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImgFrame_).x;
-                tra[y][x].scale_.y /= (float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImgFrame_).y;
+                //画面サイズ変更に対応するための変換処理 現在画面サイズ/基準サイズを割る
+                tra[y][x].position_.x /= ((float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImgFrame_).x);
+                tra[y][x].position_.y /= ((float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImgFrame_).y);
+                tra[y][x].scale_.x /= ((float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImgFrame_).x);
+                tra[y][x].scale_.y /= ((float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImgFrame_).y);
 
             }
         }
         break;
-        /*
-        左右X=1 上下Y=1
-        左：-640+30+32画面横幅/2-左右余白
-        
-        positionの挙動がキモい サイズ変更しても1280(/2)x720(/2)の範囲内でしか画面に写らない
-
-        マウスポインタやただの変数、はどちらかといえば画面サイズに依存しない挙動をする
-        ボタンクラスの範囲判定はマウス座標をコンバートして実現している
-        Transformクラスほかメディアオブジェクトは画面サイズ変更により自動で変形する ただし元の変形情報は全く変化しない
-
-        的確に表すなら1280pで編集してたやつをフレームバッファでn倍しているような感じ 画質変わらないんだからキモ
-        大体のエンジンが設計上の仕様として割り切ってる部分だけども 映像出身者には引き延ばしする仕様は嫌われますよ...
-width/2=640
-+mLeft + 64/2
-
-1280x720
-grid=64
-mL=50
-配置=640-64-25=551
-
-640x360
-AviUtl等での本来の配置座標=320-64-25=231
-このままでは1280x720上での231を参照するため、割合参照する必要がある
-単純に640x360では2倍かかるので つまり？知らん
-        */
 
     case Frame::CONST_SIZE:
 
         break;
-    default:
-        break;
     }
 }
+
+/*
+やっぱアス比も欲しいな
+
+*/
