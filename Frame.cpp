@@ -149,6 +149,60 @@ void Frame::UpdateDrawData()
     switch (mode_)
     {
     case Frame::AUTO_ASPECT:
+        using namespace SystemConfig;
+
+        /*
+        AB-2C=D 1280*0.5-64*2=512
+        E=D/2+C/2 =288
+        E=AB/2-C/2 = 1280*0.5/2-32=288
+        */
+        //9分割しているため単純に画面サイズ変更に伴う見かけの拡大率変更が行われると...
+        int resizeWidth = (windowWidth * transform_.scale_.x - grid_ - grid_);
+        int resizeHeight = (windowHeight * transform_.scale_.y - grid_ - grid_);
+        //引き延ばしの拡大率=(画面サイズ*クラス拡大率-2*グリッド)/グリッド
+        // 
+        //frame構築
+        for (int y = FRAME_H::H_TOP; y < FRAME_H::H_MAX; y++) {
+
+            for (int x = FRAME_W::W_LEFT; x < FRAME_W::W_MAX; x++) {
+                switch (y) {
+                case FRAME_H::H_TOP:
+                    tra[y][x].position_.y = 0;
+                    tra[y][x].scale_.y = DEFAULT_SCALE;
+                    break;
+                case FRAME_H::H_CENTER:
+                    tra[y][x].position_.y = Half(mUp - mDown);
+                    tra[y][x].scale_.y = resizeHeight / (float)grid_;
+                    break;
+                case FRAME_H::H_BOTTOM:
+                    tra[y][x].position_.y = 0;
+                    tra[y][x].scale_.y = DEFAULT_SCALE;
+                    break;
+                }
+
+                switch (x) {
+                case FRAME_W::W_LEFT:
+                    tra[y][x].position_.x = -windowWidth * transform_.scale_.x + grid_ / 2 + transform_.position_.x;
+                    tra[y][x].scale_.x = DEFAULT_SCALE;
+                    break;
+                case FRAME_W::W_CENTER:
+                    tra[y][x].position_.x = transform_.position_.x;
+                    tra[y][x].scale_.x = resizeWidth / (float)grid_;
+                    break;
+                case FRAME_W::W_RIGHT:
+                    tra[y][x].position_.x = -mRight + Half(windowWidth - grid_);
+                    tra[y][x].scale_.x = DEFAULT_SCALE;
+                    break;
+                }
+
+                //画面サイズ変更に対応するための変換処理 現在画面サイズ/基準サイズを割る
+                //tra[y][x].position_.x /= ((float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImgFrame_).x);
+                //tra[y][x].position_.y /= ((float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImgFrame_).y);
+                //tra[y][x].scale_.x /= ((float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImgFrame_).x);
+                //tra[y][x].scale_.y /= ((float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImgFrame_).y);
+
+            }
+        }
         break;
     case Frame::CONST_MARGIN:
         using namespace SystemConfig;

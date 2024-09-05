@@ -37,7 +37,9 @@ void CreditScreen::Initialize()
     backBtn->SetSound(AudioManager::SE_CANCEL);
     
     frame = Instantiate<Frame>(this);
-    frame->ChangeMode(Frame::MODE::CONST_MARGIN, 50, 50, 100, 50);
+    //frame->ChangeMode(Frame::MODE::CONST_MARGIN, 50, 50, 100, 50);
+    frame->ChangeMode(Frame::MODE::AUTO_ASPECT, 0.5f, 0.75f);
+    frame->SetPosition(50, 100,0);
 
 }
 
