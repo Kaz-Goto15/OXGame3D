@@ -8,10 +8,10 @@
 //コンストラクタ
 CreditScreen::CreditScreen(GameObject* parent):
     Screen(parent, "CreditScreen"),
-    frameMargin(0,0,0,0),
-    frameScale(1.0f),
-    framePos(0,50,0),
-    frameLength(64)
+    pFrame(nullptr),
+    framePosY(-55),
+    frameGrid_(64),
+    backBtn(nullptr)
 {
     std::fill_n(hPict_, PIC_MAX, -1);
 }
@@ -24,11 +24,12 @@ CreditScreen::~CreditScreen()
 //初期化
 void CreditScreen::Initialize()
 {
+    //画像
     hPict_[PIC_BACKGROUND] = Image::Load("Screen/black.png");
     hPict_[PIC_DESCRIPTION] = Image::Load("Screen/descr2.png");
     Image::SetAlpha(hPict_[PIC_BACKGROUND], 128);
-    
-    frameMargin = { 50,50,150,50 };   //コンストラクタでやるとxが-1になる 原因不明のためこっちで
+
+    //もどるボタン
     backBtn = Instantiate<ButtonGP>(this);
     backBtn->SetText("BACK");
     backBtn->SetAction(0);
@@ -36,10 +37,9 @@ void CreditScreen::Initialize()
     backBtn->SetScale(0.75f);
     backBtn->SetSound(AudioManager::SE_CANCEL);
     
-    frame = Instantiate<Frame>(this);
-    //frame->ChangeMode(Frame::MODE::CONST_MARGIN, 50, 50, 100, 50);
-    frame->ChangeMode(Frame::MODE::AUTO_ASPECT, 0.5f, 0.75f);
-    frame->SetPosition(50, 100,0);
+    //フレーム
+    pFrame = Instantiate<Frame>(this);
+    pFrame->ChangeMode(Frame::MODE::AUTO_ASPECT, 0.8f, 0.75f,0.0f,framePosY);
 
 }
 
@@ -49,22 +49,8 @@ void CreditScreen::Update()
     if (SystemConfig::IsDebug()) {
         //もどる
         if (Input::IsKeyDown(DIK_P)) {
-            Prev();
+            ButtonAct(0);
         }
-
-        //枠が拡縮する
-        //if (Input::IsKey(DIK_6)) {
-        //    frameScale -= 0.01f;
-        //}
-        //if (Input::IsKey(DIK_7)) {
-        //    frameScale += 0.01f;
-        //}
-        //if (Input::IsKey(DIK_8)) {
-        //    framePos.y -= 1.0f;
-        //}
-        //if (Input::IsKey(DIK_9)) {
-        //    framePos.y += 1.0f;
-        //}
     }
 }
 
@@ -72,8 +58,7 @@ void CreditScreen::Update()
 void CreditScreen::Draw()
 {
     Transform creditTra;
-    creditTra.SetCenter(framePos);
-    creditTra.IsCalcCenterPoint(true);
+    creditTra.position_.y = framePosY;
     Transform frameTra;
 
     for (PIC p = static_cast<PIC>(0); p < PIC_MAX; p = static_cast<PIC>(p + 1)) {
@@ -84,7 +69,7 @@ void CreditScreen::Draw()
             Image::Draw(hPict_[p]);
 
             //フレーム描画
-            frame->DrawFrame();
+            pFrame->DrawFrame();
             break;
         case CreditScreen::PIC_DESCRIPTION:
             Image::SetTransform(hPict_[p], creditTra);

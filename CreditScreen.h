@@ -15,13 +15,12 @@ class CreditScreen : public Screen
     };
     int hPict_[PIC_MAX];
 
-    XMINT4 frameMargin;  //上右下左
-    float frameScale;    //可変フレーム拡大率
-    XMFLOAT3 framePos;  //フレーム中心点
-    int frameLength;    //フレーム画像を分割したときの1辺の長さ
+    Frame* pFrame;       //枠
+    float framePosY;  //フレーム中心点
+    int frameGrid_;    //フレーム画像を分割したときの1辺の長さ
+
     ButtonGP* backBtn;  //もどるﾎﾞﾀﾝ
 
-    Frame* frame;       //枠
 
     //半分にする 型をそのまんま返すためintなどは自動切り捨て
     template <class T>

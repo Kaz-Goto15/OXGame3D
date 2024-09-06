@@ -5,23 +5,15 @@
 class DebugText;
 class ButtonGP;
 class ControlSlider;
+class Frame;
 //クレジット画面を管理するクラス
 class OptionScreen : public Screen
 {
-    enum PIC {
-        PIC_BACKGROUND,
-        PIC_BASIC_FRAME_TEX,
-        //PIC_DESCRIPTION,
-        PIC_MAX
-    };
-    int hPict_[PIC_MAX];
-
-    XMINT4 frameMargin;  //上右下左
-    float frameScale;    //可変フレーム拡大率
-    XMFLOAT3 framePos;
+    int hBg_;
+    Frame* pFrame;
+    ButtonGP* backBtn;
 
     DebugText* debugtext;
-    ButtonGP* backBtn;
     ButtonGP* testBtn[7];
     std::string debugStr[20];
     ControlSlider* pSlider;
