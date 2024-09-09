@@ -217,6 +217,7 @@
     <ClCompile Include="CubeSelectIndicator.cpp">
       <Filter>Game Obj</Filter>
     </ClCompile>
+    <ClCompile Include="ButtonEx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -374,6 +375,7 @@
     <ClInclude Include="CubeSelectIndicator.h">
       <Filter>Game Obj</Filter>
     </ClInclude>
+    <ClInclude Include="ButtonEx.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

@@ -137,6 +137,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ButtonEx.cpp" />
     <ClCompile Include="ButtonGP.cpp" />
     <ClCompile Include="ConfigKey.cpp" />
     <ClCompile Include="ControlSlider.cpp" />
@@ -196,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
+    <ClInclude Include="ButtonEx.h" />
     <ClInclude Include="ButtonGP.h" />
     <ClInclude Include="ConfigKey.h" />
     <ClInclude Include="ControlSlider.h" />
