@@ -6,8 +6,10 @@
 #include "Engine/Text.h"
 #include "OptionScreen.h"
 #include "CreditScreen.h"
+#include "ButtonEx.h"
 
 #include <vector>
+
 TestScene::TestScene(GameObject* parent)
 	: GameObject(parent, "TestScene"),
 	newText(nullptr)
@@ -21,6 +23,10 @@ void TestScene::Initialize(){
 	newText->Initialize(KUROKANE_AQUA_50px);
 	descrText = new Text();
 	descrText->Initialize(TEXT_SOURCE::GAKUMARU_16px);
+
+	btn = Instantiate<ButtonEx>(this);
+	btn->EnDrawShadow(true);
+	btn->SetSize(0.2f, 0.2f);
 }
 void TestScene::Update(){
 
@@ -72,7 +78,15 @@ void TestScene::Draw(){
 		"A/D : Change EaseNo",
 		"O : Open Option Screen",
 		"C : Open Credit Screen",
-		"P : Play Scene(old:ModelTestScreen)"
+		"P : Play Scene(old:ModelTestScreen)",
+		btn->GetDebugStr(0),
+		btn->GetDebugStr(1),
+		btn->GetDebugStr(2),
+		btn->GetDebugStr(3),
+		btn->GetDebugStr(4),
+		btn->GetDebugStr(5),
+		btn->GetDebugStr(6),
+		btn->GetDebugStr(7)
 	};
 	for (int i = 0; i < helpStr.size(); i++) {
 		descrText->Draw(-640, -360+i*24, helpStr[i].c_str(), Text::HORIZONAL_ALIGNMENT::LEFT, Text::VERTICAL_ALIGNMENT::TOP);

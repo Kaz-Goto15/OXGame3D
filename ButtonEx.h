@@ -25,14 +25,26 @@ protected:
 	AudioManager::AUDIO_SOURCE sound;
 
 	XMFLOAT2 rangeLU, rangeRB;
+
+public:
+	enum DIR {
+		DIR_DOWN,
+		DIR_UP,
+		DIR_LEFT,
+		DIR_RIGHT,
+		DIR_MAX,
+	};
+private:
+	ButtonEx* nextBtn[DIR::DIR_MAX];
+public:
+	void SetNextKey(DIR dir, ButtonEx* _pBtn);
 	
-	ButtonEx *leftBtn, *upBtn, *downBtn, *rightBtn;
 	bool isSelecting_;
 public:
 	enum MODE {
-		PUSH_ONLY,          //押下時、即移行
+		PUSH_ONLY,          //押下時、即移行 
 		PUSH_UP,            //押下から離したときに移行
-		PUSH_ONLY_SELECT,   //押下時、即移行 十字キーやマウス移動で選択が移動する
+		PUSH_ONLY_SELECT,   //押下時、即移行 十字キーやマウス移動で選択が移動する ←最初からいれていいかも どうせnullptrなら作動しないし
 		PUSH_UP_SELECT      //押下から離したときに移行 十字キーやマウス移動で選択が移動する
 	}mode_;
 	STATE state;
@@ -74,8 +86,16 @@ private:
 	int grid_;									//ボタン3x3分割ファイルの1x1サイズ
 	Transform buttonDivTra[DIV_H::H_MAX][DIV_W::W_MAX];	//3x3分割の各変形情報
 	void CalcDivImage();								//計算
+	void DrawDivImage(STATE _state);
 public:
 	void SetButtonImages(int _grid, string path_idle, string path_select = "", string path_push = "", string path_selected = "");
+private:
+	void SetScale(XMFLOAT3 scale) { }
+	void SetScale(float x, float y, float z = 1.0f) { }
+	void SetScale(float all) {}
+	void SetScale(float all, float oX, float oY, float oZ) {}
+public:
+	void SetSize(float x, float y);
 
 	//シャドウ系
 private:
@@ -87,8 +107,9 @@ private:
 	float shadowScale;
 public:
 	void SetShadowTransform(int _x, int _y, float _scale = 1.f);
-	void SetDrawShadow(bool b);
+	void EnDrawShadow(bool b);
 	void SetShadowImage(string path);
+	void DrawDivShadow();
 	
 
 
@@ -96,9 +117,7 @@ public:
 protected:
 	//初期化追加時の処理
 	virtual void Init() {}
-	//画像リンク ボタン画像を変えたい場合これ継承してオーバーライドする
-	virtual std::string LinkImageFile(STATE state);
-	//ボタンアニメーション系
+	//ボタンアニメーション系を拡張する際に上書きする
 	virtual void DrawIdle();
 	virtual void DrawSelect();
 	virtual void DrawPush();
@@ -109,10 +128,10 @@ private:
 	void UpdateSelect();
 	void UpdatePush();
 	void UpdateSelected();
+
 	//ボタンの描画範囲内にマウスカーソルがあるか
 	bool IsEntered();
-	//値が範囲内か
-	bool Between(float value, float min, float max);
+
 	//マウスが1pxでも動いたか
 	bool IsMovedMouse();
 public:
@@ -121,4 +140,5 @@ public:
 
 /*
 サイズは画面に対する拡大率指定(=scale_) デフォルトを1より小さくすることで何も設定しなかった場合にボタンで画面が埋め尽くされることを防ぐ
+ボタンはAssets\Image\Button\を参照します
 */

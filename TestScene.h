@@ -3,6 +3,7 @@
 
 class Text;
 class Screen;
+class ButtonEx;
 class TestScene : public GameObject
 {
 	int easeNum = 41;
@@ -11,6 +12,7 @@ class TestScene : public GameObject
 	Text* newText;
 	Text* descrText;
 	Screen* pScreen;
+	ButtonEx* btn;
 public:
 	TestScene(GameObject* parent);
 	void Initialize() override;

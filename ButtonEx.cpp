@@ -3,6 +3,7 @@
 #include "Engine/Input.h"
 #include "SystemConfig.h"
 #include "AudioManager.h"
+#include <vector>
 
 //1/2
 template <class T>
@@ -13,6 +14,20 @@ T Half(T pValue) {
 template <class T>
 bool Between(T value, T min, T max) {
 	return (min <= value && value <= max);
+}
+
+//SQLのIn句と同じ
+template <class T>
+bool In(T val, std::vector<T> search) {
+	for (auto& word : search) {
+		if (val == word)return true;
+	}
+	return false;
+}
+
+void ButtonEx::SetNextKey(DIR dir, ButtonEx* _pBtn)
+{
+	nextBtn[dir] = _pBtn;
 }
 
 //コンストラクタ
@@ -28,11 +43,21 @@ ButtonEx::ButtonEx(GameObject* parent, const std::string& name) :
 	ActTiming(SELECTED),
 	sound(AudioManager::AUDIO_SOURCE::SE_DECIDE),
 
-	leftBtn(nullptr),upBtn(nullptr),downBtn(nullptr),rightBtn(nullptr),
+	nextBtn{nullptr,nullptr,nullptr,nullptr},
 	isSelecting_(false),
-	mode_(PUSH_UP)
+	mode_(PUSH_UP),
+	//ボタン画像系
+	DEFAULT_BUTTON_IMG{"btnDefIdle.png","btnDefSelect.png","btnDefPush.png","btnDefSelected.png"},
+	hImgButton_{-1,-1,-1,-1},
+	grid_(64),
+	//シャドウ系
+	DEFAULT_SHADOW_IMG("btnDefShadow.png"),
+	hImgShadow_(-1),
+	isDrawShadow(false),
+	shadowAlpha_(128),
+	shadowPos({5,5}),
+	shadowScale(1.0f)
 {
-	std::fill_n(hImg_, MAX, -1);
 }
 
 //デストラクタ
@@ -43,10 +68,14 @@ ButtonEx::~ButtonEx()
 //初期化
 void ButtonEx::Initialize()
 {
-	for (int i = 0; i < MAX; i++) {
-		hImg_[i] = Image::Load(LinkImageFile(static_cast<STATE>(i)));
-		Image::SetTransform(hImg_[i], transform_);
-	}
+	//画像セット
+	SetButtonImages(grid_,
+		DEFAULT_BUTTON_IMG[STATE::IDLE],
+		DEFAULT_BUTTON_IMG[STATE::SELECT],
+		DEFAULT_BUTTON_IMG[STATE::PUSH],
+		DEFAULT_BUTTON_IMG[STATE::SELECTED]);
+
+	//テキストオブジェクト
 	buttonTextObj_ = new Text;
 	buttonTextObj_->Initialize(KUROKANE_AQUA_50px);
 
@@ -62,6 +91,33 @@ void ButtonEx::Update()
 		nextIdle = false;
 	}
 
+	//如何なる時もキー移動時にそれを選択中に、自身をアイドルにする
+	if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_DOWN))) {
+		if (nextBtn[DIR::DIR_DOWN] != nullptr) {
+			nextBtn[DIR::DIR_DOWN]->state = SELECT;
+			state = IDLE;
+		}
+	}
+	if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_UP))) {
+		if (nextBtn[DIR::DIR_UP] != nullptr) {
+			nextBtn[DIR::DIR_UP]->state = SELECT;
+			state = IDLE;
+		}
+	}
+	if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_LEFT))) {
+		if (nextBtn[DIR::DIR_LEFT] != nullptr) {
+			nextBtn[DIR::DIR_LEFT]->state = SELECT;
+			state = IDLE;
+		}
+	}
+	if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_RIGHT))) {
+		if (nextBtn[DIR::DIR_RIGHT] != nullptr) {
+			nextBtn[DIR::DIR_RIGHT]->state = SELECT;
+			state = IDLE;
+		}
+	}
+
+	//各ステート更新
 	switch (state)
 	{
 	case ButtonEx::IDLE:		UpdateIdle();		break;
@@ -74,6 +130,11 @@ void ButtonEx::Update()
 //描画
 void ButtonEx::Draw()
 {
+	//シャドウが有効化なら描画
+	if (isDrawShadow)DrawDivShadow();
+
+	//各ステート描画
+	/*
 	switch (state)
 	{
 	case ButtonEx::IDLE:		DrawIdle();		break;
@@ -81,7 +142,7 @@ void ButtonEx::Draw()
 	case ButtonEx::PUSH:		DrawPush();		break;
 	case ButtonEx::SELECTED:	DrawSelected();	break;
 	}
-
+	*/
 	//ボタンテキスト描画
 	buttonTextObj_->Draw((int)transform_.position_.x, (int)transform_.position_.y, buttonTextName_.c_str(), hAl, vAl);
 }
@@ -91,58 +152,20 @@ void ButtonEx::Release()
 {
 }
 
-std::string ButtonEx::LinkImageFile(STATE _state)
-{
-	std::string AssetDir = "Default\\";
-	std::string fileName;
-	switch (_state)
-	{
-	case ButtonEx::IDLE:		fileName = "btnIdle.png";	break;
-	case ButtonEx::SELECT:		fileName = "btnSelect.png";	break;
-	case ButtonEx::PUSH:		fileName = "btnPush.png";	break;
-	case ButtonEx::SELECTED:	fileName = "btnSelected.png";	break;
-	}
-	return AssetDir + fileName;
-}
-
-void ButtonEx::DrawIdle()
-{
-	Image::SetTransform(hImg_[IDLE], transform_);
-	Image::Draw(hImg_[IDLE]);
-}
-
-void ButtonEx::DrawSelect()
-{
-	Image::SetTransform(hImg_[SELECT], transform_);
-	Image::Draw(hImg_[SELECT]);
-}
-
-void ButtonEx::DrawPush()
-{
-	Image::SetTransform(hImg_[PUSH], transform_);
-	Image::Draw(hImg_[PUSH]);
-}
-
-void ButtonEx::DrawSelected()
-{
-	Image::SetTransform(hImg_[SELECTED], transform_);
-	Image::Draw(hImg_[SELECTED]);
-}
-
 std::string ButtonEx::GetDebugStr(int i)
 {
 	XMFLOAT3 imageSize = {
-	Image::GetSize(hImg_[0]).x * transform_.scale_.x,
-	Image::GetSize(hImg_[0]).y * transform_.scale_.y,
-	Image::GetSize(hImg_[0]).z * transform_.scale_.z
+	Image::GetSize(hImgButton_[STATE::IDLE]).x * transform_.scale_.x,
+	Image::GetSize(hImgButton_[STATE::IDLE]).y * transform_.scale_.y,
+	Image::GetSize(hImgButton_[STATE::IDLE]).z * transform_.scale_.z
 	};
 	using std::to_string;
-	Transform buttonTra = Image::GetTransform(hImg_[0]);
+	Transform buttonTra = Image::GetTransform(hImgButton_[STATE::IDLE]);
 	switch (i) {
 	case 0:
 		return "imageSize: " +
-			to_string(Image::GetSize(hImg_[0]).x) + "," +
-			to_string(Image::GetSize(hImg_[0]).y);
+			to_string(Image::GetSize(hImgButton_[STATE::IDLE]).x) + "," +
+			to_string(Image::GetSize(hImgButton_[STATE::IDLE]).y);
 	case 1:
 		return "null vertex:(" +
 			to_string((int)Half(SystemConfig::windowWidth - imageSize.x)) + "," +
@@ -157,9 +180,6 @@ std::string ButtonEx::GetDebugStr(int i)
 		return "windowsize: " +
 			to_string(SystemConfig::windowWidth) + ", " +
 			to_string(SystemConfig::windowHeight);
-	case 3:
-		return "windowsize: " +
-			to_string(GetPrivateProfileInt("SCREEN", "Width", 800, ".\\setup.ini"));
 	case 4:
 		return "between:(" +
 			to_string((int)(buttonTra.position_.x + Half(SystemConfig::windowWidth - imageSize.x))) + ")" +
@@ -169,6 +189,7 @@ std::string ButtonEx::GetDebugStr(int i)
 	case 5:
 		return "buttonPos: " +
 			to_string(buttonTra.position_.x) + "," + to_string(buttonTra.position_.y);
+	case 6:return "mouse=(" + to_string((int)Input::GetMousePosition(true).x) + ", " + to_string((int)Input::GetMousePosition(true).y) + ")";
 	case 7:
 		return "range: " +
 			to_string(rangeLU.x) + "," + to_string(rangeLU.y) + "," + to_string(rangeRB.x) + "," + to_string(rangeRB.y);
@@ -244,18 +265,46 @@ void ButtonEx::CalcDivImage()
 			}
 		}
 	}
+
+	rangeLU = {
+		buttonDivTra[DIV_H::H_TOP][DIV_W::W_LEFT].position_.x - grid_ / 2,
+		buttonDivTra[DIV_H::H_TOP][DIV_W::W_LEFT].position_.y - grid_ / 2
+	};
+	rangeRB = {
+		buttonDivTra[DIV_H::H_BOTTOM][DIV_W::W_RIGHT].position_.x + grid_ / 2,
+		buttonDivTra[DIV_H::H_BOTTOM][DIV_W::W_RIGHT].position_.y + grid_ / 2
+	};
+}
+
+void ButtonEx::DrawDivImage(STATE _state)
+{
+	for (int h = DIV_H::H_TOP; h < DIV_H::H_MAX; h++) {
+		for (int w = DIV_W::W_LEFT; w < DIV_W::W_MAX; w++) {
+			Image::SetRect(hImgButton_[_state], w * grid_, h * grid_, grid_, grid_);
+			Image::SetTransform(hImgButton_[_state], buttonDivTra[h][w]);
+			Image::Draw(hImgButton_[_state]);
+		}
+	}
 }
 
 void ButtonEx::SetButtonImages(int _grid, string path_idle, string path_select, string path_push, string path_selected)
 {
+	std::string BUTTON_DIR_PATH = "Button\\";
 	//変数更新
 	grid_ = _grid;
-	hImgButton_[STATE::IDLE] = Image::Load(path_idle);
-	hImgButton_[STATE::SELECT] = Image::Load(path_select);
-	hImgButton_[STATE::PUSH] = Image::Load(path_push);
-	hImgButton_[STATE::SELECTED] = Image::Load(path_selected);
+	hImgButton_[STATE::IDLE] = Image::Load(BUTTON_DIR_PATH+path_idle);
+	hImgButton_[STATE::SELECT] = Image::Load(BUTTON_DIR_PATH + path_select);
+	hImgButton_[STATE::PUSH] = Image::Load(BUTTON_DIR_PATH + path_push);
+	hImgButton_[STATE::SELECTED] = Image::Load(BUTTON_DIR_PATH + path_selected);
 
 	//分割変形情報の更新
+	CalcDivImage();
+}
+
+void ButtonEx::SetSize(float x, float y)
+{
+	transform_.scale_.x = x;
+	transform_.scale_.y = y;
 	CalcDivImage();
 }
 
@@ -266,7 +315,7 @@ void ButtonEx::SetShadowTransform(int _posX, int _posY, float _scale)
 	shadowScale = _scale;
 }
 
-void ButtonEx::SetDrawShadow(bool b)
+void ButtonEx::EnDrawShadow(bool b)
 {
 	isDrawShadow = b;
 }
@@ -276,9 +325,78 @@ void ButtonEx::SetShadowImage(string path)
 	hImgShadow_ = Image::Load(path);
 }
 
+void ButtonEx::DrawDivShadow()
+{
+	XMINT2 stdWindowSize = Image::GetStdWindowSize(hImgButton_[STATE::IDLE]);
+	for (int y = DIV_H::H_TOP; y < DIV_H::H_MAX; y++) {
+		for (int x = DIV_W::W_LEFT; x < DIV_W::W_MAX; x++) {
+			Transform shadowTra = buttonDivTra[y][x];
+
+			//拡大率により変形する部分に乗算
+			/*
+			switch (y) {
+			case DIV_H::H_TOP:
+				shadowTra.position_.y = -Half(stdWindowSize.y * transform_.scale_.y * shadowScale - grid_) + transform_.position_.y;
+				break;
+			case DIV_H::H_CENTER:
+				shadowTra.scale_.y = (stdWindowSize.y * transform_.scale_.y * shadowScale - grid_ - grid_) / (float)grid_;
+				break;
+			case DIV_H::H_BOTTOM:
+				shadowTra.position_.y = Half(stdWindowSize.y * transform_.scale_.y * shadowScale - grid_) + transform_.position_.y;
+				break;
+			}
+
+			switch (x) {
+			case DIV_W::W_LEFT:
+				shadowTra.position_.x = -Half(stdWindowSize.x * transform_.scale_.x * shadowScale - grid_) + transform_.position_.x;
+				break;
+			case DIV_W::W_CENTER:
+				shadowTra.scale_.x = (stdWindowSize.x * transform_.scale_.x * shadowScale - grid_ - grid_) / (float)grid_;
+				break;
+			case DIV_W::W_RIGHT:
+				shadowTra.position_.x = Half(stdWindowSize.x * transform_.scale_.x * shadowScale - grid_) + transform_.position_.x;
+				break;
+			}
+			*/
+			//座標調整
+			//shadowTra.position_.x += shadowPos.x;
+			//shadowTra.position_.y += shadowPos.y;
+
+			//描画
+			Image::SetRect(hImgShadow_, x * grid_, y * grid_, grid_, grid_);
+			Image::SetTransform(hImgShadow_, shadowTra);
+			Image::Draw(hImgShadow_);
+
+		}
+	}
+}
+
+
+void ButtonEx::DrawIdle()
+{
+	DrawDivImage(STATE::IDLE);
+}
+
+void ButtonEx::DrawSelect()
+{
+	DrawDivImage(STATE::SELECT);
+}
+
+void ButtonEx::DrawPush()
+{
+	DrawDivImage(STATE::PUSH);
+}
+
+void ButtonEx::DrawSelected()
+{
+	DrawDivImage(STATE::SELECTED);
+}
+
 
 void ButtonEx::UpdateIdle()
 {
+	//範囲内かつ動いていれば選択中へ移行
+	//ボタンの描画が許可されていたら選択された音をならす
 	if (IsMovedMouse() && IsEntered()) {
 		state = SELECT;
 		if (IsVisibled())
@@ -288,6 +406,7 @@ void ButtonEx::UpdateIdle()
 
 void ButtonEx::UpdateSelect()
 {
+	//ボタン押下時、押下中へ移行
 	if (Input::IsMouseButtonDown(0)) {
 		if (ActTiming == SELECTED) {
 			state = PUSH;
@@ -298,18 +417,24 @@ void ButtonEx::UpdateSelect()
 		}
 	}
 
+	//動いておりかつ範囲外ならアイドルへ移行
 	if (IsMovedMouse() && !IsEntered()) {
 		state = IDLE;
 		return;
 	}
+
+	//if(In(mode_, {PUSH_ONLY_SELECT, PUSH_UP_SELECT}))
 }
 
 void ButtonEx::UpdatePush()
 {
+	//範囲外にいるならばアイドルへ移行
 	if (!IsEntered()) {
 		state = IDLE;
 		return;
 	}
+
+	//離したならば選択後へ移行
 	if (Input::IsMouseButtonUp(0)) {
 		state = SELECTED;
 		return;
@@ -326,33 +451,14 @@ void ButtonEx::UpdateSelected()
 
 bool ButtonEx::IsEntered()
 {
-	//デカさ：ウィンドウサイズ(可変)*ボタン比率 左上右下の判定のため1/2にしてぶち込む
-	//デカさ矯正：Image呼び出し元の拡大率 これImage内拡大率じゃだめか 多分ダメ 不変なので
-	//座標：画像の座標
-	// ポジションを指定する
-	rangeLU = {
-		transform_.scale_.x * -(Half(SystemConfig::windowWidth * Image::GetWindowRatio(hImg_[IDLE]).x)) +
-		Image::GetTransform(hImg_[IDLE]).position_.x * (float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImg_[IDLE]).x,
-		transform_.scale_.y * -(Half(SystemConfig::windowHeight * Image::GetWindowRatio(hImg_[IDLE]).y)) +
-		Image::GetTransform(hImg_[IDLE]).position_.y * (float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImg_[IDLE]).y
-	};
-	rangeRB = {
-		transform_.scale_.x * (Half(SystemConfig::windowWidth * Image::GetWindowRatio(hImg_[IDLE]).x)) +
-		Image::GetTransform(hImg_[IDLE]).position_.x * (float)SystemConfig::windowWidth / (float)Image::GetStdWindowSize(hImg_[IDLE]).x,
-		transform_.scale_.y * (Half(SystemConfig::windowHeight * Image::GetWindowRatio(hImg_[IDLE]).y)) +
-		Image::GetTransform(hImg_[IDLE]).position_.y * (float)SystemConfig::windowHeight / (float)Image::GetStdWindowSize(hImg_[IDLE]).y
-	};
+	XMINT2 stdWindowSize = Image::GetStdWindowSize(hImgButton_[STATE::IDLE]);
 
-	if (Between(Input::GetMousePosition(true).x, rangeLU.x, rangeRB.x) && Between(Input::GetMousePosition(true).y, rangeLU.y, rangeRB.y)) {
+	//3x3分割の左上と右下にグリッドの半分をずらした値と比較 マウス座標は画面サイズに応じてコンバート
+	if (Between(Input::GetMousePosition(true).x * stdWindowSize.x / (float)SystemConfig::windowWidth, rangeLU.x, rangeRB.x) && 
+		Between(Input::GetMousePosition(true).y * stdWindowSize.y / (float)SystemConfig::windowHeight, rangeLU.y, rangeRB.y)) {
 		return true;
 	}
 	return false;
-}
-
-
-bool ButtonEx::Between(float value, float min, float max)
-{
-	return (value >= min && value <= max);
 }
 
 bool ButtonEx::IsMovedMouse()
