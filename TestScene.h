@@ -12,7 +12,7 @@ class TestScene : public GameObject
 	Text* newText;
 	Text* descrText;
 	Screen* pScreen;
-	ButtonEx* btn;
+	ButtonEx* btn[5];
 public:
 	TestScene(GameObject* parent);
 	void Initialize() override;

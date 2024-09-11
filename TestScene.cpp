@@ -24,9 +24,58 @@ void TestScene::Initialize(){
 	descrText = new Text();
 	descrText->Initialize(TEXT_SOURCE::GAKUMARU_16px);
 
-	btn = Instantiate<ButtonEx>(this);
-	btn->EnDrawShadow(true);
-	btn->SetSize(0.2f, 0.2f);
+	for (int i = 0; i < 5; i++) {
+		btn[i] = Instantiate<ButtonEx>(this);
+		btn[i]->EnDrawShadow(true);
+		btn[i]->SetSize(0.2f, 0.2f);
+		btn[i]->SetDebugNum(i);
+		if (i == 0) {
+			btn[i]->SetPosition(-360, 0);
+		}
+		else if (i == 4) {
+			btn[i]->SetPosition(360, 0);
+		}
+		else {
+			btn[i]->SetPosition(0, -180+180*(i-1));
+		}
+	}
+	for (int i = 0; i < 5; i++) {
+		switch (i)
+		{
+		case 0:
+		case 2:
+		case 4:
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_UP, btn[1]);
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_DOWN, btn[3]);
+			break;
+		case 1:
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_UP, btn[3]);
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_DOWN, btn[2]);
+			break;
+		case 3:
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_UP, btn[2]);
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_DOWN, btn[1]);
+			break;
+		}
+
+		switch (i)
+		{
+		case 1:
+		case 2:
+		case 3:
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_LEFT, btn[0]);
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_RIGHT, btn[4]);
+			break;
+		case 0:
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_LEFT, btn[4]);
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_RIGHT, btn[2]);
+			break;
+		case 4:
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_LEFT, btn[2]);
+			btn[i]->SetNextKey(ButtonEx::DIR::DIR_RIGHT, btn[0]);
+			break;
+		}
+	}
 }
 void TestScene::Update(){
 
@@ -79,14 +128,14 @@ void TestScene::Draw(){
 		"O : Open Option Screen",
 		"C : Open Credit Screen",
 		"P : Play Scene(old:ModelTestScreen)",
-		btn->GetDebugStr(0),
-		btn->GetDebugStr(1),
-		btn->GetDebugStr(2),
-		btn->GetDebugStr(3),
-		btn->GetDebugStr(4),
-		btn->GetDebugStr(5),
-		btn->GetDebugStr(6),
-		btn->GetDebugStr(7)
+		btn[0]->GetDebugStr(0),
+		btn[0]->GetDebugStr(1),
+		btn[0]->GetDebugStr(2),
+		btn[0]->GetDebugStr(3),
+		btn[0]->GetDebugStr(4),
+		btn[0]->GetDebugStr(5),
+		btn[0]->GetDebugStr(6),
+		btn[0]->GetDebugStr(7)
 	};
 	for (int i = 0; i < helpStr.size(); i++) {
 		descrText->Draw(-640, -360+i*24, helpStr[i].c_str(), Text::HORIZONAL_ALIGNMENT::LEFT, Text::VERTICAL_ALIGNMENT::TOP);

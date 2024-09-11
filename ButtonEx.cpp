@@ -4,6 +4,7 @@
 #include "SystemConfig.h"
 #include "AudioManager.h"
 #include <vector>
+#include "Engine/Debug.h"
 
 //1/2
 template <class T>
@@ -47,6 +48,7 @@ ButtonEx::ButtonEx(GameObject* parent, const std::string& name) :
 	isSelecting_(false),
 	mode_(PUSH_UP),
 	//ボタン画像系
+	DEFAULT_DIRECTORY("Button\\"),
 	DEFAULT_BUTTON_IMG{"btnDefIdle.png","btnDefSelect.png","btnDefPush.png","btnDefSelected.png"},
 	hImgButton_{-1,-1,-1,-1},
 	grid_(64),
@@ -75,6 +77,9 @@ void ButtonEx::Initialize()
 		DEFAULT_BUTTON_IMG[STATE::PUSH],
 		DEFAULT_BUTTON_IMG[STATE::SELECTED]);
 
+	SetShadowImage(DEFAULT_SHADOW_IMG);
+	SetShadowTransform(shadowPos.x, shadowPos.y, shadowScale, shadowAlpha_);
+
 	//テキストオブジェクト
 	buttonTextObj_ = new Text;
 	buttonTextObj_->Initialize(KUROKANE_AQUA_50px);
@@ -92,31 +97,36 @@ void ButtonEx::Update()
 	}
 
 	//如何なる時もキー移動時にそれを選択中に、自身をアイドルにする
-	if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_DOWN))) {
-		if (nextBtn[DIR::DIR_DOWN] != nullptr) {
-			nextBtn[DIR::DIR_DOWN]->state = SELECT;
-			state = IDLE;
+	if (state != STATE::IDLE) {
+		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_DOWN))) {
+			if (nextBtn[DIR::DIR_DOWN] != nullptr) {
+				nextBtn[DIR::DIR_DOWN]->state = SELECT;
+				state = IDLE;
+				Debug::Log(this->GetObjectName() + std::to_string(debugNum) + ":DOWN",true);
+			}
+		}
+		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_UP))) {
+			if (nextBtn[DIR::DIR_UP] != nullptr) {
+				nextBtn[DIR::DIR_UP]->state = SELECT;
+				state = IDLE;
+				Debug::Log(this->GetObjectName() + std::to_string(debugNum) + ":UP", true);
+			}
+		}
+		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_LEFT))) {
+			if (nextBtn[DIR::DIR_LEFT] != nullptr) {
+				nextBtn[DIR::DIR_LEFT]->state = SELECT;
+				state = IDLE;
+				Debug::Log(this->GetObjectName() + std::to_string(debugNum) + ":LEFT", true);
+			}
+		}
+		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_RIGHT))) {
+			if (nextBtn[DIR::DIR_RIGHT] != nullptr) {
+				nextBtn[DIR::DIR_RIGHT]->state = SELECT;
+				state = IDLE;
+				Debug::Log(this->GetObjectName() + std::to_string(debugNum) + ":RIGHT", true);
+			}
 		}
 	}
-	if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_UP))) {
-		if (nextBtn[DIR::DIR_UP] != nullptr) {
-			nextBtn[DIR::DIR_UP]->state = SELECT;
-			state = IDLE;
-		}
-	}
-	if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_LEFT))) {
-		if (nextBtn[DIR::DIR_LEFT] != nullptr) {
-			nextBtn[DIR::DIR_LEFT]->state = SELECT;
-			state = IDLE;
-		}
-	}
-	if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_RIGHT))) {
-		if (nextBtn[DIR::DIR_RIGHT] != nullptr) {
-			nextBtn[DIR::DIR_RIGHT]->state = SELECT;
-			state = IDLE;
-		}
-	}
-
 	//各ステート更新
 	switch (state)
 	{
@@ -134,7 +144,7 @@ void ButtonEx::Draw()
 	if (isDrawShadow)DrawDivShadow();
 
 	//各ステート描画
-	/*
+	
 	switch (state)
 	{
 	case ButtonEx::IDLE:		DrawIdle();		break;
@@ -142,7 +152,7 @@ void ButtonEx::Draw()
 	case ButtonEx::PUSH:		DrawPush();		break;
 	case ButtonEx::SELECTED:	DrawSelected();	break;
 	}
-	*/
+	
 	//ボタンテキスト描画
 	buttonTextObj_->Draw((int)transform_.position_.x, (int)transform_.position_.y, buttonTextName_.c_str(), hAl, vAl);
 }
@@ -289,13 +299,12 @@ void ButtonEx::DrawDivImage(STATE _state)
 
 void ButtonEx::SetButtonImages(int _grid, string path_idle, string path_select, string path_push, string path_selected)
 {
-	std::string BUTTON_DIR_PATH = "Button\\";
 	//変数更新
 	grid_ = _grid;
-	hImgButton_[STATE::IDLE] = Image::Load(BUTTON_DIR_PATH+path_idle);
-	hImgButton_[STATE::SELECT] = Image::Load(BUTTON_DIR_PATH + path_select);
-	hImgButton_[STATE::PUSH] = Image::Load(BUTTON_DIR_PATH + path_push);
-	hImgButton_[STATE::SELECTED] = Image::Load(BUTTON_DIR_PATH + path_selected);
+	hImgButton_[STATE::IDLE] = Image::Load(DEFAULT_DIRECTORY +path_idle);
+	hImgButton_[STATE::SELECT] = Image::Load(DEFAULT_DIRECTORY + path_select);
+	hImgButton_[STATE::PUSH] = Image::Load(DEFAULT_DIRECTORY + path_push);
+	hImgButton_[STATE::SELECTED] = Image::Load(DEFAULT_DIRECTORY + path_selected);
 
 	//分割変形情報の更新
 	CalcDivImage();
@@ -308,11 +317,20 @@ void ButtonEx::SetSize(float x, float y)
 	CalcDivImage();
 }
 
+void ButtonEx::SetPosition(int x, int y)
+{
+	transform_.position_.x = x;
+	transform_.position_.y = y;
+	CalcDivImage();
+}
+
 //シャドウ
-void ButtonEx::SetShadowTransform(int _posX, int _posY, float _scale)
+void ButtonEx::SetShadowTransform(int _posX, int _posY, float _scale, int _alpha)
 {
 	shadowPos = { _posX, _posY };
 	shadowScale = _scale;
+	shadowAlpha_ = _alpha;
+	Image::SetAlpha(hImgShadow_, shadowAlpha_);
 }
 
 void ButtonEx::EnDrawShadow(bool b)
@@ -322,7 +340,7 @@ void ButtonEx::EnDrawShadow(bool b)
 
 void ButtonEx::SetShadowImage(string path)
 {
-	hImgShadow_ = Image::Load(path);
+	hImgShadow_ = Image::Load(DEFAULT_DIRECTORY+path);
 }
 
 void ButtonEx::DrawDivShadow()
@@ -333,7 +351,7 @@ void ButtonEx::DrawDivShadow()
 			Transform shadowTra = buttonDivTra[y][x];
 
 			//拡大率により変形する部分に乗算
-			/*
+			
 			switch (y) {
 			case DIV_H::H_TOP:
 				shadowTra.position_.y = -Half(stdWindowSize.y * transform_.scale_.y * shadowScale - grid_) + transform_.position_.y;
@@ -357,10 +375,10 @@ void ButtonEx::DrawDivShadow()
 				shadowTra.position_.x = Half(stdWindowSize.x * transform_.scale_.x * shadowScale - grid_) + transform_.position_.x;
 				break;
 			}
-			*/
+			
 			//座標調整
-			//shadowTra.position_.x += shadowPos.x;
-			//shadowTra.position_.y += shadowPos.y;
+			shadowTra.position_.x += shadowPos.x;
+			shadowTra.position_.y += shadowPos.y;
 
 			//描画
 			Image::SetRect(hImgShadow_, x * grid_, y * grid_, grid_, grid_);

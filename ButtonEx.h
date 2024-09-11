@@ -81,23 +81,44 @@ private:
 		H_BOTTOM,
 		H_MAX
 	};
+	const string DEFAULT_DIRECTORY;
 	const string DEFAULT_BUTTON_IMG[STATE::MAX];		//デフォルトパス
 	int hImgButton_[STATE::MAX];						//ボタンハンドル
 	int grid_;									//ボタン3x3分割ファイルの1x1サイズ
 	Transform buttonDivTra[DIV_H::H_MAX][DIV_W::W_MAX];	//3x3分割の各変形情報
 	void CalcDivImage();								//計算
-	void DrawDivImage(STATE _state);
+	void DrawDivImage(STATE _state);					//分割された画像を描画する
 public:
+	/// <summary>
+	/// ボタンに使う画像を設定
+	/// シャドウも含めて同じサイズでなければならない
+	/// </summary>
+	/// <param name="_grid">3x3分割の1x1の正方形の長さ</param>
+	/// <param name="path_idle">アイドル時の画像パス</param>
+	/// <param name="path_select">選択時の画像パス</param>
+	/// <param name="path_push">押下時の画像パス</param>
+	/// <param name="path_selected">選択済み時の画像パス</param>
 	void SetButtonImages(int _grid, string path_idle, string path_select = "", string path_push = "", string path_selected = "");
-private:
-	void SetScale(XMFLOAT3 scale) { }
-	void SetScale(float x, float y, float z = 1.0f) { }
-	void SetScale(float all) {}
-	void SetScale(float all, float oX, float oY, float oZ) {}
-public:
+
+	/// <summary>
+	/// ボタンのサイズを指定
+	/// 画面全体を1としたときのボタンのサイズを割合で指定
+	/// </summary>
+	/// <param name="x">x割合</param>
+	/// <param name="y">y割合</param>
 	void SetSize(float x, float y);
 
-	//シャドウ系
+	void SetPosition(int x, int y);
+	//SetScaleを封印
+	void SetPosition(XMFLOAT3 position) = delete;
+	void SetPosition(float x, float y, float z) = delete;
+	void SetPosition(int x, int y, int z) = delete;
+	void SetScale(XMFLOAT3 scale) = delete;
+	void SetScale(float x, float y, float z = 1.0f) = delete;
+	void SetScale(float all) = delete;
+	void SetScale(float all, float oX, float oY, float oZ) = delete;
+
+//シャドウ系
 private:
 	const string DEFAULT_SHADOW_IMG;
 	int hImgShadow_;
@@ -106,7 +127,7 @@ private:
 	XMINT2 shadowPos;
 	float shadowScale;
 public:
-	void SetShadowTransform(int _x, int _y, float _scale = 1.f);
+	void SetShadowTransform(int _x, int _y, float _scale = 1.f, int _alpha = 255);
 	void EnDrawShadow(bool b);
 	void SetShadowImage(string path);
 	void DrawDivShadow();
@@ -136,6 +157,8 @@ private:
 	bool IsMovedMouse();
 public:
 	std::string GetDebugStr(int i);
+	int debugNum;
+	void SetDebugNum(int num) { debugNum = num; }
 };
 
 /*
