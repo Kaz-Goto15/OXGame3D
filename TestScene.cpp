@@ -28,7 +28,6 @@ void TestScene::Initialize(){
 		btn[i] = Instantiate<ButtonEx>(this);
 		btn[i]->EnDrawShadow(true);
 		btn[i]->SetSize(0.2f, 0.2f);
-		btn[i]->SetDebugNum(i);
 		if (i == 0) {
 			btn[i]->SetPosition(-360, 0);
 		}

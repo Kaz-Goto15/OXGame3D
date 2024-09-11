@@ -34,18 +34,15 @@ void ButtonEx::SetNextKey(DIR dir, ButtonEx* _pBtn)
 //コンストラクタ
 ButtonEx::ButtonEx(GameObject* parent, const std::string& name) :
 	GameObject(parent, name),
-	buttonTextObj_(nullptr),
-	buttonTextName_(""),
+	textObj_(nullptr),
+	text_(""),
 	state(IDLE),
 	actHandle_(-1),
 	hAl(Text::HORIZONAL_ALIGNMENT::CENTER),
 	vAl(Text::VERTICAL_ALIGNMENT::CENTER),
 	nextIdle(false),
-	ActTiming(SELECTED),
-	sound(AudioManager::AUDIO_SOURCE::SE_DECIDE),
 
 	nextBtn{nullptr,nullptr,nullptr,nullptr},
-	isSelecting_(false),
 	mode_(PUSH_UP),
 	//ボタン画像系
 	DEFAULT_DIRECTORY("Button\\"),
@@ -81,8 +78,8 @@ void ButtonEx::Initialize()
 	SetShadowTransform(shadowPos.x, shadowPos.y, shadowScale, shadowAlpha_);
 
 	//テキストオブジェクト
-	buttonTextObj_ = new Text;
-	buttonTextObj_->Initialize(KUROKANE_AQUA_50px);
+	textObj_ = new Text;
+	textObj_->Initialize(KUROKANE_AQUA_50px);
 
 	Init();
 }
@@ -96,37 +93,6 @@ void ButtonEx::Update()
 		nextIdle = false;
 	}
 
-	//如何なる時もキー移動時にそれを選択中に、自身をアイドルにする
-	if (state != STATE::IDLE) {
-		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_DOWN))) {
-			if (nextBtn[DIR::DIR_DOWN] != nullptr) {
-				nextBtn[DIR::DIR_DOWN]->state = SELECT;
-				state = IDLE;
-				Debug::Log(this->GetObjectName() + std::to_string(debugNum) + ":DOWN",true);
-			}
-		}
-		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_UP))) {
-			if (nextBtn[DIR::DIR_UP] != nullptr) {
-				nextBtn[DIR::DIR_UP]->state = SELECT;
-				state = IDLE;
-				Debug::Log(this->GetObjectName() + std::to_string(debugNum) + ":UP", true);
-			}
-		}
-		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_LEFT))) {
-			if (nextBtn[DIR::DIR_LEFT] != nullptr) {
-				nextBtn[DIR::DIR_LEFT]->state = SELECT;
-				state = IDLE;
-				Debug::Log(this->GetObjectName() + std::to_string(debugNum) + ":LEFT", true);
-			}
-		}
-		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_RIGHT))) {
-			if (nextBtn[DIR::DIR_RIGHT] != nullptr) {
-				nextBtn[DIR::DIR_RIGHT]->state = SELECT;
-				state = IDLE;
-				Debug::Log(this->GetObjectName() + std::to_string(debugNum) + ":RIGHT", true);
-			}
-		}
-	}
 	//各ステート更新
 	switch (state)
 	{
@@ -134,6 +100,39 @@ void ButtonEx::Update()
 	case ButtonEx::SELECT:		UpdateSelect();		break;
 	case ButtonEx::PUSH:		UpdatePush();		break;
 	case ButtonEx::SELECTED:	UpdateSelected();	break;
+	}
+
+	//如何なる時もキー移動時にそれを選択中に、自身をアイドルにする
+	if (state != STATE::IDLE) {
+		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_DOWN))) {
+			if (nextBtn[DIR::DIR_DOWN] != nullptr) {
+				nextBtn[DIR::DIR_DOWN]->ChangeState(SELECT);
+				state = IDLE;
+			}
+		}
+		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_UP))) {
+			if (nextBtn[DIR::DIR_UP] != nullptr) {
+				nextBtn[DIR::DIR_UP]->ChangeState(SELECT);
+				state = IDLE;
+			}
+		}
+		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_LEFT))) {
+			if (nextBtn[DIR::DIR_LEFT] != nullptr) {
+				nextBtn[DIR::DIR_LEFT]->ChangeState(SELECT);
+				state = IDLE;
+			}
+		}
+		if (Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_RIGHT))) {
+			if (nextBtn[DIR::DIR_RIGHT] != nullptr) {
+				nextBtn[DIR::DIR_RIGHT]->ChangeState(SELECT);
+				state = IDLE;
+			}
+		}
+	}
+
+	if (isChangeState) {
+		isChangeState = false;
+		state = nextState;
 	}
 }
 
@@ -154,7 +153,7 @@ void ButtonEx::Draw()
 	}
 	
 	//ボタンテキスト描画
-	buttonTextObj_->Draw((int)transform_.position_.x, (int)transform_.position_.y, buttonTextName_.c_str(), hAl, vAl);
+	textObj_->Draw((int)transform_.position_.x, (int)transform_.position_.y, text_.c_str(), hAl, vAl);
 }
 
 //開放
@@ -208,6 +207,12 @@ std::string ButtonEx::GetDebugStr(int i)
 	return "invalid num";
 }
 
+void ButtonEx::ChangeState(STATE state)
+{
+	nextState = state;
+	isChangeState = true;
+}
+
 void ButtonEx::SetAction(int hAct)
 {
 	actHandle_ = hAct;
@@ -219,19 +224,19 @@ void ButtonEx::SetTextAlignment(Text::HORIZONAL_ALIGNMENT h, Text::VERTICAL_ALIG
 	vAl = v;
 }
 
-void ButtonEx::SetFont(const char* fileName, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength)
+void ButtonEx::SetFont(const char* filePath, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength)
 {
-	buttonTextObj_->Initialize(fileName, charWidth, charHeight, rowLength);
+	textObj_->Initialize(filePath, charWidth, charHeight, rowLength);
 }
 
 void ButtonEx::SetFont(TEXT_SOURCE textScr)
 {
-	buttonTextObj_->Initialize(textScr);
+	textObj_->Initialize(textScr);
 }
 
-void ButtonEx::SetText(std::string buttonName)
+void ButtonEx::SetText(std::string _text)
 {
-	buttonTextName_ = buttonName;
+	text_ = _text;
 }
 
 //ボタン画像系
@@ -277,12 +282,12 @@ void ButtonEx::CalcDivImage()
 	}
 
 	rangeLU = {
-		buttonDivTra[DIV_H::H_TOP][DIV_W::W_LEFT].position_.x - grid_ / 2,
-		buttonDivTra[DIV_H::H_TOP][DIV_W::W_LEFT].position_.y - grid_ / 2
+		buttonDivTra[DIV_H::H_TOP][DIV_W::W_LEFT].position_.x - (float)Half(grid_),
+		buttonDivTra[DIV_H::H_TOP][DIV_W::W_LEFT].position_.y - (float)Half(grid_)
 	};
 	rangeRB = {
-		buttonDivTra[DIV_H::H_BOTTOM][DIV_W::W_RIGHT].position_.x + grid_ / 2,
-		buttonDivTra[DIV_H::H_BOTTOM][DIV_W::W_RIGHT].position_.y + grid_ / 2
+		buttonDivTra[DIV_H::H_BOTTOM][DIV_W::W_RIGHT].position_.x + (float)Half(grid_),
+		buttonDivTra[DIV_H::H_BOTTOM][DIV_W::W_RIGHT].position_.y + (float)Half(grid_)
 	};
 }
 
@@ -389,7 +394,7 @@ void ButtonEx::DrawDivShadow()
 	}
 }
 
-
+//描画
 void ButtonEx::DrawIdle()
 {
 	DrawDivImage(STATE::IDLE);
@@ -410,7 +415,7 @@ void ButtonEx::DrawSelected()
 	DrawDivImage(STATE::SELECTED);
 }
 
-
+//更新
 void ButtonEx::UpdateIdle()
 {
 	//範囲内かつ動いていれば選択中へ移行
@@ -426,12 +431,14 @@ void ButtonEx::UpdateSelect()
 {
 	//ボタン押下時、押下中へ移行
 	if (Input::IsMouseButtonDown(0)) {
-		if (ActTiming == SELECTED) {
-			state = PUSH;
-			return;
-		}
-		else if (ActTiming == PUSH) {
+		switch (mode_)
+		{
+		case ButtonEx::PUSH_ONLY:
 			UpdateSelected();
+			break;
+		case ButtonEx::PUSH_UP:
+			state = PUSH;
+			break;
 		}
 	}
 
@@ -441,7 +448,6 @@ void ButtonEx::UpdateSelect()
 		return;
 	}
 
-	//if(In(mode_, {PUSH_ONLY_SELECT, PUSH_UP_SELECT}))
 }
 
 void ButtonEx::UpdatePush()
@@ -461,7 +467,7 @@ void ButtonEx::UpdatePush()
 
 void ButtonEx::UpdateSelected()
 {
-	AudioManager::Play(sound);
+	AudioManager::Play(AudioManager::AUDIO_SOURCE::SE_DECIDE);
 	GameObject* obj = (GameObject*)GetParent();
 	obj->ButtonAct(actHandle_);
 	nextIdle = true;

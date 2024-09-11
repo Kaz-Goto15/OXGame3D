@@ -8,24 +8,11 @@ using std::string;
 class ButtonEx : public GameObject
 {
 protected:
-	enum STATE {
-		IDLE,
-		SELECT,
-		PUSH,
-		SELECTED,
-		MAX
-	};
-	Text* buttonTextObj_;
-	std::string buttonTextName_;
-	Text::HORIZONAL_ALIGNMENT hAl;
-	Text::VERTICAL_ALIGNMENT vAl;
 	int actHandle_;
-	bool nextIdle;
-	STATE ActTiming;
-	AudioManager::AUDIO_SOURCE sound;
+	bool nextIdle;	//スクリーン描画などで選択済描画を続けるためのフラグ
 
 	XMFLOAT2 rangeLU, rangeRB;
-
+//判定系？
 public:
 	enum DIR {
 		DIR_DOWN,
@@ -39,7 +26,6 @@ private:
 public:
 	void SetNextKey(DIR dir, ButtonEx* _pBtn);
 	
-	bool isSelecting_;
 public:
 	enum MODE {
 		PUSH_ONLY,          //押下時、即移行 
@@ -47,7 +33,7 @@ public:
 		PUSH_ONLY_SELECT,   //押下時、即移行 十字キーやマウス移動で選択が移動する ←最初からいれていいかも どうせnullptrなら作動しないし
 		PUSH_UP_SELECT      //押下から離したときに移行 十字キーやマウス移動で選択が移動する
 	}mode_;
-	STATE state;
+	
 
 	ButtonEx(GameObject* parent, const std::string& name = "ButtonEx");    //コンストラクタ
 	~ButtonEx();                     //デストラクタ
@@ -60,14 +46,67 @@ public:
 	//自身(ボタン)と親の選択ステートを紐づける
 	void SetAction(int hAct);
 
-	void SetSound(AudioManager::AUDIO_SOURCE audioSource) { sound = audioSource; }
-	//テキスト設定系
-	void SetTextAlignment(Text::HORIZONAL_ALIGNMENT h, Text::VERTICAL_ALIGNMENT v);
-	void SetFont(const char* fileName, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength);
-	void SetFont(TEXT_SOURCE textScr);
-	void SetText(std::string buttonName);
+	//void SetSound(AudioManager::AUDIO_SOURCE audioSource) { sound = audioSource; }
 
-	//ボタン画像系
+//テキスト設定系
+private:
+	Text* textObj_;					//テキストオブジェクト
+	std::string text_;				//テキスト内容
+	Text::HORIZONAL_ALIGNMENT hAl;	//水平方向の配置
+	Text::VERTICAL_ALIGNMENT vAl;	//垂直方向の配置
+public:
+	/// <summary>
+	/// ボタン内テキストの配置変更
+	/// </summary>
+	/// <param name="h">水平方向の配置</param>
+	/// <param name="v">垂直方向の配置</param>
+	void SetTextAlignment(Text::HORIZONAL_ALIGNMENT h, Text::VERTICAL_ALIGNMENT v);
+
+	/// <summary>
+	/// フォント設定
+	/// </summary>
+	/// <param name="fileName">ファイルパス Fontsフォルダがカレントディレクトリ</param>
+	/// <param name="charWidth">1文字幅</param>
+	/// <param name="charHeight">１文字高さ</param>
+	/// <param name="rowLength">横に何文字あるか</param>
+	void SetFont(const char* filePath, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength);
+
+	/// <summary>
+	/// フォント設定
+	/// </summary>
+	/// <param name="textScr">フォント</param>
+	void SetFont(TEXT_SOURCE textScr);
+
+	/// <summary>
+	/// テキストの内容を変更
+	/// </summary>
+	/// <param name="_text">内容</param>
+	void SetText(std::string _text);
+	
+
+
+//ステート系
+private:
+	enum STATE {
+		IDLE,
+		SELECT,
+		PUSH,
+		SELECTED,
+		MAX
+	};
+	STATE state;
+	bool isChangeState;
+	STATE nextState;
+
+private:
+	/// <summary>
+	/// 次回更新時、更新を行った後に状態を変化させます。
+	/// </summary>
+	/// <param name="state">次回ステート</param>
+	void ChangeState(STATE state);
+
+
+//ボタン画像系
 private:
 	enum DIV_W {
 		W_LEFT = 0,
@@ -157,8 +196,6 @@ private:
 	bool IsMovedMouse();
 public:
 	std::string GetDebugStr(int i);
-	int debugNum;
-	void SetDebugNum(int num) { debugNum = num; }
 };
 
 /*
