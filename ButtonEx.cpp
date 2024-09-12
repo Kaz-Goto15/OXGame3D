@@ -26,24 +26,24 @@ bool In(T val, std::vector<T> search) {
 	return false;
 }
 
-void ButtonEx::SetNextKey(DIR dir, ButtonEx* _pBtn)
-{
-	nextBtn[dir] = _pBtn;
-}
-
 //コンストラクタ
 ButtonEx::ButtonEx(GameObject* parent, const std::string& name) :
 	GameObject(parent, name),
+	//判定系
+	actHandle_(-1),
+	nextIdle(false),
+	rangeLU({ 0,0 }), rangeRB({ 0,0 }),
+	nextBtn{ nullptr,nullptr,nullptr,nullptr },
+	mode_(PUSH_UP),
+	//テキスト系
 	textObj_(nullptr),
 	text_(""),
-	state(IDLE),
-	actHandle_(-1),
 	hAl(Text::HORIZONAL_ALIGNMENT::CENTER),
 	vAl(Text::VERTICAL_ALIGNMENT::CENTER),
-	nextIdle(false),
-
-	nextBtn{nullptr,nullptr,nullptr,nullptr},
-	mode_(PUSH_UP),
+	//ステート系
+	state(IDLE),
+	isChangeState(false),
+	nextState(IDLE),
 	//ボタン画像系
 	DEFAULT_DIRECTORY("Button\\"),
 	DEFAULT_BUTTON_IMG{"btnDefIdle.png","btnDefSelect.png","btnDefPush.png","btnDefSelected.png"},
@@ -161,62 +161,19 @@ void ButtonEx::Release()
 {
 }
 
-std::string ButtonEx::GetDebugStr(int i)
-{
-	XMFLOAT3 imageSize = {
-	Image::GetSize(hImgButton_[STATE::IDLE]).x * transform_.scale_.x,
-	Image::GetSize(hImgButton_[STATE::IDLE]).y * transform_.scale_.y,
-	Image::GetSize(hImgButton_[STATE::IDLE]).z * transform_.scale_.z
-	};
-	using std::to_string;
-	Transform buttonTra = Image::GetTransform(hImgButton_[STATE::IDLE]);
-	switch (i) {
-	case 0:
-		return "imageSize: " +
-			to_string(Image::GetSize(hImgButton_[STATE::IDLE]).x) + "," +
-			to_string(Image::GetSize(hImgButton_[STATE::IDLE]).y);
-	case 1:
-		return "null vertex:(" +
-			to_string((int)Half(SystemConfig::windowWidth - imageSize.x)) + "," +
-			to_string((int)Half(SystemConfig::windowHeight - imageSize.y)) + ")" +
-			"(" + to_string((int)Half(SystemConfig::windowWidth + imageSize.x)) + "," +
-			to_string((int)Half(SystemConfig::windowHeight - imageSize.y)) + ")" +
-			"(" + to_string((int)Half(SystemConfig::windowWidth - imageSize.x)) + "," +
-			to_string((int)Half(SystemConfig::windowHeight + imageSize.y)) + ")" +
-			"(" + to_string((int)Half(SystemConfig::windowWidth + imageSize.x)) + "," +
-			to_string((int)Half(SystemConfig::windowHeight + imageSize.y)) + ")";
-	case 2:
-		return "windowsize: " +
-			to_string(SystemConfig::windowWidth) + ", " +
-			to_string(SystemConfig::windowHeight);
-	case 4:
-		return "between:(" +
-			to_string((int)(buttonTra.position_.x + Half(SystemConfig::windowWidth - imageSize.x))) + ")" +
-			"(" + to_string((int)(buttonTra.position_.x + Half(SystemConfig::windowWidth + imageSize.x))) + ")" +
-			"(" + to_string((int)(buttonTra.position_.y + Half(SystemConfig::windowHeight - imageSize.y))) + ")" +
-			"(" + to_string((int)(buttonTra.position_.y + Half(SystemConfig::windowHeight + imageSize.y))) + ")";
-	case 5:
-		return "buttonPos: " +
-			to_string(buttonTra.position_.x) + "," + to_string(buttonTra.position_.y);
-	case 6:return "mouse=(" + to_string((int)Input::GetMousePosition(true).x) + ", " + to_string((int)Input::GetMousePosition(true).y) + ")";
-	case 7:
-		return "range: " +
-			to_string(rangeLU.x) + "," + to_string(rangeLU.y) + "," + to_string(rangeRB.x) + "," + to_string(rangeRB.y);
-		//case 6:	return "clip: " + std::to_string(clip.x) + "," + std::to_string(clip.y) + "," + std::to_string(clip.z) + "," + std::to_string(clip.w);
-	}
-	return "invalid num";
-}
 
-void ButtonEx::ChangeState(STATE state)
-{
-	nextState = state;
-	isChangeState = true;
-}
 
-void ButtonEx::SetAction(int hAct)
+void ButtonEx::SetActionHandle(int hAct)
 {
 	actHandle_ = hAct;
 }
+
+void ButtonEx::SetNextKey(DIR dir, ButtonEx* _pBtn)
+{
+	nextBtn[dir] = _pBtn;
+}
+
+
 
 void ButtonEx::SetTextAlignment(Text::HORIZONAL_ALIGNMENT h, Text::VERTICAL_ALIGNMENT v)
 {
@@ -238,6 +195,16 @@ void ButtonEx::SetText(std::string _text)
 {
 	text_ = _text;
 }
+
+
+
+void ButtonEx::ChangeState(STATE state)
+{
+	nextState = state;
+	isChangeState = true;
+}
+
+
 
 //ボタン画像系
 void ButtonEx::CalcDivImage()
@@ -324,10 +291,12 @@ void ButtonEx::SetSize(float x, float y)
 
 void ButtonEx::SetPosition(int x, int y)
 {
-	transform_.position_.x = x;
-	transform_.position_.y = y;
+	transform_.position_.x = (float)x;
+	transform_.position_.y = (float)y;
 	CalcDivImage();
 }
+
+
 
 //シャドウ
 void ButtonEx::SetShadowTransform(int _posX, int _posY, float _scale, int _alpha)
@@ -394,6 +363,8 @@ void ButtonEx::DrawDivShadow()
 	}
 }
 
+
+
 //描画
 void ButtonEx::DrawIdle()
 {
@@ -414,6 +385,8 @@ void ButtonEx::DrawSelected()
 {
 	DrawDivImage(STATE::SELECTED);
 }
+
+
 
 //更新
 void ButtonEx::UpdateIdle()
@@ -489,4 +462,50 @@ bool ButtonEx::IsMovedMouse()
 {
 	XMFLOAT3 mouseMove = Input::GetMouseMove();
 	return (mouseMove.x != 0 || mouseMove.y != 0);
+}
+
+std::string ButtonEx::GetDebugStr(int i)
+{
+	XMFLOAT3 imageSize = {
+	Image::GetSize(hImgButton_[STATE::IDLE]).x * transform_.scale_.x,
+	Image::GetSize(hImgButton_[STATE::IDLE]).y * transform_.scale_.y,
+	Image::GetSize(hImgButton_[STATE::IDLE]).z * transform_.scale_.z
+	};
+	using std::to_string;
+	Transform buttonTra = Image::GetTransform(hImgButton_[STATE::IDLE]);
+	switch (i) {
+	case 0:
+		return "imageSize: " +
+			to_string(Image::GetSize(hImgButton_[STATE::IDLE]).x) + "," +
+			to_string(Image::GetSize(hImgButton_[STATE::IDLE]).y);
+	case 1:
+		return "null vertex:(" +
+			to_string((int)Half(SystemConfig::windowWidth - imageSize.x)) + "," +
+			to_string((int)Half(SystemConfig::windowHeight - imageSize.y)) + ")" +
+			"(" + to_string((int)Half(SystemConfig::windowWidth + imageSize.x)) + "," +
+			to_string((int)Half(SystemConfig::windowHeight - imageSize.y)) + ")" +
+			"(" + to_string((int)Half(SystemConfig::windowWidth - imageSize.x)) + "," +
+			to_string((int)Half(SystemConfig::windowHeight + imageSize.y)) + ")" +
+			"(" + to_string((int)Half(SystemConfig::windowWidth + imageSize.x)) + "," +
+			to_string((int)Half(SystemConfig::windowHeight + imageSize.y)) + ")";
+	case 2:
+		return "windowsize: " +
+			to_string(SystemConfig::windowWidth) + ", " +
+			to_string(SystemConfig::windowHeight);
+	case 4:
+		return "between:(" +
+			to_string((int)(buttonTra.position_.x + Half(SystemConfig::windowWidth - imageSize.x))) + ")" +
+			"(" + to_string((int)(buttonTra.position_.x + Half(SystemConfig::windowWidth + imageSize.x))) + ")" +
+			"(" + to_string((int)(buttonTra.position_.y + Half(SystemConfig::windowHeight - imageSize.y))) + ")" +
+			"(" + to_string((int)(buttonTra.position_.y + Half(SystemConfig::windowHeight + imageSize.y))) + ")";
+	case 5:
+		return "buttonPos: " +
+			to_string(buttonTra.position_.x) + "," + to_string(buttonTra.position_.y);
+	case 6:return "mouse=(" + to_string((int)Input::GetMousePosition(true).x) + ", " + to_string((int)Input::GetMousePosition(true).y) + ")";
+	case 7:
+		return "range: " +
+			to_string(rangeLU.x) + "," + to_string(rangeLU.y) + "," + to_string(rangeRB.x) + "," + to_string(rangeRB.y);
+		//case 6:	return "clip: " + std::to_string(clip.x) + "," + std::to_string(clip.y) + "," + std::to_string(clip.z) + "," + std::to_string(clip.w);
+	}
+	return "invalid num";
 }

@@ -7,12 +7,16 @@ using std::string;
 //ボタンを管理するクラス
 class ButtonEx : public GameObject
 {
-protected:
-	int actHandle_;
-	bool nextIdle;	//スクリーン描画などで選択済描画を続けるためのフラグ
+//基本
+public:
+	ButtonEx(GameObject* parent, const std::string& name = "ButtonEx");    //コンストラクタ
+	~ButtonEx();                     //デストラクタ
+	void Initialize() override; //初期化
+	void Update() override;     //更新
+	void Draw() override;       //描画
+	void Release() override;    //解放
 
-	XMFLOAT2 rangeLU, rangeRB;
-//判定系？
+//判定系
 public:
 	enum DIR {
 		DIR_DOWN,
@@ -21,30 +25,22 @@ public:
 		DIR_RIGHT,
 		DIR_MAX,
 	};
-private:
-	ButtonEx* nextBtn[DIR::DIR_MAX];
-public:
-	void SetNextKey(DIR dir, ButtonEx* _pBtn);
-	
-public:
 	enum MODE {
 		PUSH_ONLY,          //押下時、即移行 
 		PUSH_UP,            //押下から離したときに移行
-		PUSH_ONLY_SELECT,   //押下時、即移行 十字キーやマウス移動で選択が移動する ←最初からいれていいかも どうせnullptrなら作動しないし
-		PUSH_UP_SELECT      //押下から離したときに移行 十字キーやマウス移動で選択が移動する
-	}mode_;
-	
+	};
 
-	ButtonEx(GameObject* parent, const std::string& name = "ButtonEx");    //コンストラクタ
-	~ButtonEx();                     //デストラクタ
-	void Initialize() override; //初期化
-	void Update() override;     //更新
-	void Draw() override;       //描画
-	void Release() override;    //解放
+private:
+	int actHandle_;						//押下時に返却するハンドル
+	bool nextIdle;						//スクリーン描画などで選択済描画を続けるためのフラグ
+	XMFLOAT2 rangeLU, rangeRB;			//ボタン判定範囲
+	ButtonEx* nextBtn[DIR::DIR_MAX];	//上下左右のキーによる選択ボタンの移動を制御するポインタ
+	MODE mode_;							//ボタンの判定モード
 
-
+public:
 	//自身(ボタン)と親の選択ステートを紐づける
-	void SetAction(int hAct);
+	void SetActionHandle(int hAct);
+	void SetNextKey(DIR dir, ButtonEx* _pBtn);
 
 	//void SetSound(AudioManager::AUDIO_SOURCE audioSource) { sound = audioSource; }
 
@@ -55,6 +51,7 @@ private:
 	Text::HORIZONAL_ALIGNMENT hAl;	//水平方向の配置
 	Text::VERTICAL_ALIGNMENT vAl;	//垂直方向の配置
 public:
+
 	/// <summary>
 	/// ボタン内テキストの配置変更
 	/// </summary>
@@ -170,9 +167,6 @@ public:
 	void EnDrawShadow(bool b);
 	void SetShadowImage(string path);
 	void DrawDivShadow();
-	
-
-
 
 protected:
 	//初期化追加時の処理
