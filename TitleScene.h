@@ -4,7 +4,7 @@
 
 using std::vector;
 class Text;
-class ButtonGP;
+class ButtonEx;
 class DebugText;
 class SceneManager;
 class Screen;
@@ -48,7 +48,7 @@ class TitleScene : public GameObject
 
 	//ボタン
 	std::string State2Str(SELECT_STATE state);	//選択ステート(ボタン)を文字列に ボタンの名前表示に使用
-	ButtonGP* btn[S_SEL_MAX];	//各ボタンオブジェクト
+	ButtonEx* btn[S_SEL_MAX];	//各ボタンオブジェクト
 	const int BUTTON_X_SPACE;	//ボタン横間隔
 	const XMINT2 BUTTON_Y_FADE;	//ボタン縦フェード 初期座標/移動後座標 基準は1280x720
 

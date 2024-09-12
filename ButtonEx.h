@@ -41,8 +41,15 @@ public:
 	//自身(ボタン)と親の選択ステートを紐づける
 	void SetActionHandle(int hAct);
 	void SetNextKey(DIR dir, ButtonEx* _pBtn);
+	void SetMode(MODE _mode) { mode_ = mode_; }
 
-	//void SetSound(AudioManager::AUDIO_SOURCE audioSource) { sound = audioSource; }
+//音系
+private:
+	int selectedAudioSource;
+	int selectAudioSource;
+public:
+	void SetSelectAudio(AudioManager::AUDIO_SOURCE audioSource) { selectAudioSource = audioSource; }
+	void SetSelectedAudio(AudioManager::AUDIO_SOURCE audioSource) { selectedAudioSource = audioSource; }
 
 //テキスト設定系
 private:

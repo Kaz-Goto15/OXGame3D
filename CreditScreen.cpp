@@ -3,8 +3,9 @@
 #include "Engine/Image.h"
 
 #include "SystemConfig.h"
-#include "ButtonGP.h"
+#include "ButtonEx.h"
 #include "Frame.h"
+
 //コンストラクタ
 CreditScreen::CreditScreen(GameObject* parent):
     Screen(parent, "CreditScreen"),
@@ -30,12 +31,15 @@ void CreditScreen::Initialize()
     Image::SetAlpha(hPict_[PIC_BACKGROUND], 128);
 
     //もどるボタン
-    backBtn = Instantiate<ButtonGP>(this);
+    backBtn = Instantiate<ButtonEx>(this);
+    backBtn->SetButtonImages(32, "btnDefIdle32.png", "btnDefSelect32.png", "btnDefPush32.png", "btnDefSelected32.png");
+    backBtn->SetShadowImage("btnDefShadow32.png");
     backBtn->SetText("BACK");
-    backBtn->SetAction(0);
-    backBtn->SetPosition(0, 280, 0);
-    backBtn->SetScale(0.75f);
-    backBtn->SetSound(AudioManager::SE_CANCEL);
+    backBtn->SetPosition(0, 280);
+    backBtn->EnDrawShadow(true);
+    backBtn->SetActionHandle(0);
+    backBtn->SetSize(0.2f, 0.15f);
+    backBtn->SetSelectedAudio(AudioManager::SE_CANCEL);
     
     //フレーム
     pFrame = Instantiate<Frame>(this);

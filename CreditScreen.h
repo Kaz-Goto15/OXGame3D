@@ -2,7 +2,7 @@
 #include <string>
 #include "Engine/GameObject.h"
 #include "Screen.h"
-class ButtonGP;
+class ButtonEx;
 class Frame;
 
 //クレジット画面を管理するクラス
@@ -19,7 +19,7 @@ class CreditScreen : public Screen
     float framePosY;  //フレーム中心点
     int frameGrid_;    //フレーム画像を分割したときの1辺の長さ
 
-    ButtonGP* backBtn;  //もどるﾎﾞﾀﾝ
+    ButtonEx* backBtn;  //もどるﾎﾞﾀﾝ
 
 
     //半分にする 型をそのまんま返すためintなどは自動切り捨て

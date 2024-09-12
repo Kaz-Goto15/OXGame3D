@@ -5,7 +5,7 @@
 #include "Easing.h"
 #include "Engine/Text.h"
 
-#include "ButtonGP.h"
+#include "ButtonEx.h"
 //#include "DebugText.h"
 #include "CreditScreen.h"
 #include "OptionScreen.h"
@@ -162,7 +162,7 @@ void TitleScene::Draw() {
 				//‚à‚Á‚Æ‚¢‚¢ŒvŽZ•û–@‚Å‚Å‚«‚é‚©‚à
 				XMFLOAT3 pos = btn[i]->GetPosition();
 				pos.y = Easing::Calc(OBJ_FADE_EASE_NUMBER, progress, MOVE_FRAMES, BUTTON_Y_FADE.x, BUTTON_Y_FADE.y);
-				btn[i]->SetPosition(pos);
+				btn[i]->SetPosition(pos.x, pos.y);
 			}
 
 			//”’
@@ -212,10 +212,12 @@ void TitleScene::ButtonAct(int hAct)
 
 void TitleScene::InitButton(SELECT_STATE ss, std::string text, XMINT2 pos)
 {
-	btn[ss] = Instantiate <ButtonGP>(this);
+	btn[ss] = Instantiate <ButtonEx>(this);
 	btn[ss]->SetText(text);
-	btn[ss]->SetAction(ss);
-	btn[ss]->SetPosition(pos.x, pos.y, 0);
+	btn[ss]->SetFont(TextLoader::TEXT_SOURCE::GAKUMARU_32px);
+	btn[ss]->SetActionHandle(ss);
+	btn[ss]->SetPosition(pos.x, pos.y);
+	btn[ss]->SetSize(0.2f, 0.2f);
 	btn[ss]->Leave();
 	btn[ss]->Invisible();
 }

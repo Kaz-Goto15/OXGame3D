@@ -35,6 +35,9 @@ ButtonEx::ButtonEx(GameObject* parent, const std::string& name) :
 	rangeLU({ 0,0 }), rangeRB({ 0,0 }),
 	nextBtn{ nullptr,nullptr,nullptr,nullptr },
 	mode_(PUSH_UP),
+	//‰¹Œn
+	selectedAudioSource(AudioManager::AUDIO_SOURCE::SE_DECIDE),
+	selectAudioSource(AudioManager::AUDIO_SOURCE::SE_SELECT),
 	//ƒeƒLƒXƒgŒn
 	textObj_(nullptr),
 	text_(""),
@@ -315,6 +318,7 @@ void ButtonEx::EnDrawShadow(bool b)
 void ButtonEx::SetShadowImage(string path)
 {
 	hImgShadow_ = Image::Load(DEFAULT_DIRECTORY+path);
+	Image::SetAlpha(hImgShadow_, shadowAlpha_);
 }
 
 void ButtonEx::DrawDivShadow()
@@ -396,7 +400,7 @@ void ButtonEx::UpdateIdle()
 	if (IsMovedMouse() && IsEntered()) {
 		state = SELECT;
 		if (IsVisibled())
-			AudioManager::Play(AudioManager::AUDIO_SOURCE::SE_SELECT);
+			AudioManager::Play(selectAudioSource);
 	}
 }
 
@@ -440,7 +444,7 @@ void ButtonEx::UpdatePush()
 
 void ButtonEx::UpdateSelected()
 {
-	AudioManager::Play(AudioManager::AUDIO_SOURCE::SE_DECIDE);
+	AudioManager::Play(selectedAudioSource);
 	GameObject* obj = (GameObject*)GetParent();
 	obj->ButtonAct(actHandle_);
 	nextIdle = true;
