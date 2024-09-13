@@ -17,10 +17,9 @@ class CreditScreen : public Screen
 
     Frame* pFrame;       //枠
     float framePosY;  //フレーム中心点
-    int frameGrid_;    //フレーム画像を分割したときの1辺の長さ
 
     ButtonEx* backBtn;  //もどるﾎﾞﾀﾝ
-
+    bool unselected;
 
     //半分にする 型をそのまんま返すためintなどは自動切り捨て
     template <class T>

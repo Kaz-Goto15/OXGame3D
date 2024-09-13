@@ -9,6 +9,7 @@
 //#include "DebugText.h"
 #include "CreditScreen.h"
 #include "OptionScreen.h"
+#include "SystemConfig.h"
 
 #include "AudioManager.h"
 
@@ -90,9 +91,25 @@ void TitleScene::Initialize() {
 		InitButton(state, State2Str(state), { btnX, 0 });
 			btnX += BUTTON_X_SPACE;
 	}
+	for (int i = 0; i < S_SEL_MAX;i++) {
+		//左右キーボタン移動
+		if(i-1 >= 0)btn[i]->SetNextKey(ButtonEx::DIR::DIR_LEFT, btn[i - 1]);
+		else btn[i]->SetNextKey(ButtonEx::DIR::DIR_LEFT, btn[SELECT_STATE::S_SEL_MAX-1]);
+
+		if(i+1 < SELECT_STATE::S_SEL_MAX)btn[i]->SetNextKey(ButtonEx::DIR::DIR_RIGHT, btn[i + 1]);
+		else btn[i]->SetNextKey(ButtonEx::DIR::DIR_RIGHT, btn[0]);
+
+		//ボタン集合リンク
+		for (int j = 0; j < S_SEL_MAX; j++) {
+			if (i != j)
+				btn[i]->AddLinkButton(btn[j]);
+		}
+	}
+
 }
 
 void TitleScene::Update() {
+
 
 	//スタンバイ時のみ更新 それ以外はボタン押下で処理
 	if (In(state_, { S_STANDBY,S_STANDBY_WAIT })) {
@@ -113,6 +130,23 @@ void TitleScene::Update() {
 			Image::SetAlpha(hPict_[PIC_TITLE], ALPHA_MAX);
 			Image::SetAlpha(hPict_[PIC_BACKGROUND], ALPHA_MAX);
 		}
+	}
+	else if (state_ == S_MAIN) {
+		//全て未選択のときの処理
+		bool unselected = true;
+		for (auto& b : btn) {
+			if (b->GetState() == ButtonEx::STATE::SELECT) {
+				unselected = false;
+				break;
+			}
+		}
+		if(unselected &&
+			(Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_LEFT)) ||
+				Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_RIGHT)) )
+		) {
+			btn[0]->ChangeState(ButtonEx::STATE::SELECT);
+		}
+
 	}
 }
 void TitleScene::Draw() {
@@ -218,6 +252,8 @@ void TitleScene::InitButton(SELECT_STATE ss, std::string text, XMINT2 pos)
 	btn[ss]->SetActionHandle(ss);
 	btn[ss]->SetPosition(pos.x, pos.y);
 	btn[ss]->SetSize(0.2f, 0.2f);
+	btn[ss]->EnDrawShadow(true);
+	btn[ss]->EnDecideKey(true);
 	btn[ss]->Leave();
 	btn[ss]->Invisible();
 }

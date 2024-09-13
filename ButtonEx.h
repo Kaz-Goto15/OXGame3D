@@ -2,7 +2,7 @@
 #include "Engine/GameObject.h"
 #include "Engine/Text.h"
 #include "AudioManager.h"
-
+#include <vector>
 using std::string;
 //ボタンを管理するクラス
 class ButtonEx : public GameObject
@@ -35,13 +35,19 @@ private:
 	bool nextIdle;						//スクリーン描画などで選択済描画を続けるためのフラグ
 	XMFLOAT2 rangeLU, rangeRB;			//ボタン判定範囲
 	ButtonEx* nextBtn[DIR::DIR_MAX];	//上下左右のキーによる選択ボタンの移動を制御するポインタ
+	bool enDecideKey;					//決定ボタンによるボタンのトリガーを有効化
+	bool autoIdle;						//マウスカーソルが外れた時に自動的にアイドルになるか
+	bool isFloat;						//アイドルではないがマウスカーソルがどっかいってるとき
+	std::vector<ButtonEx*> linkButton;	//自動アイドルがオフのときに使う紐づけボタンのポインタ 効率は悪い
 	MODE mode_;							//ボタンの判定モード
 
 public:
 	//自身(ボタン)と親の選択ステートを紐づける
 	void SetActionHandle(int hAct);
 	void SetNextKey(DIR dir, ButtonEx* _pBtn);
-	void SetMode(MODE _mode) { mode_ = mode_; }
+	void EnDecideKey(bool b) { enDecideKey = b; }
+	void SetMode(MODE _mode) { mode_ = _mode; }
+	void AddLinkButton(ButtonEx* _pBtn);
 
 //音系
 private:
@@ -90,7 +96,7 @@ public:
 
 
 //ステート系
-private:
+public:
 	enum STATE {
 		IDLE,
 		SELECT,
@@ -98,17 +104,20 @@ private:
 		SELECTED,
 		MAX
 	};
+private:
 	STATE state;
 	bool isChangeState;
 	STATE nextState;
 
-private:
+	public:
 	/// <summary>
 	/// 次回更新時、更新を行った後に状態を変化させます。
 	/// </summary>
 	/// <param name="state">次回ステート</param>
 	void ChangeState(STATE state);
-
+public:
+	STATE GetState() { return state; }
+	//void SetState(STATE s) { state = s; }
 
 //ボタン画像系
 private:

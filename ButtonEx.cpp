@@ -34,6 +34,9 @@ ButtonEx::ButtonEx(GameObject* parent, const std::string& name) :
 	nextIdle(false),
 	rangeLU({ 0,0 }), rangeRB({ 0,0 }),
 	nextBtn{ nullptr,nullptr,nullptr,nullptr },
+	enDecideKey(false),
+	autoIdle(false),
+	isFloat(false),
 	mode_(PUSH_UP),
 	//音系
 	selectedAudioSource(AudioManager::AUDIO_SOURCE::SE_DECIDE),
@@ -174,6 +177,12 @@ void ButtonEx::SetActionHandle(int hAct)
 void ButtonEx::SetNextKey(DIR dir, ButtonEx* _pBtn)
 {
 	nextBtn[dir] = _pBtn;
+}
+
+void ButtonEx::AddLinkButton(ButtonEx* _pBtn)
+{
+	//自身が追加されたり重複追加を防ぐ機構があったほうがいいがとりあえず
+	linkButton.push_back(_pBtn);
 }
 
 
@@ -417,26 +426,73 @@ void ButtonEx::UpdateSelect()
 			state = PUSH;
 			break;
 		}
+	}	//ボタン押下時、押下中へ移行
+	if (enDecideKey && Input::IsKeyDown(SystemConfig::GetKey(SystemConfig::KEY::KEY_ACT))) {
+		switch (mode_)
+		{
+		case ButtonEx::PUSH_ONLY:
+			UpdateSelected();
+			break;
+		case ButtonEx::PUSH_UP:
+			state = PUSH;
+			break;
+		}
 	}
 
 	//動いておりかつ範囲外ならアイドルへ移行
+	if (!IsEntered()) {
+		isFloat = true;
+	}
 	if (IsMovedMouse() && !IsEntered()) {
-		state = IDLE;
-		return;
+		if (autoIdle) {
+			state = IDLE;
+			return;
+		}
+		else {
+			isFloat = true;
+		}
 	}
 
+	if (isFloat) {
+		for (auto& linkBtn : linkButton) {
+			if (linkBtn->GetState() == STATE::SELECT) {
+				state = IDLE;
+				isFloat = false;
+				return;
+			}
+		}
+	}
 }
 
 void ButtonEx::UpdatePush()
 {
-	//範囲外にいるならばアイドルへ移行
-	if (!IsEntered()) {
-		state = IDLE;
-		return;
+	//動いておりかつ範囲外にいるならばアイドルへ移行
+	if (IsMovedMouse() && !IsEntered()) {
+		if (autoIdle) {
+			state = IDLE;
+			return;
+		}
+		else {
+			isFloat = true;
+		}
+	}
+
+	if (isFloat) {
+		for (auto& linkBtn : linkButton) {
+			if (linkBtn->GetState() == STATE::SELECT) {
+				state = IDLE;
+				isFloat = false;
+				return;
+			}
+		}
 	}
 
 	//離したならば選択後へ移行
 	if (Input::IsMouseButtonUp(0)) {
+		state = SELECTED;
+		return;
+	}
+	if (enDecideKey && Input::IsKeyUp(SystemConfig::GetKey(SystemConfig::KEY::KEY_ACT))) {
 		state = SELECTED;
 		return;
 	}
