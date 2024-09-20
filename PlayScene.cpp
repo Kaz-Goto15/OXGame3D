@@ -1,25 +1,25 @@
 #include "PlayScene.h"
 
 #include "./Include/nameof.hpp"
-#include "Easing.h"
-#include "Engine/Input.h"
-#include "SystemConfig.h"
-
-#include "./Engine/Image.h"
-#include "CubeSelectIndicator.h"
-#include "./Engine/Camera.h"
 #include <algorithm>
 
-#include "OptionScreen.h"
-
+#include "Easing.h"
+#include "./Engine/SceneManager.h"
+#include "./Engine/Input.h"
+#include "SystemConfig.h"
 #include "./Engine/Debug.h"
 #include "DebugText.h"
+
+#include "./Engine/Image.h"
+#include "./Engine/Camera.h"
+
+#include "CubeSelectIndicator.h"
+#include "OptionScreen.h"
+
 #include "GroupingObject.h"
 
 #include "Engine/Text.h"
-#include "ButtonGP.h"
-
-#include "./Engine/SceneManager.h"
+#include "ButtonEx.h"
 
 using KEY = SystemConfig::KEY;
 using SystemConfig::GetKey;
@@ -81,6 +81,11 @@ PlayScene::PlayScene(GameObject* parent) :
 	WIN_IMG_ALPHA_PLUS(10),
 	winImageAlpha(0),
 	winner(CONTROL::CONTROL_1P),
+	//オプション系
+	optionBtn(nullptr),
+	optionBtnGrid(32),
+	optionBtnImages{ "btnDefIdle32.png", "btnDefSelect32.png", "btnDefPush32.png", "btnDefSelected32.png" ,"btnDefShadow32.png" },
+	optionBtnSize({ optionBtnGrid /(float)SystemConfig::windowWidth, optionBtnGrid / (float)SystemConfig::windowHeight}),
 	//デバッグ
 	debugtext(nullptr),
 	testCubeParent(nullptr),
@@ -1453,12 +1458,12 @@ void PlayScene::WinProcess(CONTROL winner) {
 	mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_COMPLETE, t);
 
 	//ボタン初期化
-	titleButton = Instantiate<ButtonGP>(this);
+	titleButton = Instantiate<ButtonEx>(this);
 	titleButton->SetText("Back to Title");
-	titleButton->SetPosition({ (float)titleBtnPos.x,(float)titleBtnPos.y,0.0f });
-	titleButton->SetScale(0.5f);
+	titleButton->SetPosition(titleBtnPos.x,titleBtnPos.y);
+	titleButton->SetSize(0.3f,0.3f);
 	//titleButton->
-	titleButton->SetAction(BUTTON_ACTION::BACK_TO_TITLE);
+	titleButton->SetActionHandle(BUTTON_ACTION::BACK_TO_TITLE);
 
 	//おと
 	AudioManager::Play(SE_ID_END);

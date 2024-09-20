@@ -214,6 +214,7 @@ void TitleScene::Draw() {
 
 	XMFLOAT3 mousePos = Input::GetMousePosition();
 }
+
 void TitleScene::Release() {}
 
 void TitleScene::ButtonAct(int hAct)
@@ -222,24 +223,26 @@ void TitleScene::ButtonAct(int hAct)
 	switch (ss)
 	{
 	case TitleScene::S_SEL_START:
+		//ゲームプレイシーンへ移行
 		pSceneManager = (SceneManager*)FindObject("SceneManager");
 		pSceneManager->ChangeScene(SCENE_ID_PLAY);
 		break;
 	case TitleScene::S_SEL_CREDIT:
+		//クレジットシーンを呼び出す
 		pScreen = Instantiate<CreditScreen>(GetParent());
 		pScreen->SetPrevScene(this);
 		pScreen->Run();
 		break;
 	case TitleScene::S_SEL_OPTION:
-
+		//オプションスクリーンを呼び出す
 		pScreen = Instantiate<OptionScreen>(GetParent());
 		pScreen->SetPrevScene(this);
 		pScreen->Run();
 
 		break;
 	case TitleScene::S_SEL_EXIT:
+		//終了
 		exit(0);
-	default:
 		break;
 	}
 }
@@ -247,73 +250,13 @@ void TitleScene::ButtonAct(int hAct)
 void TitleScene::InitButton(SELECT_STATE ss, std::string text, XMINT2 pos)
 {
 	btn[ss] = Instantiate <ButtonEx>(this);
-	btn[ss]->SetText(text);
-	btn[ss]->SetFont(TextLoader::TEXT_SOURCE::GAKUMARU_32px);
-	btn[ss]->SetActionHandle(ss);
-	btn[ss]->SetPosition(pos.x, pos.y);
-	btn[ss]->SetSize(0.2f, 0.2f);
-	btn[ss]->EnDrawShadow(true);
-	btn[ss]->EnDecideKey(true);
-	btn[ss]->Leave();
-	btn[ss]->Invisible();
+	btn[ss]->SetText(text);										//テキスト指定
+	btn[ss]->SetFont(TextLoader::TEXT_SOURCE::GAKUMARU_32px);	//フォント指定
+	btn[ss]->SetActionHandle(ss);								//ボタン押下時に返すハンドルを設定
+	btn[ss]->SetPosition(pos.x, pos.y);							//位置指定
+	btn[ss]->SetSize(0.2f, 0.2f);								//サイズ指定
+	btn[ss]->EnDrawShadow(true);								//シャドウを有効化
+	btn[ss]->EnDecideKey(true);									//決定キーによる実行を許可
+	btn[ss]->Leave();											//更新しない
+	btn[ss]->Invisible();										//描画しない
 }
-
-/*
-BUTTON STATE
-IDLE:
- 選択外のアニメーション
- カーソルが来た時にSELECTに移動
-
- ボタンで選ばれたときSELECTに移動
-
-SELECT:
- 選択中のアニメーション
- マウスボタンが押されたらPUSHに移動
- カーソルが外れたらIDLEに移動
- ボタンが押されたらSELECTEDに移動(keydown upではなく)
- ボタンが他に行ったときIDLEに移動
-
-PUSH:
- 押下中アニメーション
-
- カーソルが外れたらIDLEに移動
- マウスボタンが離されたとき、SELECTEDに移動
-
-SELECTED:
- 選択されたアニメーション
- 処理を行う
- 処理が終わったらIDLEに移動
-
- マウスは自分で処理できる
- ボタンがきついか
-
-
-
-カーソルがぼたん上に来た時の処理：btn_select
-ボタン上で押し、押し続けている時の処理：btn_push
-ボタン上で押し、離したときの処理：btn_selected
-離されたとき・ボタン上に無い時の処理：btn_idle
-
-
-選択中のBTN_ENUM
-
-白inでボタンフェードイン 選択可能
- ボタン：選択外/選択中/選択中かつ押されている/選択後の処理中
- 押されたときの処理を考える
- ボタンを登録するときにGenerate(cmd);
- 表示は親のほうでTitleBtn.count()分のforでDraw
- ボタンが押されたら親のRun(COMMAND cmd);を呼ぶ
-main
-background
-select: logo (白フェード)
-start/option/edit/exit
-start→screenで新たに記述
-option→screen
-edit→ブラックアウトからeditscene
-exit→そのまんまexit(0)でおけ
-
-fadein イージング番号に沿って透明度変更　0→100でidle SPACE:end
-idle 指定時間待機　指定時間超過でfadeoutへ SPACE:end
-fadeout イージング番号に沿って透明度変更　100→0でendへ SPACE:end
-end 表示するものがあればfadein なければタイトルシーンへ
-*/

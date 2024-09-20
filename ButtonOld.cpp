@@ -1,4 +1,4 @@
-#include "Button.h"
+#include "ButtonOld.h"
 #include "Engine/Image.h"
 #include "Engine/Input.h"
 #include "SystemConfig.h"
@@ -16,7 +16,7 @@ bool Between(T value, T min, T max) {
 }
 
 //コンストラクタ
-Button::Button(GameObject* parent, const std::string& name) :
+ButtonOld::ButtonOld(GameObject* parent, const std::string& name) :
 	GameObject(parent, name),
 	buttonTextObj_(nullptr),
 	buttonTextName_(""),
@@ -32,12 +32,12 @@ Button::Button(GameObject* parent, const std::string& name) :
 }
 
 //デストラクタ
-Button::~Button()
+ButtonOld::~ButtonOld()
 {
 }
 
 //初期化
-void Button::Initialize()
+void ButtonOld::Initialize()
 {
 	for (int i = 0; i < MAX; i++) {
 		hImg_[i] = Image::Load(LinkImageFile(static_cast<STATE>(i)));
@@ -50,7 +50,7 @@ void Button::Initialize()
 }
 
 //更新
-void Button::Update()
+void ButtonOld::Update()
 {
 	if (nextIdle) {
 		state = IDLE;
@@ -58,71 +58,71 @@ void Button::Update()
 	}
 	switch (state)
 	{
-	case Button::IDLE:		UpdateIdle();		break;
-	case Button::SELECT:	UpdateSelect();		break;
-	case Button::PUSH:		UpdatePush();		break;
-	case Button::SELECTED:	UpdateSelected();	break;
+	case ButtonOld::IDLE:		UpdateIdle();		break;
+	case ButtonOld::SELECT:	UpdateSelect();		break;
+	case ButtonOld::PUSH:		UpdatePush();		break;
+	case ButtonOld::SELECTED:	UpdateSelected();	break;
 	}
 }
 
 //描画
-void Button::Draw()
+void ButtonOld::Draw()
 {
 	switch (state)
 	{
-	case Button::IDLE:		DrawIdle();		break;
-	case Button::SELECT:	DrawSelect();	break;
-	case Button::PUSH:		DrawPush();		break;
-	case Button::SELECTED:	DrawSelected();	break;
+	case ButtonOld::IDLE:		DrawIdle();		break;
+	case ButtonOld::SELECT:	DrawSelect();	break;
+	case ButtonOld::PUSH:		DrawPush();		break;
+	case ButtonOld::SELECTED:	DrawSelected();	break;
 	}
 
 	buttonTextObj_->Draw((int)transform_.position_.x, (int)transform_.position_.y, buttonTextName_.c_str(), hAl, vAl);
 }
 
 //開放
-void Button::Release()
+void ButtonOld::Release()
 {
 }
 
-std::string Button::LinkImageFile(STATE _state)
+std::string ButtonOld::LinkImageFile(STATE _state)
 {
 	std::string AssetDir = "Default\\";
 	std::string fileName;
 	switch (_state)
 	{
-	case Button::IDLE:		fileName = "btnIdle.png";	break;
-	case Button::SELECT:	fileName = "btnSelect.png";	break;
-	case Button::PUSH:		fileName = "btnPush.png";	break;
-	case Button::SELECTED:	fileName = "btnSelected.png";	break;
+	case ButtonOld::IDLE:		fileName = "btnIdle.png";	break;
+	case ButtonOld::SELECT:	fileName = "btnSelect.png";	break;
+	case ButtonOld::PUSH:		fileName = "btnPush.png";	break;
+	case ButtonOld::SELECTED:	fileName = "btnSelected.png";	break;
 	}
 	return AssetDir + fileName;
 }
 
-void Button::DrawIdle()
+void ButtonOld::DrawIdle()
 {
 	Image::SetTransform(hImg_[IDLE], transform_);
 	Image::Draw(hImg_[IDLE]);
 }
 
-void Button::DrawSelect()
+void ButtonOld::DrawSelect()
 {
 	Image::SetTransform(hImg_[SELECT], transform_);
 	Image::Draw(hImg_[SELECT]);
 }
 
-void Button::DrawPush()
+void ButtonOld::DrawPush()
 {
 	Image::SetTransform(hImg_[PUSH], transform_);
 	Image::Draw(hImg_[PUSH]);
 }
 
-void Button::DrawSelected()
+void ButtonOld::DrawSelected()
 {
 	Image::SetTransform(hImg_[SELECTED], transform_);
 	Image::Draw(hImg_[SELECTED]);
 }
 
-std::string Button::GetDebugStr(int i)
+std::string ButtonOld::GetDebugStr(int i)
 {
 	XMFLOAT3 imageSize = {
 	Image::GetSize(hImg_[0]).x * transform_.scale_.x,
@@ -170,33 +170,33 @@ std::string Button::GetDebugStr(int i)
 	return "invalid num";
 }
 
-void Button::SetAction(int hAct)
+void ButtonOld::SetAction(int hAct)
 {
 	actHandle_ = hAct;
 }
 
-void Button::SetTextAlignment(Text::HORIZONAL_ALIGNMENT h, Text::VERTICAL_ALIGNMENT v)
+void ButtonOld::SetTextAlignment(Text::HORIZONAL_ALIGNMENT h, Text::VERTICAL_ALIGNMENT v)
 {
 	hAl = h;
 	vAl = v;
 }
 
-void Button::SetFont(const char* fileName, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength)
+void ButtonOld::SetFont(const char* fileName, const unsigned int charWidth, const unsigned int charHeight, const unsigned int rowLength)
 {
 	buttonTextObj_->Initialize(fileName, charWidth, charHeight, rowLength);
 }
 
-void Button::SetFont(TEXT_SOURCE textScr)
+void ButtonOld::SetFont(TEXT_SOURCE textScr)
 {
 	buttonTextObj_->Initialize(textScr);
 }
 
-void Button::SetText(std::string buttonName)
+void ButtonOld::SetText(std::string buttonName)
 {
 	buttonTextName_ = buttonName;
 }
 
-void Button::UpdateIdle()
+void ButtonOld::UpdateIdle()
 {
 	if (IsMovedMouse() && IsEntered()) {
 		state = SELECT;
@@ -205,7 +205,7 @@ void Button::UpdateIdle()
 	}
 }
 
-void Button::UpdateSelect()
+void ButtonOld::UpdateSelect()
 {
 	if (Input::IsMouseButtonDown(0)) {
 		if (ActTiming == SELECTED) {
@@ -223,7 +223,7 @@ void Button::UpdateSelect()
 	}
 }
 
-void Button::UpdatePush()
+void ButtonOld::UpdatePush()
 {
 	if (!IsEntered()) {
 		state = IDLE;
@@ -235,7 +235,7 @@ void Button::UpdatePush()
 	}
 }
 
-void Button::UpdateSelected()
+void ButtonOld::UpdateSelected()
 {
 	AudioManager::Play(sound);
 	GameObject* obj = (GameObject*)GetParent();
@@ -243,7 +243,7 @@ void Button::UpdateSelected()
 	nextIdle = true;
 }
 
-bool Button::IsEntered()
+bool ButtonOld::IsEntered()
 {
 	//デカさ：ウィンドウサイズ(可変)*ボタン比率 左上右下の判定のため1/2にしてぶち込む
 	//デカさ矯正：Image呼び出し元の拡大率 これImage内拡大率じゃだめか 多分ダメ 不変なので
@@ -269,12 +269,12 @@ bool Button::IsEntered()
 }
 
 
-bool Button::Between(float value, float min, float max)
+bool ButtonOld::Between(float value, float min, float max)
 {
 	return (value >= min && value <= max);
 }
 
-bool Button::IsMovedMouse()
+bool ButtonOld::IsMovedMouse()
 {
 	XMFLOAT3 mouseMove = Input::GetMouseMove();
 	return (mouseMove.x != 0 || mouseMove.y != 0);

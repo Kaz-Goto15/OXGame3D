@@ -4,7 +4,7 @@
 #include "AudioManager.h"
 
 //ボタンを管理するクラス
-class Button : public GameObject
+class ButtonOld : public GameObject
 {
 protected:
     enum STATE {
@@ -29,8 +29,8 @@ protected:
 public:
     STATE state;
 
-    Button(GameObject* parent, const std::string& name= "Button");    //コンストラクタ
-    ~Button();                     //デストラクタ
+    ButtonOld(GameObject* parent, const std::string& name= "ButtonOld");    //コンストラクタ
+    ~ButtonOld();                     //デストラクタ
     void Initialize() override; //初期化
     void Update() override;     //更新
     void Draw() override;       //描画

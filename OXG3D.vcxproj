@@ -136,9 +136,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="ButtonOld.cpp" />
     <ClCompile Include="ButtonEx.cpp" />
-    <ClCompile Include="ButtonGP.cpp" />
+    <ClCompile Include="ButtonGPU.cpp" />
     <ClCompile Include="ConfigKey.cpp" />
     <ClCompile Include="ControlSlider.cpp" />
     <ClCompile Include="CreditScreen.cpp" />
@@ -183,7 +183,6 @@
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="TextLoader.cpp" />
-    <ClCompile Include="TitleButton.cpp" />
     <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="GameData.cpp" />
@@ -196,9 +195,9 @@
     <ClCompile Include="TransitionAnimBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Button.h" />
+    <ClInclude Include="ButtonOld.h" />
     <ClInclude Include="ButtonEx.h" />
-    <ClInclude Include="ButtonGP.h" />
+    <ClInclude Include="ButtonGPU.h" />
     <ClInclude Include="ConfigKey.h" />
     <ClInclude Include="ControlSlider.h" />
     <ClInclude Include="CreditScreen.h" />
@@ -243,7 +242,6 @@
     <ClInclude Include="Screen.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="TextLoader.h" />
-    <ClInclude Include="TitleButton.h" />
     <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="GameData.h" />

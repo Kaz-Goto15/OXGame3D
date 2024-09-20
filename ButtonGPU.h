@@ -1,11 +1,11 @@
 #pragma once
-#include "Button.h"
+#include "ButtonOld.h"
 //タイトルのボタンを管理するクラス
-class ButtonGP : public Button
+class ButtonGPU : public ButtonOld
 {
 public:
-    ButtonGP(GameObject* parent);    //コンストラクタ
-    ~ButtonGP();                     //デストラクタ
+    ButtonGPU(GameObject* parent);    //コンストラクタ
+    ~ButtonGPU();                     //デストラクタ
     std::string LinkImageFile(STATE state) override;
     void Init() override;
 private:

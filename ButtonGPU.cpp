@@ -1,39 +1,39 @@
-#include "ButtonGP.h"
+#include "ButtonGPU.h"
 
 //コンストラクタ
-ButtonGP::ButtonGP(GameObject* parent) :
-	Button(parent, "Button"),
+ButtonGPU::ButtonGPU(GameObject* parent) :
+	ButtonOld(parent, "ButtonOld"),
 	hButtonShadow_(-1),
 	shadowXY(5)
 {
 }
 
 //デストラクタ
-ButtonGP::~ButtonGP()
+ButtonGPU::~ButtonGPU()
 {
 }
 
-std::string ButtonGP::LinkImageFile(STATE _state)
+std::string ButtonGPU::LinkImageFile(STATE _state)
 {
 	std::string AssetDir = "Default\\";
 	std::string fileName;
 	switch (_state)
 	{
-	case Button::IDLE:		fileName = "buttonDef2unselected.png";	break;
-	case Button::SELECT:	fileName = "buttonDef2.png";	break;
-	case Button::PUSH:		fileName = "buttonDef2.png";	break;
-	case Button::SELECTED:	fileName = "buttonDef2.png";	break;
+	case ButtonOld::IDLE:		fileName = "buttonDef2unselected.png";	break;
+	case ButtonOld::SELECT:	fileName = "buttonDef2.png";	break;
+	case ButtonOld::PUSH:		fileName = "buttonDef2.png";	break;
+	case ButtonOld::SELECTED:	fileName = "buttonDef2.png";	break;
 	}
 	return AssetDir + fileName;
 }
 
-void ButtonGP::Init()
+void ButtonGPU::Init()
 {
 	ActTiming = PUSH;
 	hButtonShadow_ = Image::Load("Default\\buttonDef2Shadow.png");
 	SetFont(GAKUMARU_32px);
 }
-void ButtonGP::DrawIdle()
+void ButtonGPU::DrawIdle()
 {
 	Transform shadowTra = transform_;
 	shadowTra.position_.x += shadowXY;
@@ -44,7 +44,7 @@ void ButtonGP::DrawIdle()
 	Image::Draw(hImg_[IDLE]);
 }
 
-void ButtonGP::DrawSelect()
+void ButtonGPU::DrawSelect()
 {
 	Transform shadowTra = transform_;
 	shadowTra.position_.x += shadowXY;
@@ -55,7 +55,7 @@ void ButtonGP::DrawSelect()
 	Image::Draw(hImg_[SELECT]);
 }
 
-void ButtonGP::DrawPush()
+void ButtonGPU::DrawPush()
 {
 	Transform shadowTra = transform_;
 	shadowTra.position_.x += shadowXY;
@@ -66,7 +66,7 @@ void ButtonGP::DrawPush()
 	Image::Draw(hImg_[PUSH]);
 }
 
-void ButtonGP::DrawSelected()
+void ButtonGPU::DrawSelected()
 {
 	Transform shadowTra = transform_;
 	shadowTra.position_.x += shadowXY;

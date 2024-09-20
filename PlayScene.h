@@ -14,7 +14,7 @@ class Screen;
 class DebugText;
 class GroupingObject;
 class Text;
-class ButtonGP;
+class ButtonEx;
 
 using std::vector;
 using std::string;
@@ -266,9 +266,9 @@ private:
 	int winRotProgress;				//現在カメラ移動フレーム数
 	bool enFreeLook;				//ゲーム終了後にカメラを動かした場合に有効化 trueにすると揃った面に移動するカメラが途中でも停止する
 	Text* winPlayerMsg;
-	ButtonGP* titleButton;			//タイトルへ戻るボタン
+	ButtonEx* titleButton;			//タイトルへ戻るボタン
 	XMINT2 titleBtnPos;				//タイトルボタン座標 1280x720基準
-	ButtonGP* restartButton;		//再戦ボタン
+	ButtonEx* restartButton;		//再戦ボタン
 	XMINT2 restartBtnPos;				//タイトルボタン座標 1280x720基準
 	Easing::Ease WIN_CAM_EASE;
 	int MAX_IMG_ALPHA;				//画像アルファ値最大
@@ -282,6 +282,11 @@ private:
 	void Restart();					//再戦
 	void BackToTitle();				//タイトルへ戻る
 
+	//============================ GUI関連 ==============================
+	ButtonEx* optionBtn;
+	int optionBtnGrid;
+	std::string optionBtnImages[5];
+	XMFLOAT2 optionBtnSize;
 	//============================ 汎用関数・変換関数 ============================
 	//値が範囲内か
 	template <class T>
@@ -301,7 +306,7 @@ private:
 	//半分にする 型をそのまんま返すためintなどは自動切り捨て
 	template <class T>
 	T Half(T value) {
-		return (value / 2);
+		return (value / 2.0f);
 	}
 
 	//2倍にする

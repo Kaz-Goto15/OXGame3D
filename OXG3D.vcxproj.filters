@@ -146,16 +146,13 @@
     <ClCompile Include="PlayScene.cpp">
       <Filter>C_Scene/Screen</Filter>
     </ClCompile>
-    <ClCompile Include="TitleButton.cpp">
-      <Filter>Splash,Title Obj</Filter>
-    </ClCompile>
     <ClCompile Include="Sample.cpp">
       <Filter>BaseObject</Filter>
     </ClCompile>
     <ClCompile Include="Screen.cpp">
       <Filter>BaseObject</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
+    <ClCompile Include="ButtonOld.cpp">
       <Filter>BaseObject</Filter>
     </ClCompile>
     <ClCompile Include="CreditScreen.cpp">
@@ -191,7 +188,7 @@
     <ClCompile Include="ModelLoader.cpp">
       <Filter>01Engine\ResourceManager\Model</Filter>
     </ClCompile>
-    <ClCompile Include="ButtonGP.cpp">
+    <ClCompile Include="ButtonGPU.cpp">
       <Filter>BaseObject</Filter>
     </ClCompile>
     <ClCompile Include="Transition.cpp">
@@ -304,16 +301,13 @@
     <ClInclude Include="PlayScene.h">
       <Filter>C_Scene/Screen</Filter>
     </ClInclude>
-    <ClInclude Include="TitleButton.h">
-      <Filter>Splash,Title Obj</Filter>
-    </ClInclude>
     <ClInclude Include="Sample.h">
       <Filter>BaseObject</Filter>
     </ClInclude>
     <ClInclude Include="Screen.h">
       <Filter>BaseObject</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
+    <ClInclude Include="ButtonOld.h">
       <Filter>BaseObject</Filter>
     </ClInclude>
     <ClInclude Include="CreditScreen.h">
@@ -346,7 +340,7 @@
     <ClInclude Include="Engine\Model.h">
       <Filter>01Engine\ResourceManager\Model</Filter>
     </ClInclude>
-    <ClInclude Include="ButtonGP.h">
+    <ClInclude Include="ButtonGPU.h">
       <Filter>BaseObject</Filter>
     </ClInclude>
     <ClInclude Include="Transition.h">

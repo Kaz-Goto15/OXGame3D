@@ -44,9 +44,17 @@ private:
 public:
 	//自身(ボタン)と親の選択ステートを紐づける
 	void SetActionHandle(int hAct);
+
+	//キーを押したときにSELECTステートを渡すボタンを指定
 	void SetNextKey(DIR dir, ButtonEx* _pBtn);
+
+	//決定ボタンでボタンをトリガするか
 	void EnDecideKey(bool b) { enDecideKey = b; }
+
+	//ボタンの押下モードを変更
 	void SetMode(MODE _mode) { mode_ = _mode; }
+
+	//実質的なグループ化をする
 	void AddLinkButton(ButtonEx* _pBtn);
 
 //音系
