@@ -215,6 +215,8 @@
       <Filter>Game Obj</Filter>
     </ClCompile>
     <ClCompile Include="ButtonEx.cpp" />
+    <ClCompile Include="ButtonExampleScreen.cpp" />
+    <ClCompile Include="GameEndImage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -370,6 +372,8 @@
       <Filter>Game Obj</Filter>
     </ClInclude>
     <ClInclude Include="ButtonEx.h" />
+    <ClInclude Include="ButtonExampleScreen.h" />
+    <ClInclude Include="GameEndImage.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

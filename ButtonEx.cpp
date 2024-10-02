@@ -87,6 +87,9 @@ void ButtonEx::Initialize()
 	textObj_ = new Text;
 	textObj_->Initialize(KUROKANE_AQUA_50px);
 
+	//‰¹
+	AudioManager::Load(selectedAudioSource);
+	AudioManager::Load(selectAudioSource);
 	Init();
 }
 

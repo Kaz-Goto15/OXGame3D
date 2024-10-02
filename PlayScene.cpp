@@ -15,6 +15,7 @@
 
 #include "CubeSelectIndicator.h"
 #include "OptionScreen.h"
+#include "GameEndImage.h"
 
 #include "GroupingObject.h"
 
@@ -77,10 +78,8 @@ PlayScene::PlayScene(GameObject* parent) :
 	restartButton(nullptr),
 	restartBtnPos({ 200,200 }),
 	WIN_CAM_EASE(Easing::Ease::OUT_QUART),
-	MAX_IMG_ALPHA(255),
-	WIN_IMG_ALPHA_PLUS(10),
-	winImageAlpha(0),
 	winner(CONTROL::CONTROL_1P),
+	endImage(nullptr),
 	//オプション系
 	optionBtn(nullptr),
 	optionBtnGrid(32),
@@ -109,9 +108,6 @@ void PlayScene::Initialize()
 
 	//背景
 	hImgBG = Image::Load("Background\\bg_game.png");
-	//画像読込
-	hImgWin[CONTROL_1P] = Image::Load("Game\\p1win.png");
-	hImgWin[CONTROL_2P] = Image::Load("Game\\p2win.png");
 
 	//音声読込
 	AudioManager::Load(BGM_ID, SE_ID_SET, SE_ID_ROTATE, SE_ID_END, SE_ID_CHANGE);
@@ -145,6 +141,9 @@ void PlayScene::Initialize()
 	indicator->SetCubeRotate(selectData.dir);
 	indicator->SetRotateColumn(selectData.rotCol);
 	indicator->SetDrawMode(indicator->DRAWMODE_SINGLE);
+
+	//ゲーム終了時の画像クラス初期化
+	endImage = Instantiate<GameEndImage>(groupObject[GROUP_TOP]);
 
 	//デバッグ
 	debugtext = Instantiate<DebugText>(this);
@@ -319,12 +318,10 @@ void PlayScene::Draw()
 	Image::Draw(hImgBG);
 
 	if (finished) {
-		if (winImageAlpha < MAX_IMG_ALPHA) {
-			winImageAlpha += WIN_IMG_ALPHA_PLUS;
-			if (winImageAlpha > MAX_IMG_ALPHA)winImageAlpha = MAX_IMG_ALPHA;
-		}
-		Image::SetAlpha(hImgWin[winner], winImageAlpha);
-		Image::Draw(hImgWin[winner]);
+		endImage->Visible();
+	}
+	else {
+		endImage->Invisible();
 	}
 }
 
@@ -1459,11 +1456,20 @@ void PlayScene::WinProcess(CONTROL winner) {
 
 	//ボタン初期化
 	titleButton = Instantiate<ButtonEx>(this);
+	titleButton->SetFont(TextLoader::GAKUMARU_16px);
 	titleButton->SetText("Back to Title");
-	titleButton->SetPosition(titleBtnPos.x,titleBtnPos.y);
-	titleButton->SetSize(0.3f,0.3f);
-	//titleButton->
+	titleButton->SetPosition(titleBtnPos.x, titleBtnPos.y);
+	titleButton->SetSize(0.2f, 0.18f);
 	titleButton->SetActionHandle(BUTTON_ACTION::BACK_TO_TITLE);
+	restartButton = Instantiate<ButtonEx>(this);
+	restartButton->SetFont(TextLoader::GAKUMARU_16px);
+	restartButton->SetText("Restart");
+	restartButton->SetPosition(-titleBtnPos.x, titleBtnPos.y);
+	restartButton->SetSize(0.2f, 0.18f);
+	restartButton->SetActionHandle(BUTTON_ACTION::RESTART_GAME);
+
+	//画像設定
+	endImage->SetWinner(winner == CONTROL_1P);
 
 	//おと
 	AudioManager::Play(SE_ID_END);
@@ -1535,11 +1541,14 @@ void PlayScene::FinishCamera()
 void PlayScene::Restart()
 {
 	//各種再初期化
+	SAFE_RELEASE(titleButton);
+	SAFE_RELEASE(restartButton);
 }
 
 void PlayScene::BackToTitle()
 {
-
+	SceneManager* pSceneManager = (SceneManager*)FindObject("SceneManager");
+	pSceneManager->ChangeScene(SCENE_ID_SPLASH);
 }
 
 

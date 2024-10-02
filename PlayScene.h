@@ -9,12 +9,14 @@
 #include "AudioManager.h"
 #include "./Include/EffekseeLib/EffekseerVFX.h"
 
+
 class CubeSelectIndicator;
 class Screen;
 class DebugText;
 class GroupingObject;
 class Text;
 class ButtonEx;
+class GameEndImage;
 
 using std::vector;
 using std::string;
@@ -78,8 +80,7 @@ private:
 	const AudioManager::AUDIO_SOURCE SE_ID_ROTATE;
 	const AudioManager::AUDIO_SOURCE SE_ID_CHANGE;
 	const AudioManager::AUDIO_SOURCE SE_ID_END;
-	//portrait
-	int hImgWin[CONTROL_MAX];
+
 	//フィールドの情報(キューブ情報)
 	const int PIECES;
 	const float OUTER_POINT;
@@ -271,13 +272,11 @@ private:
 	ButtonEx* restartButton;		//再戦ボタン
 	XMINT2 restartBtnPos;				//タイトルボタン座標 1280x720基準
 	Easing::Ease WIN_CAM_EASE;
-	int MAX_IMG_ALPHA;				//画像アルファ値最大
-	int WIN_IMG_ALPHA_PLUS;				//画像アルファ値加算値
-	int winImageAlpha;				//画像アルファ値格納
 	CONTROL winner;					//勝者
+	GameEndImage* endImage;			//〇〇の勝利の画像
+
 	void WinProcess(CONTROL winner);//勝利確定時の処理
 	void FinishCamera();			//ゲーム終了時のカメラ処理
-
 	//これらはButtonActから呼び出されるやつ
 	void Restart();					//再戦
 	void BackToTitle();				//タイトルへ戻る

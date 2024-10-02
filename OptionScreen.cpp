@@ -46,8 +46,8 @@ void OptionScreen::Initialize()
 		buttons[i]->SetActionHandle(i);
 		buttons[i]->EnDecideKey(true);
 		if (i <= BTN_BACK) {    //フレーム外のボタンならば
-			buttons[i]->SetPosition(0, 266);
-			buttons[i]->SetSize(0.3f, 0.2f);
+			buttons[i]->SetPosition(-180 + i * 360, 266);
+			buttons[i]->SetSize(0.2f, 0.18f);
 		}
 		else {
 			buttons[i]->SetFont(TextLoader::TEXT_SOURCE::GAKUMARU_16px);
