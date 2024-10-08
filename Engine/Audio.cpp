@@ -4,6 +4,7 @@
 #include <cmath>
 #include "Audio.h"
 #include "../SystemConfig.h"
+#include "Debug.h"
 #include <assert.h>
 
 #define SAFE_DELETE_ARRAY(p) if(p){delete[] p; p = nullptr;}
@@ -50,6 +51,8 @@ void Audio::Initialize()
 //サウンドファイル(.wav）をロード
 int Audio::Load(std::string fileName, bool isLoop, int svNum, ATTRIBUTE at)
 {
+	Debug::Log(fileName + " の Load が実行されました",true);
+
 	fileName = "Audio\\" + fileName;
 	bool isSucc = true;
 	//すでに同じファイルを使ってないかチェック
@@ -160,11 +163,21 @@ int Audio::Load(std::string fileName, bool isLoop, int svNum, ATTRIBUTE at)
 	//SAFE_DELETE_ARRAY(pBuffer);
 	if (isSucc == false)return NULL_HANDLE;
 	return (int)audioDatas.size() - 1;
+
+	for (int i = 0; i < audioDatas.size(); i++) {
+		std::string str = std::to_string(i) + ": " + audioDatas[i].fileName;
+		Debug::Log(str, true);
+	}
 }
 
 //再生
 void Audio::Play(int ID)
 {
+	Debug::Log(std::to_string(ID) + "番 の Play が実行されました", true);
+	for (int i = 0; i < audioDatas.size(); i++) {
+		std::string str = std::to_string(i) + ": " + audioDatas[i].fileName;
+		Debug::Log(str, true);
+	}
 	for (int i = 0; i < audioDatas[ID].svNum; i++)
 	{
 		XAUDIO2_VOICE_STATE state;

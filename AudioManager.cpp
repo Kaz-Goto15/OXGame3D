@@ -52,9 +52,8 @@ void AudioManager::Play(int sourceID)
 	//if (!loadAllFile) {
 	//	Load(sourceID);
 	//}
-	if (handle[sourceID] == -1) {
-		Load(sourceID);
-	}
+	//•s‹ï‡‚ª‚ ‚é‚È‚ç‚Î‘Ã‹¦ˆÄ‚¾‚ªˆê’ULoad‚ğ‹²‚à‚¤
+	Load(sourceID);
 	Audio::Play(handle[sourceID]);
 }
 

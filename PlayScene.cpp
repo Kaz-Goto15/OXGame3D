@@ -110,8 +110,9 @@ void PlayScene::Initialize()
 	hImgBG = Image::Load("Background\\bg_game.png");
 
 	//音声読込
-	AudioManager::Load(BGM_ID, SE_ID_SET, SE_ID_ROTATE, SE_ID_END, SE_ID_CHANGE);
-	AudioManager::Play(BGM_ID);
+	Debug::Log("PlayScene から読み込みます",true);
+	AudioManager::Load(SE_ID_SET, SE_ID_ROTATE, SE_ID_END, SE_ID_CHANGE, BGM_ID);
+
 	//キューブ本体を保存するvectorをリサイズ
 	cube.resize(PIECES, vector<vector<Cube*>>(PIECES, vector<Cube*>(PIECES, nullptr)));
 
@@ -169,6 +170,9 @@ void PlayScene::Initialize()
 	//DirectX::XMStoreFloat4x4(&(t.matrix), traaaa.GetWorldMatrix());
 	//mt = EFFEKSEERLIB::gEfk->Play(EFF_ID_COMPLETE, t);
 
+	//音声再生
+	Debug::Log("PlayScene から再生します", true);
+	AudioManager::Play(BGM_ID);
 }
 
 //更新
