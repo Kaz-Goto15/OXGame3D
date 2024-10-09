@@ -28,14 +28,14 @@ GitHub: https://github.com/Kaz-Goto15/OXGame3D/tree/dev
   Esc ... 戻る
   Space ... 決定
 
-・ゲーム中(未実装)
+・ゲーム中
 マウス
   左クリック ... カメラ操作(自動的にカメラ操作モードに切り替わる)
 
 キーボード
   設置モード時
     WASD ... 上下左右に選択を移動
-    Space ...マークを設置
+    Space ... マークを設置
     L Shift ... 回転モードに切り替える
 
   回転モード時
@@ -67,7 +67,7 @@ GoogleDrive内の構成
 　・実行ファイルが開けなかった時用の動画URLが入っているフォルダです。
 
 GitHub内の構成
-　GraySide.sln
+　OXGame3D.sln
 　　・当ゲームのソリューションファイルです。
 　各種ソースファイル・ヘッダファイル
 
