@@ -1,3 +1,0 @@
-CsvManager.cpp & .h
-CsvReaderの上位互換
-Write("ファイル名",x,y,"置換データ(string")で対応する場所のデータを置換する

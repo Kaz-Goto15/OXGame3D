@@ -2,7 +2,7 @@
   "Source": [
     {
       "name": "Player",
-      "file": "HNSG\\grayman.fbx",
+      "file": "HNSG\\grayman3.fbx",
       "anim": [
         {
           "name": "jump",
@@ -37,38 +37,70 @@
       ]
     },
     {
-      "name": "Player",
-      "file": "HNSG\\grayman2.fbx",
+      "name": "Hanger",
+      "file": "HNSG\\hanger.fbx"
+
+    },
+    {
+      "name": "Cube",
+      "file": "cube.fbx"
+    },
+    {
+      "name": "COLOR_YELLOW",
+      "file": "color_yellow3.fbx"
+    },
+    {
+      "name": "MARK_O",
+      "file": "mark_o.fbx"
+    },
+    {
+      "name": "MARK_X",
+      "file": "mark_x.fbx"
+    },
+    {
+      "name": "MARK_1",
+      "file": "mark_1.fbx"
+    },
+    {
+      "name": "MARK_2",
+      "file": "mark_2.fbx"
+    },
+    {
+      "name": "MARK_3",
+      "file": "mark_3.fbx"
+    },
+    {
+      "name": "MARK_4",
+      "file": "mark_4.fbx"
+    },
+    {
+      "name": "MARK_5",
+      "file": "mark_5.fbx"
+    },
+    {
+      "name": "MARK_6",
+      "file": "mark_6.fbx"
+    },
+    {
+      "name": "MARK_7",
+      "file": "mark_7.fbx"
+    },
+    {
+      "name": "MARK_8",
+      "file": "mark_8.fbx"
+    },
+    {
+      "name": "MARK_9",
+      "file": "mark_9.fbx"
+    },
+    {
+      "name": "CubeSelectIndicator",
+      "file": "cubeindicator2.fbx",
       "anim": [
         {
-          "name": "jump",
+          "name": "green",
           "start": 1,
-          "end": 114
-        },
-        {
-          "name": "run",
-          "start": 115,
-          "end": 158
-        },
-        {
-          "name": "down",
-          "start": 159,
-          "end": 434
-        },
-        {
-          "name": "throw",
-          "start": 435,
-          "end": 633
-        },
-        {
-          "name": "damaged",
-          "start": 634,
-          "end": 713
-        },
-        {
-          "name": "idle",
-          "start": 714,
-          "end": 1309
+          "end": 89
         }
       ]
     }

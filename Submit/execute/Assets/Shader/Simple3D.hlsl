@@ -107,5 +107,6 @@ float4 PS(VS_OUT inData) : SV_Target
 	}
 
 	//最終的な色
-	return diffuse * shade + diffuse * ambient + speculer;
+    //return diffuse * shade + diffuse * ambient + speculer;
+    return diffuse + speculer;	//急ピッチな制作のため雑にアンビエント光を抜く(アルファがこれで作動したため)
 }
